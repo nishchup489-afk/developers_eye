@@ -17,6 +17,16 @@ The goal is to make technical search faster, more structured, and more useful fo
 
 ---
 
+
+# For Developer’s Eye, the main estimated stack we settled on is:
+- Backend: Python, FastAPI, Pydantic, SQLAlchemy
+- Database: PostgreSQL
+- Crawler: httpx + BeautifulSoup / lxml
+- Search: custom inverted index + BM25
+- Background jobs: Redis + ARQ
+- Frontend: Next.js + TypeScript
+- Infrastructure: Docker + Docker Compose
+
 ## Example
 
 A developer searches:
