@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Developer’s Eye frontend
 
-## Getting Started
+Responsive Next.js search frontend with a custom GSAP eye illustration, staggered entrances, source filters, shareable queries, browser-local saved results, keyboard shortcuts, and reduced-motion support.
 
-First, run the development server:
+## Run
 
-```bash
+```sh
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. No environment variables are required for the labeled demo playground. It uses a small curated collection, not live third-party search.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To connect a future FastAPI backend, copy `.env.example` to `.env.local`, set `BACKEND_URL=http://127.0.0.1:8000`, and restart. The backend must implement the documented GET /search contract. The existing backend directory is a scaffold and was not modified.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Checks
 
-## Learn More
+```sh
+npm run lint
+npm run build
+npm run test:integration
+```
 
-To learn more about Next.js, take a look at the following resources:
+Integration checks require the production build and start isolated local Next.js servers plus a mock upstream. No actual backend or provider credentials are used.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Documentation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Visit `/docs` for the API overview or read [the full API and connector reference](public/api-reference.md). It distinguishes implemented frontend endpoints from all proposed public/admin backend routes and provider connector contracts.
 
-## Deploy on Vercel
+## Architecture
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`app/page.tsx` passes server configuration mode to the interactive search component. The browser calls same-origin `/api/search`; the route reads BACKEND_URL and forwards validated searches server-side. No provider credentials are exposed. Failed live requests return errors rather than demo results.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The UI has intentionally no account system, dashboard, crawl controls, or fake analytics. Saved items live in this browser’s localStorage. Query suggestions are static shortcuts. Source tabs filter the received result collection.
