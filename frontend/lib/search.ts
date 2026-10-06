@@ -22,6 +22,10 @@ export const sourceNames: Record<Source, string> = {
 export function isSearchResult(value: unknown): value is SearchResult {
   if (!value || typeof value !== "object") return false;
   const r = value as Record<string, unknown>;
+  try {
+    const url = new URL(String(r.url));
+    if (!["http:", "https:"].includes(url.protocol) || !url.hostname) return false;
+  } catch { return false; }
   return typeof r.title === "string" && typeof r.snippet === "string" &&
     typeof r.url === "string" && /^https?:\/\//i.test(r.url) &&
     sources.includes(r.source as Source) && typeof r.score === "number" && Number.isFinite(r.score) &&
