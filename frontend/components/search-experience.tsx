@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import BrandEye from "./brand-eye";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -24,7 +25,6 @@ import {
 import {
   isSearchResult,
   sourceNames,
-  sources,
   type SearchResponse,
   type SearchResult,
   type Source,
@@ -45,12 +45,29 @@ const icons = {
   events: Globe2,
   practice: Command,
 };
+type SearchFilter = Source | "discussions" | "all";
+const verticals = [
+  "docs",
+  "github",
+  "discussions",
+  "articles",
+  "events",
+  "practice",
+] as const;
+function matchesSource(source: Source, filter: SearchFilter) {
+  return (
+    filter === "all" ||
+    (filter === "discussions"
+      ? source === "stackoverflow" || source === "reddit"
+      : source === filter)
+  );
+}
 const cards = [
   {
     source: "docs",
     title: "The source of truth.",
     body: "Straight from the documentation. Clear, authoritative, and to the point.",
-    label: "Official documentation",
+    label: "Docs",
   },
   {
     source: "github",
@@ -59,16 +76,16 @@ const cards = [
     label: "GitHub",
   },
   {
-    source: "stackoverflow",
+    source: "discussions",
     title: "Someone’s been there.",
-    body: "The edge case. The elusive bug. Answers from developers in the trenches.",
-    label: "Stack Overflow",
+    body: "Stack Overflow answers and Reddit conversations. Learn from developers who’ve been there.",
+    label: "Discussions",
   },
   {
-    source: "reddit",
-    title: "Beyond the docs.",
-    body: "Honest discussions, fresh perspectives, and lessons from the community.",
-    label: "Reddit & community",
+    source: "articles",
+    title: "Go a little deeper.",
+    body: "Tutorials, engineering blogs, and practical lessons from the people building the web.",
+    label: "Articles",
   },
 ] as const;
 
@@ -79,7 +96,7 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
   const controller = useRef<AbortController | null>(null);
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState<SearchResponse | null>(null);
-  const [filter, setFilter] = useState<Source | "all">("all");
+  const [filter, setFilter] = useState<SearchFilter>("all");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState<SearchResult[]>([]);
@@ -87,7 +104,7 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
   const [storageError, setStorageError] = useState("");
 
   const search = useCallback(
-    async (text: string, updateUrl = true, source: Source | "all" = "all") => {
+    async (text: string, updateUrl = true, source: SearchFilter = "all") => {
       const value = text.trim();
       if (!value) {
         input.current?.focus();
@@ -154,7 +171,7 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
       const q = new URLSearchParams(window.location.search).get("q");
       if (q) void search(q, false);
     }, 0);
-    const onPop = () => {
+    const restoreQuery = () => {
       const q = new URLSearchParams(window.location.search).get("q");
       if (q) void search(q, false);
       else {
@@ -165,6 +182,12 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
         setLoading(false);
         setShowSaved(false);
       }
+    };
+    let historyTimer: number | undefined;
+    const onPop = () => {
+      // Next.js can restore history during a router render. Update after it finishes.
+      window.clearTimeout(historyTimer);
+      historyTimer = window.setTimeout(restoreQuery, 0);
     };
     const onKey = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
@@ -182,6 +205,7 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
     window.addEventListener("popstate", onPop);
     return () => {
       clearTimeout(initialize);
+      window.clearTimeout(historyTimer);
       controller.current?.abort();
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("popstate", onPop);
@@ -215,17 +239,15 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
           repeat: -1,
           ease: "sine.inOut",
         });
-        gsap.utils
-          .toArray<HTMLElement>(".scroll-reveal")
-          .forEach((el) =>
-            gsap.from(el, {
-              y: 32,
-              opacity: 0,
-              duration: 0.7,
-              scrollTrigger: { trigger: el, start: "top 94%", once: true },
-              clearProps: "all",
-            }),
-          );
+        gsap.utils.toArray<HTMLElement>(".scroll-reveal").forEach((el) =>
+          gsap.from(el, {
+            y: 32,
+            opacity: 0,
+            duration: 0.7,
+            scrollTrigger: { trigger: el, start: "top 94%", once: true },
+            clearProps: "all",
+          }),
+        );
       }, root);
       return () => context.revert();
     });
@@ -268,8 +290,8 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
     }
   }
   const resultItems = showSaved ? saved : (response?.results ?? []);
-  const visible = resultItems.filter(
-    (item) => filter === "all" || item.source === filter,
+  const visible = resultItems.filter((item) =>
+    matchesSource(item.source, filter),
   );
   const hasResults = loading || error || response || showSaved;
 
@@ -304,8 +326,12 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
           <a className="nav-link" href="#sources">
             The sources
           </a>
-          <a className="nav-link" href="#how-it-works">
-            How it works
+          <a
+            className="nav-link"
+            href="#search-input"
+            onClick={() => input.current?.focus()}
+          >
+            Search
           </a>
           <a className="nav-link" href="/docs">
             API docs <ArrowUpRight size={12} />
@@ -348,172 +374,81 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
               <br />
               One search. A clearer way forward.
             </p>
-            <div className="hero-note reveal">
-              <span className="tiny-line" /> BUILT FOR CURIOSITY. DESIGNED FOR
-              FLOW.
-            </div>
           </div>
-          <div className="eye-art reveal" aria-hidden="true">
-            <div className="art-grid" />
-            <span className="art-coordinate coordinate-top">
-              DE—01 / SIGNAL FOUND
-            </span>
-            <svg viewBox="0 0 500 400" className="eye-svg" fill="none">
-              <defs>
-                <radialGradient id="iris">
-                  <stop stopColor="#d6fc81" />
-                  <stop offset=".5" stopColor="#91aa60" />
-                  <stop offset="1" stopColor="#344625" />
-                </radialGradient>
-                <linearGradient id="eyeLine">
-                  <stop stopColor="#586044" stopOpacity=".1" />
-                  <stop offset=".5" stopColor="#d6fc81" />
-                  <stop offset="1" stopColor="#586044" stopOpacity=".1" />
-                </linearGradient>
-              </defs>
-              <ellipse
-                cx="250"
-                cy="200"
-                rx="213"
-                ry="158"
-                stroke="#414737"
-                strokeDasharray="2 8"
-              />
-              <g className="orbit-spin">
-                <circle cx="250" cy="200" r="184" stroke="#34392c" />
-                <circle cx="250" cy="16" r="5" fill="#d6fc81" />
-                <circle cx="250" cy="384" r="3" fill="#849664" />
-              </g>
-              {Array.from({ length: 12 }, (_, i) => (
-                <ellipse
-                  key={i}
-                  cx="250"
-                  cy="200"
-                  rx={206 - i * 6}
-                  ry={122 - i * 7}
-                  stroke="url(#eyeLine)"
-                  strokeWidth=".8"
-                />
-              ))}
-              <g className="eye-core">
-                <circle cx="250" cy="200" r="72" fill="url(#iris)" />
-                {Array.from({ length: 56 }, (_, i) => (
-                  <line
-                    key={i}
-                    x1="250"
-                    y1="132"
-                    x2="250"
-                    y2="163"
-                    stroke="#17200e"
-                    opacity=".45"
-                    transform={`rotate(${i * (360 / 56)} 250 200)`}
-                  />
-                ))}
-                <circle cx="250" cy="200" r="34" fill="#11150e" />
-                <circle
-                  cx="250"
-                  cy="200"
-                  r="25"
-                  stroke="#b4d578"
-                  strokeOpacity=".3"
-                />
-                <circle cx="266" cy="180" r="9" fill="#e8ffc3" />
-                <circle cx="236" cy="215" r="3" fill="#b6d680" />
-              </g>
-              <path
-                d="M20 200h25m410 0h25M250 0v20m0 360v20"
-                stroke="#a1b67b"
-              />
-              <path
-                d="M62 67V52h15m346 0h15v15M62 333v15h15m346 0h15v-15"
-                stroke="#52613e"
-              />
-            </svg>
-            <span className="art-label label-docs">
-              <BookOpen size={12} /> docs
-            </span>
-            <span className="art-label label-code">
-              <Code2 size={12} /> code
-            </span>
-            <span className="art-label label-community">
-              <MessageCircle size={12} /> community
-            </span>
-            <span className="art-coordinate coordinate-bottom">
-              A LITTLE PERSPECTIVE CHANGES EVERYTHING.
-            </span>
-          </div>
-        </section>
-        <section
-          className="search-section shell reveal"
-          aria-label="Developer search"
-        >
-          <form
-            className="search-box"
-            onSubmit={(e) => {
-              e.preventDefault();
-              void search(query);
-            }}
+          <section
+            className="search-section reveal"
+            aria-label="Developer search"
           >
-            <Search className="search-icon" size={23} />
-            <label className="sr-only" htmlFor="search-input">
-              Search developer knowledge
-            </label>
-            <input
-              ref={input}
-              id="search-input"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="What are you building next?"
-              maxLength={300}
-              required
-              autoComplete="off"
-            />
-            {query && (
-              <button
-                type="button"
-                className="clear-search icon-button"
-                aria-label="Clear search"
-                onClick={() => {
-                  setQuery("");
-                  input.current?.focus();
-                }}
-              >
-                <X size={16} />
-              </button>
-            )}
-            <kbd className="search-shortcut">⌘ K</kbd>
-            <button
-              className="search-submit"
-              type="submit"
-              aria-label="Find your answer"
-              disabled={loading}
+            <form
+              className="search-box"
+              onSubmit={(e) => {
+                e.preventDefault();
+                void search(query);
+              }}
             >
-              {loading ? (
-                <LoaderCircle className="spinner" size={19} />
-              ) : (
-                <>
-                  <span>Find your answer</span>
-                  <ArrowUpRight size={19} />
-                </>
-              )}
-            </button>
-          </form>
-          <div className="search-meta">
-            <div className="suggestions">
-              <span>TRY A LITTLE CURIOSITY</span>
-              {suggestions.map((s) => (
-                <button key={s} onClick={() => void search(s)}>
-                  {s}
-                  <ArrowUpRight size={11} />
+              <Search className="search-icon" size={23} />
+              <label className="sr-only" htmlFor="search-input">
+                Search developer knowledge
+              </label>
+              <input
+                ref={input}
+                id="search-input"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search docs, code…"
+                maxLength={300}
+                required
+                autoComplete="off"
+              />
+              {query && (
+                <button
+                  type="button"
+                  className="clear-search icon-button"
+                  aria-label="Clear search"
+                  onClick={() => {
+                    setQuery("");
+                    input.current?.focus();
+                  }}
+                >
+                  <X size={16} />
                 </button>
-              ))}
+              )}
+              <kbd className="search-shortcut">⌘ K</kbd>
+              <button
+                className="search-submit"
+                type="submit"
+                aria-label="Search"
+                disabled={loading}
+              >
+                {loading ? (
+                  <LoaderCircle className="spinner" size={19} />
+                ) : (
+                  <>
+                    <span>Search</span>
+                    <ArrowUpRight size={19} />
+                  </>
+                )}
+              </button>
+            </form>
+            <div className="search-meta">
+              <div className="suggestions">
+                <span>TRY A LITTLE CURIOSITY</span>
+                {suggestions.map((s) => (
+                  <button key={s} onClick={() => void search(s)}>
+                    {s}
+                    <ArrowUpRight size={11} />
+                  </button>
+                ))}
+              </div>
+              <span className="demo-label">
+                <span className="status-dot" />
+                {mode === "demo" ? "Demo playground" : "Live search configured"}
+              </span>
             </div>
-            <span className="demo-label">
-              <span className="status-dot" />
-              {mode === "demo" ? "Demo playground" : "Live search configured"}
-            </span>
-          </div>
+          </section>
+          <BrandEye />
         </section>
+
         {hasResults && (
           <section
             ref={resultsRegion}
@@ -573,8 +508,10 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
                 >
                   All sources <span>{resultItems.length}</span>
                 </button>
-                {sources
-                  .filter((s) => resultItems.some((item) => item.source === s))
+                {verticals
+                  .filter((s) =>
+                    resultItems.some((item) => matchesSource(item.source, s)),
+                  )
                   .map((s) => (
                     <button
                       key={s}
@@ -582,7 +519,7 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
                       aria-pressed={filter === s}
                       onClick={() => setFilter(s)}
                     >
-                      {sourceNames[s]}
+                      {s === "discussions" ? "Discussions" : sourceNames[s]}
                     </button>
                   ))}
               </div>
@@ -703,14 +640,18 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
           </div>
           <div className="source-grid">
             {cards.map((card, index) => {
-              const Icon = icons[card.source];
+              const Icon =
+                card.source === "discussions"
+                  ? MessageCircle
+                  : icons[card.source];
               return (
                 <button
                   className={`source-card source-${card.source}`}
                   key={card.source}
                   onClick={() =>
                     void search(
-                      card.source === "github" ? "react" : "python",
+                      query.trim() ||
+                        (card.source === "github" ? "react" : "python"),
                       true,
                       card.source,
                     )
@@ -741,88 +682,12 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
               <GitBranch size={14} /> A growing field of view
             </span>
             <span>
-              Articles <span>/</span> Events <span>/</span> Practice{" "}
+              Events <span>/</span> Practice{" "}
               <span className="small-pill">
                 {mode === "demo" ? "IN THE DEMO" : "SOURCE CATEGORIES"}
               </span>
             </span>
           </div>
-        </section>
-        <section id="how-it-works" className="how-section shell scroll-reveal">
-          <div className="how-intro">
-            <span className="eyebrow">A SIMPLE IDEA. A BETTER WORKFLOW.</span>
-            <h2>
-              Stay in the flow.
-              <br />
-              <span className="muted">We’ll find the signal.</span>
-            </h2>
-            <p>
-              Built around the way developers think.
-              <br />
-              No detours. Just a path to what matters.
-            </p>
-            <a
-              className="text-button"
-              href="#search-input"
-              onClick={() => input.current?.focus()}
-            >
-              Follow your curiosity <ArrowUpRight size={16} />
-            </a>
-          </div>
-          <div className="steps">
-            <div>
-              <span>01</span>
-              <div>
-                <h3>Start with a question.</h3>
-                <p>
-                  A framework, an error, a half-formed idea.
-                  <br />
-                  Search the way you think.
-                </p>
-              </div>
-              <Search size={20} />
-            </div>
-            <div>
-              <span>02</span>
-              <div>
-                <h3>Find a wider perspective.</h3>
-                <p>
-                  Explore docs, code, and discussions.
-                  <br />
-                  Filter down to the sources you need.
-                </p>
-              </div>
-              <Eye size={21} />
-            </div>
-            <div>
-              <span>03</span>
-              <div>
-                <h3>Get back to building.</h3>
-                <p>
-                  Open the original. Save the useful bits.
-                  <br />
-                  Make the next thing happen.
-                </p>
-              </div>
-              <Code2 size={21} />
-            </div>
-          </div>
-        </section>
-        <section className="closing shell scroll-reveal">
-          <span className="closing-mark">✳</span>
-          <p>
-            The answer is out there.
-            <br />
-            <span>Let’s bring it into focus.</span>
-          </p>
-          <a
-            href="#search-input"
-            className="round-link"
-            aria-label="Back to search"
-            onClick={() => input.current?.focus()}
-          >
-            <ArrowUpRight size={27} />
-          </a>
         </section>
       </main>
       <footer className="footer shell">

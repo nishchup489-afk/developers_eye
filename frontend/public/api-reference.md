@@ -98,6 +98,7 @@ Additional result fields are accepted but not used. The bridge rejects the entir
 
 - `components/search-experience.tsx` fetches `/api/search` only when a form, suggested query, or source card is activated.
 - UI tabs filter the returned collection locally; they do not trigger provider requests. Direct API callers may use the server `source` parameter.
+- The Discussions tab groups `stackoverflow` and `reddit`. It is a frontend vertical, not an additional API enum value; direct API callers still use the individual provider categories. Cards reuse the entered query, or a sample query when the input is blank.
 - Queries are shareable as `/?q=fastapi%20async#results`. Loading that URL runs the search; browser back/forward restores query state. Filters and saved view are local UI state, not encoded in the URL.
 - New searches abort obsolete browser fetches. Server upstream requests remain bounded by their own deadline.
 - Saved results live in localStorage under `developers-eye-saved`. They are validated on load and can be removed with the same bookmark button. They are local to the browser, not synced to an account. Storage failure falls back to the session with a visible notice.

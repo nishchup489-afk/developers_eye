@@ -32,3 +32,5 @@ Visit `/docs` for the API overview or read [the full API and connector reference
 `app/page.tsx` passes server configuration mode to the interactive search component. The browser calls same-origin `/api/search`; the route reads BACKEND_URL and forwards validated searches server-side. No provider credentials are exposed. Failed live requests return errors rather than demo results.
 
 The UI has intentionally no account system, dashboard, crawl controls, or fake analytics. Saved items live in this browser’s localStorage. Query suggestions are static shortcuts. Source tabs filter the received result collection.
+
+Search is the primary hero action, above the illustration on mobile. The eye illustration lives in `components/brand-eye.tsx` as the reusable brand asset. The four source cards are Docs, GitHub, Discussions, and Articles; Discussions groups Stack Overflow and Reddit locally while preserving their separate API source values. Navigation points to search, source cards, and the implemented API docs page. Bookmarks are included as a local-only v1 feature.
