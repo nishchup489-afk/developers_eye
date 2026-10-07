@@ -75,6 +75,21 @@ async function get(base, params, status = 200) {
 }
 try {
   const demo = await start(3181, "");
+  const home = await (await fetch(demo)).text();
+  assert.match(home, /class="eye-art reveal"/);
+  assert.match(home, /id="sources"/);
+  assert.doesNotMatch(home, /id="results"/);
+  const resultsPage = await (await fetch(`${demo}/search?q=react`)).text();
+  assert.match(resultsPage, /id="results"/);
+  assert.match(resultsPage, /value="react"/);
+  assert.doesNotMatch(resultsPage, /class="eye-art reveal"|id="sources"/);
+  assert.equal((await fetch(`${demo}/search`)).status, 200);
+  const savedPage = await (await fetch(`${demo}/search?saved=1`)).text();
+  assert.match(savedPage, /YOUR PERSONAL INDEX/);
+  const legacy = await fetch(`${demo}/?q=react&source=github`, { redirect: "manual" });
+  assert.equal(legacy.status, 307);
+  assert.equal(legacy.headers.get("location"), "/search?q=react&source=github");
+  console.log("PASS separate home/results routes, saved page, legacy search redirect");
   let data = await get(demo, { q: " fastapi async " });
   assert.equal(data.mode, "demo");
   assert.equal(data.query, "fastapi async");

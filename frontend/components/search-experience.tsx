@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import BrandEye from "./brand-eye";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -45,7 +46,7 @@ const icons = {
   events: Globe2,
   practice: Command,
 };
-type SearchFilter = Source | "discussions" | "all";
+export type SearchFilter = Source | "discussions" | "all";
 const verticals = [
   "docs",
   "github",
@@ -89,18 +90,30 @@ const cards = [
   },
 ] as const;
 
-export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
+export default function SearchExperience({
+  mode,
+  resultsPage = false,
+  initialQuery = "",
+  initialFilter = "all",
+  savedPage = false,
+}: {
+  mode: "demo" | "live";
+  resultsPage?: boolean;
+  initialQuery?: string;
+  initialFilter?: SearchFilter;
+  savedPage?: boolean;
+}) {
+  const router = useRouter();
   const root = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
-  const resultsRegion = useRef<HTMLElement>(null);
   const controller = useRef<AbortController | null>(null);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [response, setResponse] = useState<SearchResponse | null>(null);
-  const [filter, setFilter] = useState<SearchFilter>("all");
-  const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState<SearchFilter>(initialFilter);
+  const [loading, setLoading] = useState(resultsPage && !savedPage && !!initialQuery);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState<SearchResult[]>([]);
-  const [showSaved, setShowSaved] = useState(false);
+  const showSaved = savedPage;
   const [storageError, setStorageError] = useState("");
 
   const search = useCallback(
@@ -110,30 +123,24 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
         input.current?.focus();
         return;
       }
+      if (updateUrl) {
+        const params = new URLSearchParams({ q: value });
+        if (source !== "all") params.set("source", source);
+        const destination = `/search?${params}`;
+        // Re-submitting the current query should refresh its results too.
+        if (!resultsPage || window.location.search !== `?${params}`) {
+          router.push(destination);
+          return;
+        }
+      }
       controller.current?.abort();
       const active = new AbortController();
       controller.current = active;
       setQuery(value);
       setLoading(true);
       setError("");
-      setShowSaved(false);
       setFilter(source);
       setResponse(null);
-      if (updateUrl)
-        window.history.pushState(
-          {},
-          "",
-          `/?q=${encodeURIComponent(value)}#results`,
-        );
-      requestAnimationFrame(() =>
-        resultsRegion.current?.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
-            .matches
-            ? "instant"
-            : "smooth",
-          block: "start",
-        }),
-      );
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(value)}`, {
           signal: active.signal,
@@ -155,7 +162,7 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
         if (!active.signal.aborted) setLoading(false);
       }
     },
-    [],
+    [router, resultsPage],
   );
 
   useEffect(() => {
@@ -168,27 +175,9 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
       } catch {
         /* Session bookmarks still work. */
       }
-      const q = new URLSearchParams(window.location.search).get("q");
-      if (q) void search(q, false);
+      if (resultsPage && initialQuery && !savedPage)
+        void search(initialQuery, false, initialFilter);
     }, 0);
-    const restoreQuery = () => {
-      const q = new URLSearchParams(window.location.search).get("q");
-      if (q) void search(q, false);
-      else {
-        controller.current?.abort();
-        setQuery("");
-        setResponse(null);
-        setError("");
-        setLoading(false);
-        setShowSaved(false);
-      }
-    };
-    let historyTimer: number | undefined;
-    const onPop = () => {
-      // Next.js can restore history during a router render. Update after it finishes.
-      window.clearTimeout(historyTimer);
-      historyTimer = window.setTimeout(restoreQuery, 0);
-    };
     const onKey = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
       if (
@@ -202,15 +191,12 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
       }
     };
     window.addEventListener("keydown", onKey);
-    window.addEventListener("popstate", onPop);
     return () => {
       clearTimeout(initialize);
-      window.clearTimeout(historyTimer);
       controller.current?.abort();
       window.removeEventListener("keydown", onKey);
-      window.removeEventListener("popstate", onPop);
     };
-  }, [search]);
+  }, [search, resultsPage, initialQuery, initialFilter, savedPage]);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -225,20 +211,22 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
           ease: "power3.out",
           clearProps: "all",
         });
-        gsap.to(".orbit-spin", {
-          rotation: 360,
-          duration: 55,
-          repeat: -1,
-          ease: "none",
-          transformOrigin: "50% 50%",
-        });
-        gsap.to(".eye-core", {
-          y: -8,
-          duration: 3,
-          yoyo: true,
-          repeat: -1,
-          ease: "sine.inOut",
-        });
+        if (!resultsPage) {
+          gsap.to(".orbit-spin", {
+            rotation: 360,
+            duration: 55,
+            repeat: -1,
+            ease: "none",
+            transformOrigin: "50% 50%",
+          });
+          gsap.to(".eye-core", {
+            y: -8,
+            duration: 3,
+            yoyo: true,
+            repeat: -1,
+            ease: "sine.inOut",
+          });
+        }
         gsap.utils.toArray<HTMLElement>(".scroll-reveal").forEach((el) =>
           gsap.from(el, {
             y: 32,
@@ -252,7 +240,7 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
       return () => context.revert();
     });
     return () => media.revert();
-  }, []);
+  }, [resultsPage]);
   useEffect(() => {
     ScrollTrigger.refresh();
     if (!root.current?.querySelector(".result-row")) return;
@@ -293,10 +281,9 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
   const visible = resultItems.filter((item) =>
     matchesSource(item.source, filter),
   );
-  const hasResults = loading || error || response || showSaved;
 
   return (
-    <div ref={root}>
+    <div ref={root} className={`search-home${resultsPage ? " search-results-page" : ""}`}>
       <a className="skip-link" href="#search-input">
         Skip to search
       </a>
@@ -310,7 +297,6 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
             setLoading(false);
             setError("");
             setResponse(null);
-            setShowSaved(false);
           }}
           aria-label="Developer’s Eye home"
         >
@@ -323,7 +309,7 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
           </span>
         </Link>
         <nav aria-label="Main navigation">
-          <a className="nav-link" href="#sources">
+          <a className="nav-link" href={resultsPage ? "/#sources" : "#sources"}>
             The sources
           </a>
           <a
@@ -337,44 +323,27 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
             API docs <ArrowUpRight size={12} />
           </a>
         </nav>
-        <button
+        <Link
+          href="/search?saved=1"
           aria-label={`Saved results (${saved.length})`}
           className={`saved-button ${showSaved ? "selected" : ""}`}
-          onClick={() => {
-            controller.current?.abort();
-            setLoading(false);
-            setError("");
-            setShowSaved(true);
-            setFilter("all");
-            requestAnimationFrame(() =>
-              resultsRegion.current?.scrollIntoView({ behavior: "smooth" }),
-            );
-          }}
         >
           <Bookmark size={15} />
           <span>Saved</span>
           <span className="saved-count">{saved.length}</span>
-        </button>
+        </Link>
       </header>
       <main>
-        <section className="hero shell" aria-labelledby="hero-title">
-          <div className="hero-copy">
-            <div className="eyebrow reveal">
-              <span className="status-dot" /> A SEARCH ENGINE WITH A DEVELOPER’S
-              INSTINCT
-            </div>
+        <section className="hero shell" aria-label={resultsPage ? "Search" : undefined} aria-labelledby={resultsPage ? undefined : "hero-title"}>
+          {!resultsPage && <BrandEye />}
+          {!resultsPage && <div className="hero-copy">
             <h1 id="hero-title" className="reveal">
-              Less searching.
-              <br />
-              <span>More building.</span>
-              <span className="title-asterisk">✳</span>
+              developer’s <span>eye.</span>
             </h1>
             <p className="hero-description reveal">
-              The docs, the code, the conversation.
-              <br />
-              One search. A clearer way forward.
+              Less searching. More building.
             </p>
-          </div>
+          </div>}
           <section
             className="search-section reveal"
             aria-label="Developer search"
@@ -430,9 +399,9 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
                 )}
               </button>
             </form>
-            <div className="search-meta">
+            {!resultsPage && <div className="search-meta">
               <div className="suggestions">
-                <span>TRY A LITTLE CURIOSITY</span>
+                <span>Try</span>
                 {suggestions.map((s) => (
                   <button key={s} onClick={() => void search(s)}>
                     {s}
@@ -444,14 +413,12 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
                 <span className="status-dot" />
                 {mode === "demo" ? "Demo playground" : "Live search configured"}
               </span>
-            </div>
+            </div>}
           </section>
-          <BrandEye />
         </section>
 
-        {hasResults && (
+        {resultsPage && (
           <section
-            ref={resultsRegion}
             id="results"
             className="results-section shell"
             aria-label="Search results"
@@ -466,33 +433,25 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
                       ? "CURATED DEMO RESULTS"
                       : "THE SIGNAL"}
                 </span>
-                <h2>
+                <h1>
                   {showSaved ? (
                     "Worth keeping."
                   ) : loading ? (
                     "Connecting the dots…"
                   ) : error ? (
                     "A break in the signal."
+                  ) : !initialQuery ? (
+                    "What are you building?"
                   ) : (
                     <>
                       Results for <em>“{response?.query}”</em>
                     </>
                   )}
-                </h2>
+                </h1>
               </div>
-              <button
-                className="text-button"
-                onClick={() => {
-                  controller.current?.abort();
-                  setLoading(false);
-                  setShowSaved(false);
-                  setResponse(null);
-                  setError("");
-                  window.history.pushState({}, "", "/");
-                }}
-              >
-                Close <X size={15} />
-              </button>
+              <Link className="text-button" href="/">
+                Back home <ArrowUpRight size={15} />
+              </Link>
             </div>
             {storageError && (
               <p role="status" className="result-notice">
@@ -540,7 +499,7 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
                 <p>{error}</p>
                 <button
                   className="text-button"
-                  onClick={() => void search(query)}
+                  onClick={() => void search(query, false, filter)}
                 >
                   Try again <ArrowRight size={16} />
                 </button>
@@ -551,11 +510,15 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
                 <h3>
                   {showSaved
                     ? "Your next great find belongs here."
+                    : !initialQuery
+                      ? "Start with a question or a topic."
                     : "No signal on this frequency."}
                 </h3>
                 <p>
                   {showSaved
                     ? "Bookmark a result to keep it in this browser."
+                    : !initialQuery
+                      ? "Search the docs, code, and conversations above."
                     : mode === "demo"
                       ? "Try Python, React, or Redis. Demo mode searches a small curated collection."
                       : "Try a broader query or choose a different source."}
@@ -620,7 +583,7 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
             )}
           </section>
         )}
-        <section id="sources" className="sources-section shell scroll-reveal">
+        {!resultsPage && <section id="sources" className="sources-section shell scroll-reveal">
           <div className="section-heading">
             <div>
               <span className="eyebrow">
@@ -688,7 +651,7 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
               </span>
             </span>
           </div>
-        </section>
+        </section>}
       </main>
       <footer className="footer shell">
         <Link
@@ -700,7 +663,6 @@ export default function SearchExperience({ mode }: { mode: "demo" | "live" }) {
             setLoading(false);
             setError("");
             setResponse(null);
-            setShowSaved(false);
           }}
         >
           <Eye size={22} />
