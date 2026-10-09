@@ -1,0 +1,10 @@
+id = identifier , used bigint instead of UUID for better performance 
+slug = stable identifier than just a number 
+name = displayable name of the source 
+kind = how the source provide data 
+base_url = starting url for the source 
+allowed_hosts = whatever passes robots.txt or permitted to 
+crawl_interval_seconds = interval between scheduled crawls so it dont be a DDoS 
+is_enables = should the schedular process the source 
+config = source specific settings 
+created_at = you know

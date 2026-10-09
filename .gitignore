@@ -1,0 +1,116 @@
+# ==========================================
+# Root & System / OS
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# IDE & Editor Configs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+
+# Environment Files (Keep sensitive secrets out of git)
+.env
+.env*.local
+.env.production
+.env.development
+
+# Logs & Databases
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.sqlite
+*.db
+
+# ==========================================
+# Python (Backend & Crawler)
+# ==========================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.nox/
+.hypothesis/
+nosetests.xml
+coverage.xml
+*.cover
+
+# Poetry & Packaging
+# (Uncomment poetry.lock below if you prefer NOT committing lock files, though committing them is standard for applications)
+# poetry.lock
+
+# ==========================================
+# Frontend (Next.js / Node)
+# ==========================================
+# Node modules & dependencies
+node_modules/
+/frontend/node_modules/
+
+# Local NPM cache (Present in your directory structure)
+.npm-cache/
+/frontend/.npm-cache/
+
+# Next.js build output
+.next/
+/frontend/.next/
+out/
+/frontend/out/
+
+# Vercel deployment files
+.vercel/
+
+# TypeScript / Build output
+*.tsbuildinfo
+next-env.d.ts
+
+# Testing (Jest / Playwright / Cypress)
+/frontend/coverage/
+/frontend/cypress/screenshots/
+/frontend/cypress/videos/
