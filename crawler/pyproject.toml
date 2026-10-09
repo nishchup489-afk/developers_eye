@@ -2,4 +2,7 @@
 name = "crawler"
 version = "0.1.0"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = ["backend @ file:///C:/Users/nishc/Documents/developers-eye/backend"]
+
+[tool.poetry.dependencies]
+backend = {develop = true}

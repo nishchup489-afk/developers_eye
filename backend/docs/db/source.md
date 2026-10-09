@@ -1,3 +1,7 @@
+what it is ?
+- which url to fetch
+
+
 id = identifier , used bigint instead of UUID for better performance 
 slug = stable identifier than just a number 
 name = displayable name of the source 
