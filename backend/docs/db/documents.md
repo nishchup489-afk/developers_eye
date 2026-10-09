@@ -1,12 +1,12 @@
-what it is?
+# what it is?
 - stores the scraped data , what we got from those crawled website. mostly html , metadata , little description
 
 
-why metadata_ not metadata?
+# why metadata_ not metadata?
 - metadata is a preserved word in sqlalchemy
 
 
-what is hash?
+# what is hash?
 
 - Suppose you crawl a documentation page today and revisit it tomorrow.
 If the cleaned content hasn't changed, the hash remains the same. Your ingestion pipeline can skip unnecessary reindexing.
