@@ -38,7 +38,7 @@ These are **discovery entry points**, not permission to crawl every linked page.
 
 ### Seed configuration example
 
-This is a **logical payload** based on the current proposed `sources` model. It is not yet a verified constructor for your existing `Source` class.
+This is a **logical payload** based on the current proposed `sources` model.
 
 ```json
 {
