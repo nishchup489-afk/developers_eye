@@ -20,33 +20,34 @@ from backend.db.session import SessionFactory
 from .registry import get_enabled_sources
 from sqlalchemy import insert
 from backend.models import CrawlTarget
-from backend.schema import CrawlAttemptCreate
+from backend.schema import CrawlTargetCreate
+from frontier.urls import normalize_url
 
 
 
 # it will return what we about to crawl with source id , kind , fetch_url 
-# def build_initial_target(source : Source ) -> dict:
-#     async with SessionFactory() as session:
-#         async with session.begin():
-#             sources = get_enabled_sources()
 
-#             urls = []
-#             for source in sources : 
-#                 urls.append({"source_id" : source.id ,
-#                              "fetch_url" : source.base_url, 
-#                               "normalized_url": normalize_url(source.base_url) , 
-#                               "kind" : source.kind,
-#                               "priority" : source.config.get("priority" , 0) ,
-#                               "discovered_from_id" : source.id})
 
-#             for url in urls:
-#                 to_insert = CrawlAttemptCreate.model_validate(*url)
 
-#                 CrawlTarget.insert(to_insert)
+def build_initial_target(source : Source) -> dict[str , int | str]:
 
-#             session.commit()
+    if source.kind != "website":
+        raise ValueError("Unsupported source kind")
 
-#             return 
+    target = {
+        "source_id" : source.id,
+        "fetch_url" : source.base_url , 
+        "normalized_url" : normalize_url(source.base_url) , 
+        "kind" : "page",
+        "priority" : source.config.get("priority" , 0),
+        "discovered_from_id" : None
+    }
+
+    return CrawlTargetCreate.model_validate(target)
+
+
+
+
 
 
 
