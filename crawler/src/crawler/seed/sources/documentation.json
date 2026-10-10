@@ -1,0 +1,25 @@
+
+[
+  {
+    "slug": "mdn",
+    "name": "MDN Web Docs",
+    "kind": "website",
+    "base_url": "https://developer.mozilla.org/en-US/docs/Web",
+    "allowed_hosts": ["developer.mozilla.org"],
+    "crawl_interval_seconds": 86400,
+    "config": {
+      "max_depth": 3
+    }
+  },
+  {
+    "slug": "python-docs",
+    "name": "Python Documentation",
+    "kind": "website",
+    "base_url": "https://docs.python.org/3/",
+    "allowed_hosts": ["docs.python.org"],
+    "crawl_interval_seconds": 86400,
+    "config": {
+      "max_depth": 3
+    }
+  }
+]
