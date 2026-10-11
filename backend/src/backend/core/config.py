@@ -1,5 +1,6 @@
 from functools import lru_cache 
 from pydantic_settings import SettingsConfigDict , BaseSettings 
+from pathlib import Path
 
 
 class Settings(BaseSettings):
@@ -11,9 +12,9 @@ class Settings(BaseSettings):
 
 
     model_config = SettingsConfigDict(
-        env_file=".env" , 
-        env_file_encoding="utf-8" , 
-        case_sensitive=False , 
+        env_file=Path(__file__).resolve().parents[3] / ".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
         extra="ignore",
     )
 
