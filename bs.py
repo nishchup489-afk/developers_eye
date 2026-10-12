@@ -1,5 +1,5 @@
-from urllib.parse import urldefrag 
+from urllib.parse import urlsplit 
 
 url = "HTTPS://EXAMPLE.COM:443/docs?lang=en#intro"
 
-print(urldefrag(url))
+print(urlsplit(url))

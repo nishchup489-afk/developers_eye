@@ -56,9 +56,11 @@ Tests two functions:
 
 Calculates capped exponential backoff:
 
+```math
 $$
 \text{delay} = \min(\text{base} \times 2^{(\text{failure\_count}-1)}, \text{max})
 $$
+```
 
 Default configuration:
 - Base delay: **60 seconds**
@@ -115,8 +117,8 @@ They create temporary database records, execute real SQL queries and updates, an
 
 ## 7. Remaining work
 
-- [ ] Verify `test_fail_target.py` passes.
-- [ ] Test concurrent claims using separate database sessions.
+- [☑️] Verify `test_fail_target.py` passes. 
+- [ ] Test concurrent claims using separate database sessions. 
 - [ ] Integrate `CrawlAttempt` with the fetch workers.
 - [ ] Add robots.txt, host validation, DNS/IP safety, and redirect validation.
 - [ ] Test real HTTP fetching with HTTPX.
