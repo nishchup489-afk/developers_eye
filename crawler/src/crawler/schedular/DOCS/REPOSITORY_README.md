@@ -24,9 +24,9 @@
 - this is a helping function to cap the failure count and delay of the process.
 - it have a simple formula
 
-$$
+```math
 \text{delay} = \min\left(\text{base} \times 2^{(\text{failure\_count} - 1)},\ \text{max}\right)
-$$
+```
 
 with this formula it counts delay. **[TODO: add `full jitter` for scalability]**
 
