@@ -188,3 +188,133 @@ async def complete_target(
 
     # Step 4: Return whether completion succeeded
     return completed_id is not None
+
+
+
+
+
+
+def calculate_retry_delay(
+    failure_count: int,
+    base_delay_seconds: int = 60,
+    max_delay_seconds: int = 3600,
+) -> int:
+    """Calculate a capped exponential retry delay."""
+
+    if failure_count <= 0:
+        raise ValueError("failure_count must be positive")
+
+    if base_delay_seconds <= 0:
+        raise ValueError("base_delay_seconds must be positive")
+
+    if max_delay_seconds < base_delay_seconds:
+        raise ValueError(
+            "max_delay_seconds must be >= base_delay_seconds"
+        )
+
+    # Double the delay after each consecutive failure.
+    # Cap the exponent to avoid creating enormous integers.
+    exponent = min(
+        failure_count - 1,
+        max_delay_seconds.bit_length(),
+    )
+
+    delay = base_delay_seconds * (2 ** exponent)
+
+    return min(delay, max_delay_seconds)
+
+
+async def fail_target(
+    session: AsyncSession,
+    target_id: int,
+    expected_lease_until: datetime,
+    base_delay_seconds: int = 60,
+    max_delay_seconds: int = 3600,
+) -> bool:
+    """
+    Mark a leased crawl target as failed.
+
+    - Verify that the original lease is still valid.
+    - Increment its consecutive failure count.
+    - Calculate exponential retry backoff.
+    - Clear the lease.
+    - Requeue the target for a future retry.
+
+    The caller owns the database transaction.
+    """
+
+    # Step 1: Validate parameters
+    if target_id <= 0:
+        raise ValueError("target_id must be positive")
+
+    if base_delay_seconds <= 0:
+        raise ValueError("base_delay_seconds must be positive")
+
+    if max_delay_seconds < base_delay_seconds:
+        raise ValueError(
+            "max_delay_seconds must be >= base_delay_seconds"
+        )
+
+    if (
+        expected_lease_until.tzinfo is None
+        or expected_lease_until.utcoffset() is None
+    ):
+        raise ValueError(
+            "expected_lease_until must be timezone-aware"
+        )
+
+    # Step 2: Find the target and lock it
+    select_stmt = (
+        select(CrawlTarget.failure_count)
+        .where(
+            CrawlTarget.id == target_id,
+            CrawlTarget.state == "leased",
+            CrawlTarget.lease_until == expected_lease_until,
+            CrawlTarget.lease_until > func.now(),
+        )
+        .with_for_update()
+    )
+
+    current_failure_count = await session.scalar(select_stmt)
+
+    # Target missing, lease expired, or ownership changed
+    if current_failure_count is None:
+        return False
+
+    # Step 3: Calculate the next failure count
+    new_failure_count = current_failure_count + 1
+
+    # Step 4: Calculate the retry delay
+    retry_delay = calculate_retry_delay(
+        failure_count=new_failure_count,
+        base_delay_seconds=base_delay_seconds,
+        max_delay_seconds=max_delay_seconds,
+    )
+
+    # Step 5: Update the target
+    update_stmt = (
+        update(CrawlTarget)
+        .where(
+            CrawlTarget.id == target_id,
+            CrawlTarget.state == "leased",
+            CrawlTarget.lease_until == expected_lease_until,
+            CrawlTarget.lease_until > func.now(),
+        )
+        .values(
+            state="queued",
+            lease_until=None,
+            failure_count=CrawlTarget.failure_count + 1,
+            next_fetch_at=func.now() + func.make_interval(
+                0, 0, 0, 0, 0, 0, retry_delay
+            ),
+        )
+        .returning(CrawlTarget.id)
+    )
+
+    # Step 6: Execute the update
+    failed_id = await session.scalar(update_stmt)
+
+    # Step 7: Return whether the failure was recorded
+    return failed_id is not None
+
+
