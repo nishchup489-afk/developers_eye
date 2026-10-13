@@ -1,3 +1,12 @@
+# I suggest this order:
+# 1. URL + host validation: Pure Python, no HTTP or database access.
+# 2. DNS/IP validation: Reject unsafe destinations and choose a safe HTTP connection strategy.
+# 3. Robots policy: Fetch, parse, cache, and evaluate robots rules.
+# 4. Politeness: Implement host-specific concurrency and timing restrictions.
+# 5. Redirect handling: Reapply security and access checks at each hop.
+# 6. Policy coordinator: Bring everything together for the fetch worker.
+
+
 import ipaddress
 import re
 import unicodedata
@@ -118,3 +127,5 @@ def is_allowed_host(
 
     # 9. Require exact hostname matching.
     return host in normalized_allowed_hosts
+
+
