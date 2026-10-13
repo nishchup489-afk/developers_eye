@@ -1,0 +1,1 @@
+Robots & Host Policy decides whether we're allowed to crawl it, whether it's safe, and how aggressively we can request it.
