@@ -50,6 +50,7 @@ from crawler.policy_and_politeness.robots_policy import (
     USER_AGENT,
     evaluate_robots_policy,
 )
+from crawler.src.crawler.fetcher.schemas import OneHopFetcher, OneHopResponse
 
 DEFAULT_MAX_BODY_BYTES = 2_000_000
 DEFAULT_TIMEOUT_SECONDS = 15.0
@@ -67,29 +68,6 @@ class FetcherSecurityError(ValueError):
     """Fetcher rejected an unsafe transport configuration or destination."""
 
 
-@dataclass(frozen=True, slots=True)
-class OneHopResponse:
-    """Fully read (or deliberately skipped) response from exactly one GET."""
-
-    status_code: int
-    headers: Mapping[str, str]
-    body: bytes = b""
-
-
-class OneHopFetcher(Protocol):
-    """Contract implemented by the upcoming asynchronous fetcher."""
-
-    async def fetch_once(
-        self,
-        *,
-        url: str,
-        approved_ips: Sequence[str],
-        max_body_bytes: int,
-        timeout_seconds: float,
-        user_agent: str,
-    ) -> OneHopResponse:
-        """Make one IP-pinned HTTP GET and close the stream before returning."""
-        ...
 
 
 @dataclass(frozen=True, slots=True)

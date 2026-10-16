@@ -1,4 +1,5 @@
-"""Create an HTTPX client scoped to one approved request and one IP set."""
+"""Create an HTTPX client scoped to 
+one approved request and one IP set."""
 
 from __future__ import annotations
 

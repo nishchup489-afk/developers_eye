@@ -9,6 +9,7 @@ DEFAULT_CHUNK_SIZE = 16 * 1024
 
 # The crawler fetches documents, feeds, API results, and robots.txt.
 # Unknown/binary media types are deliberately not buffered into memory.
+#frozenset is an immutable version of Python's set
 ALLOWED_MEDIA_TYPES = frozenset(
     {
         "text/html",

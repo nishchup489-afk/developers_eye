@@ -6,3 +6,9 @@ dependencies = ["backend @ file:///C:/Users/nishc/Documents/developers-eye/backe
 
 [tool.poetry.dependencies]
 backend = {develop = true}
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.1.1,<10.0.0)",
+    "colorama (>=0.4.6,<0.5.0)"
+]

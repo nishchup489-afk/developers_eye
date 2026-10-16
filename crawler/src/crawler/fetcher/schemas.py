@@ -32,3 +32,9 @@ class OneHopFetcher(Protocol):
         timeout_seconds: float,
         user_agent: str,
     ) -> OneHopResponse: ...
+
+"""
+If you want to work with the Policy Coordinator, 
+you must implement fetch_once() with these parameters 
+and return a OneHopResponse.
+"""
