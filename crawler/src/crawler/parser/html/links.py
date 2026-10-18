@@ -1,4 +1,5 @@
-"""Discover crawlable URL candidates from already-parsed HTML.
+
+"""Discover URL candidates from already-parsed HTML.
 
 No HTTP requests, DNS lookups, database access, or mutations to the soup tree.
 The parser discovers links; the Worker/Frontier decides which to enqueue.
@@ -11,25 +12,31 @@ from urllib.parse import urljoin
 from bs4 import BeautifulSoup, Tag
 
 from crawler.frontier.urls import normalize_url
+from crawler.parser.schemas import DiscoveredLink
 
 
 DEFAULT_MAX_LINKS = 1_000
 
 
-def _effective_base_url(soup: BeautifulSoup | Tag, page_url: str) -> str:
+def _effective_base_url(
+    soup: BeautifulSoup | Tag,
+    page_url: str,
+) -> str:
     """Use the first HTML <base href> if valid, otherwise use the page URL."""
+
     base_tag = soup.find("base", href=True)
+
     if not isinstance(base_tag, Tag):
         return page_url
 
     base_href = base_tag.get("href")
+
     if not isinstance(base_href, str) or not base_href.strip():
         return page_url
 
     try:
         return normalize_url(urljoin(page_url, base_href.strip()))
     except ValueError:
-        # Invalid or unsupported <base> must not break discovery.
         return page_url
 
 
@@ -38,61 +45,90 @@ def extract_links(
     page_url: str,
     *,
     max_links: int = DEFAULT_MAX_LINKS,
-) -> tuple[str, ...]:
-    """Return unique, normalized, absolute HTTP(S) links in document order.
+) -> tuple[DiscoveredLink, ...]:
+    """Return unique, normalized HTTP(S) link candidates.
 
-    - Resolve relative links against the document's first <base href> (if valid),
-      or the fetched page URL when no valid <base> is present.
-    - Ignore empty/fragment-only hrefs, non-HTTP(S) schemes, malformed URLs,
-      and per-link rel="nofollow".
-    - Remove URL fragments using the Frontier's existing normalizer.
-    - Return candidates only; never enqueue them or check DNS/robots here.
-
-    IMPORTANT: Worker/Frontier MUST apply the source's allowed_hosts and
-    discovery scope before inserting any returned URL into crawl_target.
-    PolicyCoordinator MUST check policies again before any actual fetch.
+    - Resolve relative links against the effective base URL.
+    - Ignore empty, fragment-only, unsupported and malformed URLs.
+    - Preserve rel="nofollow" as metadata.
+    - Remove fragments using the Frontier's URL normalizer.
+    - Never authorize, fetch, or enqueue discovered URLs.
     """
+
     if not isinstance(soup, Tag):
         raise TypeError("soup must be a BeautifulSoup or Tag instance")
+
     if type(max_links) is not int or max_links <= 0:
         raise ValueError("max_links must be a positive integer")
 
-    # The fetched page must be an absolute, supported URL.
     page_url = normalize_url(page_url)
     base_url = _effective_base_url(soup, page_url)
 
-    found: list[str] = []
+    found: list[DiscoveredLink] = []
     seen: set[str] = set()
 
-    for anchor in soup.find_all("a", href=True):
+    for anchor in soup.find_all(["a", "area"], href=True):
+
         href = anchor.get("href")
+
         if not isinstance(href, str):
             continue
 
         href = href.strip()
+
         if not href or href.startswith("#"):
             continue
 
-        # A site's rel="nofollow" is a request not to follow that link.
-        rel = anchor.get("rel", ())
-        if isinstance(rel, str):
-            rel_tokens = rel.split()
-        else:
-            rel_tokens = rel or ()
-        if any(str(token).casefold() == "nofollow" for token in rel_tokens):
-            continue
+        # Extract link relationship attributes.
+        raw_rel = anchor.get("rel", ())
 
+        if isinstance(raw_rel, str):
+            rel_tokens = raw_rel.split()
+
+        elif isinstance(raw_rel, (list, tuple)):
+            rel_tokens = raw_rel
+
+        else:
+            rel_tokens = ()
+
+        rel = tuple(
+            dict.fromkeys(
+                str(token).casefold()
+                for token in rel_tokens
+                if token
+            )
+        )
+
+        nofollow = "nofollow" in rel
+
+        # Resolve and normalize the destination URL.
         try:
             absolute = urljoin(base_url, href)
             normalized = normalize_url(absolute)
+
         except ValueError:
-            # e.g. mailto:, javascript:, broken host/port/percent encoding
             continue
 
+        # Prevent duplicate URLs.
         if normalized in seen:
             continue
+
         seen.add(normalized)
-        found.append(normalized)
+
+        # Extract visible anchor text.
+        anchor_text = " ".join(
+            anchor.get_text(" ", strip=True).split()
+        )[:300]
+
+        # Preserve the URL and its metadata.
+        link = DiscoveredLink(
+            url=normalized,
+            anchor_text=anchor_text,
+            rel=rel,
+            nofollow=nofollow,
+        )
+
+        found.append(link)
 
         if len(found) >= max_links:
             break

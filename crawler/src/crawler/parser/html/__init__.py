@@ -4,14 +4,14 @@ Extract readable content and discover links from parsed HTML.
 No HTTP requests or database operations.
 """
 
-from .extractor import ExtractedContent, extract_main_content
-from .links import find_links
-from .metadata import extract_metadata , ExtractedMetadata
+"""HTML parsing components for Developer's Eye."""
+
+from .extractor import extract_main_content
+from .metadata import extract_metadata
+from .links import extract_links
 
 __all__ = [
-    "ExtractedContent",
     "extract_main_content",
-    "find_links",
-    "ExtractedMetadata",
-    "extract_metadata"
+    "extract_metadata",
+    "extract_links",
 ]
