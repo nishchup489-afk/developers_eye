@@ -51,6 +51,8 @@ from crawler.policy_and_politeness.robots_policy import (
     evaluate_robots_policy,
 )
 from crawler.fetcher.schemas import OneHopFetcher, OneHopResponse
+from fetcher.errors import ResponseTooLargeError
+
 
 DEFAULT_MAX_BODY_BYTES = 2_000_000
 DEFAULT_TIMEOUT_SECONDS = 15.0
@@ -60,8 +62,6 @@ class HostNotAllowedError(ValueError):
     """Host is not on the approved source allowlist."""
 
 
-class ResponseTooLargeError(ValueError):
-    """Fetcher rejected a response that exceeded the body-size limit."""
 
 
 class FetcherSecurityError(ValueError):

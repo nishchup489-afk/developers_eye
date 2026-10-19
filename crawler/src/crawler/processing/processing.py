@@ -25,7 +25,8 @@ from crawler.processing.schemas import (
     SkipReason,
     SkippedDocument,
 )
-
+from dataclasses import replace
+from urllib.parse import urlsplit, unquote
 
 _ROBOTS_SEPARATOR = re.compile(r"[,;\s]+")
 _NO_INDEX = frozenset({"noindex", "none"})
@@ -59,6 +60,37 @@ def _has_noindex(metadata: dict) -> bool:
             return True
 
     return False
+
+
+
+def _fallback_title(
+    canonical_url: str,
+    headings: tuple[str, ...],
+) -> str:
+    """Generate a usable title when the HTML title is missing."""
+
+    # STEP 1: Prefer the first meaningful heading.
+    for heading in headings:
+        if heading.strip():
+            return heading.strip()
+
+    # STEP 2: Use the final URL path segment.
+    parsed = urlsplit(canonical_url)
+
+    path = parsed.path.rstrip("/")
+    slug = unquote(path.rsplit("/", 1)[-1])
+
+    # Remove a common HTML file extension.
+    if slug.lower().endswith((".html", ".htm")):
+        slug = slug.rsplit(".", 1)[0]
+
+    slug = slug.replace("-", " ").replace("_", " ").strip()
+
+    if slug:
+        return slug
+
+    # STEP 3: Root URL without a useful path.
+    return parsed.hostname or "Untitled"
 
 
 def process_document(document: ParsedDocument) -> ProcessedDocument | SkippedDocument:
@@ -104,6 +136,20 @@ def process_document(document: ParsedDocument) -> ProcessedDocument | SkippedDoc
             url=normalized.url,
             reason=SkipReason.EMPTY_CONTENT,
             details="No readable body or code content to index",
+        )
+
+    # Generate a title for valid, titleless documents.
+    if not normalized.title:
+        normalized = replace(
+            normalized,
+            title=_fallback_title(
+                normalized.canonical_url,
+                normalized.headings,
+            ),
+            metadata={
+                **normalized.metadata,
+                "generated_title": True,
+            },
         )
 
     # STEP 4: Classify the type and recognized technology topics.

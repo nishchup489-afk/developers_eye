@@ -389,6 +389,36 @@ class Test04Processor(unittest.TestCase):
         self.assertIn("python", doc.tags)
         self.assertRegex(doc.content_hash, r"^[0-9a-f]{64}$")
 
+    
+    def test_missing_title_uses_heading(self):
+        document = parsed_doc(
+            title=None,
+            headings=("Python Asyncio Documentation",),
+        )
+
+        result = process_document(document)
+
+        self.assertIsInstance(result, ProcessedDocument)
+        self.assertEqual(
+            result.title,
+            "Python Asyncio Documentation",
+        )
+        self.assertTrue(result.metadata["generated_title"])
+
+
+    def test_missing_title_uses_url(self):
+        document = parsed_doc(
+            title=None,
+            headings=(),
+        )
+
+        result = process_document(document)
+
+        self.assertIsInstance(result, ProcessedDocument)
+        self.assertEqual(result.title, "tutorial")
+        self.assertTrue(result.metadata["generated_title"])
+
+
     def test_noindex_string_skips_document(self) -> None:
         result = process_document(parsed_doc(metadata={
             "robots_directives": "NOINDEX, FOLLOW"
