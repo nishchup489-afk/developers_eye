@@ -50,7 +50,7 @@ from crawler.policy_and_politeness.robots_policy import (
     USER_AGENT,
     evaluate_robots_policy,
 )
-from crawler.src.crawler.fetcher.schemas import OneHopFetcher, OneHopResponse
+from crawler.fetcher.schemas import OneHopFetcher, OneHopResponse
 
 DEFAULT_MAX_BODY_BYTES = 2_000_000
 DEFAULT_TIMEOUT_SECONDS = 15.0

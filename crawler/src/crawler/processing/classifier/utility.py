@@ -1,8 +1,8 @@
 # Avoid matching malicious lookalike domains such as 'notgithub.com'.
 from urllib.parse import urlsplit
 
-from crawler.src.crawler.processing.classifier.patterns import _TOPIC_PATTERNS
-from crawler.src.crawler.processing.schemas import NormalizedDocument
+from .patterns import _TOPIC_PATTERNS
+from crawler.processing.schemas import NormalizedDocument
 
 
 def _on_domain(host: str, domain: str) -> bool:

@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 from email.utils import format_datetime
 
 # Change "politeness" if your module has a different filename.
-from crawler.src.crawler.policy_and_politeness.politeness_policy import (
+from crawler.policy_and_politeness.politeness_policy import (
     MAX_BACKOFF_SECONDS,
     PolitenessManager,
     get_host_key,

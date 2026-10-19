@@ -1,7 +1,7 @@
 from dataclasses import replace
 
-from crawler.src.crawler.processing.fingerprint import fingerprint_document
-from crawler.src.crawler.processing.schemas import NormalizedDocument
+from crawler.processing.fingerprint import fingerprint_document
+from crawler.processing.schemas import NormalizedDocument
 
 
 

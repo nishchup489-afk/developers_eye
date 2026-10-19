@@ -20,7 +20,7 @@ from urllib.parse import urljoin, urlsplit
 from crawler.frontier.urls import normalize_url
 from crawler.parser.schemas import ParsedDocument
 from crawler.processing.schemas import NormalizedDocument
-from crawler.src.crawler.processing.normalize.utility import _canonical_url, _clean_body, _clean_code, _clean_short_text, _validate_source_url
+from crawler.processing.normalize.utility import _canonical_url, _clean_body, _clean_code, _clean_short_text, _validate_source_url
 
 
 

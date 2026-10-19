@@ -1,8 +1,8 @@
 import unicodedata
 from urllib.parse import urljoin, urlsplit
 
-from crawler.src.crawler.frontier.urls import normalize_url
-from crawler.src.crawler.processing.normalize.helper import _CONTROL_CHARACTERS, _EXCESS_NEWLINES, _HORIZONTAL_WHITESPACE, _WHITESPACE
+from crawler.frontier.urls import normalize_url
+from crawler.processing.normalize.helper import _CONTROL_CHARACTERS, _EXCESS_NEWLINES, _HORIZONTAL_WHITESPACE, _WHITESPACE
 
 
 def _normalize_unicode(value: str) -> str:

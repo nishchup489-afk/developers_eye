@@ -40,7 +40,7 @@ from crawler.processing.schemas import (
     SkipReason,
     SkippedDocument,
 )
-from crawler.src.crawler.processing.processing import process, process_document
+from crawler.processing.processing import process, process_document
 
 
 # ============================================================
