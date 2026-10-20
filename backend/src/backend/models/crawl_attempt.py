@@ -13,6 +13,7 @@ from sqlalchemy import (
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.dialects.postgresql import JSONB
 
 from backend.db.base import Base
 
@@ -20,7 +21,10 @@ from backend.db.base import Base
 class CrawlAttempt(Base):
     __tablename__ = "crawl_attempt"
 
+    telemetry: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+
     __table_args__ = (
+        Index("ix_crawl_attempt_started_at", "started_at"),
         CheckConstraint(
             "outcome IS NULL OR outcome IN "
             "('success', 'failed', 'blocked', 'not_modified')",

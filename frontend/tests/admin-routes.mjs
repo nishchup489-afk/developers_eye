@@ -6,6 +6,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { resolve } from "node:path";
 import { seal, unseal, userFromSession } from "../lib/admin-session.ts";
 import { fixture } from "./fixtures/crawler-report.mjs";
+import { monitorFixture, documentFixture, attemptFixture } from "./fixtures/crawler-monitor.mjs";
 
 const require = createRequire(import.meta.url);
 globalThis.AsyncLocalStorage = AsyncLocalStorage;
@@ -14,6 +15,8 @@ const { NextRequest } = require("next/server");
 const dir = process.env.NEXT_BUILD_DIR || ".next";
 const load = (path) => require(resolve(dir, `server/app/api/${path}/route.js`));
 const reportRoute = load("admin/crawler/report");
+const monitorRoute = load("admin/crawler/monitor");
+const inspectRoute = load("admin/crawler/inspect");
 const githubRoute = load("auth/github");
 const callbackRoute = load("auth/github/callback");
 const logoutRoute = load("auth/logout");
@@ -30,6 +33,11 @@ function report(token, query = "") {
   return reportRoute.workAsyncStorage.run({ route: "/api/admin/crawler/report", isStaticGeneration: false }, () =>
     reportRoute.workUnitAsyncStorage.run({ type: "request", phase: "render", cookies: cookieJar }, () => reportRoute.routeModule.userland.GET(request(`/api/admin/crawler/report${query}`))));
 }
+function monitoring(route, token, path) {
+  const cookieJar = { get: () => token ? { value: token } : undefined };
+  return route.workAsyncStorage.run({ route: "/api/admin/crawler/monitor", isStaticGeneration: false }, () =>
+    route.workUnitAsyncStorage.run({ type: "request", phase: "render", cookies: cookieJar }, () => route.routeModule.userland.GET(request(path))));
+}
 let calls = [];
 let responseMode = "ok";
 let profileId = 42;
@@ -42,6 +50,10 @@ globalThis.fetch = async (input, options) => {
     if (responseMode === "timeout") throw new DOMException("timed out", "TimeoutError");
     if (responseMode === "unavailable") return Response.json({}, { status: 503 });
     if (responseMode === "malformed") return Response.json({});
+    if (responseMode === "notfound") return Response.json({}, { status: 404 });
+    if (url.pathname.endsWith("/monitor")) return Response.json(monitorFixture());
+    if (url.pathname.includes("/documents/")) return Response.json(documentFixture());
+    if (url.pathname.includes("/attempts/")) return Response.json(attemptFixture());
     return Response.json(fixture(Number(url.searchParams.get("days"))));
   }
   if (url.href === "https://github.com/login/oauth/access_token") {
@@ -56,6 +68,27 @@ globalThis.fetch = async (input, options) => {
 try {
   for (const token of [undefined, "forged", `${session}!`, seal(identity, "session", -1), seal({ ...identity, id: 99 }, "session", 60), seal(identity, "oauth", 60)]) assert.equal((await report(token)).status, 401);
   assert.equal(calls.length, 0);
+  for (const [route, path] of [[monitorRoute, "/api/admin/crawler/monitor"], [inspectRoute, "/api/admin/crawler/inspect?type=documents&id=42"]]) {
+    assert.equal((await monitoring(route, undefined, path)).status, 401);
+    assert.equal((await monitoring(route, "forged", path)).status, 401);
+    const result = await monitoring(route, session, path);
+    assert.equal(result.status, 200);
+    assert.equal(result.headers.get("cache-control"), "private, no-store");
+    assert.equal(result.headers.get("vary"), "Cookie");
+  }
+  const monitorResult = await monitoring(monitorRoute, session, "/api/admin/crawler/monitor?source_id=1&status=skipped&category=process&q=async&unknown=secret");
+  assert.equal(monitorResult.status, 200);
+  assert.equal(calls.at(-1).url.pathname, "/admin/crawler/monitor");
+  assert.equal(calls.at(-1).url.searchParams.get("status"), "skipped");
+  assert.equal(calls.at(-1).url.searchParams.has("unknown"), false);
+  assert.equal((await monitoring(inspectRoute, session, "/api/admin/crawler/inspect?type=attempts&id=1")).status, 200);
+  for (const query of ["days=0", "source_id=-1", "status=invented", "category=imaginary", "frontier_page=10001", "q=" + "a".repeat(201)]) assert.equal((await monitoring(monitorRoute, session, `/api/admin/crawler/monitor?${query}`)).status, 400);
+  for (const query of ["type=secret&id=1", "type=documents&id=0", "type=documents&id=../report"]) assert.equal((await monitoring(inspectRoute, session, `/api/admin/crawler/inspect?${query}`)).status, 400);
+  for (responseMode of ["malformed", "unavailable", "timeout", "notfound"]) {
+    assert.equal((await monitoring(monitorRoute, session, "/api/admin/crawler/monitor")).status, responseMode === "timeout" ? 504 : responseMode === "notfound" ? 404 : 502);
+  }
+  responseMode = "ok";
+  console.log("PASS monitoring and inspector production handlers: authentication, query allowlists, validation, service key, private responses and upstream failures");
   const valid = await report(session, "?days=30&top_sources=50&recent_errors=0");
   assert.equal(valid.status, 200);
   assert.equal(valid.headers.get("cache-control"), "private, no-store");
