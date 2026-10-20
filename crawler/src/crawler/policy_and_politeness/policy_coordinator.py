@@ -51,8 +51,10 @@ from crawler.policy_and_politeness.robots_policy import (
     evaluate_robots_policy,
 )
 from crawler.fetcher.schemas import OneHopFetcher, OneHopResponse
-from fetcher.errors import ResponseTooLargeError
-
+from crawler.fetcher.errors import (
+    ResponseTooLargeError,
+    FetcherSecurityError,
+)
 
 DEFAULT_MAX_BODY_BYTES = 2_000_000
 DEFAULT_TIMEOUT_SECONDS = 15.0
