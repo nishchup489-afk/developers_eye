@@ -40,6 +40,9 @@ from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from typing import Any
 
+from functools import partial
+
+from crawler.policy_and_politeness.politeness_policy import (PolitenessManager,)
 from backend.db.session import SessionFactory, engine
 from backend.schema.crawler_frontier import CrawlTargetRead
 from crawler.schedular.repository import claim_targets, recover_expired_leases
@@ -306,7 +309,24 @@ def load_job_handler() -> JobHandler:
 
 
 async def main(config: RunnerConfig) -> int:
-    return await run_worker(config=config, job_handler=load_job_handler())
+
+    # STEP 1: Create one shared politeness manager.
+    politeness_manager = PolitenessManager(
+        max_concurrent_per_host=1,
+        min_interval_seconds=2.0,
+    )
+
+    # STEP 2: Bind the required dependency to process_job.
+    job_handler = partial(
+        load_job_handler(),
+        politeness_manager=politeness_manager,
+    )
+
+    # STEP 3: Start the worker.
+    return await run_worker(
+        config=config,
+        job_handler=job_handler,
+    )
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ from sqlalchemy import text
 
 from backend.core.config import settings
 from backend.db.session import engine 
+from backend.api.crawler_report import router as crawler_report_router
 
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,6 +22,8 @@ app = FastAPI(
     version="1.0.0" , 
     lifespan=lifespan
 )
+
+app.include_router(crawler_report_router)
 
 
 app.add_middleware(

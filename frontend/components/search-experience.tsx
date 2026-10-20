@@ -676,6 +676,9 @@ export default function SearchExperience({
           <a href="/docs">
             Under the hood <ArrowUpRight size={12} />
           </a>
+          <Link href="/admin">
+            Admin <ArrowUpRight size={12} />
+          </Link>
         </div>
       </footer>
     </div>

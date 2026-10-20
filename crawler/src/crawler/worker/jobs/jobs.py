@@ -19,6 +19,7 @@ from dataclasses import dataclass, replace
 from datetime import datetime
 from typing import Literal
 
+from crawler.worker.jobs.schemas import JobOutcome, JobResult, TargetAction
 from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -41,8 +42,8 @@ from crawler.processing.normalize.normalize import normalize_document
 from crawler.processing.processing import process
 from crawler.processing.schemas import ProcessingResult, SkipReason
 from crawler.schedular.repository import complete_target, fail_target
-from crawler.src.crawler.worker.jobs.utility import _add_x_robots, _create_discovered_targets, _finalize
-from crawler.worker.jobs import _HTML_MEDIA_TYPES
+from crawler.worker.jobs.utility import _add_x_robots, _create_discovered_targets, _finalize
+from crawler.worker.jobs.constants import _HTML_MEDIA_TYPES
 from crawler.writer.attempts import finish_attempt, start_attempt
 from crawler.writer.documents import upsert_document
 
@@ -50,22 +51,8 @@ logger = logging.getLogger(__name__)
 
 
 
-JobOutcome = Literal["success", "failed", "blocked", "not_modified", "disabled", "stale"]
-TargetAction = Literal["complete", "retry", "block", "disable"]
 
 
-@dataclass(frozen=True, slots=True)
-class JobResult:
-    target_id: int
-    outcome: JobOutcome
-    attempt_id: int | None = None
-    http_status: int | None = None
-    documents_saved: int = 0
-    documents_skipped: int = 0
-    links_discovered: int = 0
-    links_enqueued: int = 0
-    message: str = ""
-    duration_seconds: float = 0.0
 
 
 

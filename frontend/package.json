@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:integration": "node tests/integration.mjs"
+    "test:integration": "node tests/integration.mjs",
+    "test:admin": "node tests/admin-integration.mjs",
+    "test:admin:unit": "node --experimental-strip-types tests/admin-unit.mjs",
+    "test:admin:routes": "node --experimental-strip-types tests/admin-routes.mjs"
   },
   "dependencies": {
     "gsap": "^3.15.0",

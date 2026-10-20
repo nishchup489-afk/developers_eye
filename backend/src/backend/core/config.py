@@ -1,6 +1,7 @@
 from functools import lru_cache 
 from pydantic_settings import SettingsConfigDict , BaseSettings 
 from pathlib import Path
+from pydantic import SecretStr
 
 
 class Settings(BaseSettings):
@@ -9,6 +10,7 @@ class Settings(BaseSettings):
     debug: bool = True 
 
     database_url : str  
+    crawler_report_api_key: SecretStr | None = None
 
 
     model_config = SettingsConfigDict(
