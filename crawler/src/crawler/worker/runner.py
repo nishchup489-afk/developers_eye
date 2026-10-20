@@ -46,6 +46,9 @@ from crawler.policy_and_politeness.politeness_policy import (PolitenessManager,)
 from backend.db.session import SessionFactory, engine
 from backend.schema.crawler_frontier import CrawlTargetRead
 from crawler.schedular.repository import claim_targets, recover_expired_leases
+from crawler.worker.telemetry import WorkerMonitor, active_targets, checkpoint
+from backend.models.crawl_attempt import CrawlAttempt
+from sqlalchemy import select
 
 logger = logging.getLogger("crawler.worker.runner")
 
@@ -135,6 +138,9 @@ async def execute_target(
     """
     async with semaphore:
         started = time.perf_counter()
+        targets = active_targets.get()
+        if targets is not None:
+            targets[target.id] = {"target_id": target.id, "source_id": target.source_id, "url": target.fetch_url}
         logger.info(
             "START target=%s source=%s url=%s lease_until=%s",
             target.id, target.source_id, target.fetch_url, target.lease_until,
@@ -171,6 +177,7 @@ async def execute_target(
             )
 
         except TimeoutError:
+            await record_runner_failure(target.id, "timeout", "Job deadline exceeded; lease recovery will retry")
             report.timed_out += 1
             report.failed += 1
             logger.error(
@@ -179,12 +186,17 @@ async def execute_target(
                 target.id, config.job_timeout_seconds,
             )
 
-        except Exception:
+        except Exception as exc:
+            await record_runner_failure(target.id, "worker", f"{type(exc).__name__}: {exc}"[:1000])
             report.failed += 1
             logger.exception(
                 "CRASH target=%s; lease recovery will retry if not finalized",
                 target.id,
             )
+
+        finally:
+            if targets is not None:
+                targets.pop(target.id, None)
 
         # Do not catch asyncio.CancelledError: shutdown cancels tasks;
         # the lease expiry mechanism requeues unfinished claims.
@@ -235,7 +247,29 @@ async def run_batch(
     return report
 
 
-async def run_worker(
+async def record_runner_failure(target_id: int, category: str, message: str) -> None:
+    try:
+        async with SessionFactory() as session:
+            attempt = await session.scalar(select(CrawlAttempt).where(
+                CrawlAttempt.crawl_target_id == target_id, CrawlAttempt.finished_at.is_(None)
+            ).order_by(CrawlAttempt.id.desc()).limit(1))
+            if attempt:
+                measurements = dict(attempt.telemetry or {})
+                measurements.setdefault("error_category", category)
+                await checkpoint(SessionFactory, attempt.id, "WORKER", "failed", {"error": message}, measurements)
+    except Exception:
+        logger.exception("Could not record runner failure")
+
+
+async def run_worker(*, config: RunnerConfig, job_handler: JobHandler) -> int:
+    try:
+        async with WorkerMonitor(config):
+            return await _run_worker(config=config, job_handler=job_handler)
+    finally:
+        await engine.dispose()
+
+
+async def _run_worker(
     *,
     config: RunnerConfig,
     job_handler: JobHandler,
@@ -272,7 +306,6 @@ async def run_worker(
             "WORKER STOP cycles=%s claimed=%s job_failures=%s",
             cycles, total_claimed, total_failed,
         )
-        await engine.dispose()
 
     return 1 if total_failed else 0
 

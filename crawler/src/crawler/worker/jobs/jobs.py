@@ -46,6 +46,7 @@ from crawler.worker.jobs.utility import _add_x_robots, _create_discovered_target
 from crawler.worker.jobs.constants import _HTML_MEDIA_TYPES
 from crawler.writer.attempts import finish_attempt, start_attempt
 from crawler.writer.documents import upsert_document
+from crawler.worker.telemetry import checkpoint
 
 logger = logging.getLogger(__name__)
 
@@ -110,6 +111,11 @@ async def process_job(
             kind = current.kind
             attempt_id = await start_attempt(session, target_id)
 
+    measurements = {"version": 1, "fetch_success": False, "parsed": False,
+                    "accepted": 0, "skipped": [], "stored": 0, "documents": []}
+    await checkpoint(session_factory, attempt_id, "FETCH", "running",
+                     {"url": url}, measurements)
+
     action: TargetAction = "retry"
     outcome: JobOutcome = "failed"
     message = "Unknown failure"
@@ -119,6 +125,7 @@ async def process_job(
     parsed: ParseResult | None = None
     processed: ProcessingResult | None = None
     new_targets: list[CrawlTargetCreate] = []
+    stage = "fetch"
 
     if kind != "page":
         action, message = "disable", f"Unsupported target kind for HTML Worker: {kind}"
@@ -134,9 +141,22 @@ async def process_job(
             # independently; no attempt/frontier/document transaction is open.
             # Current coordinator interface holds a DB transaction across fetch;
             # refactor policy-cache access separately when optimizing throughput.
+            fetch_started = time.perf_counter()
             async with session_factory() as session:
                 async with session.begin():
                     fetched: FetchResult = await coordinator.fetch(session, url)
+
+            measurements.update(
+                fetch_ms=round((time.perf_counter() - fetch_started) * 1000, 2),
+                final_url=fetched.final_url, redirects=list(fetched.redirect_chain),
+                content_type=_header(fetched.headers, "content-type"),
+                fetch_success=fetched.decision == RobotsDecision.ALLOW and fetched.status_code is not None
+                and (200 <= fetched.status_code < 300 or fetched.status_code == 304),
+            )
+            await checkpoint(session_factory, attempt_id, "FETCH",
+                             "success" if measurements["fetch_success"] else "blocked" if fetched.decision == RobotsDecision.DENY else "failed",
+                             {"http_status": fetched.status_code, "bytes": len(fetched.body),
+                              "duration_ms": measurements["fetch_ms"], "reason": fetched.reason}, measurements)
 
             http_status = fetched.status_code
             body_bytes = len(fetched.body)
@@ -174,13 +194,24 @@ async def process_job(
                     action, outcome = "retry", "failed"
                     message = "HTTP 200 HTML response had empty body"
                 else:
+                    stage = "parse"
                     parsed = parse(
                         url=fetched.final_url,
                         content=fetched.body,
                         content_type=content_type,
                     )
                     parsed = _add_x_robots(parsed, fetched.headers)
+                    measurements["parsed"] = True
+                    await checkpoint(session_factory, attempt_id, "PARSE", "success",
+                                     {"documents": len(parsed.documents),
+                                      "words": sum(len((d.body or "").split()) for d in parsed.documents)}, measurements)
+                    stage = "process"
                     processed = process(parsed)
+                    measurements["accepted"] = len(processed.documents)
+                    measurements["skipped"] = [{"url": s.url, "reason": str(s.reason), "details": s.details} for s in processed.skipped]
+                    await checkpoint(session_factory, attempt_id, "PROCESS",
+                                     "accepted" if processed.documents else "skipped",
+                                     {"accepted": len(processed.documents), "skipped": measurements["skipped"]}, measurements)
                     new_targets = _create_discovered_targets(
                         parsed,
                         target_id=target_id,
@@ -199,9 +230,12 @@ async def process_job(
             logger.exception("Crawl pipeline failed: target_id=%s", target_id)
             action, outcome = "retry", "failed"
             message = f"{type(exc).__name__}: {exc}"[:1000]
+            measurements["error_category"] = stage
+            await checkpoint(session_factory, attempt_id, stage.upper(), "failed", {"error": message}, measurements)
             parsed, processed, new_targets = None, None, []
 
-    return await _finalize(
+    try:
+        return await _finalize(
         session_factory=session_factory,
         target_id=target_id,
         source_id=source_id,
@@ -218,7 +252,14 @@ async def process_job(
         processed=processed,
         targets=new_targets,
         elapsed=time.perf_counter() - started,
-    )
+        measurements=measurements,
+        )
+    except Exception as exc:
+        # The storage transaction has rolled back; preserve the reason independently.
+        measurements["error_category"] = "persistence"
+        await checkpoint(session_factory, attempt_id, "STORE", "failed",
+                         {"error": f"{type(exc).__name__}: {exc}"[:1000]}, measurements)
+        raise
 
 
 __all__ = ["JobResult", "process_job"]

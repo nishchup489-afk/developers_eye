@@ -34,11 +34,13 @@ from crawler.worker.jobs.schemas import JobOutcome, JobResult, TargetAction
 from crawler.worker.jobs.constants import _AGENT_SCOPE, _DIRECTIVE_SPLIT, _RETRY_AFTER_CAP_SECONDS
 from crawler.writer.attempts import finish_attempt, start_attempt
 from crawler.writer.documents import upsert_document
+from backend.models.crawl_attempt import CrawlAttempt
+from crawler.worker.telemetry import event
 
 
 def _header(headers: dict[str, str], name: str) -> str | None:
     """Response headers are case-insensitive."""
-    return next((value for key, value in headers.items() if key.casefold() == name.casefold()), 
+    return next((value for key, value in headers.items() if key.casefold() == name.casefold()),
                 None)
 
 
@@ -182,6 +184,7 @@ async def _finalize(
     processed: ProcessingResult | None,
     targets: list[CrawlTargetCreate],
     elapsed: float,
+    measurements: dict | None = None,
 ) -> JobResult:
     """Atomically transition the target and persist all related job output.
 
@@ -192,6 +195,9 @@ async def _finalize(
     links_enqueued = 0
     skipped = len(processed.skipped) if processed else 0
     discovered = len(parsed.discovered_links) if parsed else 0
+    storage_started = time.perf_counter()
+    measurements = dict(measurements or {})
+    measurements["documents"] = []
 
     async with session_factory() as session:
         async with session.begin():
@@ -223,6 +229,9 @@ async def _finalize(
                     targets = []
 
             if not active:
+                measurements.update(result="stale", reason="Lease lost or expired; output discarded")
+                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id).values(telemetry=measurements))
+                event(session, attempt_id, "FINALIZE", "stale", {"reason": "Lease lost or expired; output discarded"})
                 # The attempt belongs to this job, so it is safe to finish.
                 # No document/URL writes are made after losing the lease.
                 await finish_attempt(
@@ -274,6 +283,9 @@ async def _finalize(
                 ) is not None
 
             if not transitioned:
+                measurements.update(result="stale", reason="Lease expired before target transition")
+                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id).values(telemetry=measurements))
+                event(session, attempt_id, "FINALIZE", "stale", {"reason": "Lease expired before target transition"})
                 await finish_attempt(
                     session, attempt_id, "failed", http_status=http_status,
                     bytes_received=body_bytes,
@@ -292,15 +304,41 @@ async def _finalize(
                     await session.execute(
                         delete(Document).where(Document.canonical_url.in_(noindex))
                     )
+                # Serialize observations of the same identity/hash across workers.
+                lock_keys = sorted({key for d in processed.documents for key in
+                                    ("canonical:" + d.canonical_url, "content:" + d.content_hash)})
+                for key in lock_keys:
+                    await session.execute(select(func.pg_advisory_xact_lock(func.hashtextextended(key, 0))))
                 for document in processed.documents:
-                    await upsert_document(
+                    previous = await session.scalar(select(Document).where(Document.canonical_url == document.canonical_url))
+                    duplicate = await session.scalar(select(Document.id).where(
+                        Document.content_hash == document.content_hash,
+                        Document.canonical_url != document.canonical_url).limit(1))
+                    decision = "unchanged" if previous and previous.content_hash == document.content_hash else "updated" if previous else "new"
+                    event(session, attempt_id, "DEDUP", "duplicate" if duplicate else decision,
+                          {"canonical_url": document.canonical_url, "matching_document_id": duplicate,
+                           "decision": decision, "content_hash": document.content_hash,
+                           "reason": "Matching content at another canonical URL; retained by current writer" if duplicate else "Canonical URL content hash comparison"})
+                    document_id = await upsert_document(
                         session, document,
                         source_id=source_id,
                         crawl_target_id=target_id,
                     )
                     documents_saved += 1
+                    measurements["documents"].append({"id": document_id, "decision": decision,
+                                                       "duplicate_of": duplicate, "canonical_url": document.canonical_url})
                 if targets:
                     links_enqueued = await enqueue_targets(session, targets)
+
+            measurements.update(stored=documents_saved, links_discovered=discovered,
+                                links_enqueued=links_enqueued, storage_ms=round((time.perf_counter() - storage_started) * 1000, 2),
+                                result=outcome, reason=message, target_action=action)
+            await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id).values(telemetry=measurements))
+            event(session, attempt_id, "STORE", "persisted" if documents_saved else "not_stored",
+                  {"documents": measurements["documents"], "duration_ms": measurements["storage_ms"], "reason": message})
+            if parsed is not None:
+                event(session, attempt_id, "DISCOVER", "complete", {"discovered": discovered, "enqueued": links_enqueued})
+            event(session, attempt_id, "FINALIZE", outcome, {"reason": message, "action": action})
 
             # All operations above use this same transaction. Errors roll back
             # target transition, documents, link insertions and attempt update.
