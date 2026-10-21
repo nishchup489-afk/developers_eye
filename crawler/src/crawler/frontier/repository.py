@@ -31,16 +31,27 @@ async def enqueue_targets(
     - Ignores duplicate (source_id, normalized_url) pairs.
     - Returns the number of newly inserted targets.
     - Transaction management belongs to the caller.
-    """
-
+        """
     if not targets:
         return 0
 
+    # Deduplicate while preserving the first occurrence.
+    unique_targets = {}
+
+    for target in targets:
+        key = (target.source_id, target.normalized_url)
+        unique_targets.setdefault(key, target)
+
+    # Sort by the same key used by the database uniqueness constraint.
+    ordered_targets = [
+        unique_targets[key]
+        for key in sorted(unique_targets)
+    ]
+
     inserted_count = 0
 
-    for start in range(0, len(targets), BATCH_SIZE):
-
-        batch = targets[start:start + BATCH_SIZE]
+    for start in range(0, len(ordered_targets), BATCH_SIZE):
+        batch = ordered_targets[start:start + BATCH_SIZE]
 
         dataset = [
             target.model_dump()
@@ -60,7 +71,6 @@ async def enqueue_targets(
         )
 
         result = await session.execute(stmt)
-
         inserted_count += len(result.scalars().all())
 
     return inserted_count

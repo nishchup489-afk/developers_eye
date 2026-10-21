@@ -21,5 +21,38 @@
     "config": {
       "max_depth": 3
     }
+  },
+  {
+    "slug": "fastapi",
+    "name": "FastAPI Documentation",
+    "kind": "website",
+    "base_url": "https://fastapi.tiangolo.com/",
+    "allowed_hosts": ["fastapi.tiangolo.com"],
+    "crawl_interval_seconds": 86400,
+    "config": {
+      "max_depth": 3
+    }
+  },
+  {
+    "slug": "django",
+    "name": "Django Documentation",
+    "kind": "website",
+    "base_url": "https://docs.djangoproject.com/en/stable/",
+    "allowed_hosts": ["docs.djangoproject.com"],
+    "crawl_interval_seconds": 86400,
+    "config": {
+      "max_depth": 3
+    }
+  },
+  {
+    "slug": "rust-book",
+    "name": "The Rust Programming Language",
+    "kind": "website",
+    "base_url": "https://doc.rust-lang.org/book/",
+    "allowed_hosts": ["doc.rust-lang.org"],
+    "crawl_interval_seconds": 86400,
+    "config": {
+      "max_depth": 3
+    }
   }
 ]

@@ -17,12 +17,15 @@ dependencies = [
     "redis (>=8.1.0,<9.0.0)",
     "pydantic-settings (>=2.15.0,<3.0.0)",
     "psycopg[binary] (>=3.3.6,<4.0.0)",
-    "greenlet (>=3.5.6,<4.0.0)"
+    "greenlet (>=3.5.6,<4.0.0)",
+    "crawler @ file:///C:/Users/nishc/Documents/developers-eye/crawler"
 ]
 
 [tool.poetry]
 packages = [{include = "backend", from = "src"}]
 
+[tool.poetry.dependencies]
+crawler = {develop = true}
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"

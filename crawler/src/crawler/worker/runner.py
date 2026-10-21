@@ -42,6 +42,7 @@ from typing import Any
 
 from functools import partial
 
+from crawler.worker.logging_config import setup_logging
 from crawler.policy_and_politeness.politeness_policy import (PolitenessManager,)
 from backend.db.session import SessionFactory, engine
 from backend.schema.crawler_frontier import CrawlTargetRead
@@ -364,10 +365,8 @@ async def main(config: RunnerConfig) -> int:
 
 if __name__ == "__main__":
     args = parse_args()
-    logging.basicConfig(
-        level=getattr(logging, args.log_level),
-        format="%(asctime)s %(levelname)-8s %(name)s: %(message)s",
-    )
+
+    setup_logging(args.log_level)
     config = RunnerConfig(
         batch_size=args.batch_size,
         concurrency=args.concurrency,

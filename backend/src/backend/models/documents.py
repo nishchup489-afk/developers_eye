@@ -22,6 +22,8 @@ class Document(Base):
     __tablename__ = "document"
 
     __table_args__ = (
+        Index("ix_document_last_seen_at", "last_seen_at"),
+        Index("ix_document_content_hash", "content_hash"),
         Index(
             "ix_document_type_published",
             "document_type",

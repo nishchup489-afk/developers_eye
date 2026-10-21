@@ -37,7 +37,18 @@ The landing page centers the animated eye illustration, wordmark, and rounded se
 
 ## Admin and crawler reporting
 
-Open `/admin` to sign in. `/admin/crawler` shows the actual `crawler.worker.reporting.build_report()` snapshot: documents, attempts, finished-attempt success rate, enabled sources, daily outcomes, index coverage, queue states, lease recovery backlog, robots cache, source breakdown, and failed/blocked attempt details. Date ranges use UTC calendar days including today. Refresh runs every 30 seconds while the tab is visible; it can be paused. Reports can be exported as JSON. Sources can be searched, filtered, and sorted; failures can be searched, filtered, expanded, copied, and opened. Missing connections produce an actionable error, never fixture analytics. No start/stop or destructive crawler controls are exposed.
+Open `/admin` to sign in. `/admin/crawler` opens on stored documents: search titles or canonical URLs, then select a document to inspect its actual extracted body, description, word count, metadata, content hash, and matching content at other URLs. Open its latest crawl attempt to inspect redirects, HTTP status, processing decisions, skips, failures, and stored document references. Raw HTML is not retained.
+
+The other tabs show live pipeline events, current URL tasks, frontier states and retries, source health, worker heartbeats, throughput, latency, and a pipeline funnel. Events and documents refresh every five seconds while visible; database totals refresh every 30 seconds. Refresh can be paused and snapshots exported as JSON. Date ranges use UTC calendar days including today; document browsing shows current database content across all time. Older attempts remain visible without invented stage measurements. Missing connections produce an error, never fixture analytics. No start/stop or destructive crawler controls are exposed.
+
+Before using the updated worker and dashboard, apply the additive observability migration from the repository root:
+
+```powershell
+$env:PYTHONPATH = "$(Resolve-Path .\crawler\src);$(Resolve-Path .\backend\src)"
+.\crawler\.venv\Scripts\python.exe -m alembic -c backend/alembic.ini upgrade head
+```
+
+Restart the backend and worker afterward. The migration adds attempt measurements, stage events, heartbeats, and lookup indexes; existing crawler documents are retained. The new backend endpoints are `GET /admin/crawler/monitor`, `GET /admin/crawler/documents/{id}`, and `GET /admin/crawler/attempts/{id}`. They require the same reporting key and are accessed through authenticated frontend proxy routes.
 
 ### GitHub setup
 

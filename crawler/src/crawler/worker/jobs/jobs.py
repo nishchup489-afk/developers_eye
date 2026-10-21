@@ -19,6 +19,11 @@ from dataclasses import dataclass, replace
 from datetime import datetime
 from typing import Literal
 
+import asyncio
+import random
+
+from collections.abc import Awaitable, Callable
+from sqlalchemy.exc import DBAPIError
 from crawler.worker.jobs.schemas import JobOutcome, JobResult, TargetAction
 from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -51,6 +56,48 @@ from crawler.worker.telemetry import checkpoint
 logger = logging.getLogger(__name__)
 
 
+
+
+
+async def retry_deadlocked_finalization(
+    operation: Callable[[], Awaitable[JobResult]],
+    *,
+    max_attempts: int = 4,
+) -> JobResult:
+    if max_attempts < 1:
+        raise ValueError("max_attempts must be positive")
+
+    for attempt in range(1, max_attempts + 1):
+        try:
+            return await operation()
+
+        except DBAPIError as exc:
+            sqlstate = getattr(exc.orig, "sqlstate", None)
+
+            # 40P01 = PostgreSQL deadlock detected.
+            if sqlstate != "40P01":
+                raise
+
+            if attempt == max_attempts:
+                logger.error(
+                    "Finalization deadlock persisted after %d attempts",
+                    max_attempts,
+                )
+                raise
+
+            delay = min(0.2 * (2 ** (attempt - 1)), 2.0)
+            delay += random.uniform(0.0, 0.15)
+
+            logger.warning(
+                "Database deadlock, retry %d/%d in %.2fs",
+                attempt + 1,
+                max_attempts,
+                delay,
+            )
+
+            await asyncio.sleep(delay)
+
+    raise RuntimeError("Unreachable retry state")
 
 
 

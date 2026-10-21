@@ -7,7 +7,7 @@ from pydantic import SecretStr
 class Settings(BaseSettings):
     app_name : str  = "Developers Eye"
     app_env : str = "development"
-    debug: bool = True 
+    debug: bool = False 
 
     database_url : str  
     crawler_report_api_key: SecretStr | None = None
