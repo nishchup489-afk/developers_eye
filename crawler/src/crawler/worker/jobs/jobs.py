@@ -53,6 +53,7 @@ from crawler.worker.jobs.constants import _HTML_MEDIA_TYPES
 from crawler.writer.attempts import finish_attempt, start_attempt
 from crawler.writer.documents import upsert_document
 from crawler.worker.telemetry import checkpoint
+from crawler.worker.recovery import recover_failed_claim
 
 logger = logging.getLogger(__name__)
 
@@ -159,7 +160,7 @@ async def process_job(
             kind = current.kind
             depth = current.depth
             scope = CrawlScope.from_config(source.config)
-            attempt_id = await start_attempt(session, target_id)
+            attempt_id = await start_attempt(session, target_id, lease_until=lease)
 
     measurements = {"version": 1, "fetch_success": False, "parsed": False,
                     "accepted": 0, "skipped": [], "stored": 0, "documents": []}
@@ -317,6 +318,7 @@ async def process_job(
         measurements["error_category"] = "persistence"
         await checkpoint(session_factory, attempt_id, "STORE", "failed",
                          {"error": f"{type(exc).__name__}: {exc}"[:1000]}, measurements)
+        await recover_failed_claim(session_factory, target_id, lease, "persistence", message=f"{type(exc).__name__}: {exc}"[:1000])
         raise
 
 

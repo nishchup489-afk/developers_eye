@@ -69,10 +69,12 @@ def test_real_parser_pipeline_checkpoints(monkeypatch, scenario):
         if scenario == "parse_error": monkeypatch.setattr(jobs, "parse", lambda **kwargs: (_ for _ in ()).throw(ValueError("broken markup")))
         final = AsyncMock(side_effect=RuntimeError("storage rejected") if scenario == "store_error" else None)
         monkeypatch.setattr(jobs, "_finalize", final)
+        monkeypatch.setattr(jobs, "recover_failed_claim", AsyncMock())
         if scenario == "store_error":
             with pytest.raises(RuntimeError): await jobs.process_job(target, politeness_manager=object(), session_factory=factory)
             assert checkpoints[-1][0:2] == ("STORE", "failed")
             assert checkpoints[-1][2]["stored"] == 0
+            jobs.recover_failed_claim.assert_awaited_once()
         else:
             await jobs.process_job(target, politeness_manager=object(), session_factory=factory)
         args = final.call_args.kwargs

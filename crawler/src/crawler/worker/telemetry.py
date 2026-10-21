@@ -32,7 +32,7 @@ async def checkpoint(factory, attempt_id, stage, outcome, details=None, measurem
         async with factory() as session, session.begin():
             event(session, attempt_id, stage, outcome, details)
             if measurements is not None:
-                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id)
+                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id, CrawlAttempt.finished_at.is_(None))
                                       .values(telemetry=dict(measurements)))
     except Exception:
         logger.exception("Could not persist crawl checkpoint for attempt=%s", attempt_id)

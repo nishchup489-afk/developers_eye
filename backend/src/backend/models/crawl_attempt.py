@@ -22,6 +22,7 @@ class CrawlAttempt(Base):
     __tablename__ = "crawl_attempt"
 
     telemetry: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    lease_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     __table_args__ = (
         Index("ix_crawl_attempt_started_at", "started_at"),

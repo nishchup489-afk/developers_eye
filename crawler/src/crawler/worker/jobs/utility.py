@@ -238,7 +238,7 @@ async def _finalize(
 
             if not active:
                 measurements.update(result="stale", reason="Lease lost or expired; output discarded")
-                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id).values(telemetry=measurements))
+                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id, CrawlAttempt.finished_at.is_(None)).values(telemetry=measurements))
                 event(session, attempt_id, "FINALIZE", "stale", {"reason": "Lease lost or expired; output discarded"})
                 # The attempt belongs to this job, so it is safe to finish.
                 # No document/URL writes are made after losing the lease.
@@ -292,7 +292,7 @@ async def _finalize(
 
             if not transitioned:
                 measurements.update(result="stale", reason="Lease expired before target transition")
-                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id).values(telemetry=measurements))
+                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id, CrawlAttempt.finished_at.is_(None)).values(telemetry=measurements))
                 event(session, attempt_id, "FINALIZE", "stale", {"reason": "Lease expired before target transition"})
                 await finish_attempt(
                     session, attempt_id, "failed", http_status=http_status,

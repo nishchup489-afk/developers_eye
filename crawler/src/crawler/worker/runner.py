@@ -48,6 +48,7 @@ from backend.db.session import SessionFactory, engine
 from backend.schema.crawler_frontier import CrawlTargetRead
 from crawler.schedular.repository import claim_targets, recover_expired_leases
 from crawler.worker.telemetry import WorkerMonitor, active_targets, checkpoint
+from crawler.worker.recovery import recover_failed_claim
 from backend.models.crawl_attempt import CrawlAttempt
 from sqlalchemy import select
 
@@ -178,7 +179,7 @@ async def execute_target(
             )
 
         except TimeoutError:
-            await record_runner_failure(target.id, "timeout", "Job deadline exceeded; lease recovery will retry")
+            await record_runner_failure(target, "timeout", "Job deadline exceeded; retry scheduled")
             report.timed_out += 1
             report.failed += 1
             logger.error(
@@ -188,7 +189,7 @@ async def execute_target(
             )
 
         except Exception as exc:
-            await record_runner_failure(target.id, "worker", f"{type(exc).__name__}: {exc}"[:1000])
+            await record_runner_failure(target, "worker", f"{type(exc).__name__}: {exc}"[:1000])
             report.failed += 1
             logger.exception(
                 "CRASH target=%s; lease recovery will retry if not finalized",
@@ -248,18 +249,8 @@ async def run_batch(
     return report
 
 
-async def record_runner_failure(target_id: int, category: str, message: str) -> None:
-    try:
-        async with SessionFactory() as session:
-            attempt = await session.scalar(select(CrawlAttempt).where(
-                CrawlAttempt.crawl_target_id == target_id, CrawlAttempt.finished_at.is_(None)
-            ).order_by(CrawlAttempt.id.desc()).limit(1))
-            if attempt:
-                measurements = dict(attempt.telemetry or {})
-                measurements.setdefault("error_category", category)
-                await checkpoint(SessionFactory, attempt.id, "WORKER", "failed", {"error": message}, measurements)
-    except Exception:
-        logger.exception("Could not record runner failure")
+async def record_runner_failure(target: CrawlTargetRead, category: str, message: str) -> None:
+    await recover_failed_claim(SessionFactory, target.id, target.lease_until, category, message)
 
 
 async def run_worker(*, config: RunnerConfig, job_handler: JobHandler) -> int:
