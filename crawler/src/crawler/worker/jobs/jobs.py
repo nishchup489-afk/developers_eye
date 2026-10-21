@@ -6,7 +6,7 @@ PolitenessManager, and dispatch one process_job() call per target.
 Job responsibility: record attempt -> fetch/policy -> parse -> process ->
 lease-safe transaction (reschedule + write + enqueue + finish attempt).
 
-HTML pages and sitemap resources share the same policy and lease lifecycle.
+HTML pages, sitemaps and feeds share the same policy and lease lifecycle.
 """
 
 from __future__ import annotations
@@ -41,6 +41,7 @@ from crawler.parser.parser import parse
 from crawler.parser.schemas import ParseResult
 from crawler.parser.schemas import DiscoveredLink
 from crawler.parser.sitemap import parse_sitemap_resource
+from crawler.parser.feeds import parse_feed
 from crawler.policy_and_politeness.host_policy import is_allowed_host
 from crawler.policy_and_politeness.policy_coordinator import FetchResult, PolicyCoordinator, _header
 from crawler.policy_and_politeness.politeness_policy import PolitenessManager
@@ -162,6 +163,7 @@ async def process_job(
             depth = current.depth
             scope = CrawlScope.from_config(source.config)
             discover_sitemaps = source.config.get("discover_sitemaps", True)
+            follow_entry_links = source.config.get("follow_entry_links", False)
             attempt_id = await start_attempt(session, target_id, lease_until=lease)
 
     measurements = {"version": 1, "fetch_success": False, "parsed": False,
@@ -182,7 +184,7 @@ async def process_job(
 
     if depth > scope.max_depth or (kind == "page" and not scope.allows(url, depth)):
         action, message = "disable", "URL exceeds the source depth or path scope"
-    elif kind not in {"page", "sitemap"}:
+    elif kind not in {"page", "sitemap", "rss"}:
         action, message = "disable", f"Unsupported target kind for HTML Worker: {kind}"
     else:
         try:
@@ -253,12 +255,16 @@ async def process_job(
                     message = "HTTP 200 response had empty body"
                 else:
                     stage = "parse"
-                    parser = parse if kind == "page" else parse_sitemap_resource
+                    parser = {"page": parse, "sitemap": parse_sitemap_resource, "rss": parse_feed}[kind]
                     parsed = parser(
                         url=fetched.final_url,
                         content=fetched.body,
                         content_type=content_type,
                     )
+                    if kind == "rss":
+                        parsed = replace(parsed,
+                            documents=tuple(d for d in parsed.documents if is_allowed_host(d.url, list(allowed_hosts)) and scope.allows(d.url, 0)),
+                            discovered_links=tuple(link for link in parsed.discovered_links if link.kind != "page" or follow_entry_links))
                     parsed = _add_x_robots(parsed, fetched.headers)
                     if discover_sitemaps:
                         parsed = replace(parsed, discovered_links=parsed.discovered_links + tuple(
