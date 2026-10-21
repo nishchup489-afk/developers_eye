@@ -16,6 +16,7 @@ class CrawlTargetCreate(BaseModel):
     normalized_url: str = Field(min_length=1)
     kind: TargetKind = "page"
     priority: int = 0
+    depth: int = Field(default=0, ge=0)
     discovered_from_id: int | None = Field(default=None, gt=0)
 
 
@@ -38,6 +39,7 @@ class CrawlTargetUpdate(BaseModel):
     kind: TargetKind | None = None
     state: TargetState | None = None
     priority: int | None = None
+    depth: int | None = Field(default=None, ge=0)
     next_fetch_at: AwareDatetime | None = None
     lease_until: AwareDatetime | None = None
     failure_count: int | None = Field(default=None, ge=0)

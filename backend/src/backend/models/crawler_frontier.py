@@ -22,6 +22,7 @@ class CrawlTarget(Base):
     __tablename__ = "crawl_target"
 
     __table_args__ = (
+        CheckConstraint("depth >= 0", name="ck_crawl_target_depth"),
         UniqueConstraint(
             "source_id",
             "normalized_url",
@@ -75,6 +76,8 @@ class CrawlTarget(Base):
     )
 
     # Target Type
+    depth: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+
     kind: Mapped[str] = mapped_column(
         Text,
         nullable=False,

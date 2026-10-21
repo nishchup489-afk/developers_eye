@@ -37,6 +37,7 @@ from crawler.fetcher.fetch import HTTPXHopFetcher
 from crawler.fetcher.schemas import OneHopFetcher
 from crawler.frontier.repository import enqueue_targets
 from crawler.frontier.urls import normalize_url
+from crawler.frontier.scope import CrawlScope
 from crawler.parser.parser import parse
 from crawler.parser.schemas import ParseResult
 from crawler.policy_and_politeness.host_policy import is_allowed_host
@@ -156,6 +157,8 @@ async def process_job(
             interval_seconds = source.crawl_interval_seconds
             url = current.fetch_url
             kind = current.kind
+            depth = current.depth
+            scope = CrawlScope.from_config(source.config)
             attempt_id = await start_attempt(session, target_id)
 
     measurements = {"version": 1, "fetch_success": False, "parsed": False,
@@ -174,7 +177,9 @@ async def process_job(
     new_targets: list[CrawlTargetCreate] = []
     stage = "fetch"
 
-    if kind != "page":
+    if not scope.allows(url, depth):
+        action, message = "disable", "URL exceeds the source depth or path scope"
+    elif kind != "page":
         action, message = "disable", f"Unsupported target kind for HTML Worker: {kind}"
     else:
         try:
@@ -265,6 +270,8 @@ async def process_job(
                         source_id=source_id,
                         allowed_hosts=allowed_hosts,
                         max_links=max_links,
+                        parent_depth=depth,
+                        scope=scope,
                     )
                     action, outcome = "complete", "success"
                     message = (
@@ -300,6 +307,7 @@ async def process_job(
         targets=new_targets,
         elapsed=time.perf_counter() - started,
         measurements=measurements,
+        max_pages=scope.max_pages,
         )
 
     try:

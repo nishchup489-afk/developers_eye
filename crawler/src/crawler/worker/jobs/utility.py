@@ -20,6 +20,7 @@ from crawler.fetcher.fetch import HTTPXHopFetcher
 from crawler.fetcher.schemas import OneHopFetcher
 from crawler.frontier.repository import enqueue_targets
 from crawler.frontier.urls import normalize_url
+from crawler.frontier.scope import CrawlScope, DEFAULT_MAX_PAGES
 from crawler.parser.parser import parse
 from crawler.parser.schemas import ParseResult
 from crawler.policy_and_politeness.host_policy import is_allowed_host
@@ -118,9 +119,12 @@ def _create_discovered_targets(
     source_id: int,
     allowed_hosts: tuple[str, ...],
     max_links: int,
+    parent_depth: int = 0,
+    scope: CrawlScope | None = None,
 ) -> list[CrawlTargetCreate]:
     """Create only in-scope, followed URL candidates; no DNS/network here."""
-    if _page_nofollow(parsed):
+    scope = scope or CrawlScope()
+    if _page_nofollow(parsed) or parent_depth >= scope.max_depth:
         return []
 
     output: list[CrawlTargetCreate] = []
@@ -134,6 +138,8 @@ def _create_discovered_targets(
             continue
         if normalized in seen or not is_allowed_host(normalized, list(allowed_hosts)):
             continue
+        if not scope.allows(normalized, parent_depth + 1):
+            continue
         seen.add(normalized)
         output.append(CrawlTargetCreate(
             source_id=source_id,
@@ -141,6 +147,7 @@ def _create_discovered_targets(
             normalized_url=normalized,
             kind="page",
             discovered_from_id=target_id,
+            depth=parent_depth + 1,
         ))
         if len(output) >= max_links:
             break
@@ -185,6 +192,7 @@ async def _finalize(
     targets: list[CrawlTargetCreate],
     elapsed: float,
     measurements: dict | None = None,
+    max_pages: int = DEFAULT_MAX_PAGES,
 ) -> JobResult:
     """Atomically transition the target and persist all related job output.
 
@@ -328,7 +336,7 @@ async def _finalize(
                     measurements["documents"].append({"id": document_id, "decision": decision,
                                                        "duplicate_of": duplicate, "canonical_url": document.canonical_url})
                 if targets:
-                    links_enqueued = await enqueue_targets(session, targets)
+                    links_enqueued = await enqueue_targets(session, targets, max_pages=max_pages)
 
             measurements.update(stored=documents_saved, links_discovered=discovered,
                                 links_enqueued=links_enqueued, storage_ms=round((time.perf_counter() - storage_started) * 1000, 2),

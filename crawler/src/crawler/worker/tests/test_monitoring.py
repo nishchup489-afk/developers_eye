@@ -42,7 +42,7 @@ class Session:
         str(query.compile(dialect=postgresql.dialect()))
         self.statements.append(query)
 
-    async def get(self, cls, id): return SimpleNamespace(is_enabled=True, allowed_hosts=["example.com"], crawl_interval_seconds=60)
+    async def get(self, cls, id): return SimpleNamespace(is_enabled=True, allowed_hosts=["example.com"], crawl_interval_seconds=60, config={})
     def add(self, value): self.events.append(value)
 
 
@@ -50,7 +50,7 @@ class Session:
 def test_real_parser_pipeline_checkpoints(monkeypatch, scenario):
     async def run():
         now = datetime.now(timezone.utc)
-        target = SimpleNamespace(id=1, source_id=1, fetch_url="https://example.com/docs", state="leased", lease_until=now + timedelta(minutes=5), kind="page")
+        target = SimpleNamespace(id=1, source_id=1, fetch_url="https://example.com/docs", state="leased", lease_until=now + timedelta(minutes=5), kind="page", depth=0)
         session = Session([target, now])
         factory = lambda: session
         body = b'<html><head><title>Testing Python</title></head><body><main><h1>Testing Python</h1><p>Use async await to write concurrent programs and schedule tasks with Python.</p></main></body></html>'
