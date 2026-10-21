@@ -133,7 +133,7 @@ def test_monitoring_routes_enforce_auth_and_validate_filters(monkeypatch):
     monkeypatch.setattr(api.settings, "crawler_report_api_key", SecretStr("a" * 32))
     session = Session()
     monkeypatch.setattr(api, "SessionFactory", lambda: session)
-    import crawler.worker.monitoring as monitoring
+    import backend.services.crawler_monitoring as monitoring
     handler = AsyncMock(return_value={"version": 1})
     monkeypatch.setattr(monitoring, "build_monitor", handler)
     async def run():
