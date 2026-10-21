@@ -12,6 +12,8 @@ from defusedxml.ElementTree import fromstring
 from defusedxml.common import DefusedXmlException
 
 from crawler.parser.errors import MalformedContentError
+from crawler.frontier.urls import normalize_url
+from crawler.parser.schemas import DiscoveredLink, ParseResult
 
 MAX_XML_BYTES = 10 * 1024 * 1024
 MAX_ENTRIES = 50_000
@@ -94,3 +96,29 @@ def parse_sitemap(content: bytes) -> SitemapResult:
     if kind == "urlset":
         return SitemapResult(page_urls=tuple(urls))
     return SitemapResult(sitemap_urls=tuple(urls))
+
+
+def extract_robots_sitemaps(raw: str) -> tuple[str, ...]:
+    """Read at most 100 distinct, absolute Sitemap declarations from robots.txt."""
+    urls: dict[str, None] = {}
+    for line in raw.splitlines():
+        name, separator, value = line.partition("#")[0].partition(":")
+        if separator and name.strip().casefold() == "sitemap":
+            try:
+                urls[normalize_url(value.strip())] = None
+            except ValueError:
+                continue
+            if len(urls) >= 100:
+                break
+    return tuple(urls)
+
+
+def parse_sitemap_resource(*, url: str, content: bytes, content_type: str) -> ParseResult:
+    result = parse_sitemap(content)
+    return ParseResult(
+        source_url=url, content_type=content_type,
+        discovered_links=tuple(
+            [DiscoveredLink(url=value) for value in result.page_urls]
+            + [DiscoveredLink(url=value, kind="sitemap") for value in result.sitemap_urls]
+        ),
+    )

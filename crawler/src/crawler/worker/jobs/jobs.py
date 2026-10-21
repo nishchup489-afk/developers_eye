@@ -1,4 +1,4 @@
-"""Run one leased HTML crawl target through Developer's Eye's offline pipeline.
+"""Run one leased crawl target through Developer's Eye's offline pipeline.
 
 Runner responsibility: claim/commit target leases, provide one shared
 PolitenessManager, and dispatch one process_job() call per target.
@@ -6,8 +6,7 @@ PolitenessManager, and dispatch one process_job() call per target.
 Job responsibility: record attempt -> fetch/policy -> parse -> process ->
 lease-safe transaction (reschedule + write + enqueue + finish attempt).
 
-MVP limitation: only target.kind == 'page' is supported. RSS, API and
-sitemaps need dedicated parsers/dispatchers before enabling those kinds.
+HTML pages and sitemap resources share the same policy and lease lifecycle.
 """
 
 from __future__ import annotations
@@ -40,6 +39,8 @@ from crawler.frontier.urls import normalize_url
 from crawler.frontier.scope import CrawlScope
 from crawler.parser.parser import parse
 from crawler.parser.schemas import ParseResult
+from crawler.parser.schemas import DiscoveredLink
+from crawler.parser.sitemap import parse_sitemap_resource
 from crawler.policy_and_politeness.host_policy import is_allowed_host
 from crawler.policy_and_politeness.policy_coordinator import FetchResult, PolicyCoordinator, _header
 from crawler.policy_and_politeness.politeness_policy import PolitenessManager
@@ -48,7 +49,7 @@ from crawler.processing.normalize.normalize import normalize_document
 from crawler.processing.processing import process
 from crawler.processing.schemas import ProcessingResult, SkipReason
 from crawler.schedular.repository import complete_target, fail_target
-from crawler.worker.jobs.utility import _add_x_robots, _create_discovered_targets, _finalize
+from crawler.worker.jobs.utility import _add_x_robots, _create_discovered_targets, _finalize, _x_robots_directives
 from crawler.worker.jobs.constants import _HTML_MEDIA_TYPES
 from crawler.writer.attempts import finish_attempt, start_attempt
 from crawler.writer.documents import upsert_document
@@ -160,6 +161,7 @@ async def process_job(
             kind = current.kind
             depth = current.depth
             scope = CrawlScope.from_config(source.config)
+            discover_sitemaps = source.config.get("discover_sitemaps", True)
             attempt_id = await start_attempt(session, target_id, lease_until=lease)
 
     measurements = {"version": 1, "fetch_success": False, "parsed": False,
@@ -178,9 +180,9 @@ async def process_job(
     new_targets: list[CrawlTargetCreate] = []
     stage = "fetch"
 
-    if not scope.allows(url, depth):
+    if depth > scope.max_depth or (kind == "page" and not scope.allows(url, depth)):
         action, message = "disable", "URL exceeds the source depth or path scope"
-    elif kind != "page":
+    elif kind not in {"page", "sitemap"}:
         action, message = "disable", f"Unsupported target kind for HTML Worker: {kind}"
     else:
         try:
@@ -238,22 +240,33 @@ async def process_job(
             else:
                 content_type = _header(fetched.headers, "content-type") or ""
                 mime_type = content_type.split(";", 1)[0].strip().casefold()
-                if mime_type not in _HTML_MEDIA_TYPES:
+                if not is_allowed_host(fetched.final_url, list(allowed_hosts)) or (kind == "page" and not scope.allows(fetched.final_url, depth)):
+                    action, outcome = "block", "blocked"
+                    message = "Final URL exceeds the source host or path scope"
+                elif kind == "page" and mime_type not in _HTML_MEDIA_TYPES:
                     # An accepted 200 non-HTML response is valid, but this job
                     # cannot parse/index it yet; schedule a normal recrawl.
                     action, outcome = "complete", "success"
                     message = f"Skipped unsupported MIME: {mime_type or '(none)'}"
                 elif not fetched.body:
                     action, outcome = "retry", "failed"
-                    message = "HTTP 200 HTML response had empty body"
+                    message = "HTTP 200 response had empty body"
                 else:
                     stage = "parse"
-                    parsed = parse(
+                    parser = parse if kind == "page" else parse_sitemap_resource
+                    parsed = parser(
                         url=fetched.final_url,
                         content=fetched.body,
                         content_type=content_type,
                     )
                     parsed = _add_x_robots(parsed, fetched.headers)
+                    if discover_sitemaps:
+                        parsed = replace(parsed, discovered_links=parsed.discovered_links + tuple(
+                            DiscoveredLink(url=value, kind="sitemap") for value in fetched.sitemap_urls
+                        ))
+                    if set(_x_robots_directives(fetched.headers)) & {"nofollow", "none"}:
+                        parsed = replace(parsed, discovered_links=())
+                    measurements["resource_kind"] = kind
                     measurements["parsed"] = True
                     await checkpoint(session_factory, attempt_id, "PARSE", "success",
                                      {"documents": len(parsed.documents),
@@ -273,6 +286,7 @@ async def process_job(
                         max_links=max_links,
                         parent_depth=depth,
                         scope=scope,
+                        target_kind=kind,
                     )
                     action, outcome = "complete", "success"
                     message = (

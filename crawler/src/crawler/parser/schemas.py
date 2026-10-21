@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 
 @dataclass(slots=True)
@@ -20,6 +20,7 @@ class DiscoveredLink:
     anchor_text: str = ""
     rel: tuple[str, ...] = ()
     nofollow: bool = False
+    kind: Literal["page", "sitemap", "rss", "api"] = "page"
 
 
 @dataclass(slots=True)

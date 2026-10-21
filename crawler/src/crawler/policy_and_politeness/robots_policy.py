@@ -20,6 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.models.robot_cache import RobotsCache
 from crawler.frontier.urls import normalize_url
 from crawler.config import DEFAULT_USER_AGENT
+from crawler.parser.sitemap import extract_robots_sitemaps
 
 
 USER_AGENT = DEFAULT_USER_AGENT
@@ -41,6 +42,7 @@ class RobotsPolicyResult:
     reason: str
     origin: str
     retry_after_seconds: int | None = None
+    sitemap_urls: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -159,6 +161,7 @@ def _decision_for_status(
             RobotsDecision.ALLOW if permitted else RobotsDecision.DENY,
             "Robots rules permit URL" if permitted else "Robots rules disallow URL",
             origin,
+            sitemap_urls=extract_robots_sitemaps(content or ""),
         )
 
     if status in (401, 403):

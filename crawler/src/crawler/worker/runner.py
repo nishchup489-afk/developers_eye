@@ -335,6 +335,20 @@ def load_job_handler() -> JobHandler:
 
 async def main(config: RunnerConfig) -> int:
 
+    # Automatically register new JSON sources and queue eligible website seeds.
+    # Existing source slugs and crawl targets are not duplicated.
+    try:
+        from crawler.seed.seed import seed_sources
+        from crawler.seed.discovery import discover_initial_targets
+
+        await seed_sources()
+        queued = await discover_initial_targets()
+        logger.info("SOURCE SYNC complete queued_start_urls=%s", queued)
+    except Exception:
+        logger.exception("SOURCE SYNC failed; worker startup aborted")
+        await engine.dispose()
+        return 1
+
     # STEP 1: Create one shared politeness manager.
     politeness_manager = PolitenessManager(
         max_concurrent_per_host=1,
