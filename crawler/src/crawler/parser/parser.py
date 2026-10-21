@@ -4,7 +4,7 @@
 Consumes already-fetched bytes. No HTTP requests, policy checks, database
 writes, or document classification happen here.
 
-RSS/Atom and JSON dispatch can be added later without changing parse().
+Structured resource parsers are selected separately by the worker.
 """
 
 from __future__ import annotations

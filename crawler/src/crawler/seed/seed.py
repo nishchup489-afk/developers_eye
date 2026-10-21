@@ -1,7 +1,8 @@
 
 import asyncio
 import json
-
+import selectors
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -87,4 +88,12 @@ async def seed_sources() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(seed_sources())
+    if sys.platform == "win32":
+        asyncio.run(
+            seed_sources(),
+            loop_factory=lambda: asyncio.SelectorEventLoop(
+                selectors.SelectSelector()
+            ),
+        )
+    else:
+        asyncio.run(seed_sources())

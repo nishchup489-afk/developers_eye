@@ -1,6 +1,7 @@
 """Dedicated PostgreSQL regression tests; never use the crawler's live database."""
 import asyncio
 import os
+import json
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
@@ -69,6 +70,46 @@ async def claim(factory, source_id, count=1):
         targets = await claim_targets(session, limit=count, source_id=source_id)
         await asyncio.sleep(.01)
         return [CrawlTargetRead.model_validate(target) for target in targets]
+
+
+@pytest.mark.parametrize("kind", ["sitemap", "rss", "api"])
+def test_structured_resources_commit_documents_targets_and_attempts(monkeypatch, kind):
+    bodies = {
+        "sitemap": b"<urlset><url><loc>https://example.com/docs/imported</loc></url></urlset>",
+        "rss": b'<rss xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link rel="next" href="https://example.com/endpoint?page=2"/><item><link>https://example.com/docs/imported</link><title>Python guide</title><description>Useful Python programming documentation.</description></item></channel></rss>',
+        "api": json.dumps({"items": [{"url": "https://example.com/docs/imported", "title": "Python guide", "body": "Useful Python programming documentation."}], "next": "https://example.com/endpoint?page=2"}).encode(),
+    }
+    async def fetch(self, session, url):
+        return FetchResult(RobotsDecision.ALLOW, "Fetched", url, url, status_code=200,
+            headers={"content-type": "application/json" if kind == "api" else "application/xml"}, body=bodies[kind])
+    monkeypatch.setattr(PolicyCoordinator, "fetch", fetch)
+    async def run():
+        async with database() as (factory, source_id):
+            async with factory() as session, session.begin():
+                await session.execute(update(Source).where(Source.id == source_id).values(
+                    config={"max_depth": 3, "max_pages": 7, "api": {"next_path": "next"}}))
+                await enqueue_targets(session, [CrawlTargetCreate(source_id=source_id, kind=kind,
+                    fetch_url="https://example.com/endpoint", normalized_url="https://example.com/endpoint")])
+            target, = await claim(factory, source_id)
+            result = await process_job(target, session_factory=factory, politeness_manager=PolitenessManager(min_interval_seconds=0))
+            assert result.outcome == "success"
+            assert result.links_enqueued == 1
+            assert result.documents_saved == (0 if kind == "sitemap" else 1)
+            async with factory() as session:
+                attempt = await session.get(CrawlAttempt, result.attempt_id)
+                assert attempt.finished_at is not None and attempt.outcome == "success"
+                assert attempt.telemetry["resource_kind"] == kind
+                child, = (await session.scalars(select(CrawlTarget).where(CrawlTarget.discovered_from_id == target.id))).all()
+                assert child.kind == ("page" if kind == "sitemap" else kind)
+                assert child.depth == (0 if kind == "sitemap" else 1)
+                documents = (await session.scalars(select(Document).where(Document.source_id == source_id))).all()
+                assert len(documents) == result.documents_saved
+                if documents:
+                    assert documents[0].canonical_url == "https://example.com/docs/imported"
+                    assert documents[0].metadata_["ingestion_format"] == ("rss" if kind == "rss" else "json_api")
+                    inspected = await inspect_document(session, document_id=documents[0].id)
+                    assert inspected is not None
+    asyncio.run(run())
 
 
 def install_fetch(monkeypatch, statuses=None):

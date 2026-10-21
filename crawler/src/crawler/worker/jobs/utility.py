@@ -122,10 +122,11 @@ def _create_discovered_targets(
     max_links: int,
     parent_depth: int = 0,
     scope: CrawlScope | None = None,
+    target_kind: str = "page",
 ) -> list[CrawlTargetCreate]:
     """Create only in-scope, followed URL candidates; no DNS/network here."""
     scope = scope or CrawlScope()
-    if _page_nofollow(parsed) or parent_depth >= scope.max_depth:
+    if _page_nofollow(parsed):
         return []
 
     output: list[CrawlTargetCreate] = []
@@ -139,16 +140,18 @@ def _create_discovered_targets(
             continue
         if normalized in seen or not is_allowed_host(normalized, list(allowed_hosts)):
             continue
-        if not scope.allows(normalized, parent_depth + 1):
+        is_seed = (target_kind == "sitemap" and link.kind == "page") or (target_kind != "sitemap" and link.kind == "sitemap")
+        depth = 0 if is_seed else parent_depth + 1
+        if depth > scope.max_depth or (link.kind == "page" and not scope.allows(normalized, depth)):
             continue
         seen.add(normalized)
         output.append(CrawlTargetCreate(
             source_id=source_id,
             fetch_url=normalized,
             normalized_url=normalized,
-            kind="page",
+            kind=link.kind,
             discovered_from_id=target_id,
-            depth=parent_depth + 1,
+            depth=depth,
         ))
         if len(output) >= max_links:
             break

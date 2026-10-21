@@ -77,6 +77,7 @@ class FetchResult:
     headers: dict[str, str] = field(default_factory=dict)
     body: bytes = b""
     retry_after_seconds: float | None = None
+    sitemap_urls: tuple[str, ...] = ()
 
 
 def _header(headers: Mapping[str, str], name: str) -> str | None:
@@ -222,6 +223,7 @@ class PolicyCoordinator:
             )
 
         history = [tracker.current_url]
+        sitemap_urls: dict[str, None] = {}
 
         def result(
             decision: RobotsDecision,
@@ -240,6 +242,7 @@ class PolicyCoordinator:
                 headers=dict(response.headers) if response else {},
                 body=response.body if response and decision == RobotsDecision.ALLOW else b"",
                 retry_after_seconds=retry_after_seconds,
+                sitemap_urls=tuple(sitemap_urls),
             )
 
         while True:
@@ -269,6 +272,9 @@ class PolicyCoordinator:
                     f"Robots check failed: {exc}",
                     retry_after_seconds=DEFAULT_DEFER_SECONDS,
                 )
+            for sitemap_url in robots.sitemap_urls:
+                if len(sitemap_urls) < 100:
+                    sitemap_urls[sitemap_url] = None
             if robots.decision != RobotsDecision.ALLOW:
                 return result(
                     robots.decision,
