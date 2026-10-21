@@ -33,6 +33,7 @@ from backend.models.documents import Document
 from backend.models.source import Source
 from backend.schema.crawler_frontier import CrawlTargetCreate
 from crawler.fetcher.fetch import HTTPXHopFetcher
+from crawler.fetcher.config import ALLOWED_MEDIA_TYPES, FetcherConfig
 from crawler.fetcher.schemas import OneHopFetcher
 from crawler.frontier.repository import enqueue_targets
 from crawler.frontier.urls import normalize_url
@@ -59,6 +60,14 @@ from crawler.worker.telemetry import checkpoint
 from crawler.worker.recovery import recover_failed_claim
 
 logger = logging.getLogger(__name__)
+
+
+def _resource_fetcher(kind: str) -> HTTPXHopFetcher:
+    # Gzip file bodies are permitted only for sitemap jobs, still under byte limits.
+    media = ALLOWED_MEDIA_TYPES
+    if kind == "sitemap":
+        media |= {"application/gzip", "application/x-gzip", "application/octet-stream"}
+    return HTTPXHopFetcher(FetcherConfig(allowed_media_types=frozenset(media)))
 
 
 
@@ -163,7 +172,7 @@ async def process_job(
             kind = current.kind
             depth = current.depth
             scope = CrawlScope.from_config(source.config)
-            discover_sitemaps = source.config.get("discover_sitemaps", True)
+            discover_sitemaps = source.config.get("discover_sitemaps", kind in {"page", "sitemap"})
             follow_entry_links = source.config.get("follow_entry_links", False)
             api_options = source.config.get("api", {})
             attempt_id = await start_attempt(session, target_id, lease_until=lease)
@@ -184,7 +193,9 @@ async def process_job(
     new_targets: list[CrawlTargetCreate] = []
     stage = "fetch"
 
-    if depth > scope.max_depth or (kind == "page" and not scope.allows(url, depth)):
+    if type(discover_sitemaps) is not bool or type(follow_entry_links) is not bool:
+        action, message = "disable", "discover_sitemaps and follow_entry_links must be booleans"
+    elif depth > scope.max_depth or (kind == "page" and not scope.allows(url, depth)):
         action, message = "disable", "URL exceeds the source depth or path scope"
     elif kind not in {"page", "sitemap", "rss", "api"}:
         action, message = "disable", f"Unsupported target kind: {kind}"
@@ -192,7 +203,7 @@ async def process_job(
         try:
             coordinator = PolicyCoordinator(
                 allowed_hosts=allowed_hosts,
-                fetcher=fetcher if fetcher is not None else HTTPXHopFetcher(),
+                fetcher=fetcher if fetcher is not None else _resource_fetcher(kind),
                 politeness_manager=politeness_manager,
             )
 
@@ -270,9 +281,9 @@ async def process_job(
                             discovered_links=tuple(link for link in parsed.discovered_links if link.kind != "page" or follow_entry_links))
                     parsed = _add_x_robots(parsed, fetched.headers)
                     if discover_sitemaps:
-                        parsed = replace(parsed, discovered_links=parsed.discovered_links + tuple(
+                        parsed = replace(parsed, discovered_links=tuple(
                             DiscoveredLink(url=value, kind="sitemap") for value in fetched.sitemap_urls
-                        ))
+                        ) + parsed.discovered_links)
                     if set(_x_robots_directives(fetched.headers)) & {"nofollow", "none"}:
                         parsed = replace(parsed, discovered_links=())
                     measurements["resource_kind"] = kind

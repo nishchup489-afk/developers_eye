@@ -23,8 +23,9 @@ def resolve_record_url(value: object, base: str) -> str | None:
 
 def readable_markup(value: str) -> str:
     soup = BeautifulSoup(value, "lxml")
-    for element in soup.select("script, style, noscript, template, iframe, object"):
-        element.decompose()
+    for element in soup.find_all(True):
+        if element.name and element.name.rsplit(":", 1)[-1] in {"script", "style", "noscript", "template", "iframe", "object"}:
+            element.decompose()
     return soup.get_text("\n", strip=True)
 
 
@@ -38,4 +39,7 @@ def parse_record_date(value: object) -> datetime | None:
             result = parsedate_to_datetime(value.strip())
         except (ValueError, TypeError, OverflowError):
             return None
-    return result.replace(tzinfo=timezone.utc) if result.tzinfo is None else result.astimezone(timezone.utc)
+    try:
+        return result.replace(tzinfo=timezone.utc) if result.tzinfo is None else result.astimezone(timezone.utc)
+    except (ValueError, OverflowError):
+        return None

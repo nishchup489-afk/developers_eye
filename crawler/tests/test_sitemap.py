@@ -82,3 +82,10 @@ def test_invalid_documents_rejected(xml):
 def test_extension_namespace_does_not_supply_page_location():
     result = parse_sitemap(b'<urlset xmlns:image="urn:image"><url><image:loc>https://example.com/image</image:loc></url></urlset>')
     assert result.page_urls == ()
+
+
+def test_corrupt_deflate_is_reported_as_malformed_xml():
+    compressed = gzip.compress(b"<urlset/>")
+    corrupt = compressed[:10] + b"\x06" + compressed[11:]
+    with pytest.raises(MalformedContentError, match="gzip"):
+        parse_sitemap(corrupt)

@@ -47,7 +47,7 @@ def test_missing_items_path_is_not_a_successful_empty_import(options):
 
 
 @pytest.mark.parametrize("options", [{"unknown": 1}, {"fields": {"body": None}}, {"fields": {"secret": "value"}},
-    {"items_path": 1}, {"next_path": ""}, {"body_format": "markdown"}])
+    {"items_path": 1}, {"next_path": ""}, {"body_format": "markdown"}, {"body_format": []}])
 def test_invalid_mapping_is_rejected(options):
     with pytest.raises(ValueError): parse([], options)
 

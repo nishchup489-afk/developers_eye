@@ -103,6 +103,8 @@ Dates use the same UTC conversion as feeds. Metadata records `ingestion_format: 
 
 The collection endpoint may be `/api/articles`, while stored page URLs must fall under `/docs`. Those are separate roles.
 
+API sources do not automatically expand into sitemaps unless `discover_sitemaps: true` is explicitly configured.
+
 Before processing and storage, the worker filters every imported document by `allowed_hosts` and the configured content paths. A response from an approved API cannot insert a document pointing at an unrelated host.
 
 Duplicate record URLs retain their first record in a response. Across attempts, the existing canonical URL upsert and content fingerprint handle repeated observations.

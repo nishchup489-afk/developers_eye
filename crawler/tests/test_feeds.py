@@ -5,6 +5,7 @@ import pytest
 from crawler.parser.feeds import parser as feeds
 from crawler.parser.errors import MalformedContentError
 from crawler.parser.feeds import parse_feed
+from crawler.parser.structured import parse_record_date
 
 
 def parse(xml):
@@ -32,7 +33,7 @@ def test_atom_bases_text_html_xhtml_author_and_pagination():
     result = parse(b'''<feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://example.com/docs/">
     <author><name>Nish</name></author><link rel="next" href="../feed.xml?page=2"/>
     <entry xml:base="python/"><title>Use &lt;button&gt;</title><link href="new"/><updated>2026-10-20T10:00:00Z</updated>
-    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>Useful Python content.</p></div></content></entry>
+    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>Useful Python content.</p><script>secret()</script></div></content></entry>
     <entry><id>urn:uuid:123</id><summary>Opaque identity</summary></entry></feed>''')
     document, = result.documents
     assert document.url == "https://example.com/docs/python/new"
@@ -61,3 +62,4 @@ def test_bad_date_does_not_drop_valid_entry_and_guid_must_be_a_url():
     result = parse(b"<rss><channel><item><guid>https://example.com/a</guid><pubDate>not a date</pubDate><description>Useful content</description></item><item><guid>opaque</guid></item></channel></rss>")
     assert len(result.documents) == 1
     assert result.documents[0].published_at is None
+    assert parse_record_date("0001-01-01T00:00:00+01:00") is None

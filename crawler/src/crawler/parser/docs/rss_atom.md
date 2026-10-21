@@ -67,6 +67,8 @@ Add the definition to a JSON array under `seed/sources`. The worker's startup re
 
 The endpoint can be outside `/docs`. Imported entry URLs must still be on an allowed host and inside the configured content paths.
 
+Feed sources do not automatically expand into a site's sitemaps. Set `discover_sitemaps: true` explicitly if that wider discovery is wanted.
+
 ## 4. How do we choose the entry URL?
 
 For RSS, prefer `<link>`. A `<guid>` can be used only when it is an absolute HTTP(S) permalink and `isPermaLink` is not false.

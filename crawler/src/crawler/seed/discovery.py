@@ -87,7 +87,9 @@ async def discover_initial_targets(
 
                     targets = build_initial_targets(source)
                     scope = CrawlScope.from_config(source.config)
-                    total_inserted += await enqueue_targets(session, targets, max_pages=scope.max_pages)
+                    # Reserve the primary seed before lower-priority sitemap candidates.
+                    total_inserted += await enqueue_targets(session, targets[:1], max_pages=scope.max_pages)
+                    total_inserted += await enqueue_targets(session, targets[1:], max_pages=scope.max_pages)
 
                 # Step 4: Move to the next page
                 offset += len(sources)

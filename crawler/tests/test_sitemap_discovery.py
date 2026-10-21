@@ -29,6 +29,12 @@ def test_seed_configuration_host_filter_and_default_sitemap():
     assert build_initial_targets(source({"allowed_path_prefixes": ["/other"]}))[0].kind == "sitemap"
 
 
+def test_gzip_file_mime_types_are_only_enabled_for_sitemap_jobs():
+    assert jobs._resource_fetcher("sitemap").config.permits_media_type("application/gzip")
+    assert jobs._resource_fetcher("sitemap").config.permits_media_type("application/octet-stream")
+    assert not jobs._resource_fetcher("page").config.permits_media_type("application/gzip")
+
+
 def test_robots_declarations_are_absolute_bounded_and_case_insensitive():
     raw = "Sitemap: https://example.com/a.xml\nsitemap: https://example.com/a.xml # comment\nSitemap: /relative\nSitemap: file:///tmp/map\n"
     assert extract_robots_sitemaps(raw) == ("https://example.com/a.xml",)

@@ -52,7 +52,7 @@ class ApiMapping:
             raise ValueError("Unknown API document field mapping")
         fields = {**DEFAULT_FIELDS, **{name: _path(value) for name, value in fields.items()}}
         body_format = options.get("body_format", "text")
-        if body_format not in {"text", "html"}:
+        if not isinstance(body_format, str) or body_format not in {"text", "html"}:
             raise ValueError("API body_format must be text or html")
         return cls(items, next_path, fields, body_format)
 

@@ -63,7 +63,7 @@ Some websites compress the sitemap file itself with gzip. The parser recognizes 
 
 Why the extra byte? If it exists, we know the decompressed XML exceeds our limit. We reject it without expanding the rest of the file.
 
-HTTP `Content-Encoding: gzip` is handled by the fetcher. A downloaded gzip file is a separate case handled here.
+HTTP `Content-Encoding: gzip` is rejected by the fetcher's identity-encoding policy. A downloaded `.xml.gz` file with identity HTTP encoding is a separate case handled here. Sitemap jobs explicitly allow gzip file MIME types; regular HTML jobs keep their existing textual MIME allowlist.
 
 ## 6. Parse XML without trusting it
 

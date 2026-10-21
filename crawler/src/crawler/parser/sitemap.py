@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import gzip
+import zlib
 from io import BytesIO
 from urllib.parse import urlsplit
 from xml.etree.ElementTree import ParseError
@@ -61,7 +62,7 @@ def parse_sitemap(content: bytes) -> SitemapResult:
         try:
             with gzip.GzipFile(fileobj=BytesIO(content)) as stream:
                 content = stream.read(MAX_XML_BYTES + 1)
-        except (OSError, EOFError) as exc:
+        except (OSError, EOFError, zlib.error) as exc:
             raise MalformedContentError("Invalid gzip sitemap") from exc
         if len(content) > MAX_XML_BYTES:
             raise MalformedContentError("Decompressed sitemap exceeds XML limit")

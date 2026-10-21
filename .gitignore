@@ -75,6 +75,7 @@ env.bak/
 venv.bak/
 
 # Testing & Coverage
+.test-artifacts/
 .pytest_cache/
 .coverage
 .coverage.*

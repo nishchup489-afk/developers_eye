@@ -14,7 +14,7 @@ from crawler.seed.discovery import build_initial_targets
 from crawler.worker.jobs import jobs
 
 
-async def run_resource(monkeypatch, kind, body, config=None, headers=None):
+async def run_resource(monkeypatch, kind, body, config=None, headers=None, sitemap_urls=()):
     now = datetime.now(timezone.utc)
     target = SimpleNamespace(id=1, source_id=1, fetch_url="https://example.com/endpoint", state="leased",
         lease_until=now + timedelta(minutes=5), kind=kind, depth=0)
@@ -29,7 +29,7 @@ async def run_resource(monkeypatch, kind, body, config=None, headers=None):
             return SimpleNamespace(is_enabled=True, allowed_hosts=["example.com"], crawl_interval_seconds=60,
                 config={"allowed_path_prefixes": ["/docs"], **(config or {})})
     fetch = AsyncMock(return_value=FetchResult(RobotsDecision.ALLOW, "Fetched", target.fetch_url, target.fetch_url,
-        status_code=200, headers=headers or {"content-type": "application/xml"}, body=body))
+        status_code=200, headers=headers or {"content-type": "application/xml"}, body=body, sitemap_urls=sitemap_urls))
     final = AsyncMock()
     monkeypatch.setattr(jobs.PolicyCoordinator, "fetch", fetch)
     monkeypatch.setattr(jobs, "start_attempt", AsyncMock(return_value=11))
@@ -98,3 +98,11 @@ def test_json_source_uses_api_target_kind():
     source = SimpleNamespace(id=1, kind="api", base_url="https://example.com/api", allowed_hosts=["example.com"], config={})
     target, = build_initial_targets(source)
     assert target.kind == "api"
+
+
+def test_feed_does_not_expand_into_sitemaps_without_explicit_configuration(monkeypatch):
+    urls = ("https://example.com/site-map.xml",)
+    result = asyncio.run(run_resource(monkeypatch, "rss", FEED, sitemap_urls=urls))
+    assert [t.kind for t in result["targets"]] == ["rss"]
+    opted_in = asyncio.run(run_resource(monkeypatch, "rss", FEED, {"discover_sitemaps": True}, sitemap_urls=urls))
+    assert [t.kind for t in opted_in["targets"]] == ["sitemap", "rss"]
