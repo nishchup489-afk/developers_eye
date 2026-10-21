@@ -281,7 +281,7 @@ async def process_job(
             await checkpoint(session_factory, attempt_id, stage.upper(), "failed", {"error": message}, measurements)
             parsed, processed, new_targets = None, None, []
 
-    try:
+    async def finalize_once() -> JobResult:
         return await _finalize(
         session_factory=session_factory,
         target_id=target_id,
@@ -301,6 +301,9 @@ async def process_job(
         elapsed=time.perf_counter() - started,
         measurements=measurements,
         )
+
+    try:
+        return await retry_deadlocked_finalization(finalize_once)
     except Exception as exc:
         # The storage transaction has rolled back; preserve the reason independently.
         measurements["error_category"] = "persistence"
