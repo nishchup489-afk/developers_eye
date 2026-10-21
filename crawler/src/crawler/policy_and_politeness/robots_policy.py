@@ -19,9 +19,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.models.robot_cache import RobotsCache
 from crawler.frontier.urls import normalize_url
+from crawler.config import DEFAULT_USER_AGENT
 
 
-USER_AGENT = "DevelopersEyeBot"
+USER_AGENT = DEFAULT_USER_AGENT
 DEFAULT_CACHE_TTL_SECONDS = 86_400
 MISSING_CACHE_TTL_SECONDS = 3_600
 DEFAULT_DEFER_SECONDS = 300

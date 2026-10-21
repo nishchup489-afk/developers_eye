@@ -15,6 +15,7 @@ from typing import Any
 from urllib.parse import urldefrag, urljoin, urlsplit
 
 from bs4 import BeautifulSoup, Tag
+from crawler.config import DEFAULT_USER_AGENT
 
 
 _WHITESPACE = re.compile(r"\s+")
@@ -256,13 +257,14 @@ def extract_metadata(
             if (token := _clean_text(item, max_length=100))
         ][:30]
 
-    robots = _first_meta(meta, "robots", max_length=1024)
+    robots = []
+    scopes = {"robots", DEFAULT_USER_AGENT.split("/", 1)[0].casefold()}
+    for tag in soup.find_all("meta", attrs={"name": True, "content": True}):
+        name, content = tag.get("name"), tag.get("content")
+        if isinstance(name, str) and name.strip().casefold() in scopes and isinstance(content, str):
+            robots.extend(token for token in re.split(r"[,;\s]+", content.casefold()) if token)
     if robots:
-        extra["robots_directives"] = [
-            token for item in robots.split(",")
-            if (token := _clean_text(item, max_length=100))
-        ][:30]
-        extra["robots_directives"] = [v.casefold() for v in extra["robots_directives"]]
+        extra["robots_directives"] = list(dict.fromkeys(robots))
 
     image = _resolve_url_hint(
         page_url, _first_meta(meta, "og:image", "twitter:image")
