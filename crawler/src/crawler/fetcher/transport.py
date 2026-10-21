@@ -37,6 +37,7 @@ _HTTP_ERROR_TYPES: tuple[tuple[type[Exception], type[httpx.HTTPError]], ...] = (
     (httpcore.NetworkError, httpx.NetworkError),
     (httpcore.ProtocolError, httpx.ProtocolError),
 )
+_CORE_EXCEPTIONS = tuple(core_type for core_type, _ in _HTTP_ERROR_TYPES)
 
 
 def _convert_httpcore_exception(exc: Exception) -> Exception:
@@ -124,14 +125,14 @@ class _CoreBodyStream(httpx.AsyncByteStream):
         try:
             async for chunk in self._stream:
                 yield chunk
-        except httpcore.HTTPError as exc:
+        except _CORE_EXCEPTIONS as exc:
             raise _convert_httpcore_exception(exc) from exc
 
     async def aclose(self) -> None:
         try:
             if hasattr(self._stream, "aclose"):
                 await self._stream.aclose()
-        except httpcore.HTTPError as exc:
+        except _CORE_EXCEPTIONS as exc:
             raise _convert_httpcore_exception(exc) from exc
 
 
@@ -192,7 +193,7 @@ class PinnedAsyncTransport(httpx.AsyncBaseTransport):
         )
         try:
             core_response = await self._pool.handle_async_request(core_request)
-        except httpcore.HTTPError as exc:
+        except _CORE_EXCEPTIONS as exc:
             raise _convert_httpcore_exception(exc) from exc
         return httpx.Response(
             status_code=core_response.status,
