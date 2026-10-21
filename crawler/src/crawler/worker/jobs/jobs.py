@@ -230,7 +230,7 @@ async def process_job(
                 action, outcome = "complete", "success"
                 message = f"HTTP {http_status}: no content"
             elif http_status in (404, 410):
-                action, outcome = "disable", "failed"
+                action, outcome = "complete", "failed"
                 message = f"HTTP {http_status}: resource unavailable"
             elif http_status != 200:
                 action, outcome = "retry", "failed"

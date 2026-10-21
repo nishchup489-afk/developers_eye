@@ -3,7 +3,7 @@ export type CrawlEvent = {
   at: string; source: string; source_id: number; url: string; stage: string;
   outcome: string; details: Record<string, unknown>;
 };
-export type StoredDocument = { id: number; source: string; title: string; canonical_url: string; document_type: string; last_seen_at: string };
+export type StoredDocument = { id: number; source: string; title: string; canonical_url: string; document_type: string; last_seen_at: string; is_available?: boolean; unavailable_at?: string | null; unavailable_http_status?: number | null };
 export type FrontierTarget = { id: number; source: string; url: string; normalized_url: string; state: string; priority: number; retries: number; next_fetch_at: string; lease_until: string | null };
 export type Worker = { id: string; hostname: string; pid: number; status: "online" | "offline" | "stopped"; started_at: string; heartbeat_at: string; concurrency: number; batch_size: number; uptime_seconds: number; idle_seconds: number; active_targets: { target_id: number; source_id: number; url: string }[] };
 export type SourceHealth = { id: number; slug: string; name: string; is_enabled: boolean; attempts: number; successful: number; failed: number; blocked: number; documents: number; avg_fetch_ms: number | null; last_activity_at: string | null };
@@ -25,7 +25,7 @@ const strings = (v: Record<string, unknown>, keys: string[]) => keys.every(k => 
 const numbers = (v: Record<string, unknown>, keys: string[]) => keys.every(k => num(v[k]));
 const nullableString = (v: unknown) => v === null || typeof v === "string";
 const events = (v: unknown): v is CrawlEvent[] => Array.isArray(v) && v.length <= 200 && v.every(e => object(e) && numbers(e, ["id", "attempt_id", "target_id", "source_id"]) && strings(e, ["at", "source", "url", "stage", "outcome"]) && stamp(e.at) && nullableString(e.worker_id) && object(e.details));
-const doc = (v: unknown) => object(v) && num(v.id) && strings(v, ["source", "title", "canonical_url", "document_type", "last_seen_at"]) && stamp(v.last_seen_at);
+const doc = (v: unknown) => object(v) && num(v.id) && strings(v, ["source", "title", "canonical_url", "document_type", "last_seen_at"]) && stamp(v.last_seen_at) && (v.is_available === undefined || typeof v.is_available === "boolean") && (v.unavailable_at === undefined || v.unavailable_at === null || stamp(v.unavailable_at)) && (v.unavailable_http_status === undefined || v.unavailable_http_status === null || typeof v.unavailable_http_status === "number" && [404, 410].includes(v.unavailable_http_status));
 
 export function isCrawlMonitor(v: unknown): v is CrawlMonitor {
   if (!object(v) || v.version !== 1 || !stamp(v.generated_at) || !stamp(v.window_start) || !num(v.active_workers) || !object(v.summary)) return false;

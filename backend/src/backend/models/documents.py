@@ -4,10 +4,12 @@ from typing import Any
 
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     DateTime,
     ForeignKey,
     Identity,
     Index,
+    Integer,
     Text,
     func,
     text,
@@ -20,6 +22,10 @@ from backend.db.base import Base
 
 class Document(Base):
     __tablename__ = "document"
+
+    is_available: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))
+    unavailable_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    unavailable_http_status: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     __table_args__ = (
         Index("ix_document_last_seen_at", "last_seen_at"),

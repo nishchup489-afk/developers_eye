@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from backend.db.session import SessionFactory
 from backend.models.crawler_frontier import CrawlTarget
 from backend.models.documents import Document
+from backend.models.search_index import SearchIndex
 from backend.models.source import Source
 from backend.schema.crawler_frontier import CrawlTargetCreate
 from crawler.fetcher.fetch import HTTPXHopFetcher
@@ -305,6 +306,19 @@ async def _finalize(
                     message="Lease expired before completion",
                     duration_seconds=elapsed,
                 )
+
+            if action == "complete" and http_status in (404, 410):
+                unavailable_ids = (await session.scalars(update(Document).where(
+                    Document.last_crawl_target_id == target_id,
+                ).values(is_available=False, unavailable_http_status=http_status,
+                    unavailable_at=func.coalesce(Document.unavailable_at, func.clock_timestamp()))
+                    .returning(Document.id))).all()
+                if unavailable_ids:
+                    await session.execute(delete(SearchIndex).where(SearchIndex.document_id.in_(unavailable_ids)))
+                event(session, attempt_id, "STORE", "not_stored", {
+                    "unavailable_document_ids": unavailable_ids, "http_status": http_status,
+                    "reason": "Stored content retained as unavailable; search entries removed",
+                })
 
             if action == "complete" and parsed is not None and processed is not None:
                 noindex = _noindex_urls(parsed, processed)

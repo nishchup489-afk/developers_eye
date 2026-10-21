@@ -22,3 +22,9 @@ const doc = documentFixture(); doc.latest_attempt = { id: "bad" };
 assert.equal(isDocumentDetail(doc), false);
 assert.equal(isAttemptDetail({ ...attemptFixture(), telemetry: [] }), false);
 console.log("PASS monitoring, worker, document and attempt contracts, null metrics and malformed responses");
+
+const unavailable = documentFixture();
+Object.assign(unavailable, { is_available: false, unavailable_http_status: 410, unavailable_at: new Date().toISOString() });
+assert.ok(isDocumentDetail(unavailable));
+unavailable.unavailable_http_status = "410";
+assert.equal(isDocumentDetail(unavailable), false);

@@ -1,4 +1,4 @@
-"""Developer's Eye — read-only PostgreSQL crawler reporting (MVP).
+"""Developer's Eye - read-only PostgreSQL crawler reporting (MVP).
 
 Location:
     crawler/src/crawler/worker/reporting.py
@@ -158,10 +158,11 @@ async def build_report(
                 func.count(Document.id),
                 func.count(Document.id).filter(Document.last_seen_at >= since),
                 func.count(Document.id).filter(Document.updated_at >= since),
+                func.count(Document.id).filter(Document.is_available.is_(True)),
             )
         )
     ).one()
-    docs_total, docs_seen, docs_updated = map(int, doc_totals)
+    docs_total, docs_seen, docs_updated, docs_available = map(int, doc_totals)
 
     index_totals = (
         await session.execute(
@@ -172,6 +173,7 @@ async def build_report(
                 ),
             )
             .join(Document, Document.id == SearchIndex.document_id)
+            .where(Document.is_available.is_(True))
         )
     ).one()
     indexed_total, stale_indexes = map(int, index_totals)
@@ -402,7 +404,8 @@ async def build_report(
             "seen_in_window": docs_seen,
             "updated_in_window": docs_updated,
             "indexed": indexed_total,
-            "not_indexed": max(0, docs_total - indexed_total),
+            "not_indexed": max(0, docs_available - indexed_total),
+            "unavailable": docs_total - docs_available,
             "stale_index_hashes": stale_indexes,
         },
         "robots_cache": {

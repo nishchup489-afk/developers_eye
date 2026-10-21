@@ -25,7 +25,8 @@ def event_dict(event, target, source):
 def document_summary(document, source):
     return dict(id=document.id, source=source.slug, title=document.title,
                 canonical_url=document.canonical_url, document_type=document.document_type,
-                last_seen_at=_utc(document.last_seen_at))
+                last_seen_at=_utc(document.last_seen_at), is_available=document.is_available,
+                unavailable_at=_utc(document.unavailable_at), unavailable_http_status=document.unavailable_http_status)
 
 
 async def build_monitor(session, *, days=7, source_id=None, status=None, category=None,
@@ -112,6 +113,7 @@ async def build_monitor(session, *, days=7, source_id=None, status=None, categor
     events = events[:80]
 
     docs_query = select(Document.id, Document.title, Document.canonical_url, Document.document_type,
+                        Document.is_available, Document.unavailable_at, Document.unavailable_http_status,
                         Document.last_seen_at, Source.slug.label("source")).join(Source, Source.id == Document.source_id)
     if source_id:
         docs_query = docs_query.where(Document.source_id == source_id)
@@ -119,7 +121,7 @@ async def build_monitor(session, *, days=7, source_id=None, status=None, categor
         docs_query = docs_query.where(or_(Document.title.icontains(q, autoescape=True), Document.canonical_url.icontains(q, autoescape=True)))
     doc_rows = (await session.execute(docs_query.order_by(Document.last_seen_at.desc(), Document.id.desc())
                                     .offset(document_page * 30).limit(31))).mappings().all()
-    documents = [{**dict(row), "last_seen_at": _utc(row["last_seen_at"])} for row in doc_rows[:30]]
+    documents = [{**dict(row), "last_seen_at": _utc(row["last_seen_at"]), "unavailable_at": _utc(row["unavailable_at"])} for row in doc_rows[:30]]
 
     target_filters = []
     if source_id:
