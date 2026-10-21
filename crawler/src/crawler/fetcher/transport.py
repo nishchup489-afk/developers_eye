@@ -149,6 +149,7 @@ class PinnedAsyncTransport(httpx.AsyncBaseTransport):
             raise FetcherSecurityError("Only absolute HTTP(S) URLs are supported")
 
         self._scheme = expected_url.scheme
+        self._expected_url = expected_url
         self._host = expected_url.raw_host
         self._port = expected_url.port or (443 if self._scheme == "https" else 80)
         self._ips = validate_approved_ips(approved_ips)
@@ -177,6 +178,12 @@ class PinnedAsyncTransport(httpx.AsyncBaseTransport):
             or (request.url.port or (443 if self._scheme == "https" else 80)) != self._port
         ):
             raise FetcherSecurityError("Request origin differs from approved origin")
+        if request.url != self._expected_url:
+            raise FetcherSecurityError("A different URL requires fresh policy checks")
+        if request.headers.get("host") != self._expected_url.netloc.decode("ascii"):
+            raise FetcherSecurityError("Host header differs from approved origin")
+        if "sni_hostname" in request.extensions:
+            raise FetcherSecurityError("Custom TLS server names are prohibited")
         # HTTPX retains the hostname in the request URL. httpcore therefore
         # uses that hostname as the Host authority and TLS certificate name.
         core_request = httpcore.Request(

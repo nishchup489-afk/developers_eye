@@ -491,10 +491,6 @@ def test_client_disables_redirects_and_environment_proxies(monkeypatch):
     assert response.next_request is not None
 
 
-# Known security gaps: keep as strict xfails until fixed in transport.py.
-# They become XPASS (a failing suite) once implementation changes, prompting
-# removal of xfail and promotion to regular tests.
-@pytest.mark.xfail(strict=True, reason="transport.py currently accepts a custom Host header")
 def test_security_rejects_custom_host_header(monkeypatch):
     transport, pool = make_fake_transport(monkeypatch)
     request = httpx.Request("GET", URL, headers={"Host": "attacker.example"})
@@ -502,7 +498,6 @@ def test_security_rejects_custom_host_header(monkeypatch):
         run(transport.handle_async_request(request))
 
 
-@pytest.mark.xfail(strict=True, reason="transport.py currently forwards a custom TLS SNI extension")
 def test_security_rejects_custom_sni_extension(monkeypatch):
     transport, pool = make_fake_transport(monkeypatch)
     request = httpx.Request("GET", URL, extensions={"sni_hostname": "attacker.example"})
@@ -510,9 +505,9 @@ def test_security_rejects_custom_sni_extension(monkeypatch):
         run(transport.handle_async_request(request))
 
 
-@pytest.mark.xfail(strict=True, reason="transport.py currently checks the origin rather than the exact approved URL")
-def test_security_rejects_other_path_on_same_host(monkeypatch):
+@pytest.mark.parametrize("url", ["https://example.com/admin", URL + "?page=2"])
+def test_security_rejects_other_path_on_same_host(monkeypatch, url):
     transport, pool = make_fake_transport(monkeypatch)
-    request = httpx.Request("GET", "https://example.com/admin")
+    request = httpx.Request("GET", url)
     with pytest.raises(FetcherSecurityError):
         run(transport.handle_async_request(request))
