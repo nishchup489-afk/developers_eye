@@ -1,5 +1,6 @@
 """Run real parser/processor dispatch, intercepting network and persistence."""
 import asyncio
+import json
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace
@@ -68,3 +69,32 @@ def test_rss_source_queues_collection_outside_content_path():
     source = SimpleNamespace(id=1, kind="rss", base_url="https://example.com/feed.xml", allowed_hosts=["example.com"], config={"allowed_path_prefixes": ["/docs"]})
     target, = build_initial_targets(source)
     assert target.kind == "rss"
+
+
+def test_json_worker_mapping_pagination_scope_and_processing(monkeypatch):
+    content = json.dumps({"results": [
+        {"html_url": "/docs/a", "text": "Useful Python programming documentation."},
+        {"html_url": "/private", "text": "Out of scope"},
+        {"html_url": "https://evil.test/docs/a", "text": "Wrong host"}], "next": "/endpoint?page=2"}).encode()
+    result = asyncio.run(run_resource(monkeypatch, "api", content, {"api": {
+        "items_path": "results", "next_path": "next", "fields": {"url": "html_url", "body": "text"}}}, {"content-type": "application/json"}))
+    assert result["outcome"] == "success"
+    assert [d.url for d in result["processed"].documents] == ["https://example.com/docs/a"]
+    assert [(t.kind, t.depth) for t in result["targets"]] == [("api", 1)]
+
+
+def test_json_noindex_nofollow_and_mapping_error_are_recorded(monkeypatch):
+    content = b'[{"url":"/docs/a","body":"Useful Python documentation."}]'
+    result = asyncio.run(run_resource(monkeypatch, "api", content, headers={"x-robots-tag": "noindex, nofollow"}))
+    assert result["processed"].documents == ()
+    assert result["processed"].skipped[0].reason == "noindex"
+    assert result["targets"] == []
+    failed = asyncio.run(run_resource(monkeypatch, "api", content, {"api": {"items_path": "missing"}}))
+    assert failed["action"] == "retry"
+    assert failed["measurements"]["error_category"] == "parse"
+
+
+def test_json_source_uses_api_target_kind():
+    source = SimpleNamespace(id=1, kind="api", base_url="https://example.com/api", allowed_hosts=["example.com"], config={})
+    target, = build_initial_targets(source)
+    assert target.kind == "api"

@@ -6,7 +6,7 @@ PolitenessManager, and dispatch one process_job() call per target.
 Job responsibility: record attempt -> fetch/policy -> parse -> process ->
 lease-safe transaction (reschedule + write + enqueue + finish attempt).
 
-HTML pages, sitemaps and feeds share the same policy and lease lifecycle.
+HTML, sitemap, feed and JSON API resources share one policy and lease lifecycle.
 """
 
 from __future__ import annotations
@@ -42,6 +42,7 @@ from crawler.parser.schemas import ParseResult
 from crawler.parser.schemas import DiscoveredLink
 from crawler.parser.sitemap import parse_sitemap_resource
 from crawler.parser.feeds import parse_feed
+from crawler.parser.api import parse_json_api
 from crawler.policy_and_politeness.host_policy import is_allowed_host
 from crawler.policy_and_politeness.policy_coordinator import FetchResult, PolicyCoordinator, _header
 from crawler.policy_and_politeness.politeness_policy import PolitenessManager
@@ -164,6 +165,7 @@ async def process_job(
             scope = CrawlScope.from_config(source.config)
             discover_sitemaps = source.config.get("discover_sitemaps", True)
             follow_entry_links = source.config.get("follow_entry_links", False)
+            api_options = source.config.get("api", {})
             attempt_id = await start_attempt(session, target_id, lease_until=lease)
 
     measurements = {"version": 1, "fetch_success": False, "parsed": False,
@@ -184,8 +186,8 @@ async def process_job(
 
     if depth > scope.max_depth or (kind == "page" and not scope.allows(url, depth)):
         action, message = "disable", "URL exceeds the source depth or path scope"
-    elif kind not in {"page", "sitemap", "rss"}:
-        action, message = "disable", f"Unsupported target kind for HTML Worker: {kind}"
+    elif kind not in {"page", "sitemap", "rss", "api"}:
+        action, message = "disable", f"Unsupported target kind: {kind}"
     else:
         try:
             coordinator = PolicyCoordinator(
@@ -255,13 +257,14 @@ async def process_job(
                     message = "HTTP 200 response had empty body"
                 else:
                     stage = "parse"
-                    parser = {"page": parse, "sitemap": parse_sitemap_resource, "rss": parse_feed}[kind]
+                    parser = {"page": parse, "sitemap": parse_sitemap_resource, "rss": parse_feed, "api": parse_json_api}[kind]
                     parsed = parser(
                         url=fetched.final_url,
                         content=fetched.body,
                         content_type=content_type,
+                        **({"options": api_options} if kind == "api" else {}),
                     )
-                    if kind == "rss":
+                    if kind in {"rss", "api"}:
                         parsed = replace(parsed,
                             documents=tuple(d for d in parsed.documents if is_allowed_host(d.url, list(allowed_hosts)) and scope.allows(d.url, 0)),
                             discovered_links=tuple(link for link in parsed.discovered_links if link.kind != "page" or follow_entry_links))

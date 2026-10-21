@@ -15,7 +15,7 @@ from .registry import get_enabled_sources
 def build_initial_target(source: Source) -> CrawlTargetCreate:
     """Convert one source into a target with the matching parser kind."""
 
-    if source.kind not in {"website", "rss"}:
+    if source.kind not in {"website", "rss", "api"}:
         raise ValueError("Unsupported source kind")
 
     target = {
@@ -82,7 +82,7 @@ async def discover_initial_targets(
 
                 # Step 2: Convert supported sources into targets
                 for source in sources:
-                    if source.kind not in {"website", "rss"}:
+                    if source.kind not in {"website", "rss", "api"}:
                         continue
 
                     targets = build_initial_targets(source)
