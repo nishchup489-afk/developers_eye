@@ -24,12 +24,14 @@ Use UPDATE ... RETURNING. Caller commits the transaction before dispatching work
 
 
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from sqlalchemy import select, update, func
+from sqlalchemy import select, update, func, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.models.crawler_frontier import CrawlTarget
+from backend.models.crawl_attempt import CrawlAttempt
+from crawler.writer.attempts import close_abandoned_attempts
 
 
 async def claim_targets(
@@ -85,7 +87,7 @@ async def claim_targets(
         .where(CrawlTarget.id.in_(target_ids))
         .values(
             state="leased",
-            lease_until=func.now() + func.make_interval(
+            lease_until=func.clock_timestamp() + func.make_interval(
                 0, 0, 0, 0, 0, 0, lease_seconds
             ),
         )
@@ -105,24 +107,26 @@ async def recover_expired_leases(
     session: AsyncSession,
 ) -> int:
 
-    update_stmt = (
-        update(CrawlTarget)
-        .where(
-            CrawlTarget.state == "leased",
-            CrawlTarget.lease_until <= func.now(),
-        )
-        .values(
-            state="queued",
-            lease_until=None,
-        )
-        .returning(CrawlTarget.id)
-    )
+    rows = (await session.scalars(select(CrawlTarget).where(
+        CrawlTarget.state == 'leased',
+        or_(CrawlTarget.lease_until <= func.clock_timestamp(), CrawlTarget.lease_until.is_(None)),
+    ).order_by(CrawlTarget.id).limit(500).with_for_update(skip_locked=True))).all()
+    for row in rows:
+        await close_abandoned_attempts(session, row.id, 'lease_expired', 'Worker lease expired; retry scheduled')
+        row.failure_count += 1
+        row.next_fetch_at = await session.scalar(select(func.clock_timestamp())) + timedelta(
+            seconds=calculate_retry_delay(row.failure_count))
+        row.state, row.lease_until = 'queued', None
 
-    result = await session.execute(update_stmt)
-
-    recovered_ids = result.scalars().all()
-
-    return len(recovered_ids)
+    # Historical attempts have no lease token. A non-leased target proves none is active.
+    orphans = (await session.scalars(select(CrawlTarget).where(
+        CrawlTarget.state != 'leased',
+        select(CrawlAttempt.id).where(CrawlAttempt.crawl_target_id == CrawlTarget.id,
+            CrawlAttempt.finished_at.is_(None)).exists(),
+    ).order_by(CrawlTarget.id).limit(500).with_for_update(skip_locked=True))).all()
+    for row in orphans:
+        await close_abandoned_attempts(session, row.id, 'worker', 'Abandoned attempt reconciled; target has no active lease')
+    return len(rows)
 
 
 
@@ -169,7 +173,7 @@ async def complete_target(
             CrawlTarget.id == target_id,
             CrawlTarget.state == "leased",
             CrawlTarget.lease_until == expected_lease_until,
-            CrawlTarget.lease_until > func.now(),
+            CrawlTarget.lease_until > func.clock_timestamp(),
         )
         .values(
             state="queued",
@@ -270,7 +274,7 @@ async def fail_target(
             CrawlTarget.id == target_id,
             CrawlTarget.state == "leased",
             CrawlTarget.lease_until == expected_lease_until,
-            CrawlTarget.lease_until > func.now(),
+            CrawlTarget.lease_until > func.clock_timestamp(),
         )
         .with_for_update()
     )
@@ -298,7 +302,7 @@ async def fail_target(
             CrawlTarget.id == target_id,
             CrawlTarget.state == "leased",
             CrawlTarget.lease_until == expected_lease_until,
-            CrawlTarget.lease_until > func.now(),
+            CrawlTarget.lease_until > func.clock_timestamp(),
         )
         .values(
             state="queued",

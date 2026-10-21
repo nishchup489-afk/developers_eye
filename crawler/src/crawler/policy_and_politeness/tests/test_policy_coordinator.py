@@ -13,6 +13,7 @@ import httpx
 import pytest
 
 import crawler.policy_and_politeness.policy_coordinator as module
+from crawler.fetcher.errors import FetcherSecurityError
 from crawler.policy_and_politeness.dns_policy import (
     DNSResolutionError,
     UnsafeDestinationError,
@@ -24,7 +25,6 @@ from crawler.policy_and_politeness.robots_policy import (
     RobotsPolicyResult,
 )
 from crawler.policy_and_politeness.policy_coordinator import (
-    FetcherSecurityError,
     OneHopResponse,
     PolicyCoordinator,
     ResponseTooLargeError,
@@ -33,6 +33,10 @@ from crawler.policy_and_politeness.policy_coordinator import (
 
 def run(coro):
     return asyncio.run(coro)
+
+
+def test_coordinator_uses_fetchers_security_exception():
+    assert module.FetcherSecurityError is FetcherSecurityError
 
 
 @dataclass

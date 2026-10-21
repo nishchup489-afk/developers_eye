@@ -42,7 +42,7 @@ class Session:
         str(query.compile(dialect=postgresql.dialect()))
         self.statements.append(query)
 
-    async def get(self, cls, id): return SimpleNamespace(is_enabled=True, allowed_hosts=["example.com"], crawl_interval_seconds=60)
+    async def get(self, cls, id): return SimpleNamespace(is_enabled=True, allowed_hosts=["example.com"], crawl_interval_seconds=60, config={})
     def add(self, value): self.events.append(value)
 
 
@@ -50,7 +50,7 @@ class Session:
 def test_real_parser_pipeline_checkpoints(monkeypatch, scenario):
     async def run():
         now = datetime.now(timezone.utc)
-        target = SimpleNamespace(id=1, source_id=1, fetch_url="https://example.com/docs", state="leased", lease_until=now + timedelta(minutes=5), kind="page")
+        target = SimpleNamespace(id=1, source_id=1, fetch_url="https://example.com/docs", state="leased", lease_until=now + timedelta(minutes=5), kind="page", depth=0)
         session = Session([target, now])
         factory = lambda: session
         body = b'<html><head><title>Testing Python</title></head><body><main><h1>Testing Python</h1><p>Use async await to write concurrent programs and schedule tasks with Python.</p></main></body></html>'
@@ -69,10 +69,12 @@ def test_real_parser_pipeline_checkpoints(monkeypatch, scenario):
         if scenario == "parse_error": monkeypatch.setattr(jobs, "parse", lambda **kwargs: (_ for _ in ()).throw(ValueError("broken markup")))
         final = AsyncMock(side_effect=RuntimeError("storage rejected") if scenario == "store_error" else None)
         monkeypatch.setattr(jobs, "_finalize", final)
+        monkeypatch.setattr(jobs, "recover_failed_claim", AsyncMock())
         if scenario == "store_error":
             with pytest.raises(RuntimeError): await jobs.process_job(target, politeness_manager=object(), session_factory=factory)
             assert checkpoints[-1][0:2] == ("STORE", "failed")
             assert checkpoints[-1][2]["stored"] == 0
+            jobs.recover_failed_claim.assert_awaited_once()
         else:
             await jobs.process_job(target, politeness_manager=object(), session_factory=factory)
         args = final.call_args.kwargs
@@ -131,7 +133,7 @@ def test_monitoring_routes_enforce_auth_and_validate_filters(monkeypatch):
     monkeypatch.setattr(api.settings, "crawler_report_api_key", SecretStr("a" * 32))
     session = Session()
     monkeypatch.setattr(api, "SessionFactory", lambda: session)
-    import crawler.worker.monitoring as monitoring
+    import backend.services.crawler_monitoring as monitoring
     handler = AsyncMock(return_value={"version": 1})
     monkeypatch.setattr(monitoring, "build_monitor", handler)
     async def run():

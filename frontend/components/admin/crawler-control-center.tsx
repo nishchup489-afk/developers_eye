@@ -136,7 +136,7 @@ function Pipeline({ monitor: m }: { monitor: CrawlMonitor }) {
 }
 function DocumentList({ monitor: m, onInspect, compact = false }: { monitor: CrawlMonitor; onInspect: (selection: Inspection) => void; compact?: boolean }) {
   const documents = compact ? m.documents.slice(0, 5) : m.documents;
-  return documents.length ? <div className="cc-documents">{documents.map(d => <button key={d.id} className="cc-document" onClick={() => onInspect({ type: "documents", id: d.id })}><span className="cc-document-icon"><FileSearch size={18} /></span><span><strong>{d.title}</strong><small>{d.canonical_url}</small><small>{d.source} · {d.document_type} · Seen {time(d.last_seen_at)}</small></span><ChevronRight size={15} /></button>)}</div> : <Empty>No stored documents match these filters. A fetch can succeed without producing accepted content.</Empty>;
+  return documents.length ? <div className="cc-documents">{documents.map(d => <button key={d.id} className="cc-document" onClick={() => onInspect({ type: "documents", id: d.id })}><span className="cc-document-icon"><FileSearch size={18} /></span><span><strong>{d.title}</strong>{d.is_available === false && <Badge value={`unavailable HTTP ${d.unavailable_http_status}`} />}<small>{d.canonical_url}</small><small>{d.source} · {d.document_type} · Seen {time(d.last_seen_at)}</small></span><ChevronRight size={15} /></button>)}</div> : <Empty>No stored documents match these filters. A fetch can succeed without producing accepted content.</Empty>;
 }
 function ActiveWorkers({ monitor: m }: { monitor: CrawlMonitor }) {
   const active = m.workers.flatMap(w => w.active_targets.map(t => ({ ...t, worker: `${w.hostname} / ${w.pid}` })));

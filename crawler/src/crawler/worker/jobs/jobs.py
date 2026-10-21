@@ -37,6 +37,7 @@ from crawler.fetcher.fetch import HTTPXHopFetcher
 from crawler.fetcher.schemas import OneHopFetcher
 from crawler.frontier.repository import enqueue_targets
 from crawler.frontier.urls import normalize_url
+from crawler.frontier.scope import CrawlScope
 from crawler.parser.parser import parse
 from crawler.parser.schemas import ParseResult
 from crawler.policy_and_politeness.host_policy import is_allowed_host
@@ -52,6 +53,7 @@ from crawler.worker.jobs.constants import _HTML_MEDIA_TYPES
 from crawler.writer.attempts import finish_attempt, start_attempt
 from crawler.writer.documents import upsert_document
 from crawler.worker.telemetry import checkpoint
+from crawler.worker.recovery import recover_failed_claim
 
 logger = logging.getLogger(__name__)
 
@@ -156,7 +158,9 @@ async def process_job(
             interval_seconds = source.crawl_interval_seconds
             url = current.fetch_url
             kind = current.kind
-            attempt_id = await start_attempt(session, target_id)
+            depth = current.depth
+            scope = CrawlScope.from_config(source.config)
+            attempt_id = await start_attempt(session, target_id, lease_until=lease)
 
     measurements = {"version": 1, "fetch_success": False, "parsed": False,
                     "accepted": 0, "skipped": [], "stored": 0, "documents": []}
@@ -174,7 +178,9 @@ async def process_job(
     new_targets: list[CrawlTargetCreate] = []
     stage = "fetch"
 
-    if kind != "page":
+    if not scope.allows(url, depth):
+        action, message = "disable", "URL exceeds the source depth or path scope"
+    elif kind != "page":
         action, message = "disable", f"Unsupported target kind for HTML Worker: {kind}"
     else:
         try:
@@ -224,7 +230,7 @@ async def process_job(
                 action, outcome = "complete", "success"
                 message = f"HTTP {http_status}: no content"
             elif http_status in (404, 410):
-                action, outcome = "disable", "failed"
+                action, outcome = "complete", "failed"
                 message = f"HTTP {http_status}: resource unavailable"
             elif http_status != 200:
                 action, outcome = "retry", "failed"
@@ -265,6 +271,8 @@ async def process_job(
                         source_id=source_id,
                         allowed_hosts=allowed_hosts,
                         max_links=max_links,
+                        parent_depth=depth,
+                        scope=scope,
                     )
                     action, outcome = "complete", "success"
                     message = (
@@ -281,7 +289,7 @@ async def process_job(
             await checkpoint(session_factory, attempt_id, stage.upper(), "failed", {"error": message}, measurements)
             parsed, processed, new_targets = None, None, []
 
-    try:
+    async def finalize_once() -> JobResult:
         return await _finalize(
         session_factory=session_factory,
         target_id=target_id,
@@ -300,12 +308,17 @@ async def process_job(
         targets=new_targets,
         elapsed=time.perf_counter() - started,
         measurements=measurements,
+        max_pages=scope.max_pages,
         )
+
+    try:
+        return await retry_deadlocked_finalization(finalize_once)
     except Exception as exc:
         # The storage transaction has rolled back; preserve the reason independently.
         measurements["error_category"] = "persistence"
         await checkpoint(session_factory, attempt_id, "STORE", "failed",
                          {"error": f"{type(exc).__name__}: {exc}"[:1000]}, measurements)
+        await recover_failed_claim(session_factory, target_id, lease, "persistence", message=f"{type(exc).__name__}: {exc}"[:1000])
         raise
 
 

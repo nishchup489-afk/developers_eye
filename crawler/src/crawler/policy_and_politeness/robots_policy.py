@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import StrEnum
 from urllib.parse import urlsplit, urlunsplit
-from urllib.robotparser import RobotFileParser
+from crawler.policy_and_politeness.robots_rules import RobotsRules, parse_rules
 
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
@@ -19,9 +19,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.models.robot_cache import RobotsCache
 from crawler.frontier.urls import normalize_url
+from crawler.config import DEFAULT_USER_AGENT
 
 
-USER_AGENT = "DevelopersEyeBot"
+USER_AGENT = DEFAULT_USER_AGENT
 DEFAULT_CACHE_TTL_SECONDS = 86_400
 MISSING_CACHE_TTL_SECONDS = 3_600
 DEFAULT_DEFER_SECONDS = 300
@@ -70,14 +71,12 @@ def get_robots_url(url: str) -> str:
     return f"{origin}/robots.txt"
 
 
-def parse_robots(raw_content: str) -> RobotFileParser:
+def parse_robots(raw_content: str) -> RobotsRules:
     """Parse robots.txt text without fetching it."""
     if not isinstance(raw_content, str):
         raise TypeError("raw_content must be text")
 
-    parser = RobotFileParser()
-    parser.parse(raw_content.splitlines())
-    return parser
+    return parse_rules(raw_content)
 
 
 def is_crawl_allowed(

@@ -14,12 +14,14 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from backend.db.session import SessionFactory
 from backend.models.crawler_frontier import CrawlTarget
 from backend.models.documents import Document
+from backend.models.search_index import SearchIndex
 from backend.models.source import Source
 from backend.schema.crawler_frontier import CrawlTargetCreate
 from crawler.fetcher.fetch import HTTPXHopFetcher
 from crawler.fetcher.schemas import OneHopFetcher
 from crawler.frontier.repository import enqueue_targets
 from crawler.frontier.urls import normalize_url
+from crawler.frontier.scope import CrawlScope, DEFAULT_MAX_PAGES
 from crawler.parser.parser import parse
 from crawler.parser.schemas import ParseResult
 from crawler.policy_and_politeness.host_policy import is_allowed_host
@@ -118,9 +120,12 @@ def _create_discovered_targets(
     source_id: int,
     allowed_hosts: tuple[str, ...],
     max_links: int,
+    parent_depth: int = 0,
+    scope: CrawlScope | None = None,
 ) -> list[CrawlTargetCreate]:
     """Create only in-scope, followed URL candidates; no DNS/network here."""
-    if _page_nofollow(parsed):
+    scope = scope or CrawlScope()
+    if _page_nofollow(parsed) or parent_depth >= scope.max_depth:
         return []
 
     output: list[CrawlTargetCreate] = []
@@ -134,6 +139,8 @@ def _create_discovered_targets(
             continue
         if normalized in seen or not is_allowed_host(normalized, list(allowed_hosts)):
             continue
+        if not scope.allows(normalized, parent_depth + 1):
+            continue
         seen.add(normalized)
         output.append(CrawlTargetCreate(
             source_id=source_id,
@@ -141,6 +148,7 @@ def _create_discovered_targets(
             normalized_url=normalized,
             kind="page",
             discovered_from_id=target_id,
+            depth=parent_depth + 1,
         ))
         if len(output) >= max_links:
             break
@@ -185,6 +193,7 @@ async def _finalize(
     targets: list[CrawlTargetCreate],
     elapsed: float,
     measurements: dict | None = None,
+    max_pages: int = DEFAULT_MAX_PAGES,
 ) -> JobResult:
     """Atomically transition the target and persist all related job output.
 
@@ -230,7 +239,7 @@ async def _finalize(
 
             if not active:
                 measurements.update(result="stale", reason="Lease lost or expired; output discarded")
-                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id).values(telemetry=measurements))
+                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id, CrawlAttempt.finished_at.is_(None)).values(telemetry=measurements))
                 event(session, attempt_id, "FINALIZE", "stale", {"reason": "Lease lost or expired; output discarded"})
                 # The attempt belongs to this job, so it is safe to finish.
                 # No document/URL writes are made after losing the lease.
@@ -284,7 +293,7 @@ async def _finalize(
 
             if not transitioned:
                 measurements.update(result="stale", reason="Lease expired before target transition")
-                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id).values(telemetry=measurements))
+                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id, CrawlAttempt.finished_at.is_(None)).values(telemetry=measurements))
                 event(session, attempt_id, "FINALIZE", "stale", {"reason": "Lease expired before target transition"})
                 await finish_attempt(
                     session, attempt_id, "failed", http_status=http_status,
@@ -297,6 +306,19 @@ async def _finalize(
                     message="Lease expired before completion",
                     duration_seconds=elapsed,
                 )
+
+            if action == "complete" and http_status in (404, 410):
+                unavailable_ids = (await session.scalars(update(Document).where(
+                    Document.last_crawl_target_id == target_id,
+                ).values(is_available=False, unavailable_http_status=http_status,
+                    unavailable_at=func.coalesce(Document.unavailable_at, func.clock_timestamp()))
+                    .returning(Document.id))).all()
+                if unavailable_ids:
+                    await session.execute(delete(SearchIndex).where(SearchIndex.document_id.in_(unavailable_ids)))
+                event(session, attempt_id, "STORE", "not_stored", {
+                    "unavailable_document_ids": unavailable_ids, "http_status": http_status,
+                    "reason": "Stored content retained as unavailable; search entries removed",
+                })
 
             if action == "complete" and parsed is not None and processed is not None:
                 noindex = _noindex_urls(parsed, processed)
@@ -328,7 +350,7 @@ async def _finalize(
                     measurements["documents"].append({"id": document_id, "decision": decision,
                                                        "duplicate_of": duplicate, "canonical_url": document.canonical_url})
                 if targets:
-                    links_enqueued = await enqueue_targets(session, targets)
+                    links_enqueued = await enqueue_targets(session, targets, max_pages=max_pages)
 
             measurements.update(stored=documents_saved, links_discovered=discovered,
                                 links_enqueued=links_enqueued, storage_ms=round((time.perf_counter() - storage_started) * 1000, 2),

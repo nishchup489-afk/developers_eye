@@ -5,6 +5,7 @@ from backend.schema.crawler_frontier import CrawlTargetCreate
 
 from crawler.frontier.urls import normalize_url
 from crawler.frontier.repository import enqueue_targets
+from crawler.frontier.scope import CrawlScope
 
 from .registry import get_enabled_sources
 
@@ -53,22 +54,14 @@ async def discover_initial_targets(
                     break
 
                 # Step 2: Convert supported sources into targets
-                targets = []
-
                 for source in sources:
                     if source.kind != "website":
                         continue
 
                     target = build_initial_target(source)
-                    targets.append(target)
-
-                # Step 3: Persist the targets
-                inserted = await enqueue_targets(
-                    session=session,
-                    targets=targets,
-                )
-
-                total_inserted += inserted
+                    scope = CrawlScope.from_config(source.config)
+                    if scope.allows(target.fetch_url, 0):
+                        total_inserted += await enqueue_targets(session, [target], max_pages=scope.max_pages)
 
                 # Step 4: Move to the next page
                 offset += len(sources)

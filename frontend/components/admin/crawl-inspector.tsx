@@ -8,7 +8,7 @@ import { safeHttpUrl } from "@/lib/crawler-report";
 export type Inspection = { type: "documents" | "attempts"; id: number };
 const time = (value: string | null) => value ? new Date(value).toLocaleString() : "Not recorded";
 export function Badge({ value }: { value: string }) {
-  const color = /failed|blocked|stale|offline/.test(value) ? "red" : /duplicate|skipped|not_stored|unchanged|stopped/.test(value) ? "amber" : "green";
+  const color = /failed|blocked|stale|offline|unavailable/.test(value) ? "red" : /duplicate|skipped|not_stored|unchanged|stopped/.test(value) ? "amber" : "green";
   return <span className={`cc-badge ${color}`}>{value.replaceAll("_", " ")}</span>;
 }
 export function Url({ value }: { value: string | null }) {
@@ -68,6 +68,7 @@ export default function CrawlInspector({ selection, onClose, onSelect }: { selec
         <details className="cc-details"><summary>Attempt measurements</summary><pre>{JSON.stringify(attempt.telemetry, null, 2)}</pre></details>
       </>}
       {document && <>
+        {document.is_available === false && <p className="cc-inline-error">This URL returned HTTP {document.unavailable_http_status}. The stored content is retained for inspection and its search entry has been removed. First observed unavailable: {time(document.unavailable_at ?? null)}.</p>}
         <div className="cc-inspector-status"><Badge value="persisted" /><Badge value={document.matching_content.length ? "matching content" : "unique content hash"} /><span>{document.document_type}</span></div>
         <h3 className="cc-document-title">{document.title}</h3><p className="cc-description">{document.description || "No description stored."}</p>
         <dl className="cc-fields"><Field label="Canonical URL"><Url value={document.canonical_url} /></Field><Field label="Original URL"><Url value={document.original_url} /></Field><Field label="Normalized URL">{document.normalized_url || "Not recorded"}</Field></dl>

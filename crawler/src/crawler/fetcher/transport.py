@@ -37,6 +37,7 @@ _HTTP_ERROR_TYPES: tuple[tuple[type[Exception], type[httpx.HTTPError]], ...] = (
     (httpcore.NetworkError, httpx.NetworkError),
     (httpcore.ProtocolError, httpx.ProtocolError),
 )
+_CORE_EXCEPTIONS = tuple(core_type for core_type, _ in _HTTP_ERROR_TYPES)
 
 
 def _convert_httpcore_exception(exc: Exception) -> Exception:
@@ -124,14 +125,14 @@ class _CoreBodyStream(httpx.AsyncByteStream):
         try:
             async for chunk in self._stream:
                 yield chunk
-        except httpcore.HTTPError as exc:
+        except _CORE_EXCEPTIONS as exc:
             raise _convert_httpcore_exception(exc) from exc
 
     async def aclose(self) -> None:
         try:
             if hasattr(self._stream, "aclose"):
                 await self._stream.aclose()
-        except httpcore.HTTPError as exc:
+        except _CORE_EXCEPTIONS as exc:
             raise _convert_httpcore_exception(exc) from exc
 
 
@@ -148,6 +149,7 @@ class PinnedAsyncTransport(httpx.AsyncBaseTransport):
             raise FetcherSecurityError("Only absolute HTTP(S) URLs are supported")
 
         self._scheme = expected_url.scheme
+        self._expected_url = expected_url
         self._host = expected_url.raw_host
         self._port = expected_url.port or (443 if self._scheme == "https" else 80)
         self._ips = validate_approved_ips(approved_ips)
@@ -176,6 +178,12 @@ class PinnedAsyncTransport(httpx.AsyncBaseTransport):
             or (request.url.port or (443 if self._scheme == "https" else 80)) != self._port
         ):
             raise FetcherSecurityError("Request origin differs from approved origin")
+        if request.url != self._expected_url:
+            raise FetcherSecurityError("A different URL requires fresh policy checks")
+        if request.headers.get("host") != self._expected_url.netloc.decode("ascii"):
+            raise FetcherSecurityError("Host header differs from approved origin")
+        if "sni_hostname" in request.extensions:
+            raise FetcherSecurityError("Custom TLS server names are prohibited")
         # HTTPX retains the hostname in the request URL. httpcore therefore
         # uses that hostname as the Host authority and TLS certificate name.
         core_request = httpcore.Request(
@@ -192,7 +200,7 @@ class PinnedAsyncTransport(httpx.AsyncBaseTransport):
         )
         try:
             core_response = await self._pool.handle_async_request(core_request)
-        except httpcore.HTTPError as exc:
+        except _CORE_EXCEPTIONS as exc:
             raise _convert_httpcore_exception(exc) from exc
         return httpx.Response(
             status_code=core_response.status,

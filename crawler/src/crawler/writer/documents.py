@@ -67,6 +67,7 @@ async def upsert_document(
         content_hash=document.content_hash,
         published_at=document.published_at,
         last_seen_at=func.clock_timestamp(),
+        is_available=True,
         updated_at=func.clock_timestamp(),
     )
 
@@ -100,6 +101,9 @@ async def upsert_document(
                 "content_hash": incoming.content_hash,
                 "published_at": incoming.published_at,
                 "last_seen_at": func.clock_timestamp(),
+                "is_available": True,
+                "unavailable_at": None,
+                "unavailable_http_status": None,
                 "updated_at": case(
                     (changed, func.clock_timestamp()),
                     else_=Document.updated_at,
