@@ -66,12 +66,6 @@ class HostNotAllowedError(ValueError):
 
 
 
-class FetcherSecurityError(ValueError):
-    """Fetcher rejected an unsafe transport configuration or destination."""
-
-
-
-
 @dataclass(frozen=True, slots=True)
 class FetchResult:
     decision: RobotsDecision
