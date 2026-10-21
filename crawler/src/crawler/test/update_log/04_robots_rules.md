@@ -18,4 +18,8 @@ After: `/private/*` blocks descendants, while a more specific Allow can permit a
 
 Offline cases cover wildcard rules, `$`, rule order, duplicate groups, user-agent matching, comments, query strings, Unicode and reserved escapes. The coordinator suite verifies policy integration.
 
+<<<<<<< HEAD
 Reference: RFC 9309 sections 2.2.1–2.2.3, https://www.rfc-editor.org/rfc/rfc9309.html.
+=======
+Reference: RFC 9309 sections 2.2.1-2.2.3, https://www.rfc-editor.org/rfc/rfc9309.html.
+>>>>>>> e23ba5ea5dff62949216780657e331ee7de5c4d1

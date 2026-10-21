@@ -1,23 +1,23 @@
 
 """
 4. Logic we're going to implement
-Step 1 — Filter eligible targets
+Step 1 - Filter eligible targets
 state == "queued" and next_fetch_at <= NOW()
 
 
-Step 2 — Prioritize
+Step 2 - Prioritize
 ORDER BY priority DESC, next_fetch_at ASC, id ASC
 
 
-Step 3 — Acquire locks
+Step 3 - Acquire locks
 FOR UPDATE SKIP LOCKED and apply LIMIT
 
 
-Step 4 — Update claimed rows
+Step 4 - Update claimed rows
 Set state = "leased" and lease_until = NOW() + lease_seconds
 
 
-Step 5 — Return claimed targets
+Step 5 - Return claimed targets
 Use UPDATE ... RETURNING. Caller commits the transaction before dispatching work.
 
 """
