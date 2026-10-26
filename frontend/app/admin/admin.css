@@ -1,4 +1,4 @@
-.admin-root{--a-bg:#11140f;--a-panel:#191d17;--a-panel-alt:#1d221a;--a-border:#30372b;--a-text:#eef0e8;--a-muted:#9ba591;--a-lime:#d1f58d;--a-amber:#d8ac6b;--a-red:#db8780;background:var(--a-bg);color:var(--a-text);min-height:100vh;font-size:13px;line-height:1.5;font-family:Arial,Helvetica,sans-serif;color-scheme:dark}
+.admin-root{--a-bg:#11140f;--a-panel:#191d17;--a-panel-alt:#1d221a;--a-border:#30372b;--a-text:#eef0e8;--a-muted:#9ba591;--a-lime:#d1f58d;--a-amber:#d8ac6b;--a-red:#db8780;background:var(--a-bg);color:var(--a-text);min-height:100vh;font-size:13px;line-height:1.5;font-family:var(--font-sans);color-scheme:dark}
 .admin-root h1,.admin-root h2,.admin-root h3,.admin-root p{margin:0;width:auto;max-width:none;position:static}
 .admin-root h1{font-size:40px;font-weight:500;letter-spacing:-1.7px;line-height:1.12}
 .admin-root h2{font-size:17px;font-weight:500;letter-spacing:-.35px;line-height:1.4}
