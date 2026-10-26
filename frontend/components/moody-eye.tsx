@@ -367,12 +367,14 @@ function mount(
 
   let idle: gsap.core.Tween | null = null;
   const wander = () => {
+    if (reading) return;
     toX(gsap.utils.random(-0.6, 0.6));
     toY(gsap.utils.random(-0.4, 0.4));
     idle = gsap.delayedCall(gsap.utils.random(1.6, 3.8), wander);
   };
 
   const onPointer = (event: PointerEvent) => {
+    if (reading) return;
     const box = el.getBoundingClientRect();
     const cx = box.left + box.width / 2;
     const cy = box.top + box.height / 2;
@@ -383,6 +385,31 @@ function mount(
     toDilate(0.25 + 0.45 * (1 - Math.min(1, Math.hypot(nx, ny))));
     idle?.kill();
     idle = gsap.delayedCall(4, wander);
+  };
+
+  // While someone types in the search box, the eye looks down and reads along.
+  let reading = false;
+  const isSearch = (target: EventTarget | null) =>
+    (target as HTMLElement | null)?.id === "search-input";
+  const onFocusIn = (event: FocusEvent) => {
+    if (!isSearch(event.target)) return;
+    reading = true;
+    idle?.kill();
+    toX(0);
+    toY(0.85);
+    toDilate(0.8);
+  };
+  const onFocusOut = (event: FocusEvent) => {
+    if (!isSearch(event.target)) return;
+    reading = false;
+    toDilate(0.45);
+    idle?.kill();
+    idle = gsap.delayedCall(1.2, wander);
+  };
+  const onInput = (event: Event) => {
+    if (!reading || !isSearch(event.target)) return;
+    const length = (event.target as HTMLInputElement).value.length;
+    toX(-0.55 + ((length % 24) / 24) * 1.1);
   };
 
   const blink = () => {
@@ -437,11 +464,17 @@ function mount(
       .call(wander, undefined, 1.8);
     gsap.ticker.add(tick);
     window.addEventListener("pointermove", onPointer, { passive: true });
+    document.addEventListener("focusin", onFocusIn);
+    document.addEventListener("focusout", onFocusOut);
+    document.addEventListener("input", onInput);
   }
 
   return () => {
     gsap.ticker.remove(tick);
     window.removeEventListener("pointermove", onPointer);
+    document.removeEventListener("focusin", onFocusIn);
+    document.removeEventListener("focusout", onFocusOut);
+    document.removeEventListener("input", onInput);
     intro.kill();
     idle?.kill();
     nextBlink?.kill();

@@ -89,6 +89,38 @@ const cards = [
     label: "Articles",
   },
 ] as const;
+const steps = [
+  {
+    title: "Ask",
+    body: "One question, in plain words. Press / from anywhere to start.",
+  },
+  {
+    title: "Gather",
+    body: "Docs, repositories, discussions and articles are searched together.",
+  },
+  {
+    title: "Signal",
+    body: "Ranked results, filtered by source, with the useful answer first.",
+  },
+];
+const tickerItems = [
+  "Documentation",
+  "GitHub",
+  "Stack Overflow",
+  "Reddit",
+  "Articles",
+  "Events",
+  "Practice",
+];
+
+/** Splits text into per-character spans for the headline reveal. */
+function Chars({ text }: { text: string }) {
+  return Array.from(text, (char, i) => (
+    <span className="char" key={i}>
+      {char}
+    </span>
+  ));
+}
 
 export default function SearchExperience({
   mode,
@@ -211,6 +243,34 @@ export default function SearchExperience({
           ease: "power3.out",
           clearProps: "all",
         });
+        if (!resultsPage) {
+          gsap.from(".hero-title .char", {
+            yPercent: 80,
+            opacity: 0,
+            filter: "blur(8px)",
+            stagger: 0.035,
+            duration: 0.9,
+            delay: 0.25,
+            ease: "power4.out",
+            clearProps: "all",
+          });
+          gsap.from(".steps-line", {
+            scaleX: 0,
+            transformOrigin: "left center",
+            duration: 1.4,
+            ease: "power3.inOut",
+            scrollTrigger: { trigger: ".steps", start: "top 85%", once: true },
+          });
+          gsap.from(".step", {
+            y: 24,
+            opacity: 0,
+            stagger: 0.15,
+            duration: 0.8,
+            ease: "power3.out",
+            scrollTrigger: { trigger: ".steps", start: "top 85%", once: true },
+            clearProps: "all",
+          });
+        }
         gsap.utils.toArray<HTMLElement>(".scroll-reveal").forEach((el) =>
           gsap.from(el, {
             y: 32,
@@ -311,6 +371,7 @@ export default function SearchExperience({
           href="/search?saved=1"
           aria-label={`Saved results (${saved.length})`}
           className={`saved-button ${showSaved ? "selected" : ""}`}
+          data-magnetic
         >
           <Bookmark size={15} />
           <span>Saved</span>
@@ -321,8 +382,13 @@ export default function SearchExperience({
         <section className="hero shell" aria-label={resultsPage ? "Search" : undefined} aria-labelledby={resultsPage ? undefined : "hero-title"}>
           {!resultsPage && <BrandEye />}
           {!resultsPage && <div className="hero-copy">
-            <h1 id="hero-title" className="reveal">
-              developer’s <span>eye.</span>
+            <h1 id="hero-title" className="hero-title" aria-label="developer’s eye.">
+              <span className="word" aria-hidden="true">
+                <Chars text="developer’s" />
+              </span>{" "}
+              <span className="word accent" aria-hidden="true">
+                <Chars text="eye." />
+              </span>
             </h1>
             <p className="hero-description reveal">
               Less searching. More building.
@@ -369,6 +435,7 @@ export default function SearchExperience({
               <kbd className="search-shortcut">⌘ K</kbd>
               <button
                 className="search-submit"
+                data-magnetic
                 type="submit"
                 aria-label="Search"
                 disabled={loading}
@@ -475,8 +542,18 @@ export default function SearchExperience({
             </div>
             {loading ? (
               <div className="loading-state">
-                <LoaderCircle className="spinner" size={22} />
-                <p>A little less noise. A little more signal.</p>
+                <p>
+                  <LoaderCircle className="spinner" size={14} />A little less
+                  noise. A little more signal.
+                </p>
+                {[0, 1, 2].map((i) => (
+                  <div className="skeleton-row" key={i} aria-hidden="true">
+                    <span className="skeleton short" />
+                    <span className="skeleton title" />
+                    <span className="skeleton line" />
+                    <span className="skeleton line half" />
+                  </div>
+                ))}
               </div>
             ) : error ? (
               <div className="empty-state">
@@ -514,7 +591,11 @@ export default function SearchExperience({
                   const Icon = icons[result.source];
                   const isSaved = saved.some((item) => item.url === result.url);
                   return (
-                    <article className="result-row" key={result.url}>
+                    <article
+                      className="result-row"
+                      key={result.url}
+                      data-spotlight
+                    >
                       <span className="result-number">
                         {String(index + 1).padStart(2, "0")}
                       </span>
@@ -567,6 +648,22 @@ export default function SearchExperience({
             )}
           </section>
         )}
+        {!resultsPage && (
+          <div className="ticker" aria-hidden="true">
+            <div className="ticker-track">
+              {[0, 1].map((copy) => (
+                <div className="ticker-group" key={copy}>
+                  {tickerItems.map((item) => (
+                    <span key={item}>
+                      {item}
+                      <Eye size={14} />
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {!resultsPage && <section id="sources" className="sources-section shell scroll-reveal">
           <div className="section-heading">
             <div>
@@ -595,6 +692,7 @@ export default function SearchExperience({
                 <button
                   className={`source-card source-${card.source}`}
                   key={card.source}
+                  data-spotlight
                   onClick={() =>
                     void search(
                       query.trim() ||
@@ -636,7 +734,42 @@ export default function SearchExperience({
             </span>
           </div>
         </section>}
+        {!resultsPage && (
+          <section className="steps-section shell" aria-labelledby="steps-title">
+            <span className="eyebrow">HOW IT SEES</span>
+            <h2 id="steps-title">
+              Three steps from question
+              <br />
+              <span className="muted">to the answer worth reading.</span>
+            </h2>
+            <div className="steps">
+              <span className="steps-line" aria-hidden="true" />
+              <ol>
+              {steps.map((step, index) => (
+                <li className="step" key={step.title} data-spotlight>
+                  <span className="step-index">0{index + 1}</span>
+                  <h3>{step.title}</h3>
+                  <p>{step.body}</p>
+                </li>
+              ))}
+              </ol>
+            </div>
+            <button
+              className="steps-cta"
+              data-magnetic
+              onClick={() => {
+                input.current?.focus();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            >
+              Start searching <ArrowUpRight size={16} />
+            </button>
+          </section>
+        )}
       </main>
+      <div className="footer-wordmark" aria-hidden="true">
+        developer’s eye<span>.</span>
+      </div>
       <footer className="footer shell">
         <Link
           className="brand footer-brand"
