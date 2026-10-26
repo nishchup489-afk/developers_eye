@@ -211,22 +211,6 @@ export default function SearchExperience({
           ease: "power3.out",
           clearProps: "all",
         });
-        if (!resultsPage) {
-          gsap.to(".orbit-spin", {
-            rotation: 360,
-            duration: 55,
-            repeat: -1,
-            ease: "none",
-            transformOrigin: "50% 50%",
-          });
-          gsap.to(".eye-core", {
-            y: -8,
-            duration: 3,
-            yoyo: true,
-            repeat: -1,
-            ease: "sine.inOut",
-          });
-        }
         gsap.utils.toArray<HTMLElement>(".scroll-reveal").forEach((el) =>
           gsap.from(el, {
             y: 32,
