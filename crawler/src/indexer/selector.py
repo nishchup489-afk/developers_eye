@@ -123,13 +123,19 @@ async def select_removal_candidates(
     _check_cursor(after_document_id)
 
     statement = (
-        select(Document.id)
-        .join(SearchIndex, SearchIndex.document_id == Document.id)
-        .where(
-            Document.id > after_document_id,
-            Document.is_available.is_(False),
+        select(SearchIndex.document_id)
+        .select_from(SearchIndex)
+        .outerjoin(
+            Document,
+            Document.id == SearchIndex.document_id,
         )
-        .order_by(Document.id.asc())
+        .where(
+            or_(
+                Document.id.is_(None),
+                Document.is_available.is_(False),
+            )
+        )
+        .order_by(SearchIndex.document_id)
         .limit(config.batch_size)
     )
 
