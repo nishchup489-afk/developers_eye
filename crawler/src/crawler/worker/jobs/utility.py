@@ -141,6 +141,7 @@ def _create_discovered_targets(
         if normalized in seen or not is_allowed_host(normalized, list(allowed_hosts)):
             continue
         is_seed = (target_kind == "sitemap" and link.kind == "page") or (target_kind != "sitemap" and link.kind == "sitemap")
+        
         depth = 0 if is_seed else parent_depth + 1
         if depth > scope.max_depth or (link.kind == "page" and not scope.allows(normalized, depth)):
             continue

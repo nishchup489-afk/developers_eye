@@ -34,6 +34,15 @@ from backend.models.crawl_attempt import CrawlAttempt
 from crawler.writer.attempts import close_abandoned_attempts
 
 
+from datetime import timedelta
+
+from sqlalchemy import func, select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.models.source import Source
+from backend.models.crawler_frontier import CrawlTarget
+
+
 async def claim_targets(
     session: AsyncSession,
     limit: int = 10,
@@ -41,63 +50,106 @@ async def claim_targets(
     source_id: int | None = None,
 ) -> list[CrawlTarget]:
 
-    if limit <= 0:
-        raise ValueError("limit must be positive")
+    if limit < 1 or lease_seconds < 1:
+        raise ValueError("Invalid claim limit or lease duration")
 
-    if lease_seconds <= 0:
-        raise ValueError("lease_seconds must be positive")
-
-    if source_id is not None and source_id <= 0:
+    if source_id is not None and source_id < 1:
         raise ValueError("source_id must be positive")
 
-    # Select eligible queued targets
-    statement = select(CrawlTarget).where(
-        CrawlTarget.state == "queued",
-        CrawlTarget.next_fetch_at <= func.now(),
-    )
+    claimed: list[CrawlTarget] = []
+    unavailable: set[int] = set()
 
-    # Optional source-specific filtering
-    if source_id is not None:
-        statement = statement.where(
-            CrawlTarget.source_id == source_id
+    while len(claimed) < limit:
+
+        eligible = (
+            select(CrawlTarget.id)
+            .where(
+                CrawlTarget.source_id == Source.id,
+                CrawlTarget.state == "queued",
+                CrawlTarget.next_fetch_at <= func.now(),
+            )
+            .correlate(Source)
+            .exists()
         )
 
-    statement = (
-        statement
-        .order_by(
-            CrawlTarget.priority.desc(),
-            CrawlTarget.next_fetch_at.asc(),
-            CrawlTarget.id.asc(),
+        source_query = select(Source.id).where(
+            Source.is_enabled.is_(True),
+            eligible,
         )
-        .limit(limit)
-        .with_for_update(skip_locked=True)
-    )
 
-    result = await session.scalars(statement)
-    targets = result.all()
+        if source_id is not None:
+            source_query = source_query.where(
+                Source.id == source_id
+            )
 
-    target_ids = [target.id for target in targets]
+        if unavailable:
+            source_query = source_query.where(
+                Source.id.not_in(unavailable)
+            )
 
-    if not target_ids:
-        return []
-
-    # Lease the selected targets
-    update_statement = (
-        update(CrawlTarget)
-        .where(CrawlTarget.id.in_(target_ids))
-        .values(
-            state="leased",
-            lease_until=func.clock_timestamp() + func.make_interval(
-                0, 0, 0, 0, 0, 0, lease_seconds
-            ),
+        source_query = (
+            source_query
+            .order_by(
+                Source.last_claimed_at.asc().nulls_first(),
+                Source.id.asc(),
+            )
+            .limit(1)
+            .with_for_update(
+                of=Source,
+                skip_locked=True,
+            )
         )
-        .returning(CrawlTarget)
-        .execution_options(populate_existing=True)
-    )
 
-    result = await session.scalars(update_statement)
+        selected_source = await session.scalar(source_query)
 
-    return list(result.all())
+        if selected_source is None:
+            break
+
+        target_query = (
+            select(CrawlTarget)
+            .where(
+                CrawlTarget.source_id == selected_source,
+                CrawlTarget.state == "queued",
+                CrawlTarget.next_fetch_at <= func.now(),
+            )
+            .order_by(
+                CrawlTarget.priority.desc(),
+                CrawlTarget.depth.asc(),
+                CrawlTarget.next_fetch_at.asc(),
+                CrawlTarget.id.asc(),
+            )
+            .limit(1)
+            .with_for_update(
+                of=CrawlTarget,
+                skip_locked=True,
+            )
+        )
+
+        target = await session.scalar(target_query)
+
+        if target is None:
+            unavailable.add(selected_source)
+            continue
+
+        now = await session.scalar(
+            select(func.clock_timestamp())
+        )
+
+        target.state = "leased"
+        target.lease_until = now + timedelta(
+            seconds=lease_seconds
+        )
+
+        await session.execute(
+            update(Source)
+            .where(Source.id == selected_source)
+            .values(last_claimed_at=now)
+        )
+
+        await session.flush()
+        claimed.append(target)
+
+    return claimed
 
 
 
