@@ -34,10 +34,12 @@ removed = await remove_candidate(SessionFactory, document_id)
 From `crawler/`:
 
 ```powershell
-poetry run pytest src/indexer/tests/test_service_writer.py -v
+poetry run pytest src/indexer/tests -v -rs
 ```
 
-Unit tests use mocks and do not connect to PostgreSQL. Before production deployment, add database integration tests for concurrent writers, source update while waiting on a lock, and the `code_vector` schema migration.
+`test_service_writer.py` uses mocks and does not connect to PostgreSQL. `test_indexer.py` adds an opt-in end-to-end lifecycle test against PostgreSQL TEMP tables when `TEST_DATABASE_URL` is set. See [tests/README.md](tests/README.md) for setup and [tests/test_case.md](tests/test_case.md) for what each test covers.
+
+Still not covered before production deployment: concurrent writers, a source update while waiting on the lock, and the `code_vector` schema migration.
 
 ## Status and failures
 

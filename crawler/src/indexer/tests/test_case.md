@@ -1,6 +1,17 @@
 # Indexer test cases
 
-Tests for the search indexer: `selector -> builder -> analyzer -> vector -> repository`. Run from `crawler/` with `poetry run pytest src/indexer/tests -v`. Tests that need PostgreSQL are skipped unless `TEST_DATABASE_URL` is set.
+Tests for the search indexer: `selector -> service (builder -> analyzer -> vector) -> writer -> repository`. Run from `crawler/` with `poetry run pytest src/indexer/tests -v`. Tests that need PostgreSQL are skipped unless `TEST_DATABASE_URL` is set. See `README.md` in this folder for setup.
+
+| File | Layer | Needs PostgreSQL |
+| --- | --- | --- |
+| `test_builder.py` | builder | No |
+| `test_analyzer.py` | analyzer | No |
+| `test_vector.py` | vector | One optional test |
+| `test_selector.py` | selector | Yes (skipped without it) |
+| `test_repository.py` | repository | No (mocked session) |
+| `test_service_writer.py` | service and writer | No (mocked repository) |
+| `test_pipeline.py` | builder to analyzer contract | No |
+| `test_indexer.py` | full lifecycle | One test yes, one no |
 
 ## conftest.py
 
@@ -94,6 +105,44 @@ Contract tests for the persistence adapter with a mocked `AsyncSession` (no live
 | `test_upsert_rejects_invalid_hash` | An empty hash, a `v0:` version, non-hex, or uppercase hex raises `ValueError` before any SQL runs. |
 | `test_repository_rejects_invalid_document_ids` | `0`, `-1`, `True`, and `"10"` raise `ValueError` in get, lock, and delete, with no SQL run. |
 | `test_delete_is_idempotent_and_does_not_commit` | `delete_search_index` uses `DELETE ... RETURNING`, returns `True` when a row was removed and `False` when none existed, and does not commit. |
+
+## test_service_writer.py
+
+Unit tests for `writer.py` and `service.py` orchestration. The repository functions and pipeline steps are monkeypatched and a fake session factory is used, so no database is needed.
+
+| Test | What it checks |
+| --- | --- |
+| `test_writer_new_index` | `persist_search_vectors` locks the document, finds no index row, upserts once, and returns `INDEXED`. |
+| `test_writer_unchanged_index` | When the stored hash matches and `indexed_at` is newer than the source, nothing is written and the result is `UNCHANGED`. |
+| `test_writer_rejects_stale` (4 cases) | A missing document, an unavailable document, a different `source_id`, or a source updated after the vectors were built returns `STALE` without upserting. |
+| `test_writer_rebuilds_outdated_timestamp` | Same hash but an `indexed_at` older than the source's `updated_at` is rewritten and returns `INDEXED`. |
+| `test_removal_guards_active_sources` (4 cases) | `remove_search_index` returns `REMOVED` when the document is gone or unavailable and a row was deleted, `SKIPPED` when there was no row to delete, and `STALE` (without deleting) when the document is available again. |
+| `test_service_full_index` | `index_candidate` runs build, hash, analyze, and vectors, calls the writer once, and returns `INDEXED` with the hash and a non-negative `duration_ms`. |
+| `test_service_marks_stale` | A `StaleIndexSourceError` from the builder becomes a `STALE` result and nothing is persisted. |
+| `test_service_does_not_swallow_database_errors` | Unexpected errors such as a database outage are re-raised for the worker to handle. |
+| `test_service_remove_result` | `remove_candidate` returns the document ID with the writer's `REMOVED` status. |
+
+## test_indexer.py
+
+End-to-end smoke tests for `selector -> service -> writer -> repository`. (The docstring's run command still mentions the old name `test_final_indexer.py`; the file is `test_indexer.py`.)
+
+| Test | What it checks |
+| --- | --- |
+| `test_final_local_document_to_sql_expression` | No database. A real `Document` row goes through `prepare_index_document` (duplicate tags collapsed), `calculate_index_hash` (`v2:` prefix), `analyze_index_document` (title at weight A, a `code_blocks` code field), and `build_search_vectors`. The compiled SQL uses `setweight` and `to_tsvector`, and document text is bound rather than put into the SQL. |
+| `test_final_indexer_lifecycle_against_postgresql` | Needs `TEST_DATABASE_URL` (asyncpg). Uses only TEMP `document` and `search_index` tables on one connection, so real tables are never touched. It walks the full lifecycle listed below. |
+
+The lifecycle steps in `test_final_indexer_lifecycle_against_postgresql`:
+
+1. Insert one document into the temp table.
+2. The selector returns it as a candidate.
+3. `index_candidate` returns `INDEXED` with a `v2:` hash, and real full-text search matches `python` (english) and `async` (simple code vector). The selector then returns nothing.
+4. Indexing the same revision again returns `UNCHANGED` and keeps the hash.
+5. Vectors built before the document was edited are rejected as `STALE` by `persist_search_vectors`, and the stored index is unchanged.
+6. The old candidate is `STALE`; a fresh candidate reindexes with a new hash, and the new term becomes searchable.
+7. Changing `index_version` to 3 reselects the document and rebuilds it with a `v3:` hash.
+8. Marking the document unavailable removes it from candidates and adds it to removals; `remove_candidate` returns `REMOVED`, then `SKIPPED` the second time.
+9. Making it available again lets it be reindexed, and a late removal returns `STALE` without deleting the index.
+10. Hard-deleting the document cascades and removes its index row.
 
 ## test_pipeline.py
 
