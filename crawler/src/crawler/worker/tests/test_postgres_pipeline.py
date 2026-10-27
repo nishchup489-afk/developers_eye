@@ -156,7 +156,8 @@ def test_removed_page_invalidates_index_and_recovers_when_restored(monkeypatch):
             await process_job(target, session_factory=factory, politeness_manager=manager)
             async with factory() as session, session.begin():
                 document = await session.scalar(select(Document).where(Document.source_id == source_id))
-                session.add(SearchIndex(document_id=document.id, search_vector=func.to_tsvector('english', document.body), indexed_hash=document.content_hash))
+                session.add(SearchIndex(document_id=document.id, search_vector=func.to_tsvector('english', document.body),
+                    code_vector=func.to_tsvector('simple', ''), indexed_hash=document.content_hash))
             for status in [404, 200]:
                 async with factory() as session, session.begin():
                     await session.execute(update(CrawlTarget).where(CrawlTarget.source_id == source_id,

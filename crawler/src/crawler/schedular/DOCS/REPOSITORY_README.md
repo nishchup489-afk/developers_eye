@@ -37,10 +37,12 @@ Now the claim works in **two levels**:
    - -> a source that was never claimed goes first.
    - -> after that, whoever waited the longest.
    - -> `id` only breaks ties.
-- only **one** source is picked per loop step (`LIMIT 1 ... FOR UPDATE OF source SKIP LOCKED`).
-- after a target is leased, that source gets `last_claimed_at = clock_timestamp()`. So it moves to the **back of the line**, and the next loop step picks someone else.
+- this order is read **once per call** (up to `limit` sources) and **without locking** the source rows. the turns inside the call happen in memory: a source that just gave a target goes to the **back of the queue**.
+- at the end of the call, every source that gave a target gets `last_claimed_at` = the `clock_timestamp()` of its last claim in this call. So it moves to the **back of the line** for the next call too.
 
 `clock_timestamp()` (not `now()`) matters here: `now()` is frozen for the whole transaction, so every source claimed in one batch would get the same time and the order would collapse. `clock_timestamp()` keeps moving, so the order inside one batch is kept.
+
+**why the source row is not locked:** the first version picked the source with `FOR UPDATE OF source SKIP LOCKED`. row locks stay until commit, so a second worker claiming at the same moment skipped that source completely and got `[]` when it was the only source with due work. now only the *targets* are locked (`SKIP LOCKED`), so two workers can take different URLs from the same source at the same time. Full reasoning and numbers: [ADR-0001](../../../../../0_tech_docs/crawler/scheduler-and-leases/ADR-0001-round-robin-claims-without-source-locks.md), [EXP-0001](../../../../../0_tech_docs/crawler/scheduler-and-leases/EXP-0001-claim-path-concurrency-benchmark.md).
 
 ### Level 2: BFS inside the chosen source
 
@@ -60,12 +62,12 @@ FOR UPDATE OF crawl_target SKIP LOCKED
 
 `claim_targets(session, limit, lease_seconds, source_id)` runs this loop until it has `limit` targets:
 
-1. pick the next source (level 1). if there is none, stop and return what we have.
-2. pick that source's best target (level 2).
-3. if no target came back (all of its due targets are locked by another worker right now), put the source in the `unavailable` set and go back to 1, so we don't pick it again in this call.
-4. lease the target: `state = 'leased'`, `lease_until = clock_timestamp() + lease_seconds`.
-5. set the source's `last_claimed_at = clock_timestamp()` (moves it to the back).
-6. `flush()` and add the target to the result.
+1. read the round-robin order of up to `limit` sources (level 1, no lock) into a queue.
+2. take the source at the front and pick its best target (level 2, `SKIP LOCKED`).
+3. if no target came back (nothing due, or all of its due targets are locked by another worker right now), drop the source for this call and go back to 2. if the queue is empty and the last page was full, read the next page of sources (skipping the ones already seen); otherwise stop.
+4. lease the target: `state = 'leased'`, `lease_until = clock_timestamp() + lease_seconds`, then `flush()`. the flush matters: `SKIP LOCKED` only skips rows locked by *other* transactions, so without it the next query could return the same target again.
+5. add the target to the result, remember the time as this source's turn, and put the source at the back of the queue.
+6. when the loop ends, write `last_claimed_at = GREATEST(last_claimed_at, <its turn time>)` for each source that gave a target, in **ascending source id** order. every worker takes these row locks in the same order, so two claims can wait a moment on each other but never deadlock. `GREATEST` stops a slower claim from moving the clock backwards.
 
 ### Example
 
@@ -88,8 +90,10 @@ C has nothing left after its first turn, so it drops out and A and B keep taking
 
 ### Things to know
 
-- **one source per claim transaction at a time.** the source row is locked with `FOR UPDATE SKIP LOCKED` until the claiming transaction commits. so if two workers claim at the same moment and there is only one source with due work, the second worker skips it and gets `[]` for that round. with many sources each worker just takes a different source. (this is why `test_concurrent_claims_atomic_writes_and_shared_source_budget`, two parallel claims on the same source, now gets 2 and 0 instead of 2 and 2.)
-- it costs up to two small queries plus one `UPDATE source` per claimed target, instead of one query for the whole batch. fine for batch sizes like 10.
+- **many workers, one source is fine.** workers that claim at the same moment get different targets of the same source (checked by `tests/test_concurrent_claims.py` and the worker pipeline test).
+- **fairness under concurrency is approximate.** two workers that claim at the exact same moment read the same order, so both may start with the same source. when claims run one after another, the order is exact (A B C A B A).
+- **a claim can wait a few ms at the end.** if another worker's open claim already updated the same source's `last_claimed_at`, this claim waits for that transaction to commit. the runner commits right after claiming, so keep the claim transaction short.
+- it costs one source query per call, then one target query plus a flush per claimed target, and one `UPDATE source` per source used. EXP-0001: about 40 to 80 ms for `limit=10` on a dev container.
 - `priority.py` (`calculate_priority()`) gives the priority numbers BFS sorts on: seed 100, sitemap 90, API 85, reference paths 80, guide paths 70, RSS 60, other pages 50. it is not wired into the frontier yet, so targets keep whatever priority they were created with.
 - the docstring at the top of `repository.py` still describes the old single-query plan.
 

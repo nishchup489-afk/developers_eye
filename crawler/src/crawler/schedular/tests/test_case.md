@@ -1,6 +1,6 @@
 # Scheduler test cases
 
-Integration tests for `crawler.schedular.repository`. All four files are script-style (`python <file>`, with a `main()` and a selector event loop on Windows). Each one opens a real PostgreSQL transaction, creates a uniquely named temporary `Source` and `CrawlTarget` rows, and rolls everything back at the end. `test1_report.md` and `image.png` in this folder are an earlier run report.
+Integration tests for `crawler.schedular.repository`. Four files are script-style (`python <file>`, with a `main()` and a selector event loop on Windows). Each one opens a real PostgreSQL transaction, creates a uniquely named temporary `Source` and `CrawlTarget` rows, and rolls everything back at the end. `test1_report.md` and `image.png` in this folder are an earlier run report. `test_concurrent_claims.py` is a pytest file instead, because it needs committed rows and two connections; `bench_claim.py` is a benchmark, not a test.
 
 ## test_repository.py
 
@@ -61,3 +61,16 @@ Failure handling and retry backoff (`calculate_retry_delay`, `fail_target`). Use
 | Delay cap | The seventh failure retries after 3600 s; at 21 failures the counter keeps increasing but the delay stays at 3600 s. |
 | Lease ownership | A duplicate failure report returns `False` and does not increment the count. A mismatched or expired lease returns `False` and leaves the target `leased` with count `0`. A nonexistent target ID returns `False`. |
 | Parameter validation | `calculate_retry_delay` rejects `failure_count=0`, `base_delay_seconds=0`, and a max delay below the base. `fail_target` rejects target ID `0`, a zero base delay, a max below the base, and a timezone-naive lease, all with `ValueError`. |
+
+## test_concurrent_claims.py
+
+Concurrent claiming on committed rows (pytest, 4 tests). Needs `TEST_DATABASE_URL` pointing at a dedicated database with `test` in its name. Each test creates its own sources and targets, disables other sources while it runs, and deletes its rows and re-enables the others afterwards. Why claims work this way: [ADR-0001](../../../../../0_tech_docs/crawler/scheduler-and-leases/ADR-0001-round-robin-claims-without-source-locks.md). All four tests fail on the first round-robin version (source row locked during the claim) and pass now.
+
+| Test | What it verifies |
+| --- | --- |
+| Single source, overlapping claims | One source with 6 targets. A first transaction claims 3 and stays open while a second transaction claims. The second also gets 3, with no target in both, and all 6 end up `leased`. |
+| Multi source, overlapping claims | Two sources with 4 targets each. Two overlapping `limit=2` claims each get exactly one target from each source, with no overlap. A third claim also gets one from each source. |
+| Parallel drain, 1 x 60 | 4 workers loop claim-and-commit until nothing is due. Every target is claimed exactly once, and no worker gets `[]` while an unlocked due target exists. |
+| Parallel drain, 6 x 10 | Same as above with 6 sources, and every source ends up with `last_claimed_at` set. |
+
+A `lock_timeout` of 5 s on the test connections turns a lock wait that never ends into a failure instead of a hang.

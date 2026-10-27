@@ -2,7 +2,7 @@
 
 What each test checks is in [test_case.md](test_case.md). `test1_report.md` and `image.png` are an earlier run report.
 
-All four files are standalone scripts, not pytest tests. Each one needs PostgreSQL through the backend's `DATABASE_URL`, with migrations applied. They create a uniquely named temporary source and targets inside one transaction and roll it back, so nothing is left behind. Still, point them at a development or test database, never production.
+The four scripts below are standalone, not pytest tests. Each one needs PostgreSQL through the backend's `DATABASE_URL`, with migrations applied. They create a uniquely named temporary source and targets inside one transaction and roll it back, so nothing is left behind. Still, point them at a development or test database, never production.
 
 From the repository root:
 
@@ -18,6 +18,24 @@ Each prints PASS lines and a final success message, then `Test transaction rolle
 On Windows the scripts switch to a selector event loop themselves, which asyncpg needs.
 
 `test_round_robin` disables every other source inside its transaction so only its own sources take turns. The rollback restores them, but while it runs it holds row locks on the whole `source` table, so do not run it while a crawler worker is using the same database.
+
+### Concurrent claim tests (pytest)
+
+`test_concurrent_claims.py` needs committed rows, so it is a pytest file like the worker tests. It runs only when `TEST_DATABASE_URL` points at a migrated, dedicated database with `test` in its name. From `crawler/`:
+
+```powershell
+$env:TEST_DATABASE_URL = "postgresql+asyncpg://user:pass@localhost/developers_eye_test"
+poetry run pytest src/crawler/schedular/tests/test_concurrent_claims.py -v
+```
+
+### Claim benchmark
+
+`bench_claim.py` measures `claim_targets()` latency and how fast 1, 4 and 8 workers drain the frontier. It takes the `repository.py` to measure, so you can compare an old copy with the current one. Results and the exact commands are in [EXP-0001](../../../../../0_tech_docs/crawler/scheduler-and-leases/EXP-0001-claim-path-concurrency-benchmark.md). It needs `BENCH_DATABASE_URL`, also a database with `test` in its name.
+
+```powershell
+$env:BENCH_DATABASE_URL = $env:TEST_DATABASE_URL
+poetry run python src/crawler/schedular/tests/bench_claim.py src/crawler/schedular/repository.py current
+```
 
 <!-- docs-nav:start -->
 ## Documentation map

@@ -34,6 +34,7 @@ from backend.models.crawl_attempt import CrawlAttempt
 from crawler.writer.attempts import close_abandoned_attempts
 
 
+from collections import deque
 from datetime import timedelta
 
 from sqlalchemy import func, select, update
@@ -56,56 +57,61 @@ async def claim_targets(
     if source_id is not None and source_id < 1:
         raise ValueError("source_id must be positive")
 
-    claimed: list[CrawlTarget] = []
-    unavailable: set[int] = set()
-
-    while len(claimed) < limit:
-
-        eligible = (
-            select(CrawlTarget.id)
-            .where(
-                CrawlTarget.source_id == Source.id,
-                CrawlTarget.state == "queued",
-                CrawlTarget.next_fetch_at <= func.now(),
-            )
-            .correlate(Source)
-            .exists()
+    eligible = (
+        select(CrawlTarget.id)
+        .where(
+            CrawlTarget.source_id == Source.id,
+            CrawlTarget.state == "queued",
+            CrawlTarget.next_fetch_at <= func.now(),
         )
+        .correlate(Source)
+        .exists()
+    )
 
-        source_query = select(Source.id).where(
+    # Round-robin order: never-claimed sources first, then the one that
+    # waited longest. Source rows are NOT locked here, so several workers
+    # can claim different targets of the same source at the same time.
+    source_query = (  # round robin
+        select(Source.id)
+        .where(
             Source.is_enabled.is_(True),
             eligible,
         )
-
-        if source_id is not None:
-            source_query = source_query.where(
-                Source.id == source_id
-            )
-
-        if unavailable:
-            source_query = source_query.where(
-                Source.id.not_in(unavailable)
-            )
-
-        source_query = (  # round robin
-            source_query
-            .order_by(
-                Source.last_claimed_at.asc().nulls_first(),
-                Source.id.asc(),
-            )
-            .limit(1)
-            .with_for_update(
-                of=Source,
-                skip_locked=True,
-            )
+        .order_by(
+            Source.last_claimed_at.asc().nulls_first(),
+            Source.id.asc(),
         )
+        .limit(limit)
+    )
 
-        selected_source = await session.scalar(source_query)
+    if source_id is not None:
+        source_query = source_query.where(Source.id == source_id)
 
-        if selected_source is None:
-            break
+    claimed: list[CrawlTarget] = []
+    turns: dict[int, datetime] = {}
+    seen: set[int] = set()
+    queue: deque[int] = deque()
+    more_sources = True
 
-        target_query = ( # priority scheduling
+    while len(claimed) < limit:
+
+        if not queue:
+            if not more_sources:
+                break
+
+            page = list(await session.scalars(
+                source_query.where(Source.id.not_in(seen)) if seen else source_query
+            ))
+            seen.update(page)
+            queue.extend(page)
+            more_sources = len(page) == limit
+
+            if not queue:
+                break
+
+        selected_source = queue.popleft()
+
+        target_query = (  # priority scheduling
             select(CrawlTarget)
             .where(
                 CrawlTarget.source_id == selected_source,
@@ -127,8 +133,9 @@ async def claim_targets(
 
         target = await session.scalar(target_query)
 
+        # Nothing due, or every due target is leased by another worker:
+        # drop the source for the rest of this call.
         if target is None:
-            unavailable.add(selected_source)
             continue
 
         now = await session.scalar(
@@ -140,14 +147,28 @@ async def claim_targets(
             seconds=lease_seconds
         )
 
-        await session.execute(
-            update(Source)
-            .where(Source.id == selected_source)
-            .values(last_claimed_at=now)
-        )
-
+        # Flush now: SKIP LOCKED does not skip rows this transaction
+        # already locked, so the next query must see this one as leased.
         await session.flush()
         claimed.append(target)
+
+        turns[selected_source] = now
+        queue.append(selected_source)
+
+    # Record each source's last turn. Updating in source-id order gives every
+    # worker the same lock order, so two claims can wait on each other's
+    # source rows but never deadlock. GREATEST keeps the clock moving forward.
+    for claimed_source in sorted(turns):
+        await session.execute(
+            update(Source)
+            .where(Source.id == claimed_source)
+            .values(
+                last_claimed_at=func.greatest(
+                    Source.last_claimed_at,
+                    turns[claimed_source],
+                )
+            )
+        )
 
     return claimed
 
