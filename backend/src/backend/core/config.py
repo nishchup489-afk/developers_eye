@@ -11,6 +11,8 @@ class Settings(BaseSettings):
 
     database_url : str  
     crawler_report_api_key: SecretStr | None = None
+    # Must match the indexer worker's INDEXER_INDEX_VERSION.
+    indexer_index_version: int = 1
 
 
     model_config = SettingsConfigDict(
