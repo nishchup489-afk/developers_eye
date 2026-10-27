@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import Link from "next/link";
 import { Activity, ArrowDownToLine, ArrowRight, ChevronRight, CircleAlert, Database, FileSearch, Gauge, Layers3, Loader2, Pause, Play, Radio, RefreshCw, Search, ShieldCheck } from "lucide-react";
 import { isCrawlerReport, type CrawlerReport } from "@/lib/crawler-report";
 import { isCrawlMonitor, object, type CrawlEvent, type CrawlMonitor } from "@/lib/crawler-monitor";
+import { isIndexerReport, statusLabel, type IndexerReport } from "@/lib/indexer-report";
 import CrawlInspector, { Badge, Url, type Inspection } from "./crawl-inspector";
 
 const n = (value: number) => value.toLocaleString("en-US");
@@ -12,7 +14,7 @@ const time = (value: string | null) => value ? new Date(value).toLocaleString() 
 const duration = (seconds: number) => seconds < 60 ? `${Math.floor(seconds)}s` : seconds < 3600 ? `${Math.floor(seconds / 60)}m` : `${Math.floor(seconds / 3600)}h ${Math.floor(seconds % 3600 / 60)}m`;
 const tabs = [["overview", "Overview"], ["activity", "Live activity"], ["documents", "Documents"], ["frontier", "URL frontier"], ["sources", "Source health"], ["errors", "Errors"], ["workers", "Workers"]];
 
-function usePolling<T>(url: string, validate: (v: unknown) => v is T, interval: number, enabled: boolean, refresh: number) {
+export function usePolling<T>(url: string, validate: (v: unknown) => v is T, interval: number, enabled: boolean, refresh: number) {
   const [snapshot, setSnapshot] = useState<{ url: string; data: T } | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -25,8 +27,8 @@ function usePolling<T>(url: string, validate: (v: unknown) => v is T, interval: 
       try {
         const response = await fetch(url, { cache: "no-store", signal: controller.signal });
         const data: unknown = await response.json();
-        if (!response.ok) throw new Error(response.status === 401 ? "Your admin session expired. Sign in again." : object(data) && typeof data.error === "string" ? data.error : "The crawler report is unavailable.");
-        if (!validate(data)) throw new Error("The crawler returned an invalid snapshot.");
+        if (!response.ok) throw new Error(response.status === 401 ? "Your admin session expired. Sign in again." : object(data) && typeof data.error === "string" ? data.error : "The report is unavailable.");
+        if (!validate(data)) throw new Error("The service returned an invalid snapshot.");
         if (!stopped) { setSnapshot({ url, data }); setError(""); }
       } catch (e) { if (!stopped) setError(e instanceof Error ? e.message : "Could not load snapshot."); }
       finally { busy = false; if (!stopped) setLoading(false); }
@@ -38,10 +40,10 @@ function usePolling<T>(url: string, validate: (v: unknown) => v is T, interval: 
   return { data: snapshot?.url === url ? snapshot.data : null, error, loading };
 }
 
-function Panel({ title, eyebrow, action, children, className = "" }: { title: string; eyebrow?: string; action?: ReactNode; children: ReactNode; className?: string }) {
+export function Panel({ title, eyebrow, action, children, className = "" }: { title: string; eyebrow?: string; action?: ReactNode; children: ReactNode; className?: string }) {
   return <section className={`admin-panel cc-panel ${className}`}><div className="cc-panel-heading"><div>{eyebrow && <span className="admin-kicker">{eyebrow}</span>}<h2>{title}</h2></div>{action}</div>{children}</section>;
 }
-function Empty({ children }: { children: ReactNode }) { return <div className="cc-empty"><FileSearch size={25} /><p>{children}</p></div>; }
+export function Empty({ children }: { children: ReactNode }) { return <div className="cc-empty"><FileSearch size={25} /><p>{children}</p></div>; }
 function Pager({ page, more, onChange }: { page: number; more: boolean; onChange: (page: number) => void }) {
   return <div className="cc-pagination"><button className="admin-button secondary" disabled={!page} onClick={() => onChange(page - 1)}>Previous</button><span>Page {page + 1} · up to 30 records</span><button className="admin-button secondary" disabled={!more || page >= 10000} onClick={() => onChange(page + 1)}>Next</button></div>;
 }
@@ -75,7 +77,8 @@ export default function CrawlerControlCenter() {
   if (beforeEvent) params.set("before_event_id", String(beforeEvent));
   const monitor = usePolling(`/api/admin/crawler/monitor?${params}`, isCrawlMonitor, 5000, auto && !beforeEvent, refresh);
   const report = usePolling(`/api/admin/crawler/report?days=${days}&top_sources=100&recent_errors=100`, isCrawlerReport, 30000, auto, refresh);
-  const m = monitor.data, r = report.data;
+  const indexer = usePolling("/api/admin/indexer/report", isIndexerReport, 15000, auto, refresh);
+  const m = monitor.data, r = report.data, ix = indexer.data;
   const stale = !!m && clock > 0 && clock - Date.parse(m.generated_at) > 20000;
   const live = !!m && !monitor.error && !stale && auto;
   const errors = m?.events.filter(e => ["failed", "blocked", "stale"].includes(e.outcome)) ?? [];
@@ -88,7 +91,7 @@ export default function CrawlerControlCenter() {
   return <>
     <header className="admin-topbar"><div><span>Workspace</span><ChevronRight size={13} /><strong>Crawler</strong></div><span className="admin-readonly"><ShieldCheck size={13} /> Read-only monitoring</span></header>
     <main className="admin-main cc-main" id="main-content">
-      <div className="admin-page-heading"><div><div className="admin-kicker"><Radio size={12} /> CRAWLER CONTROL CENTER · LOCAL</div><h1>Every crawl.<br /><span>In clear sight</span><span className="admin-heading-dot">.</span></h1><p>Follow the pipeline from a URL in the queue to the content you actually keep.</p></div><div className="cc-heading-actions"><span className={`cc-worker-status ${live && m.active_workers ? "online" : ""}`}><span className="admin-tiny-dot" />{!m ? "Worker status unavailable" : !live ? "Worker status at snapshot" : m.active_workers ? `${m.active_workers} worker${m.active_workers === 1 ? "" : "s"} online` : "No worker online"}</span><button className="admin-button secondary" onClick={download} disabled={!m && !r}><ArrowDownToLine size={15} /> Export snapshot</button></div></div>
+      <div className="admin-page-heading"><div><div className="admin-kicker"><Radio size={12} /> CRAWLER CONTROL CENTER · LOCAL</div><h1>Every crawl.<br /><span>In clear sight</span><span className="admin-heading-dot">.</span></h1><p>Follow the pipeline from a URL in the queue to the content you actually keep.</p></div><div className="cc-heading-actions"><span className={`cc-worker-status ${live && m.active_workers ? "online" : ""}`}><span className="admin-tiny-dot" />{!m ? "Worker status unavailable" : !live ? "Worker status at snapshot" : m.active_workers ? `${m.active_workers} worker${m.active_workers === 1 ? "" : "s"} online` : "No worker online"}</span><Link href="/admin/indexer" className={`cc-worker-status ${auto && ix?.activity.status === "indexing" ? "online" : ""}`}><span className="admin-tiny-dot" />{ix ? `Indexer: ${statusLabel[ix.activity.status].toLowerCase()}` : "Indexer status unavailable"}</Link><button className="admin-button secondary" onClick={download} disabled={!m && !r}><ArrowDownToLine size={15} /> Export snapshot</button></div></div>
       <div className="cc-control-bar"><label><span>Window</span><select value={days} aria-label="Report window" onChange={e => { setDays(Number(e.target.value)); setBeforeEvent(null); }}><option value={1}>Today (UTC)</option><option value={7}>7 UTC days</option><option value={30}>30 UTC days</option><option value={90}>90 UTC days</option></select></label><label><span>Source</span><select value={source} aria-label="Filter source" onChange={e => resetSource(e.target.value)}><option value="">All sources</option>{(m?.sources ?? []).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</select></label><div className="cc-refresh-controls"><button className="admin-button secondary" onClick={() => setAuto(v => !v)} aria-pressed={auto}>{auto ? <Pause size={13} /> : <Play size={13} />}{auto ? "Auto-refresh · 5s" : "Refresh paused"}</button><button className="admin-icon-button" disabled={monitor.loading || report.loading} aria-label="Refresh dashboard" onClick={() => setRefresh(v => v + 1)}><RefreshCw size={15} className={monitor.loading ? "admin-spin" : ""} /></button></div></div>
       <div className="cc-connection" role="status"><span className={`admin-tiny-dot ${live ? "" : "amber"}`} />{monitor.loading ? "Reading committed activity…" : monitor.error ? "Monitoring connection interrupted" : live ? "Connected to crawler monitoring" : "Snapshot view"}<span>{m ? `Updated ${time(m.generated_at)}` : "Waiting for real crawler data"}</span></div>
       {(monitor.error || report.error) && <div className="admin-alert" role="alert"><CircleAlert size={19} /><div><strong>{m || r ? "Some data may be out of date" : "Crawler data is unavailable"}</strong><p>{monitor.error || report.error}</p><a className="admin-text-link" href="/admin/login">Sign in again if your session expired</a></div><button className="admin-button secondary" onClick={() => setRefresh(v => v + 1)}>Retry</button></div>}
@@ -99,7 +102,7 @@ export default function CrawlerControlCenter() {
           <div className="cc-grid"><Throughput monitor={m} /><Pipeline monitor={m} /></div>
           <Panel title="Fetching right now" eyebrow="ACTIVE TASKS · HEARTBEAT EVERY 5s" action={<Badge value={live ? "live" : "snapshot"} />}><ActiveWorkers monitor={m} /></Panel>
           <div className="cc-grid cc-grid-equal"><Panel title="Live crawl activity" eyebrow="LATEST 12 STAGE EVENTS" action={<button className="admin-text-link" onClick={() => setTab("activity")}>All activity <ArrowRight size={14} /></button>}><EventList events={m.events.slice(0, 12)} onInspect={setSelection} /></Panel><Panel title="Look inside your content" eyebrow="DOCUMENT INSPECTOR" action={<FileSearch size={20} />}><p className="cc-panel-intro">A successful request is only the beginning. Open a document to inspect the exact text and metadata in your database.</p><DocumentList monitor={m} onInspect={setSelection} compact /><button className="cc-panel-link" onClick={() => setTab("documents")}>Browse persisted documents <ArrowRight size={14} /></button></Panel></div>
-          <Performance monitor={m} /><FrontierSummary report={r} />
+          <Performance monitor={m} /><FrontierSummary report={r} /><IndexerSummary report={ix} error={indexer.error} />
         </>}
         {["activity", "errors", "documents", "frontier"].includes(tab) && <div className="cc-filters"><label className="admin-search"><Search size={15} /><input value={search} maxLength={200} onChange={e => setSearch(e.target.value)} placeholder={tab === "documents" ? "Search stored titles or canonical URLs" : "Search URLs"} aria-label="Search crawler records" /></label>{["activity", "errors"].includes(tab) && <><select aria-label="Event outcome" value={status} onChange={e => { setStatus(e.target.value); setBeforeEvent(null); }}><option value="">All outcomes</option>{["running", "success", "failed", "blocked", "skipped", "persisted", "not_stored", "duplicate", "unchanged", "not_modified", "stale"].map(s => <option key={s} value={s}>{s.replaceAll("_", " ")}</option>)}</select><select aria-label="Pipeline stage" value={category} onChange={e => { setCategory(e.target.value); setBeforeEvent(null); }}><option value="">All stages</option>{["fetch", "parse", "process", "dedup", "store", "discover", "finalize", "worker"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></>}{tab === "frontier" && <select value={frontierState} aria-label="Frontier state" onChange={e => { setFrontierState(e.target.value); setFrontierPage(0); }}><option value="">All targets</option>{["due", "scheduled", "leased", "expired", "retry", "blocked", "disabled"].map(s => <option key={s} value={s}>{s}</option>)}</select>}<button className="admin-text-link" onClick={() => { setSearch(""); setStatus(""); setCategory(""); setFrontierState(""); setBeforeEvent(null); }}>Clear filters</button></div>}
         {tab === "activity" && <Panel title={beforeEvent ? "Earlier crawl activity" : "Live crawl activity"} eyebrow="ACTUAL WORKER CHECKPOINTS"><EventList events={m.events} onInspect={setSelection} /><div className="cc-pagination"><span>Latest {m.events.length} matching stage events</span>{beforeEvent && <button className="admin-button secondary" onClick={() => setBeforeEvent(null)}>Back to latest</button>}<button className="admin-button secondary" disabled={!m.events_has_more} onClick={() => { setAuto(false); setBeforeEvent(m.events.at(-1)?.id ?? null); }}>Earlier events</button></div></Panel>}
@@ -145,6 +148,11 @@ function ActiveWorkers({ monitor: m }: { monitor: CrawlMonitor }) {
 function Performance({ monitor: m }: { monitor: CrawlMonitor }) {
   const s = m.summary;
   return <Panel title="Efficiency & latency" eyebrow="SELECTED WINDOW & SOURCE"><div className="cc-performance">{[["Fetch p50", metric(s.fetch_p50_ms, "ms")], ["Fetch p95", metric(s.fetch_p95_ms, "ms")], ["Storage mean", metric(s.storage_avg_ms, "ms")], ["Response mean", metric(s.response_avg_bytes == null ? null : s.response_avg_bytes / 1024, " KB")]].map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div><p className="cc-note">{n(s.fetch_samples)} measured fetches. Fetch timing includes policy checks, redirects and politeness waits. Storage timing measures finalization transaction work before commit.</p></Panel>;
+}
+function IndexerSummary({ report: x, error }: { report: IndexerReport | null; error: string }) {
+  if (!x) return error ? <Panel title="Search indexing" eyebrow="INDEXER"><p className="cc-note cc-warning">{error}</p></Panel> : null;
+  const c = x.coverage, a = x.activity;
+  return <Panel title="Search indexing" eyebrow="INDEXER · CURRENT STATE · ALL SOURCES" action={<Link className="admin-text-link" href="/admin/indexer">Indexer reports <ArrowRight size={14} /></Link>}><div className="cc-frontier-summary">{[["Coverage", metric(c.coverage_percent, "%")], ["Up to date", n(c.current_documents)], ["Pending", n(c.pending_documents)], ["Indexed / min", metric(a.docs_per_minute)], ["Indexed last hour", n(a.indexed_last_hour)]].map(([label, value]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}</div>{a.status === "backlog_waiting" && <p className="cc-note cc-warning">{n(c.pending_documents)} documents are waiting and nothing was indexed in the last 2 minutes. Check that the indexer worker is running.</p>}</Panel>;
 }
 function FrontierSummary({ report: r }: { report: CrawlerReport | null }) {
   if (!r) return null;

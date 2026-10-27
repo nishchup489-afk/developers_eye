@@ -15,11 +15,11 @@ from __future__ import annotations
 import argparse
 import asyncio
 import logging
-import sys
 from collections import Counter
 from dataclasses import dataclass, field, replace
 from time import perf_counter
 
+from rich.logging import RichHandler
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from indexer.config import IndexerConfig
@@ -28,6 +28,39 @@ from indexer.selector import select_index_candidates, select_removal_candidates
 from indexer.service import index_candidate, remove_candidate
 
 logger = logging.getLogger("indexer.worker.runner")
+
+_STATUS_COLORS = {
+    IndexStatus.INDEXED: "bold green",
+    IndexStatus.UNCHANGED: "cyan",
+    IndexStatus.STALE: "yellow",
+    IndexStatus.FAILED: "bold red",
+    IndexStatus.REMOVED: "magenta",
+    IndexStatus.SKIPPED: "dim",
+}
+
+
+def setup_logging(level: str = "INFO") -> None:
+    logging.basicConfig(
+        level=level.upper(),
+        format="%(message)s",
+        handlers=[
+            RichHandler(
+                rich_tracebacks=True,
+                show_path=False,
+                show_time=True,
+                markup=True,
+                log_time_format="[%H:%M:%S]",
+            )
+        ],
+        force=True,
+    )
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+
+
+def _colored_status(status: IndexStatus) -> str:
+    """Only trusted, fixed style names are placed in Rich markup."""
+    color = _STATUS_COLORS.get(status, "white")
+    return f"[{color}]{status.value.upper()}[/]"
 
 
 @dataclass(slots=True)
@@ -57,13 +90,20 @@ async def _process_index(
             result = await index_candidate(session_factory, candidate, config=config)
             if not isinstance(result, IndexResult):
                 raise TypeError("index_candidate must return IndexResult")
-            logger.info("INDEX document=%s status=%s duration_ms=%.1f", candidate.document_id,
-                        result.status.value, result.duration_ms)
+            logger.info(
+                "INDEX document=%s status=%s duration_ms=%.1f",
+                candidate.document_id,
+                _colored_status(result.status),
+                result.duration_ms,
+            )
             return result
         except Exception:
-            logger.exception("INDEX FAILED document=%s", candidate.document_id)
-            return IndexResult(document_id=candidate.document_id, status=IndexStatus.FAILED,
-                               details="unexpected indexing failure; see worker logs")
+            logger.exception("[bold red]INDEX FAILED[/] document=%s", candidate.document_id)
+            return IndexResult(
+                document_id=candidate.document_id,
+                status=IndexStatus.FAILED,
+                details="unexpected indexing failure; see worker logs",
+            )
 
 
 async def _process_removal(
@@ -76,13 +116,20 @@ async def _process_removal(
             result = await remove_candidate(session_factory, document_id)
             if not isinstance(result, IndexResult):
                 raise TypeError("remove_candidate must return IndexResult")
-            logger.info("REMOVE document=%s status=%s duration_ms=%.1f", document_id,
-                        result.status.value, result.duration_ms)
+            logger.info(
+                "REMOVE document=%s status=%s duration_ms=%.1f",
+                document_id,
+                _colored_status(result.status),
+                result.duration_ms,
+            )
             return result
         except Exception:
-            logger.exception("REMOVE FAILED document=%s", document_id)
-            return IndexResult(document_id=document_id, status=IndexStatus.FAILED,
-                               details="unexpected removal failure; see worker logs")
+            logger.exception("[bold red]REMOVE FAILED[/] document=%s", document_id)
+            return IndexResult(
+                document_id=document_id,
+                status=IndexStatus.FAILED,
+                details="unexpected removal failure; see worker logs",
+            )
 
 
 async def run_batch(
@@ -123,8 +170,8 @@ async def run_batch(
     results = await asyncio.gather(*tasks)
 
     outcomes = Counter(result.status.value for result in results)
-    # Always advance past attempted documents, even on FAILED/STALE. Otherwise
-    # a malformed document could cause an endless immediate retry loop.
+    # Advance past attempted documents, including FAILED/STALE, to avoid
+    # immediately retrying one problematic document within the same scan.
     index_end = len(candidates) < config.batch_size
     removal_end = len(removals) < config.batch_size
 
@@ -139,9 +186,13 @@ async def run_batch(
         end_of_removal_scan=removal_end,
     )
     logger.info(
-        "BATCH index=%s removals=%s outcomes=%s duration=%.2fs next=(%s,%s)",
-        report.selected, report.removals_selected, dict(outcomes),
-        report.elapsed_seconds, report.next_index_cursor, report.next_removal_cursor,
+        "[bold blue]BATCH[/] index=%s removals=%s outcomes=%s duration=%.2fs next=(%s,%s)",
+        report.selected,
+        report.removals_selected,
+        dict(outcomes),
+        report.elapsed_seconds,
+        report.next_index_cursor,
+        report.next_removal_cursor,
     )
     return report
 
@@ -156,9 +207,14 @@ async def run_worker(
     index_cursor = removal_cursor = 0
     failures = 0
     cycles = 0
-    logger.info("WORKER START mode=%s batch=%s concurrency=%s poll=%.1fs index_version=%s",
-                "forever" if forever else "once", config.batch_size,
-                config.concurrency, config.poll_seconds, config.index_version)
+    logger.info(
+        "[bold cyan]WORKER START[/] mode=%s batch=%s concurrency=%s poll=%.1fs index_version=%s",
+        "forever" if forever else "once",
+        config.batch_size,
+        config.concurrency,
+        config.poll_seconds,
+        config.index_version,
+    )
     try:
         while True:
             report = await run_batch(
@@ -177,10 +233,15 @@ async def run_worker(
             # Poll after finishing both pages, even when documents failed.
             # Work remains in the DB and will be considered next scan.
             if report.end_of_index_scan and report.end_of_removal_scan:
-                logger.info("SCAN COMPLETE; next scan after %.1fs", config.poll_seconds)
+                logger.info(
+                    "[dim]SCAN COMPLETE; next scan after %.1fs[/]",
+                    config.poll_seconds,
+                )
                 await asyncio.sleep(config.poll_seconds)
     finally:
-        logger.info("WORKER STOP cycles=%s failures=%s", cycles, failures)
+        logger.info(
+            "[bold cyan]WORKER STOP[/] cycles=%s failures=%s", cycles, failures
+        )
     return 1 if failures else 0
 
 
@@ -192,12 +253,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=None)
     parser.add_argument("--concurrency", type=int, default=None)
     parser.add_argument("--poll-seconds", type=float, default=None)
-    parser.add_argument("--log-level", choices=("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"), default=None)
+    parser.add_argument(
+        "--log-level",
+        choices=("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"),
+        default=None,
+    )
     return parser.parse_args(argv)
 
 
 async def _main(config: IndexerConfig, forever: bool) -> int:
     from backend.db.session import SessionFactory, engine
+
     try:
         return await run_worker(SessionFactory, config=config, forever=forever)
     finally:
@@ -208,22 +274,22 @@ def main() -> None:
     args = parse_args()
     base = IndexerConfig.from_env()
     overrides = {
-        name: value for name, value in (
+        name: value
+        for name, value in (
             ("batch_size", args.batch_size),
             ("concurrency", args.concurrency),
             ("poll_seconds", args.poll_seconds),
             ("log_level", args.log_level),
-        ) if value is not None
+        )
+        if value is not None
     }
     config = replace(base, **overrides)
-    logging.basicConfig(
-        level=getattr(logging, config.log_level),
-        format="%(asctime)s %(levelname)-8s %(name)s: %(message)s",
-    )
+    setup_logging(config.log_level)
+
     try:
         raise SystemExit(asyncio.run(_main(config, forever=args.forever)))
     except KeyboardInterrupt:
-        logger.info("Interrupted")
+        logger.info("[yellow]Interrupted[/]")
         raise SystemExit(130) from None
 
 

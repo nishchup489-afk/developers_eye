@@ -8,7 +8,7 @@ import { safeHttpUrl } from "@/lib/crawler-report";
 export type Inspection = { type: "documents" | "attempts"; id: number };
 const time = (value: string | null) => value ? new Date(value).toLocaleString() : "Not recorded";
 export function Badge({ value }: { value: string }) {
-  const color = /failed|blocked|stale|offline|unavailable/.test(value) ? "red" : /duplicate|skipped|not_stored|unchanged|stopped/.test(value) ? "amber" : "green";
+  const color = /failed|blocked|stale|offline|unavailable/.test(value) ? "red" : /duplicate|skipped|not_stored|unchanged|stopped|never indexed|reindex|older index|content changed/i.test(value) ? "amber" : "green";
   return <span className={`cc-badge ${color}`}>{value.replaceAll("_", " ")}</span>;
 }
 export function Url({ value }: { value: string | null }) {
