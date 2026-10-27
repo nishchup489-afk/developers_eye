@@ -87,7 +87,7 @@ async def claim_targets(
                 Source.id.not_in(unavailable)
             )
 
-        source_query = (
+        source_query = (  # round robin
             source_query
             .order_by(
                 Source.last_claimed_at.asc().nulls_first(),
@@ -105,7 +105,7 @@ async def claim_targets(
         if selected_source is None:
             break
 
-        target_query = (
+        target_query = ( # priority scheduling
             select(CrawlTarget)
             .where(
                 CrawlTarget.source_id == selected_source,
