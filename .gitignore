@@ -118,3 +118,6 @@ next-env.d.ts
 /frontend/coverage/
 /frontend/cypress/screenshots/
 /frontend/cypress/videos/
+
+
+bs.py
