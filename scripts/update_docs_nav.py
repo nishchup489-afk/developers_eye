@@ -29,6 +29,7 @@ EXCLUDED = {"frontend/AGENTS.md", "frontend/CLAUDE.md"}
 LABELS = {
     "README.md": "Project overview",
     "technical_handoff.md": "Technical handoff",
+    "0_tech_docs/README.md": "Tech docs index (decisions, incidents, experiments)",
     "crawler/src/crawler/README.md": "Crawler package",
     "crawler/src/crawler/policy_and_politeness/README.md": "Policy components overview",
     "crawler/src/crawler/policy_and_politeness/docs/README.md": "Policy docs introduction",
@@ -44,6 +45,7 @@ LABELS = {
 # (title, path prefix) in display order. The first matching prefix wins.
 SECTIONS = [
     ("Start here", ("README.md", "technical_handoff.md", "crawler/DEVELOPERS_EYE_CHECKLIST.md")),
+    ("Tech docs (why)", ("0_tech_docs/README.md",)),
     ("Backend (FastAPI, database)", ("backend/",)),
     ("Crawler: seeds and frontier", ("crawler/src/crawler/README.md", "crawler/src/crawler/seed/", "crawler/src/crawler/frontier/", "crawler/src/crawler/schedular/")),
     ("Crawler: fetch and policy", ("crawler/src/crawler/fetcher/", "crawler/src/crawler/policy_and_politeness/")),
@@ -60,7 +62,12 @@ def tracked_docs(root: Path) -> list[str]:
         ["git", "ls-files", "-z", "--", "*.md"],
         cwd=root, check=True, capture_output=True,
     ).stdout.decode("utf-8")
-    return sorted(p for p in out.split("\0") if p and p not in EXCLUDED)
+    # Tech docs keep their own index in 0_tech_docs/README.md.
+    return sorted(
+        p for p in out.split("\0")
+        if p and p not in EXCLUDED
+        and (not p.startswith("0_tech_docs/") or p == "0_tech_docs/README.md")
+    )
 
 
 def first_heading(path: Path) -> str | None:
