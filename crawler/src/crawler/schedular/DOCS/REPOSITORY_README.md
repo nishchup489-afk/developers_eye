@@ -2,10 +2,96 @@
 
 ![alt text](image.png)
 
-- now we want to crawl the target. so we pass it to `claim_target()`
-- claim target checks priority time id and set the '**`status = leased`**'
+- now we want to crawl the target. so we pass it to `claim_targets()`
+- claim targets picks a **source** first (round robin), then the best target inside that source (priority, then BFS depth), and sets '**`state = leased`**'
    - -> we used **`FOR UPDATE SKIP LOCKED`** here. so that if worker A claims the target A no worker can touch it.
-   - -> after changing to lease it gets **5min reservation**. worker A now work with this for 5min time limit.
+   - -> after changing to lease it gets **5min reservation** (`lease_seconds=300`). worker A now work with this for 5min time limit.
+
+---
+
+## How `claim_targets()` picks work: round-robin BFS
+
+### The problem it solves (feed starving)
+
+The old claim was one query over the whole frontier:
+
+```sql
+ORDER BY priority DESC, next_fetch_at ASC, id ASC
+LIMIT n
+```
+
+So a big source with thousands of high-priority targets (a docs site with a sitemap) filled every batch, and a small source (an RSS feed with a few targets) waited until the big one ran dry. That is **starvation**: the small feed was due, but never got a turn.
+
+Now the claim works in **two levels**:
+
+| Level | Question | Rule | Where in `repository.py` |
+| --- | --- | --- | --- |
+| 1. Round robin | *Which source gets the next slot?* | the enabled source that was claimed **longest ago** | `source_query`, ordered by `Source.last_claimed_at ASC NULLS FIRST, Source.id ASC` |
+| 2. BFS inside the source | *Which target of that source?* | highest priority, then **shallowest depth** | `target_query`, ordered by `priority DESC, depth ASC, next_fetch_at ASC, id ASC` |
+
+### Level 1: round robin across sources
+
+- `source.last_claimed_at` is the "whose turn is it" clock. It was added by the migration `5fc9efde409c_add_source_last_claimed_timestamp.py` (nullable, `NULL` = never claimed).
+- a source is a candidate only if it is `is_enabled = true` **and** has at least one target with `state = 'queued'` and `next_fetch_at <= now()` (the `eligible` `EXISTS` subquery). So disabled sources and sources with nothing due are skipped and their `last_claimed_at` does not move.
+- candidates are sorted `last_claimed_at ASC NULLS FIRST, id ASC`:
+   - -> a source that was never claimed goes first.
+   - -> after that, whoever waited the longest.
+   - -> `id` only breaks ties.
+- only **one** source is picked per loop step (`LIMIT 1 ... FOR UPDATE OF source SKIP LOCKED`).
+- after a target is leased, that source gets `last_claimed_at = clock_timestamp()`. So it moves to the **back of the line**, and the next loop step picks someone else.
+
+`clock_timestamp()` (not `now()`) matters here: `now()` is frozen for the whole transaction, so every source claimed in one batch would get the same time and the order would collapse. `clock_timestamp()` keeps moving, so the order inside one batch is kept.
+
+### Level 2: BFS inside the chosen source
+
+Inside the source, the target is picked by:
+
+```sql
+ORDER BY priority DESC, depth ASC, next_fetch_at ASC, id ASC
+LIMIT 1
+FOR UPDATE OF crawl_target SKIP LOCKED
+```
+
+- `priority` still wins first (seeds, sitemaps, API and reference pages stay ahead, see `priority.py` below).
+- at the same priority, **lower `depth` first**. `depth` is how many links away from a seed the page is (seed = 0, set in `worker/jobs/utility.py`). Taking depth 0, then 1, then 2... is **breadth-first search** over the link graph. So we crawl the top of a docs site before going deep into one corner of it.
+- then oldest `next_fetch_at`, then `id`, so the order is deterministic.
+
+### The loop, step by step
+
+`claim_targets(session, limit, lease_seconds, source_id)` runs this loop until it has `limit` targets:
+
+1. pick the next source (level 1). if there is none, stop and return what we have.
+2. pick that source's best target (level 2).
+3. if no target came back (all of its due targets are locked by another worker right now), put the source in the `unavailable` set and go back to 1, so we don't pick it again in this call.
+4. lease the target: `state = 'leased'`, `lease_until = clock_timestamp() + lease_seconds`.
+5. set the source's `last_claimed_at = clock_timestamp()` (moves it to the back).
+6. `flush()` and add the target to the result.
+
+### Example
+
+Sources A (3 due targets), B (2), C (1), none claimed before. `claim_targets(limit=6)` gives:
+
+```
+A  B  C  A  B  A
+```
+
+C has nothing left after its first turn, so it drops out and A and B keep taking turns. Inside A, a priority 80 page comes first, then the depth 0 page, then the depth 2 page. The same rotation also works across calls: with `limit=1` per call, two sources alternate instead of one source winning every time. (Both are checked in `tests/test_round_robin.py`.)
+
+### `source_id` filter
+
+`claim_targets(source_id=...)` (used by the runner's `--source-id` option) adds `Source.id == source_id` to level 1. The round robin then has only one candidate, so the call is just BFS inside that source.
+
+### Where it is used
+
+- `crawler/worker/runner.py`, `claim_batch()`: every runner loop calls `recover_expired_leases()` and then `claim_targets(limit=min(batch_size, concurrency), ...)` in one short transaction. The commit at the end of that transaction saves both the leases and the new `last_claimed_at` values.
+- `crawler/worker/tests/test_postgres_pipeline.py` claims through it for the pipeline regression tests.
+
+### Things to know
+
+- **one source per claim transaction at a time.** the source row is locked with `FOR UPDATE SKIP LOCKED` until the claiming transaction commits. so if two workers claim at the same moment and there is only one source with due work, the second worker skips it and gets `[]` for that round. with many sources each worker just takes a different source. (this is why `test_concurrent_claims_atomic_writes_and_shared_source_budget`, two parallel claims on the same source, now gets 2 and 0 instead of 2 and 2.)
+- it costs up to two small queries plus one `UPDATE source` per claimed target, instead of one query for the whole batch. fine for batch sizes like 10.
+- `priority.py` (`calculate_priority()`) gives the priority numbers BFS sorts on: seed 100, sitemap 90, API 85, reference paths 80, guide paths 70, RSS 60, other pages 50. it is not wired into the frontier yet, so targets keep whatever priority they were created with.
+- the docstring at the top of `repository.py` still describes the old single-query plan.
 
 ---
 
@@ -36,7 +122,7 @@ with this formula it counts delay. **[TODO: add `full jitter` for scalability]**
 
 ### Summary
 
-- **`claim_target()`**- start work
+- **`claim_targets()`**- start work. round robin over sources, BFS (priority, then depth) inside a source
 - **`recover_expired_leases()`** - handle if worker cant complete within deadline
 - **`complete_target()`** - handle if worker completes within deadline
 - **`fail_target()`** - handles if worker fails to do the work.

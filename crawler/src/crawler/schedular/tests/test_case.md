@@ -1,6 +1,6 @@
 # Scheduler test cases
 
-Integration tests for `crawler.schedular.repository`. All three files are script-style (`python <file>`, with a `main()` and a selector event loop on Windows). Each one opens a real PostgreSQL transaction, creates a uniquely named temporary `Source` and `CrawlTarget` rows, and rolls everything back at the end. `test1_report.md` and `image.png` in this folder are an earlier run report.
+Integration tests for `crawler.schedular.repository`. All four files are script-style (`python <file>`, with a `main()` and a selector event loop on Windows). Each one opens a real PostgreSQL transaction, creates a uniquely named temporary `Source` and `CrawlTarget` rows, and rolls everything back at the end. `test1_report.md` and `image.png` in this folder are an earlier run report.
 
 ## test_repository.py
 
@@ -8,13 +8,29 @@ Claiming targets and recovering expired leases (`claim_targets`, `recover_expire
 
 | Check | What it verifies |
 | --- | --- |
-| Claim highest priority | `claim_targets(limit=1)` returns the priority 10 target first. |
+| Claim highest priority | `claim_targets(limit=1, source_id=...)` returns the priority 10 target first. |
 | Claim second | The next claim returns the priority 5 target. |
 | Nothing left | A further claim for the source returns `[]`, since both are now leased. |
 | Active leases untouched | `recover_expired_leases` returns `0` while leases are still valid. |
-| Expired lease recovered | After moving one target's `lease_until` into the past, recovery returns `1`, that target goes back to `queued` with `lease_until` cleared, and the other target stays `leased`. |
-| Reclaim recovered target | The recovered target can be claimed again and is `leased`. |
+| Expired lease recovered | After moving one target's `lease_until` into the past, recovery returns `1`, that target goes back to `queued` with `lease_until` cleared, `failure_count` 1 and a retry in the future, and the other target stays `leased`. The test flushes before `refresh()`, because recovery changes ORM objects without flushing. |
+| Reclaim recovered target | After making the recovered target due again, it can be claimed again (pinned with `source_id`, since round robin picks across all sources) and is `leased`. |
 | Invalid parameters | `limit=0` and `lease_seconds=0` raise `ValueError`. |
+
+## test_round_robin.py
+
+Round-robin BFS claiming (`claim_targets`), 21 checks. How the claim works is in [REPOSITORY_README.md](../DOCS/REPOSITORY_README.md#how-claim_targets-picks-work-round-robin-bfs). `claim_targets()` looks across every source, so the test first disables all other sources inside its transaction; the rollback turns them back on. Each section creates its own sources so earlier ones cannot interleave.
+
+| Section | What it verifies |
+| --- | --- |
+| 1. Rotation in one call | Sources A (3 due targets), B (2) and C (1), never claimed. `claim_targets(limit=6)` returns six targets from sources A, B, C, A, B, A. |
+| 2. BFS inside a source | Source A's targets come out as priority 80 (depth 3), then priority 50 depth 0, then priority 50 depth 2. Source B gives depth 0 before depth 1. Every claimed target is `leased`. |
+| 3. `last_claimed_at` | Set on A, B and C, and ordered C < B < A to match each source's last turn. A further claim returns `[]`. |
+| 4. Least recently claimed first | D was last claimed 1 h ago and E 2 h ago, two targets each. Three `limit=1` calls pick E, D, E. |
+| 5. Skipped sources | A disabled source with a due target and an enabled source whose only target is not due yet. `claim_targets(limit=5)` returns only D's remaining target; both skipped targets stay `queued` and both sources keep `last_claimed_at` empty. |
+| 6. `source_id` filter | With another source holding due work, `source_id=H, limit=2` returns two targets, both from H, and `limit=10` then returns H's last one. |
+| 7. Lease and validation | `lease_seconds=120` gives a `lease_until` about 120 s after the claim. `limit=0`, `lease_seconds=0` and `source_id=0` raise `ValueError`. |
+
+Not covered here: a source skipped because another worker holds its row or all its due targets locked (`SKIP LOCKED`, the `unavailable` set). That needs two connections on committed rows, which these roll-back-only scripts avoid.
 
 ## test_complete_target.py
 

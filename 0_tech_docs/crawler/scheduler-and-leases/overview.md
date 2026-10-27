@@ -19,7 +19,8 @@ _One paragraph: what this feature is responsible for and what it is not._
 Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
 - [ ] PostgreSQL as the job queue instead of an external broker
-- [ ] Claim ordering `priority DESC, next_fetch_at, id` with `FOR UPDATE SKIP LOCKED` (see `crawler/faced_problems.md`)
+- [ ] Claim ordering `priority DESC, next_fetch_at, id` with `FOR UPDATE SKIP LOCKED` (see `crawler/faced_problems.md`), replaced by round-robin BFS below
+- [ ] Round-robin BFS claiming to stop feed starvation: sources take turns by `source.last_claimed_at`, and inside a source `priority DESC, depth ASC` (see `DOCS/REPOSITORY_README.md`)
 - [ ] Exponential backoff with `failure_count`
 - [ ] Lease recovery for expired leases
 

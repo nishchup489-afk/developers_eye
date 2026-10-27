@@ -5,7 +5,7 @@ import sys
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
-from sqlalchemy import update, func, text
+from sqlalchemy import select, update, func, text
 
 from backend.db.session import SessionFactory
 from backend.models.source import Source
@@ -146,24 +146,38 @@ async def main():
 
             assert recovered == 1
 
+            # recover_expired_leases() changes ORM objects without flushing,
+            # and refresh() would discard those pending changes.
+            await session.flush()
             await session.refresh(high)
             await session.refresh(low)
 
             assert high.state == "queued"
             assert high.lease_until is None
+            assert high.failure_count == 1
+            assert high.next_fetch_at > await session.scalar(select(func.now()))
             assert low.state == "leased"
 
-            print(Fore.GREEN + "PASS: Expired lease recovered")
+            print(Fore.GREEN + "PASS: Expired lease recovered with retry backoff")
             print(Fore.GREEN + "PASS: Non-expired lease preserved")
 
             # --------------------------------------
             # TEST 6: Reclaim recovered target
             # --------------------------------------
 
+            # Recovery schedules a retry in the future; make it due now.
+            await session.execute(
+                update(CrawlTarget)
+                .where(CrawlTarget.id == high.id)
+                .values(next_fetch_at=past)
+            )
+
+            # Round-robin picks across all sources, so pin this source.
             reclaimed = await claim_targets(
                 session,
                 limit=1,
                 lease_seconds=300,
+                source_id=source.id,
             )
 
             assert len(reclaimed) == 1
