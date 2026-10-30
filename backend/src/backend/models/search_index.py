@@ -13,8 +13,16 @@ class SearchIndex(Base):
     __tablename__ = "search_index"
 
     __table_args__ = (
-        Index("ix_search_index_vector", "search_vector", postgresql_using="gin"),
-        Index("ix_search_index_code_vector", "code_vector", postgresql_using="gin"),
+        Index(
+            "ix_search_index_vector",
+            "search_vector",
+            postgresql_using="gin",
+        ),
+        Index(
+            "ix_search_index_code_vector",
+            "code_vector",
+            postgresql_using="gin",
+        ),
     )
 
     document_id: Mapped[int] = mapped_column(
