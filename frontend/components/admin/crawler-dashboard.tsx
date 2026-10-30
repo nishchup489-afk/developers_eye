@@ -3,6 +3,7 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import { Activity, ArrowDownToLine, ArrowUpRight, Check, CheckCheck, ChevronDown, ChevronRight, CircleAlert, Clock3, Copy, Database, ExternalLink, FileText, Globe2, Layers3, Loader2, Pause, Play, Radio, RefreshCw, Search, ShieldCheck, Waypoints, X } from "lucide-react";
 import { isCrawlerReport, safeHttpUrl, type CrawlerReport, type DailyAttempts } from "@/lib/crawler-report";
+import { api, isCancelled } from "@/lib/api-client";
 
 const number = new Intl.NumberFormat("en-US");
 const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
@@ -34,16 +35,16 @@ export default function CrawlerDashboard() {
       controller = new AbortController();
       setLoading(true);
       try {
-        const response = await fetch(`/api/admin/crawler/report?days=${days}&top_sources=100&recent_errors=100`, { signal: controller.signal, cache: "no-store" });
-        const data = await response.json();
-        if (!response.ok) {
+        const response = await api.get("/admin/crawler/report", { params: { days, top_sources: 100, recent_errors: 100 }, signal: controller.signal });
+        const data = response.data;
+        if (response.status !== 200) {
           if (response.status === 401) setExpired(true);
-          throw new Error(typeof data.error === "string" ? data.error : "The report couldn't be loaded. Please retry.");
+          throw new Error(typeof data?.error === "string" ? data.error : "The report couldn't be loaded. Please retry.");
         }
         if (!isCrawlerReport(data)) throw new Error("The report response is invalid.");
         if (!stopped) { setSnapshot({ days, report: data }); setError(null); setExpired(false); }
       } catch (err) {
-        if (!stopped && !(err instanceof Error && err.name === "AbortError")) setError(err instanceof Error ? err.message : "Couldn't load the report.");
+        if (!stopped && !isCancelled(err)) setError(err instanceof Error ? err.message : "Couldn't load the report.");
       } finally { busy = false; if (!stopped) setLoading(false); }
     }
     void load();

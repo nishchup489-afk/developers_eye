@@ -11,6 +11,7 @@ _One paragraph: what this feature is responsible for and what it is not._
 - `frontend/components/search-experience.tsx`
 - `frontend/lib/search.ts`
 - `frontend/lib/demo.ts`
+- `frontend/lib/api-client.ts` (browser axios client) and `frontend/lib/backend-client.ts` (server axios client)
 
 ## How-it-works docs
 - _none yet_

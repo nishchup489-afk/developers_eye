@@ -1,3 +1,4 @@
+import { backend, isOk, isTimeout } from "@/lib/backend-client";
 import { searchDemo } from "@/lib/demo";
 import { isSearchResult, sources } from "@/lib/search";
 
@@ -26,17 +27,13 @@ export async function GET(request: Request) {
     const url = new URL(`${base.replace(/\/$/, "")}/search`);
     url.searchParams.set("q", query);
     if (source) url.searchParams.set("source", source);
-    const response = await fetch(url, {
-      cache: "no-store",
-      signal: AbortSignal.timeout(10000),
-      headers: { Accept: "application/json" },
-    });
-    if (!response.ok)
+    const response = await backend.get(url.toString(), { timeout: 10000 });
+    if (!isOk(response.status))
       return json(
         { error: "The search service is unavailable. Please try again." },
         502,
       );
-    const data = await response.json();
+    const data = response.data;
     if (
       !data ||
       !Array.isArray(data.results) ||
@@ -54,9 +51,7 @@ export async function GET(request: Request) {
       mode: "live",
     });
   } catch (error) {
-    const timeout =
-      error instanceof Error &&
-      (error.name === "TimeoutError" || error.name === "AbortError");
+    const timeout = isTimeout(error);
     return json(
       {
         error: timeout

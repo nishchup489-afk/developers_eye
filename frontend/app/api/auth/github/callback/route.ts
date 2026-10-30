@@ -1,5 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
+import { backend, isOk } from "@/lib/backend-client";
 import { adminConfig, cookieOptions, FLOW_COOKIE, seal, SESSION_COOKIE, SESSION_SECONDS, unseal } from "@/lib/admin-session";
 
 export const runtime = "nodejs";
@@ -24,22 +25,20 @@ export async function GET(request: NextRequest) {
   const code = params.get("code");
   if (params.has("error") || !code || code.length > 512) return finish("/admin/login?error=cancelled");
   try {
-    const tokenResponse = await fetch("https://github.com/login/oauth/access_token", {
-      method: "POST", headers: { Accept: "application/json", "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({ client_id: config.clientId, client_secret: config.clientSecret, code,
+    const tokenResponse = await backend.post("https://github.com/login/oauth/access_token",
+      new URLSearchParams({ client_id: config.clientId, client_secret: config.clientSecret, code,
         redirect_uri: `${config.origin}/api/auth/github/callback`, code_verifier: flow.verifier }),
-      cache: "no-store", signal: AbortSignal.timeout(10000), redirect: "error",
-    });
-    if (!tokenResponse.ok) return finish("/admin/login?error=provider");
-    const token = await tokenResponse.json();
-    if (typeof token.access_token !== "string") return finish("/admin/login?error=provider");
-    const profileResponse = await fetch("https://api.github.com/user", {
+      { timeout: 10000 });
+    if (!isOk(tokenResponse.status)) return finish("/admin/login?error=provider");
+    const token = tokenResponse.data;
+    if (typeof token?.access_token !== "string") return finish("/admin/login?error=provider");
+    const profileResponse = await backend.get("https://api.github.com/user", {
       headers: { Accept: "application/vnd.github+json", Authorization: `Bearer ${token.access_token}`, "User-Agent": "DevelopersEye-Admin" },
-      cache: "no-store", signal: AbortSignal.timeout(10000), redirect: "error",
+      timeout: 10000,
     });
-    if (!profileResponse.ok) return finish("/admin/login?error=provider");
-    const profile = await profileResponse.json();
-    if (!Number.isSafeInteger(profile.id) || !config.ids.includes(String(profile.id)) ||
+    if (!isOk(profileResponse.status)) return finish("/admin/login?error=provider");
+    const profile = profileResponse.data;
+    if (!Number.isSafeInteger(profile?.id) || !config.ids.includes(String(profile.id)) ||
       typeof profile.login !== "string" || !/^[a-zA-Z0-9-]{1,39}$/.test(profile.login)) return finish("/admin/login?error=denied");
     const response = finish("/admin/crawler");
     // Store only verified public identity. GitHub tokens never enter the session.

@@ -42,11 +42,15 @@ let calls = [];
 let responseMode = "ok";
 let profileId = 42;
 const originalFetch = globalThis.fetch;
-globalThis.fetch = async (input, options) => {
-  const url = new URL(input);
+// axios hands fetch a Request plus init, so normalise both into one view for the assertions.
+globalThis.fetch = async (input, init) => {
+  const req = new Request(input, init);
+  const url = new URL(req.url);
+  const options = { headers: Object.fromEntries([...req.headers].map(([name, value]) => [name === "authorization" ? "Authorization" : name, value])), body: req.method === "POST" ? new URLSearchParams(await req.text()) : null, redirect: req.redirect };
   calls.push({ url, options });
   if (url.hostname === "reporting.test") {
     assert.equal(options.headers.Authorization, `Bearer ${serviceKey}`);
+    assert.equal(options.redirect, "error");
     if (responseMode === "timeout") throw new DOMException("timed out", "TimeoutError");
     if (responseMode === "unavailable") return Response.json({}, { status: 503 });
     if (responseMode === "malformed") return Response.json({});

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ExternalLink, FileText, Loader2, X } from "lucide-react";
 import { isAttemptDetail, isDocumentDetail, object, type AttemptDetail, type CrawlEvent, type DocumentDetail } from "@/lib/crawler-monitor";
 import { safeHttpUrl } from "@/lib/crawler-report";
+import { api } from "@/lib/api-client";
 
 export type Inspection = { type: "documents" | "attempts"; id: number };
 const time = (value: string | null) => value ? new Date(value).toLocaleString() : "Not recorded";
@@ -41,9 +42,9 @@ export default function CrawlInspector({ selection, onClose, onSelect }: { selec
     let cancelled = false;
     async function load() {
       try {
-        const response = await fetch(`/api/admin/crawler/inspect?type=${type}&id=${id}`, { cache: "no-store", signal: controller.signal });
-        const result: unknown = await response.json();
-        if (!response.ok) throw new Error(object(result) && typeof result.error === "string" ? result.error : "Could not load this record.");
+        const response = await api.get<unknown>("/admin/crawler/inspect", { params: { type, id }, signal: controller.signal });
+        const result = response.data;
+        if (response.status !== 200) throw new Error(object(result) && typeof result.error === "string" ? result.error : "Could not load this record.");
         if (!(type === "documents" ? isDocumentDetail(result) : isAttemptDetail(result))) throw new Error("The inspection response is incomplete.");
         if (!cancelled) { setLoaded({ type, id, data: result as AttemptDetail | DocumentDetail }); setFailure(null); }
       } catch (e) { if (!cancelled) setFailure({ type, id, message: e instanceof Error ? e.message : "Could not load record." }); }

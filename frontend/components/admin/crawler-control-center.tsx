@@ -7,6 +7,7 @@ import { isCrawlerReport, type CrawlerReport } from "@/lib/crawler-report";
 import { isCrawlMonitor, object, type CrawlEvent, type CrawlMonitor } from "@/lib/crawler-monitor";
 import { isIndexerReport, statusLabel, type IndexerReport } from "@/lib/indexer-report";
 import CrawlInspector, { Badge, Url, type Inspection } from "./crawl-inspector";
+import { api } from "@/lib/api-client";
 
 const n = (value: number) => value.toLocaleString("en-US");
 const metric = (value: number | null | undefined, suffix = "") => value == null ? "N/A" : `${value.toLocaleString("en-US", { maximumFractionDigits: 2 })}${suffix}`;
@@ -25,9 +26,9 @@ export function usePolling<T>(url: string, validate: (v: unknown) => v is T, int
       if (stopped || busy) return;
       busy = true; controller = new AbortController(); setLoading(true);
       try {
-        const response = await fetch(url, { cache: "no-store", signal: controller.signal });
-        const data: unknown = await response.json();
-        if (!response.ok) throw new Error(response.status === 401 ? "Your admin session expired. Sign in again." : object(data) && typeof data.error === "string" ? data.error : "The report is unavailable.");
+        const response = await api.get<unknown>(url, { baseURL: "", signal: controller.signal });
+        const data = response.data;
+        if (response.status !== 200) throw new Error(response.status === 401 ? "Your admin session expired. Sign in again." : object(data) && typeof data.error === "string" ? data.error : "The report is unavailable.");
         if (!validate(data)) throw new Error("The service returned an invalid snapshot.");
         if (!stopped) { setSnapshot({ url, data }); setError(""); }
       } catch (e) { if (!stopped) setError(e instanceof Error ? e.message : "Could not load snapshot."); }

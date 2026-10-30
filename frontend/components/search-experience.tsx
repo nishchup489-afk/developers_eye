@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/api-client";
 import BrandEye from "./brand-eye";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -174,13 +175,14 @@ export default function SearchExperience({
       setFilter(source);
       setResponse(null);
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(value)}`, {
+        const res = await api.get("/search", {
+          params: { q: value },
           signal: active.signal,
         });
-        const data = await res.json();
-        if (!res.ok)
+        const data = res.data;
+        if (res.status < 200 || res.status >= 300)
           throw new Error(
-            data.error || "Search is unavailable. Please try again.",
+            data?.error || "Search is unavailable. Please try again.",
           );
         if (!active.signal.aborted) setResponse(data);
       } catch (err) {
