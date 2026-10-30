@@ -111,7 +111,7 @@ Operator tools: `indexer.worker.runner`, `indexer.reporting` (read-only JSON cov
 - Public: `/` landing with the animated eye, `/search?q=&source=` results, `/docs` API overview. The browser calls same-origin `/api/search`, which forwards to `BACKEND_URL/search` when set, otherwise returns demo results from `lib/demo.ts` marked `mode: "demo"`. Saved results live in browser `localStorage`.
 - Admin: `/admin/login` → GitHub OAuth (state + S256 PKCE) → signed HttpOnly session cookie (8 h), checked against the `ADMIN_GITHUB_IDS` allowlist on every request. Pages `/admin/crawler` (documents, attempts, live pipeline, frontier, sources, workers) and `/admin/indexer` (coverage).
 - Server routes `/api/admin/crawler/{report,monitor,inspect}` and `/api/admin/indexer/report` verify the session and forward to the backend with the service key (`lib/crawler-proxy.ts`). The backend base is derived from `CRAWLER_REPORT_API_URL`, which must end in `/admin/crawler/report`.
-- HTTP uses axios: `lib/api-client.ts` in the browser, the server-only `lib/backend-client.ts` for FastAPI and GitHub (fetch adapter, no-store, redirects refused, 15 s admin / 10 s search and OAuth timeouts).
+- HTTP uses axios: all instances in `lib/axios.js`: `api` in the browser, `backend` for FastAPI and GitHub (fetch adapter, no-store, redirects refused, 15 s admin / 10 s search and OAuth timeouts).
 - Next.js 16 has breaking changes from earlier versions; read `frontend/AGENTS.md` before editing.
 
 ## 3. Configuration

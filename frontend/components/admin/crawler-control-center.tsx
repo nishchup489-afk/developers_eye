@@ -7,7 +7,7 @@ import { isCrawlerReport, type CrawlerReport } from "@/lib/crawler-report";
 import { isCrawlMonitor, object, type CrawlEvent, type CrawlMonitor } from "@/lib/crawler-monitor";
 import { isIndexerReport, statusLabel, type IndexerReport } from "@/lib/indexer-report";
 import CrawlInspector, { Badge, Url, type Inspection } from "./crawl-inspector";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/axios";
 
 const n = (value: number) => value.toLocaleString("en-US");
 const metric = (value: number | null | undefined, suffix = "") => value == null ? "N/A" : `${value.toLocaleString("en-US", { maximumFractionDigits: 2 })}${suffix}`;

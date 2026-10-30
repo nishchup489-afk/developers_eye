@@ -1,6 +1,6 @@
 import "server-only";
 import { getAdmin } from "@/lib/admin-auth";
-import { adminGet, isOk, isTimeout } from "@/lib/backend-client";
+import { adminGet, isOk, isTimeout } from "@/lib/axios";
 
 export const privateJson = (body: unknown, status = 200) => Response.json(body, { status, headers: { "Cache-Control": "private, no-store", Vary: "Cookie" } });
 

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/axios";
 import BrandEye from "./brand-eye";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";

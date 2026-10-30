@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
-import { backend, isOk } from "@/lib/backend-client";
+import { backend, isOk } from "@/lib/axios";
 import { adminConfig, cookieOptions, FLOW_COOKIE, seal, SESSION_COOKIE, SESSION_SECONDS, unseal } from "@/lib/admin-session";
 
 export const runtime = "nodejs";

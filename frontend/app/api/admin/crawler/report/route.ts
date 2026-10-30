@@ -1,5 +1,5 @@
 import { getAdmin } from "@/lib/admin-auth";
-import { adminGet, isOk, isTimeout } from "@/lib/backend-client";
+import { adminGet, isOk, isTimeout } from "@/lib/axios";
 import { isCrawlerReport } from "@/lib/crawler-report";
 
 export const runtime = "nodejs";

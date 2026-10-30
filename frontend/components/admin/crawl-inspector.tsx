@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ExternalLink, FileText, Loader2, X } from "lucide-react";
 import { isAttemptDetail, isDocumentDetail, object, type AttemptDetail, type CrawlEvent, type DocumentDetail } from "@/lib/crawler-monitor";
 import { safeHttpUrl } from "@/lib/crawler-report";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/axios";
 
 export type Inspection = { type: "documents" | "attempts"; id: number };
 const time = (value: string | null) => value ? new Date(value).toLocaleString() : "Not recorded";

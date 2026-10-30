@@ -3,7 +3,7 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import { Activity, ArrowDownToLine, ArrowUpRight, Check, CheckCheck, ChevronDown, ChevronRight, CircleAlert, Clock3, Copy, Database, ExternalLink, FileText, Globe2, Layers3, Loader2, Pause, Play, Radio, RefreshCw, Search, ShieldCheck, Waypoints, X } from "lucide-react";
 import { isCrawlerReport, safeHttpUrl, type CrawlerReport, type DailyAttempts } from "@/lib/crawler-report";
-import { api, isCancelled } from "@/lib/api-client";
+import { api, isCancelled } from "@/lib/axios";
 
 const number = new Intl.NumberFormat("en-US");
 const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });

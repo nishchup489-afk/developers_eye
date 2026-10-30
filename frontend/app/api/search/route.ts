@@ -1,4 +1,4 @@
-import { backend, isOk, isTimeout } from "@/lib/backend-client";
+import { backend, isOk, isTimeout } from "@/lib/axios";
 import { searchDemo } from "@/lib/demo";
 import { isSearchResult, sources } from "@/lib/search";
 
