@@ -125,7 +125,7 @@ Never commit real values. Example files: `backend/.env.example`, `frontend/.env.
 | `INDEXER_INDEX_VERSION` | backend and indexer worker | no (1) | Must match between the two or the coverage report is wrong. |
 | `APP_NAME`, `APP_ENV`, `DEBUG` | backend | no | pydantic-settings defaults. |
 | `INDEXER_BATCH_SIZE`, `INDEXER_CONCURRENCY`, `INDEXER_POLL_SECONDS`, `INDEXER_MAX_DOCUMENT_CHARS`, `INDEXER_TEXT_SEARCH_CONFIG`, `INDEXER_CODE_SEARCH_CONFIG`, `INDEXER_LOG_LEVEL` | indexer | no | Defaults 100, 2, 10, 1000000, `english`, `simple`, `INFO`. Process environment only; the indexer does not read `.env` files. |
-| `BACKEND_URL` | frontend | no | Unset = demo search. |
+| `BACKEND_URL` | frontend | for live search | FastAPI origin, e.g. `http://127.0.0.1:8000`; `/api/search` calls `BACKEND_URL/search`. Unset = demo search. |
 | `ADMIN_APP_URL`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `ADMIN_GITHUB_IDS`, `ADMIN_SESSION_SECRET` | frontend | for admin | Server-only; never prefix with `NEXT_PUBLIC_`. Production `ADMIN_APP_URL` must be HTTPS. |
 | `CRAWLER_REPORT_API_URL` | frontend | for admin | e.g. `http://127.0.0.1:8000/admin/crawler/report` |
 | `NEXT_BUILD_DIR` | frontend | no | Alternate build dir for isolated test builds. |
@@ -206,7 +206,7 @@ Every tests folder has a `README.md` (how to run) and a `test_case.md` (what eac
 ## 8. Suggested next steps
 
 1. Rotate the leaked key and untrack the `.env` files (gap 1).
-2. Implement `GET /search` in the backend with `websearch_to_tsquery`, weighted `ts_rank_cd` over both vectors, source filters and `ts_headline` snippets, matching the contract the frontend already validates (`frontend/lib/search.ts`). Then set `BACKEND_URL` and drop demo mode.
+2. `GET /search` exists (`backend/src/backend/api/search.py`, service in `backend/search/service.py`): FTS candidates from `get_full_text_search`, categories mapped from host and `document_type`, `ts_headline` snippets. Next: weight the two vectors, push the category filter into SQL (it currently filters the top 100 candidates), and add pagination.
 3. Build the 30-query relevance evaluation set from the checklist before tuning ranking.
 4. Add indexer failure backoff and the missing concurrency tests.
 5. Add `compose.yaml` for PostgreSQL plus a CI workflow running the offline suites and `scripts/update_docs_nav.py --check`.

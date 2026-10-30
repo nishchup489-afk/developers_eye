@@ -4,7 +4,7 @@
 
 This document describes the repository as inspected on October 5, 2026.
 
-- `backend/` is a Python package scaffold. It declares FastAPI and supporting dependencies but has no application, routers, connector implementations, or runnable API entry point.
+- `backend/` is a FastAPI app. `GET /search` is implemented (October 30, 2026) over the PostgreSQL full-text index; the other public routes below are still proposals.
 - **Implemented:** Next.js `GET /api/search`, frontend runtime validation, curated demo search, browser-local saved results, and `/docs`.
 - **Not implemented:** every FastAPI route and external connector below. Their contracts are proposals based on README.md and system_design.md. They are a backend implementation handoff, not claims that those services exist.
 - No backend files were changed to implement the frontend.
@@ -109,9 +109,11 @@ Additional result fields are accepted but not used. The bridge rejects the entir
 
 These contracts give the backend team concrete starting points. Only `/search` is required by this frontend. Paths below are relative to BACKEND_URL. The proposals are not exposed as generic Next.js proxies.
 
-### GET /search
+### GET /search — implemented
 
-Accept `q` and optional `source` using the same validation as the bridge. Return `{ "query": string, "results": SearchResult[] }`; optional `took_ms`, totals, metadata, and warnings may be added. The current bridge ignores backend top-level extras and supplies its own timing/mode. Respect the source filter when provided. Return results in relevance order and use the normalized schema above. Deduplicate canonical URLs before returning.
+Implemented in `backend/src/backend/api/search.py`. Accepts `q` (1–300 characters, 422 otherwise), optional `source` and optional `limit` (1–50, default 20). Each result also carries `type`, the raw document type. A database failure returns 503. The category comes from known hosts (GitHub/GitLab, Stack Overflow/Stack Exchange, Reddit, practice sites) and otherwise from the document type.
+
+Original proposal: accept `q` and optional `source` using the same validation as the bridge. Return `{ "query": string, "results": SearchResult[] }`; optional `took_ms`, totals, metadata, and warnings may be added. The current bridge ignores backend top-level extras and supplies its own timing/mode. Respect the source filter when provided. Return results in relevance order and use the normalized schema above. Deduplicate canonical URLs before returning.
 
 ```json
 {

@@ -11,6 +11,8 @@ poetry run uvicorn backend.main:app --reload
 
 Configure `DATABASE_URL` and a random `CRAWLER_REPORT_API_KEY` of at least 32 characters in `backend/.env`. The frontend uses the same reporting key on its server.
 
+Public search is `GET /search?q=...&source=docs` (no key). It reads `search_index` and `document`, so results appear once the crawler and indexer have run. Point the frontend at it with `BACKEND_URL=http://127.0.0.1:8000` in `frontend/.env.local`.
+
 In another terminal, from the repository root:
 
 ```powershell

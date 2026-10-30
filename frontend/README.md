@@ -11,7 +11,7 @@ npm run dev
 
 Open http://localhost:3000. No environment variables are required for the labeled demo playground. It uses a small curated collection, not live third-party search.
 
-To connect public search to FastAPI, copy `.env.example` to `.env.local`, set `BACKEND_URL=http://127.0.0.1:8000`, and restart. The backend must implement the documented GET /search contract. The crawler admin reporting endpoint is implemented separately below.
+To connect public search to FastAPI, set `BACKEND_URL=http://127.0.0.1:8000` in `.env.local` (it is on in `.env.example`), start the backend, and restart Next.js. The backend serves `GET /search` from `backend/src/backend/api/search.py` over the PostgreSQL full-text index. The crawler admin reporting endpoint is implemented separately below.
 
 ## Checks
 
