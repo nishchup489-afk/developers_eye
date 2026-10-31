@@ -43,6 +43,7 @@ async def persist_search_vectors(
 
     async with session_factory() as session:
         async with session.begin():
+            await lock_vocabulary(session)
             source = await get_document_for_update(session, vectors.document_id)
             if (
                 source is None
@@ -60,7 +61,6 @@ async def persist_search_vectors(
             ):
                 return IndexStatus.UNCHANGED
 
-            await lock_vocabulary(session)
             old_lexemes = await get_index_lexemes(session, vectors.document_id)
             await upsert_search_index(
                 session,
@@ -92,7 +92,6 @@ async def remove_search_index(
             if source is not None and source.is_available:
                 return IndexStatus.STALE
 
-            await lock_vocabulary(session)
             removed = await remove_indexed_documents(session, [document_id])
             return IndexStatus.REMOVED if removed else IndexStatus.SKIPPED
 
