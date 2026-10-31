@@ -67,6 +67,16 @@ CREATE TEMP TABLE search_index (
 """
 
 
+_TEMP_SEARCH_TERMS = """
+CREATE TEMP TABLE search_terms (
+    term TEXT PRIMARY KEY,
+    document_frequency INTEGER NOT NULL DEFAULT 0,
+    CONSTRAINT ck_search_terms_length CHECK (length(term) BETWEEN 1 AND 128),
+    CONSTRAINT ck_search_terms_document_frequency CHECK (document_frequency >= 0)
+) ON COMMIT PRESERVE ROWS
+"""
+
+
 async def _candidates(factory, config: IndexerConfig):
     async with factory() as session:
         return await select_index_candidates(session, config=config)
@@ -153,6 +163,7 @@ async def test_final_indexer_lifecycle_against_postgresql() -> None:
             # One connection keeps the TEMP tables visible to every session.
             await connection.execute(text(_TEMP_DOCUMENT))
             await connection.execute(text(_TEMP_SEARCH_INDEX))
+            await connection.execute(text(_TEMP_SEARCH_TERMS))
             await connection.commit()
 
             factory = async_sessionmaker(
