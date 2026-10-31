@@ -115,6 +115,20 @@ async def get_document_for_update(
     )
 
 
+async def get_index_lexemes(session: AsyncSession, document_id: int) -> tuple[str, ...]:
+    """Read distinct stored lexemes, not original source content."""
+    _require_document_id(document_id)
+    statement = select(
+        func.tsvector_to_array(
+            SearchIndex.search_vector.op("||", return_type=SearchIndex.search_vector.type)(
+                SearchIndex.code_vector
+            )
+        )
+    ).where(SearchIndex.document_id == document_id)
+    lexemes = (await session.execute(statement)).scalar_one_or_none()
+    return tuple(lexemes) if lexemes is not None else ()
+
+
 async def upsert_search_index(
     session: AsyncSession,
     vectors: SearchVectors,
@@ -179,6 +193,7 @@ __all__ = [
     "StoredIndexState",
     "LockedDocumentState",
     "get_search_index",
+    "get_index_lexemes",
     "get_document_for_update",
     "upsert_search_index",
     "delete_search_index",
