@@ -10,11 +10,12 @@ from __future__ import annotations
 import re
 from collections.abc import Iterable
 
-from sqlalchemy import delete, update
+from sqlalchemy import delete, update, select, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.models.search_terms import SearchTerm
+from backend.models.search_index import SearchIndex
 
 _TERM = re.compile(r"[a-z][a-z0-9_+.#-]*\Z", re.ASCII)
 _SPECIAL = {"c++", "c#", "f#", ".net"}
@@ -94,4 +95,46 @@ async def synchronize_vocabulary(
             )
 
 
-__all__ = ["vocabulary_terms", "synchronize_vocabulary"]
+__all__ = ["vocabulary_terms", "synchronize_vocabulary", "lock_vocabulary", "remove_indexed_documents"]
+
+# One transaction-level mutex coordinates writers, crawler deletions and rebuild.
+# The number is an application-owned advisory-lock key (not a table lock).
+_VOCABULARY_LOCK_KEY = 7331090042
+
+
+async def lock_vocabulary(session: AsyncSession) -> None:
+    """Serialize vocabulary-changing transactions and one-time rebuilds."""
+    await session.execute(select(func.pg_advisory_xact_lock(_VOCABULARY_LOCK_KEY)))
+
+
+async def remove_indexed_documents(
+    session: AsyncSession, document_ids: Iterable[int]
+) -> int:
+    """Delete index rows and decrement frequencies in the same transaction.
+
+    The caller must lock affected Document rows first, in ascending ID order.
+    This supports 404/410, noindex, and normal index removals.
+    """
+    ids = sorted(set(document_ids))
+    if not ids:
+        return 0
+    if any(type(i) is not int or i <= 0 for i in ids):
+        raise ValueError("document IDs must be positive integers")
+    rows = (await session.execute(
+        select(
+            SearchIndex.document_id,
+            func.tsvector_to_array(
+                SearchIndex.search_vector.op(
+                    "||", return_type=SearchIndex.search_vector.type
+                )(SearchIndex.code_vector)
+            ),
+        ).where(SearchIndex.document_id.in_(ids)).order_by(SearchIndex.document_id)
+    )).all()
+    for document_id, lexemes in rows:
+        await session.execute(
+            delete(SearchIndex).where(SearchIndex.document_id == document_id)
+        )
+        await synchronize_vocabulary(
+            session, old_lexemes=lexemes or (), new_lexemes=()
+        )
+    return len(rows)
