@@ -106,6 +106,9 @@ async def test_writer_rejects_stale(monkeypatch, bad_source):
 @pytest.mark.asyncio
 async def test_writer_rebuilds_outdated_timestamp(monkeypatch):
     upsert = AsyncMock()
+    monkeypatch.setattr(writer, "lock_vocabulary", AsyncMock())
+    monkeypatch.setattr(writer, "get_index_lexemes", AsyncMock(return_value=("python",)))
+    monkeypatch.setattr(writer, "synchronize_vocabulary", AsyncMock())
     monkeypatch.setattr(writer, "get_document_for_update", AsyncMock(return_value=source()))
     monkeypatch.setattr(writer, "get_search_index", AsyncMock(return_value=stored(indexed_at=NOW - timedelta(seconds=1))))
     monkeypatch.setattr(writer, "upsert_search_index", upsert)
