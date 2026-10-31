@@ -136,3 +136,66 @@ async def fetch_pending_removal_ids(
     result = await session.scalars(stmt)
 
     return list(result.all())
+
+
+
+
+async def fetch_indexed_document(
+    session: AsyncSession,
+    *,
+    document_id: int,
+    indexed_hash: str,
+) -> dict[str, object] | None:
+    """Fetch the content of a successfully indexed document.
+
+    Returns None if the document is missing, unavailable,
+    stale, or its indexed revision has changed.
+
+    Read-only. Transaction ownership remains with the caller.
+    """
+
+    if type(document_id) is not int or document_id <= 0:
+        raise ValueError(
+            "document_id must be a positive integer"
+        )
+
+    if not isinstance(indexed_hash, str) or not indexed_hash:
+        raise ValueError(
+            "indexed_hash must be a nonempty string"
+        )
+
+    stmt = (
+        select(
+            Document.id.label("document_id"),
+            SearchIndex.indexed_hash.label("indexed_hash"),
+            Document.title,
+            Document.description,
+            Document.body,
+        )
+        .join(
+            SearchIndex,
+            SearchIndex.document_id == Document.id,
+        )
+        .where(
+            Document.id == document_id,
+            Document.is_available.is_(True),
+            SearchIndex.indexed_hash == indexed_hash,
+            SearchIndex.indexed_hash.op("~")(
+                COMPLETED_INDEX_HASH_PATTERN
+            ),
+            SearchIndex.indexed_at >= Document.updated_at,
+        )
+    )
+
+    result = await session.execute(stmt)
+    row = result.mappings().one_or_none()
+
+    if row is None:
+        return None
+
+    return {
+        **dict(row),
+        "headings": (),
+        "code_blocks": (),
+        "tags": (),
+    }
