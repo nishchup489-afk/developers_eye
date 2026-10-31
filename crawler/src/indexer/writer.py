@@ -15,8 +15,10 @@ from indexer.repository import (
     delete_search_index,
     get_document_for_update,
     get_search_index,
+    get_index_lexemes,
     upsert_search_index,
 )
+from indexer.vocabulary import synchronize_vocabulary
 from indexer.schemas import IndexStatus
 from indexer.vector import SearchVectors
 
@@ -58,10 +60,15 @@ async def persist_search_vectors(
             ):
                 return IndexStatus.UNCHANGED
 
+            old_lexemes = await get_index_lexemes(session, vectors.document_id)
             await upsert_search_index(
                 session,
                 vectors,
                 indexed_hash=indexed_hash,
+            )
+            new_lexemes = await get_index_lexemes(session, vectors.document_id)
+            await synchronize_vocabulary(
+                session, old_lexemes=old_lexemes, new_lexemes=new_lexemes
             )
             return IndexStatus.INDEXED
 
@@ -84,7 +91,12 @@ async def remove_search_index(
             if source is not None and source.is_available:
                 return IndexStatus.STALE
 
+            old_lexemes = await get_index_lexemes(session, document_id)
             removed = await delete_search_index(session, document_id)
+            if removed:
+                await synchronize_vocabulary(
+                    session, old_lexemes=old_lexemes, new_lexemes=()
+                )
             return IndexStatus.REMOVED if removed else IndexStatus.SKIPPED
 
 

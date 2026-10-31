@@ -60,6 +60,9 @@ def stored(**changes):
 
 @pytest.mark.asyncio
 async def test_writer_new_index(monkeypatch):
+    monkeypatch.setattr(writer, "get_index_lexemes", AsyncMock(return_value=("python",)))
+    mock_sync = AsyncMock()
+    monkeypatch.setattr(writer, "synchronize_vocabulary", mock_sync)
     mock_lock = AsyncMock(return_value=source())
     mock_read = AsyncMock(return_value=None)
     mock_upsert = AsyncMock(return_value=1)
@@ -69,11 +72,14 @@ async def test_writer_new_index(monkeypatch):
     result = await writer.persist_search_vectors(fake_session_factory, vectors(), indexed_hash="v1:" + "a" * 64)
     assert result is IndexStatus.INDEXED
     mock_upsert.assert_awaited_once()
+    mock_sync.assert_awaited_once()
 
 
 @pytest.mark.asyncio
 async def test_writer_unchanged_index(monkeypatch):
     upsert = AsyncMock()
+    monkeypatch.setattr(writer, "get_index_lexemes", AsyncMock(return_value=("python",)))
+    monkeypatch.setattr(writer, "synchronize_vocabulary", AsyncMock())
     monkeypatch.setattr(writer, "get_document_for_update", AsyncMock(return_value=source()))
     monkeypatch.setattr(writer, "get_search_index", AsyncMock(return_value=stored()))
     monkeypatch.setattr(writer, "upsert_search_index", upsert)
@@ -86,6 +92,8 @@ async def test_writer_unchanged_index(monkeypatch):
 @pytest.mark.parametrize("bad_source", [None, source(is_available=False), source(source_id=11), source(updated_at=NOW + timedelta(seconds=1))])
 async def test_writer_rejects_stale(monkeypatch, bad_source):
     upsert = AsyncMock()
+    monkeypatch.setattr(writer, "get_index_lexemes", AsyncMock(return_value=()))
+    monkeypatch.setattr(writer, "synchronize_vocabulary", AsyncMock())
     monkeypatch.setattr(writer, "get_document_for_update", AsyncMock(return_value=bad_source))
     monkeypatch.setattr(writer, "get_search_index", AsyncMock())
     monkeypatch.setattr(writer, "upsert_search_index", upsert)
@@ -112,6 +120,8 @@ async def test_writer_rebuilds_outdated_timestamp(monkeypatch):
 ])
 async def test_removal_guards_active_sources(monkeypatch, existing, removed, expected):
     delete = AsyncMock(return_value=removed)
+    monkeypatch.setattr(writer, "get_index_lexemes", AsyncMock(return_value=("python",)))
+    monkeypatch.setattr(writer, "synchronize_vocabulary", AsyncMock())
     monkeypatch.setattr(writer, "get_document_for_update", AsyncMock(return_value=existing))
     monkeypatch.setattr(writer, "delete_search_index", delete)
     assert await writer.remove_search_index(fake_session_factory, 1) is expected
