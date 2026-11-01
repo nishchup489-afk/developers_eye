@@ -30,6 +30,8 @@ from indexer.selector import select_index_candidates, select_removal_candidates
 from indexer.service import index_candidate, remove_candidate
 from indexer.vector import build_search_vectors
 from indexer.writer import persist_search_vectors
+from indexer.vocabulary import remove_indexed_documents, lock_vocabulary
+from indexer.vocabulary_rebuild import rebuild_vocabulary
 
 
 # The ORM queries are intentionally executed against TEMP tables with these
@@ -63,6 +65,16 @@ CREATE TEMP TABLE search_index (
     code_vector TSVECTOR NOT NULL,
     indexed_hash TEXT NOT NULL,
     indexed_at TIMESTAMPTZ NOT NULL DEFAULT now()
+) ON COMMIT PRESERVE ROWS
+"""
+
+
+_TEMP_SEARCH_TERMS = """
+CREATE TEMP TABLE search_terms (
+    term TEXT PRIMARY KEY,
+    document_frequency INTEGER NOT NULL DEFAULT 0,
+    CONSTRAINT ck_search_terms_length CHECK (length(term) BETWEEN 1 AND 128),
+    CONSTRAINT ck_search_terms_document_frequency CHECK (document_frequency >= 0)
 ) ON COMMIT PRESERVE ROWS
 """
 
@@ -153,6 +165,7 @@ async def test_final_indexer_lifecycle_against_postgresql() -> None:
             # One connection keeps the TEMP tables visible to every session.
             await connection.execute(text(_TEMP_DOCUMENT))
             await connection.execute(text(_TEMP_SEARCH_INDEX))
+            await connection.execute(text(_TEMP_SEARCH_TERMS))
             await connection.commit()
 
             factory = async_sessionmaker(
@@ -209,6 +222,7 @@ async def test_final_indexer_lifecycle_against_postgresql() -> None:
             assert stored["matches_async"] is True
             assert stored["matches_new_term"] is False
             assert await _candidates(factory, cfg) == []
+            assert (await connection.execute(text("SELECT document_frequency FROM search_terms WHERE term = 'python'"))).scalar_one() == 1
 
             # 4. Same revision and version must not reindex.
             unchanged = await index_candidate(factory, candidate, config=cfg)
@@ -253,6 +267,7 @@ async def test_final_indexer_lifecycle_against_postgresql() -> None:
             assert updated.status is IndexStatus.INDEXED
             assert updated.indexed_hash != first.indexed_hash
             assert (await _stored(factory, document_id))["matches_new_term"] is True
+            assert (await connection.execute(text("SELECT document_frequency FROM search_terms WHERE term = 'quasarwhim'"))).scalar_one() == 1
 
             # 7. Index format changes trigger a rebuild even if text is unchanged.
             cfg3 = IndexerConfig(index_version=3)
@@ -276,6 +291,7 @@ async def test_final_indexer_lifecycle_against_postgresql() -> None:
             removal = await remove_candidate(factory, document_id)
             assert removal.status is IndexStatus.REMOVED
             assert await _stored(factory, document_id) is None
+            assert (await connection.execute(text("SELECT COUNT(*) FROM search_terms"))).scalar_one() == 0
             again = await remove_candidate(factory, document_id)
             assert again.status is IndexStatus.SKIPPED
 
@@ -295,7 +311,15 @@ async def test_final_indexer_lifecycle_against_postgresql() -> None:
             assert (await remove_candidate(factory, document_id)).status is IndexStatus.STALE
             assert await _stored(factory, document_id) is not None
 
-            # 10. Hard deletion cascades to the index through the FK.
+            # 10. Rebuild from indexed vectors, then remove through the shared helper.
+            docs, terms = await rebuild_vocabulary(factory)
+            assert docs == 1 and terms > 0
+            async with factory() as session:
+                async with session.begin():
+                    await lock_vocabulary(session)
+                    assert await remove_indexed_documents(session, [document_id]) == 1
+            assert (await connection.execute(text("SELECT COUNT(*) FROM search_terms"))).scalar_one() == 0
+            # 11. Hard deletion cascades to the index through the FK.
             await connection.execute(
                 text("DELETE FROM document WHERE id = :id"), {"id": document_id}
             )

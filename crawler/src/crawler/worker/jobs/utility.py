@@ -15,6 +15,7 @@ from backend.db.session import SessionFactory
 from backend.models.crawler_frontier import CrawlTarget
 from backend.models.documents import Document
 from backend.models.search_index import SearchIndex
+from indexer.vocabulary import lock_vocabulary, remove_indexed_documents
 from backend.models.source import Source
 from backend.schema.crawler_frontier import CrawlTargetCreate
 from crawler.fetcher.fetch import HTTPXHopFetcher
@@ -311,6 +312,10 @@ async def _finalize(
                     duration_seconds=elapsed,
                 )
 
+            # Acquire the shared mutex before locking/changing documents, so
+            # indexer and crawler cannot race vocabulary frequency changes.
+            await lock_vocabulary(session)
+
             if action == "complete" and http_status in (404, 410):
                 unavailable_ids = (await session.scalars(update(Document).where(
                     Document.last_crawl_target_id == target_id,
@@ -318,7 +323,7 @@ async def _finalize(
                     unavailable_at=func.coalesce(Document.unavailable_at, func.clock_timestamp()))
                     .returning(Document.id))).all()
                 if unavailable_ids:
-                    await session.execute(delete(SearchIndex).where(SearchIndex.document_id.in_(unavailable_ids)))
+                    await remove_indexed_documents(session, unavailable_ids)
                 event(session, attempt_id, "STORE", "not_stored", {
                     "unavailable_document_ids": unavailable_ids, "http_status": http_status,
                     "reason": "Stored content retained as unavailable; search entries removed",
@@ -327,9 +332,17 @@ async def _finalize(
             if action == "complete" and parsed is not None and processed is not None:
                 noindex = _noindex_urls(parsed, processed)
                 if noindex:
-                    await session.execute(
-                        delete(Document).where(Document.canonical_url.in_(noindex))
-                    )
+                    deleted_ids = (await session.scalars(
+                        select(Document.id)
+                        .where(Document.canonical_url.in_(noindex))
+                        .order_by(Document.id)
+                        .with_for_update()
+                    )).all()
+                    await remove_indexed_documents(session, deleted_ids)
+                    if deleted_ids:
+                        await session.execute(
+                            delete(Document).where(Document.id.in_(deleted_ids))
+                        )
                 # Serialize observations of the same identity/hash across workers.
                 lock_keys = sorted({key for d in processed.documents for key in
                                     ("canonical:" + d.canonical_url, "content:" + d.content_hash)})
