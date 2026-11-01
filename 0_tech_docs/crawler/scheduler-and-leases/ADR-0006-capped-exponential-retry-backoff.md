@@ -29,7 +29,7 @@ Before commit `f19c53b` (2026-10-20), a target whose lease expired was cleared a
 Constraints: be polite to hosts that are down or rate-limiting, keep transient failures (timeouts, 5xx, empty 200 bodies) cheap to recover from, and keep the rule simple enough to test.
 
 ## Decision
-- **Which outcomes retry** (`process_job` in `worker/jobs/jobs.py`, action `retry`): robots `DEFER` (robots.txt could not be fetched yet), any HTTP status other than 200, 204, 205, 304, 401, 403, 404 and 410, an HTTP 200 with an empty body, and any exception in fetch, parse or process.
+- **Which outcomes retry** (`process_job` in `worker/jobs/jobs.py`, action `retry`): a policy `DEFER` from `PolicyCoordinator.fetch()` (DNS lookup failure, robots.txt fetch failure, network error, HTTP 429/503 with `Retry-After` or the politeness default, HTTP 5xx), any other HTTP status other than 200, 204, 205, 304, 401, 403, 404 and 410, an HTTP 200 with an empty body, and any exception in fetch, parse or process.
 - **Which outcomes do not retry**:
   - `complete` (normal recrawl interval): 200 parsed, 204/205, 304, 404/410 (the document is marked unavailable), 200 with an unsupported MIME type;
   - `block` (state `blocked`, never claimed again): robots `DENY`, 401/403, final URL outside the source's hosts or path scope;
