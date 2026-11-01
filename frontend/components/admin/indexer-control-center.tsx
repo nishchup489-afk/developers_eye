@@ -5,11 +5,12 @@ import { ArrowDownToLine, ArrowRight, ChevronRight, CircleAlert, Clock3, FileSea
 import { isIndexerReport, statusLabel, type IndexerReport, type IndexedDocument, type PendingDocument } from "@/lib/indexer-report";
 import CrawlInspector, { Badge, type Inspection } from "./crawl-inspector";
 import { Empty, Panel, usePolling } from "./crawler-control-center";
+import VocabularyReportView from "./vocabulary-report";
 
 const n = (value: number) => value.toLocaleString("en-US");
 const metric = (value: number | null | undefined, suffix = "") => value == null ? "N/A" : `${value.toLocaleString("en-US", { maximumFractionDigits: 2 })}${suffix}`;
 const time = (value: string | null) => value ? new Date(value).toLocaleString() : "Never";
-const tabs = [["overview", "Overview"], ["backlog", "Backlog"], ["recent", "Recently indexed"], ["sources", "Source coverage"]];
+const tabs = [["overview", "Overview"], ["backlog", "Backlog"], ["recent", "Recently indexed"], ["sources", "Source coverage"], ["vocabulary", "Vocabulary"]];
 const reasons: Record<PendingDocument["reason"], string> = { missing: "Never indexed", reindex_requested: "Reindex requested", old_version: "Older index version", content_changed: "Content changed" };
 
 export default function IndexerControlCenter() {
@@ -36,7 +37,7 @@ export default function IndexerControlCenter() {
       {report.error && <div className="admin-alert" role="alert"><CircleAlert size={19} /><div><strong>{r ? "Some data may be out of date" : "Indexer data is unavailable"}</strong><p>{report.error}</p><a className="admin-text-link" href="/admin/login">Sign in again if your session expired</a></div><button className="admin-button secondary" onClick={() => setRefresh(v => v + 1)}>Retry</button></div>}
       <Metrics report={r} />
       <nav className="cc-tabs" aria-label="Indexer sections">{tabs.map(([id, label]) => <button key={id} aria-current={tab === id ? "page" : undefined} onClick={() => setTab(id)}>{label}</button>)}</nav>
-      {r ? <>
+      {tab === "vocabulary" ? <VocabularyReportView auto={auto} refresh={refresh} /> : r ? <>
         {tab === "overview" && <>
           <div className="cc-grid"><Throughput report={r} /><Coverage report={r} /></div>
           <div className="cc-grid cc-grid-equal"><Panel title="Recently indexed" eyebrow="LATEST 8 INDEX WRITES" action={<button className="admin-text-link" onClick={() => setTab("recent")}>All recent <ArrowRight size={14} /></button>}><RecentList documents={r.recent.slice(0, 8)} onInspect={inspect} /></Panel><Panel title="Waiting to be indexed" eyebrow="NEXT 8 IN SELECTOR ORDER" action={<button className="admin-text-link" onClick={() => setTab("backlog")}>Full backlog <ArrowRight size={14} /></button>}><PendingList documents={r.pending.slice(0, 8)} onInspect={inspect} /></Panel></div>
