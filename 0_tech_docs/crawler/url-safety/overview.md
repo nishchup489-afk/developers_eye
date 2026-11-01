@@ -19,6 +19,7 @@ Decides whether a URL may be requested at all: exact host allowlist, public-only
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
 | [ADR-0007](ADR-0007-fail-closed-ssrf-checks-with-ip-pinning.md) | decision | Exact host allowlist, then public-only DNS pinned into the transport, on every hop | accepted |
+| [INC-0005](INC-0005-pinned-transport-accepted-unchecked-urls.md) | incident | Pinned transport accepted unchecked URLs on an approved origin | resolved |
 
 ## Decisions to record
 Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
@@ -32,4 +33,5 @@ Found in `technical_handoff.md` and the code. Turn each into an ADR file in this
 - Allowlist before DNS, DNS before any request, on every hop (ADR-0007).
 - Reject the whole DNS answer if any address is not public (ADR-0007).
 - Unsafe destinations are `DENY`, never `DEFER` (ADR-0007).
+- The transport compares the full URL, `Host` and SNI, not just the origin; import `FetcherSecurityError` from `fetcher/errors.py`, never redefine it (INC-0005).
 - Keep passing: `test_host_policy.py`, `test_redirect_policy.py`, `test_policy_coordinator.py`; run `test_dns_policy.py` after changing `dns_policy.py`.
