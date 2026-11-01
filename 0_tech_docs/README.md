@@ -66,7 +66,7 @@ Before changing a feature: read its `overview.md`, then every `accepted` ADR and
 | [Database schema and migrations](backend/database-schema/overview.md) | `backend/database-schema/` |
 | [Read-only admin API](backend/admin-api/overview.md) | `backend/admin-api/` |
 | [Backend and crawler package boundary](backend/package-boundary/overview.md) | `backend/package-boundary/` |
-| [Search API (planned)](backend/search-api/overview.md) | `backend/search-api/` |
+| [Search API](backend/search-api/overview.md) | `backend/search-api/` |
 
 ### Frontend (`frontend/`)
 
