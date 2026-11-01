@@ -80,6 +80,8 @@ export default function CodePreview({
                     ),
                   )
                 : " "}
+              {/* A real line break keeps lines apart even before styles load. */}
+              {"\n"}
             </span>
           ))}
         </code>

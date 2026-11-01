@@ -2300,9 +2300,24 @@ h1 .accent {
     animation: none !important;
   }
 }
-/* Multi-line pastes in the search bar preview as a highlighted code card. */
+/* Multi-line pastes turn the search box into a code card with the input below. */
+.search-box.has-code,
+.search-home .search-box.has-code {
+  flex-wrap: wrap;
+  row-gap: 8px;
+  padding: 8px 8px 8px 22px;
+  border-radius: 22px;
+}
+.search-box.has-code .search-code-preview {
+  /* Span the box edge to edge, past the input's left padding. */
+  flex: 0 0 calc(100% + 14px);
+  margin: 0 0 0 -14px;
+  border-radius: 15px;
+  box-shadow: none;
+}
 .search-code-preview {
   margin: 14px 0 0;
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: 14px;
   overflow: hidden;

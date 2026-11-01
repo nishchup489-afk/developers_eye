@@ -27,7 +27,8 @@ const languages: Language[] = [
     name: "Python",
     test: [
       /^\s*(def|class)\s+\w+.*:\s*$/m,
-      /^\s*(from\s+[\w.]+\s+)?import\s+\w+/m,
+      /^\s*(from\s+[\w.]+\s+)?import\s+[\w(*]/m,
+      /^\s*(if|for|while|with|try|except|else)\b.*:\s*$/m,
       /^\s*@\w+/m,
       /\b(elif|self|None|True|False)\b/,
     ],

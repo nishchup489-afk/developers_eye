@@ -415,12 +415,26 @@ export default function SearchExperience({
             aria-label="Developer search"
           >
             <form
-              className="search-box"
+              className={`search-box${code ? " has-code" : ""}`}
               onSubmit={(e) => {
                 e.preventDefault();
                 void search(fullQuery.slice(0, maxQueryLength));
               }}
             >
+              {code && (
+                <CodePreview
+                  code={code}
+                  note={
+                    fullQuery.length > maxQueryLength
+                      ? `Only the first ${maxQueryLength} characters are searched.`
+                      : undefined
+                  }
+                  onRemove={() => {
+                    setCode("");
+                    input.current?.focus();
+                  }}
+                />
+              )}
               <Search className="search-icon" size={23} />
               <label className="sr-only" htmlFor="search-input">
                 Search developer knowledge
@@ -478,20 +492,6 @@ export default function SearchExperience({
                 )}
               </button>
             </form>
-            {code && (
-              <CodePreview
-                code={code}
-                note={
-                  fullQuery.length > maxQueryLength
-                    ? `Only the first ${maxQueryLength} characters are searched.`
-                    : undefined
-                }
-                onRemove={() => {
-                  setCode("");
-                  input.current?.focus();
-                }}
-              />
-            )}
             {!resultsPage && <div className="search-meta">
               <div className="suggestions">
                 <span>Try</span>
