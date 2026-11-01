@@ -69,12 +69,23 @@ async def synchronize_vocabulary(
 
     for term in sorted(changes):
         if changes[term] == 1:
-            statement = insert(SearchTerm).values(term=term, document_frequency=1)
-            statement = statement.on_conflict_do_update(
-                index_elements=[SearchTerm.term],
-                set_={"document_frequency": SearchTerm.document_frequency + 1},
-            )
-            await session.execute(statement)
+            added = sorted(new_terms - old_terms)
+
+            if added:
+                stmt = insert(SearchTerm).values([
+                    {"term": term, "document_frequency": 1}
+                    for term in added
+                ])
+
+                await session.execute(
+                    stmt.on_conflict_do_update(
+                        index_elements=[SearchTerm.term],
+                        set_={
+                            "document_frequency":
+                                SearchTerm.document_frequency + 1
+                        },
+                    )
+                )
             continue
 
         result = await session.execute(
