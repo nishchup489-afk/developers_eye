@@ -1,9 +1,9 @@
 # Backend and crawler package boundary
 
-Area: backend · Status: stub
+Area: backend · Status: active
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+Keeps the dependency between the two Python projects one-way: `crawler` (with `indexer`) depends on `backend`, and `backend` never imports either. Shared models, sessions and report queries live in `backend`.
 
 ## Code
 - `backend/tests/test_package_boundary.py`
@@ -14,11 +14,14 @@ _One paragraph: what this feature is responsible for and what it is not._
 ## Records
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0012](ADR-0012-crawler-depends-on-backend-never-reverse.md) | decision | The crawler depends on the backend, never the reverse | accepted |
 
 ## Decisions to record
 Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] Crawler depends on the backend package, never the reverse
+- [x] Crawler depends on the backend package, never the reverse (ADR-0012)
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
+- Never import `crawler` or `indexer` from `backend`; move shared code into `backend` (ADR-0012).
+- Keep path dependencies relative (ADR-0012).
+- Keep passing: `backend/tests/test_package_boundary.py`.
