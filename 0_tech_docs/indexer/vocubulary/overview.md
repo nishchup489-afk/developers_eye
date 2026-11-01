@@ -1,0 +1,42 @@
+# Fuzzy search vocabulary
+
+Area: indexer · Status: active
+
+## Purpose
+Keeps `search_terms(term, document_frequency)`, the dictionary that typo-tolerant search matches misspelled query words against. The terms come from the lexemes already stored in `search_index`, and the counts are maintained by the index writer and the crawler's deletion paths in the same transaction as the index change. This feature does not do the online matching or correction; that lives in `backend/src/backend/search/retrieval/fuzzy/`.
+
+## Code
+- `crawler/src/indexer/vocabulary.py` (filter, deltas, advisory lock, removal helper)
+- `crawler/src/indexer/vocabulary_rebuild.py` (one-shot recount)
+- `crawler/src/indexer/writer.py`, `crawler/src/indexer/repository.py:get_index_lexemes`
+- `crawler/src/crawler/worker/jobs/utility.py:_finalize` (404/410 and `noindex` removals)
+- `backend/src/backend/models/search_terms.py`, `backend/alembic/versions/9a71c3fb20d4_ensure_search_terms.py`
+- `backend/src/backend/services/vocabulary_reporting.py` (read-only admin report)
+
+## How-it-works docs
+- `crawler/src/indexer/docs/pr4-vocabulary-consistency.md`
+- `crawler/src/indexer/docs/adr-vocabulary-consistency-pr4.md`
+- `crawler/src/indexer/operations.md` (rebuild CLI)
+
+## Records
+| ID | Type | Title | Status |
+| --- | --- | --- | --- |
+| [ADR-0002](ADR-0002-vocabulary-as-projection-of-index-lexemes.md) | decision | Fuzzy vocabulary is a projection of stored index lexemes | accepted |
+
+## Decisions to record
+- [x] Vocabulary from stored lexemes, deltas in the index writer's transaction (ADR-0002)
+- [ ] One global advisory lock vs finer locking (see `issues.md`)
+- [ ] `vocabulary_document_state` model: left over from the abandoned worker? It has no migration and no caller.
+
+## Open issues
+- `synchronize_vocabulary()` over-counts when a document adds more than one new term (ADR-0002, Failure modes).
+- `remove_search_index()` does not take `lock_vocabulary()`.
+- Global advisory lock serializes all writers (`issues.md`).
+
+## Rules for future changes
+- Do not tokenize document text to build the vocabulary; read lexemes from `search_index` (ADR-0002).
+- Never delete `search_index` rows directly; use `remove_indexed_documents()` inside a transaction that holds `lock_vocabulary()` (ADR-0002).
+- Take `lock_vocabulary()` before any `document` row lock (ADR-0002).
+- Change `vocabulary_terms()` only together with a rebuild (ADR-0002).
+- After manual SQL on `search_index` or `document`, run `python -m indexer.vocabulary_rebuild --once` with workers stopped.
+- Keep passing: `indexer/tests/test_vocabulary.py`, `indexer/tests/test_service_writer.py`, `indexer/tests/test_indexer.py`.

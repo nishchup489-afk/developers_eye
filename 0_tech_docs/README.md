@@ -57,6 +57,7 @@ Before changing a feature: read its `overview.md`, then every `accepted` ADR and
 | [Index writer consistency](indexer/index-writer/overview.md) | `indexer/index-writer/` |
 | [Reindex and index versioning](indexer/reindex-and-versioning/overview.md) | `indexer/reindex-and-versioning/` |
 | [Coverage reporting](indexer/coverage-reporting/overview.md) | `indexer/coverage-reporting/` |
+| [Fuzzy search vocabulary](indexer/vocubulary/overview.md) | `indexer/vocubulary/` |
 
 ### Backend API and database (`backend/`)
 
