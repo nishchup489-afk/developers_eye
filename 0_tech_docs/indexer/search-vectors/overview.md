@@ -1,9 +1,9 @@
 # Search vectors
 
-Area: indexer · Status: stub
+Area: indexer · Status: active
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+Builds the two weighted `TSVECTOR` expressions stored per document in `search_index`: `search_vector` (`english`) for prose and `code_vector` (`simple`) for identifiers and code. It builds SQL expressions only; the writer executes them.
 
 ## Code
 - `crawler/src/indexer/vector.py`
@@ -15,12 +15,15 @@ _One paragraph: what this feature is responsible for and what it is not._
 ## Records
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0010](ADR-0010-two-weighted-tsvectors-in-postgres.md) | decision | Two weighted Postgres tsvectors, english for prose and simple for code | accepted |
 
 ## Decisions to record
 Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] Two tsvectors: `english` for prose, `simple` for code tokens
-- [ ] Postgres full-text search instead of a separate search engine
+- [x] Two tsvectors: `english` for prose, `simple` for code tokens (ADR-0010)
+- [x] Postgres full-text search instead of a separate search engine (ADR-0010)
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
+- Bump `INDEXER_INDEX_VERSION` with any change to fields, weights, configs or vector construction (ADR-0010, ADR-0009).
+- Keep `/search` configs equal to the indexer configs (ADR-0010, ADR-0003).
+- Bind document text and config names; never interpolate them into SQL (ADR-0010).

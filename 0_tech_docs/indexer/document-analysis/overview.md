@@ -1,9 +1,9 @@
 # Document snapshot and field weighting
 
-Area: indexer · Status: stub
+Area: indexer · Status: active
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+Turns a stored `document` into an immutable snapshot (`builder.py`, which also computes `indexed_hash`) and then into weighted prose and code fields (`analyzer.py`). It does not touch the database beyond reading the document.
 
 ## Code
 - `crawler/src/indexer/builder.py`
@@ -16,11 +16,13 @@ _One paragraph: what this feature is responsible for and what it is not._
 ## Records
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0010](../search-vectors/ADR-0010-two-weighted-tsvectors-in-postgres.md) | decision | Field weights per vector (owned by search-vectors) | accepted |
 
 ## Decisions to record
 Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] Field weights for title, description, body, code
+- [x] Field weights for title, description, body, code (ADR-0010)
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
+- Field and weight changes bump `INDEXER_INDEX_VERSION` (ADR-0010, ADR-0009).
+- Add every new indexed field to the `calculate_index_hash` payload (ADR-0009).
