@@ -114,6 +114,14 @@ const tickerItems = [
   "Practice",
 ];
 
+// The search API accepts at most this many characters per query.
+const maxQueryLength = 300;
+
+/** Multi-line queries are pasted code, shown as a code block instead of in the input. */
+function splitQuery(value: string): [text: string, code: string] {
+  return value.includes("\n") ? ["", value] : [value, ""];
+}
+
 /** Splits text into per-character spans for the headline reveal. */
 function Chars({ text }: { text: string }) {
   return Array.from(text, (char, i) => (
@@ -140,7 +148,8 @@ export default function SearchExperience({
   const root = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const controller = useRef<AbortController | null>(null);
-  const [query, setQuery] = useState(initialQuery);
+  const [query, setQuery] = useState(() => splitQuery(initialQuery)[0]);
+  const [code, setCode] = useState(() => splitQuery(initialQuery)[1]);
   const [response, setResponse] = useState<SearchResponse | null>(null);
   const [filter, setFilter] = useState<SearchFilter>(initialFilter);
   const [loading, setLoading] = useState(resultsPage && !savedPage && !!initialQuery);
@@ -169,7 +178,9 @@ export default function SearchExperience({
       controller.current?.abort();
       const active = new AbortController();
       controller.current = active;
-      setQuery(value);
+      const [typed, snippet] = splitQuery(value);
+      setQuery(typed);
+      setCode(snippet);
       setLoading(true);
       setError("");
       setFilter(source);
@@ -323,6 +334,8 @@ export default function SearchExperience({
       );
     }
   }
+  const fullQuery = [query.trim(), code].filter(Boolean).join("\n");
+  const codeLines = code ? code.split("\n") : [];
   const resultItems = showSaved ? saved : (response?.results ?? []);
   const visible = resultItems.filter((item) =>
     matchesSource(item.source, filter),
@@ -340,6 +353,7 @@ export default function SearchExperience({
           onClick={() => {
             controller.current?.abort();
             setQuery("");
+            setCode("");
             setLoading(false);
             setError("");
             setResponse(null);
@@ -404,7 +418,7 @@ export default function SearchExperience({
               className="search-box"
               onSubmit={(e) => {
                 e.preventDefault();
-                void search(query);
+                void search(fullQuery.slice(0, maxQueryLength));
               }}
             >
               <Search className="search-icon" size={23} />
@@ -416,9 +430,21 @@ export default function SearchExperience({
                 id="search-input"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search docs, code…"
-                maxLength={300}
-                required
+                onPaste={(e) => {
+                  const pasted = e.clipboardData
+                    .getData("text")
+                    .replace(/\r\n?/g, "\n")
+                    .replace(/^\n+|\s+$/g, "");
+                  // A single-line paste stays in the input as usual.
+                  if (!pasted.includes("\n")) return;
+                  e.preventDefault();
+                  setCode(pasted);
+                }}
+                placeholder={
+                  code ? "Ask about this code (optional)…" : "Search docs, code…"
+                }
+                maxLength={maxQueryLength}
+                required={!code}
                 autoComplete="off"
               />
               {query && (
@@ -452,6 +478,45 @@ export default function SearchExperience({
                 )}
               </button>
             </form>
+            {code && (
+              <figure className="code-block search-code-preview">
+                <figcaption>
+                  <span className="code-dots" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <span>
+                    Pasted code · {codeLines.length} lines
+                  </span>
+                  <button
+                    type="button"
+                    className="code-copy"
+                    aria-label="Remove pasted code"
+                    onClick={() => {
+                      setCode("");
+                      input.current?.focus();
+                    }}
+                  >
+                    <X size={12} /> Remove
+                  </button>
+                </figcaption>
+                <pre>
+                  <code>
+                    {codeLines.map((line, i) => (
+                      <span className="code-line" key={i}>
+                        {line || " "}
+                      </span>
+                    ))}
+                  </code>
+                </pre>
+                {fullQuery.length > maxQueryLength && (
+                  <p className="search-code-note">
+                    Only the first {maxQueryLength} characters are searched.
+                  </p>
+                )}
+              </figure>
+            )}
             {!resultsPage && <div className="search-meta">
               <div className="suggestions">
                 <span>Try</span>
@@ -497,7 +562,12 @@ export default function SearchExperience({
                     "What are you building?"
                   ) : (
                     <>
-                      Results for <em>“{response?.query}”</em>
+                      Results for{" "}
+                      {response?.query.includes("\n") ? (
+                        "your code"
+                      ) : (
+                        <em>“{response?.query}”</em>
+                      )}
                     </>
                   )}
                 </h1>
@@ -697,7 +767,7 @@ export default function SearchExperience({
                   data-spotlight
                   onClick={() =>
                     void search(
-                      query.trim() ||
+                      fullQuery.slice(0, maxQueryLength) ||
                         (card.source === "github" ? "react" : "python"),
                       true,
                       card.source,
@@ -779,6 +849,7 @@ export default function SearchExperience({
           onClick={() => {
             controller.current?.abort();
             setQuery("");
+            setCode("");
             setLoading(false);
             setError("");
             setResponse(null);

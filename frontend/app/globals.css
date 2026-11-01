@@ -2300,3 +2300,47 @@ h1 .accent {
     animation: none !important;
   }
 }
+/* Multi-line pastes in the search bar preview as a code block. */
+.search-code-preview {
+  margin: 14px 0 0;
+  text-align: left;
+}
+.search-code-preview pre {
+  margin: 0;
+  max-height: 240px;
+  overflow: auto;
+  padding: 14px 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #c6e59a;
+  counter-reset: line;
+}
+.search-code-preview code {
+  display: block;
+  min-width: max-content;
+  font: inherit;
+}
+.search-code-preview .code-line {
+  display: block;
+  padding-right: 18px;
+  white-space: pre;
+}
+.search-code-preview .code-line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 44px;
+  padding-right: 14px;
+  text-align: right;
+  color: var(--faint);
+  opacity: 0.6;
+  user-select: none;
+}
+.search-code-note {
+  padding: 9px 16px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--faint);
+}
