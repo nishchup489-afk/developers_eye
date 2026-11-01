@@ -2300,20 +2300,65 @@ h1 .accent {
     animation: none !important;
   }
 }
-/* Multi-line pastes in the search bar preview as a code block. */
+/* Multi-line pastes in the search bar preview as a highlighted code card. */
 .search-code-preview {
   margin: 14px 0 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0e110b;
+  box-shadow: 0 20px 50px #0007;
   text-align: left;
+}
+.search-code-preview figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 8px 8px 16px;
+  border-bottom: 1px solid var(--line);
+  background: #12160e;
+}
+.search-code-language {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.search-code-language svg {
+  color: var(--faint);
+}
+.search-code-actions {
+  display: flex;
+  gap: 2px;
+}
+.search-code-actions button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: var(--faint);
+  transition:
+    color 0.2s,
+    background 0.2s;
+}
+.search-code-actions button:hover,
+.search-code-actions button.active {
+  color: var(--lime);
+  background: #ffffff0a;
 }
 .search-code-preview pre {
   margin: 0;
-  max-height: 240px;
+  max-height: 280px;
   overflow: auto;
   padding: 14px 0;
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.7;
-  color: #c6e59a;
+  color: #d4d9cc;
   counter-reset: line;
 }
 .search-code-preview code {
@@ -2321,21 +2366,50 @@ h1 .accent {
   min-width: max-content;
   font: inherit;
 }
+.search-code-preview.is-wrapped code {
+  min-width: 0;
+}
 .search-code-preview .code-line {
   display: block;
-  padding-right: 18px;
+  padding: 0 18px 0 58px;
+  text-indent: -58px;
   white-space: pre;
+}
+.search-code-preview.is-wrapped .code-line {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 .search-code-preview .code-line::before {
   counter-increment: line;
   content: counter(line);
   display: inline-block;
   width: 44px;
-  padding-right: 14px;
+  margin-right: 14px;
+  text-indent: 0;
   text-align: right;
   color: var(--faint);
-  opacity: 0.6;
+  opacity: 0.55;
   user-select: none;
+}
+.tok-comment {
+  color: #6f7a66;
+  font-style: italic;
+}
+.tok-string {
+  color: #a5d67a;
+}
+.tok-decorator {
+  color: #7cb7ff;
+}
+.tok-keyword {
+  color: #c792ea;
+}
+.tok-literal,
+.tok-type {
+  color: #f0a45d;
+}
+.tok-function {
+  color: #82aaff;
 }
 .search-code-note {
   padding: 9px 16px;

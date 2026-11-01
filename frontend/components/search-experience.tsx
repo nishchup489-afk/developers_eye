@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
 import BrandEye from "./brand-eye";
+import CodePreview from "./code-preview";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -335,7 +336,6 @@ export default function SearchExperience({
     }
   }
   const fullQuery = [query.trim(), code].filter(Boolean).join("\n");
-  const codeLines = code ? code.split("\n") : [];
   const resultItems = showSaved ? saved : (response?.results ?? []);
   const visible = resultItems.filter((item) =>
     matchesSource(item.source, filter),
@@ -479,43 +479,18 @@ export default function SearchExperience({
               </button>
             </form>
             {code && (
-              <figure className="code-block search-code-preview">
-                <figcaption>
-                  <span className="code-dots" aria-hidden="true">
-                    <i />
-                    <i />
-                    <i />
-                  </span>
-                  <span>
-                    Pasted code · {codeLines.length} lines
-                  </span>
-                  <button
-                    type="button"
-                    className="code-copy"
-                    aria-label="Remove pasted code"
-                    onClick={() => {
-                      setCode("");
-                      input.current?.focus();
-                    }}
-                  >
-                    <X size={12} /> Remove
-                  </button>
-                </figcaption>
-                <pre>
-                  <code>
-                    {codeLines.map((line, i) => (
-                      <span className="code-line" key={i}>
-                        {line || " "}
-                      </span>
-                    ))}
-                  </code>
-                </pre>
-                {fullQuery.length > maxQueryLength && (
-                  <p className="search-code-note">
-                    Only the first {maxQueryLength} characters are searched.
-                  </p>
-                )}
-              </figure>
+              <CodePreview
+                code={code}
+                note={
+                  fullQuery.length > maxQueryLength
+                    ? `Only the first ${maxQueryLength} characters are searched.`
+                    : undefined
+                }
+                onRemove={() => {
+                  setCode("");
+                  input.current?.focus();
+                }}
+              />
             )}
             {!resultsPage && <div className="search-meta">
               <div className="suggestions">
