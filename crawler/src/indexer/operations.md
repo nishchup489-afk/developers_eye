@@ -85,6 +85,58 @@ rules and the new database schema. Verify the `SearchIndex.code_vector`
 Alembic migration was applied, and run `poetry install` after adding `indexer`
 to the Poetry `packages` list.
 
+## Vocabulary rebuild CLI
+
+`indexer.vocabulary_rebuild` is a **one-time maintenance command** and runs
+separately from the crawler and indexer workers. It recomputes
+`search_terms.document_frequency` from the distinct lexemes in
+`search_index.search_vector || search_index.code_vector`; it does not crawl
+or reindex document text.
+
+From `crawler/`, after applying the vocabulary Alembic migration:
+
+```powershell
+# Stop crawler and indexer writers before a rebuild.
+poetry run python -m indexer.vocabulary_rebuild --once
+
+# Log a scan checkpoint every 250 documents; insert 100 terms per batch.
+poetry run python -m indexer.vocabulary_rebuild --once --progress-every 250 --write-batch-size 100
+
+# Show all flags.
+poetry run python -m indexer.vocabulary_rebuild --help
+```
+
+The CLI shares `RichHandler` logging conventions with
+`indexer.worker.runner`:
+
+```text
+[22:15:01] VOCABULARY REBUILD START mode=once progress_every=1000 write_batch_size=500
+[22:15:02] SCAN documents=1000 unique_terms=3200 duration=1.42s
+[22:15:04] SCAN COMPLETE documents=15600 unique_terms=18432 duration=3.41s
+[22:15:04] WRITE batch=1/37 terms=500/18432
+...
+[22:15:07] VOCABULARY REBUILD COMPLETE documents=15600 unique_terms=18432 duration=6.02s
+```
+
+The values above are illustrative, not measured results. Scan and write
+messages mean **work is in progress**, not committed. `REBUILD COMPLETE`
+is printed only after the database transaction commits. An exception logs
+`REBUILD FAILED` with a traceback, rolls back, and exits with code 1.
+Ctrl+C exits with code 130. `--once` is optional; there is no `--forever`
+because incremental index writes already maintain vocabulary.
+
+**Deployment note:** stop all crawler/indexer writers before running this
+command. An outstanding index-deletion path in PR #4 does not yet participate
+in the shared advisory lock; a concurrent removal could cause frequency
+drift. The global lock also serializes participating writers and should
+not be treated as a high-throughput design.
+
+Test the CLI argument and logging contract:
+
+```powershell
+poetry run pytest src/indexer/tests/test_vocabulary_rebuild_cli.py -v
+```
+
 ## Limitations and operations policy
 
 - There is no lease/claim table: with multiple indexer processes, preparation
