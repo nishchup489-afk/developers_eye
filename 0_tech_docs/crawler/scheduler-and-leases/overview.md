@@ -1,9 +1,9 @@
 # Scheduler and leases
 
-Area: crawler · Status: stub
+Area: crawler · Status: active
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+Hands out crawl work. `crawl_target` is both the URL frontier and the job queue: workers claim due rows with leases, then complete or fail them, and expired leases are put back in the queue. This feature decides which URL is fetched next and protects against two workers fetching the same URL. It does not fetch, parse or decide crawl scope (see `url-frontier`, `worker-runtime`).
 
 ## Code
 - `crawler/src/crawler/schedular/`
@@ -16,20 +16,24 @@ _One paragraph: what this feature is responsible for and what it is not._
 | --- | --- | --- | --- |
 | [ADR-0001](ADR-0001-round-robin-claims-without-source-locks.md) | decision | Round-robin claims without holding source row locks | accepted |
 | [EXP-0001](EXP-0001-claim-path-concurrency-benchmark.md) | experiment | Claim path latency and multi-worker drain | done, adopt |
+| [ADR-0004](ADR-0004-postgres-frontier-as-job-queue-with-leases.md) | decision | PostgreSQL crawl_target table is the job queue, with time-boxed leases | accepted |
 
 ## Decisions to record
 Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] PostgreSQL as the job queue instead of an external broker
+- [x] PostgreSQL as the job queue instead of an external broker (ADR-0004)
 - [ ] Claim ordering `priority DESC, next_fetch_at, id` with `FOR UPDATE SKIP LOCKED` (see `crawler/faced_problems.md`), replaced by round-robin BFS below
 - [ ] Round-robin BFS claiming to stop feed starvation: sources take turns by `source.last_claimed_at`, and inside a source `priority DESC, depth ASC` (see `DOCS/REPOSITORY_README.md`)
 - [x] Claim concurrently without holding source row locks (ADR-0001, EXP-0001)
 - [ ] Exponential backoff with `failure_count`
-- [ ] Lease recovery for expired leases
+- [x] Lease recovery for expired leases (ADR-0004)
 
 ## Rules for future changes
 _Short, enforceable rules distilled from the records above. Agents read this first._
 
 - Do not lock `source` rows inside the `claim_targets()` loop (`FOR UPDATE`, with or without `SKIP LOCKED`) without a new ADR (ADR-0001).
 - Keep the `flush()` after each lease and the ascending-id `last_claimed_at` update at the end of `claim_targets()` (ADR-0001).
+- Never start network work inside the claim transaction, and never hold a transaction open across a fetch (ADR-0004).
+- Update a leased target only with the `lease_until = :expected AND lease_until > clock_timestamp()` guard (ADR-0004).
+- Keep `job_timeout_seconds <= lease_seconds - 15` and `claim_limit = min(batch_size, concurrency)` (ADR-0004).
 - Keep these passing: `schedular/tests/test_concurrent_claims.py`, `schedular/tests/test_round_robin.py`, `worker/tests/test_postgres_pipeline.py`.
