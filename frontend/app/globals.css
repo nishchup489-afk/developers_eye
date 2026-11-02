@@ -879,6 +879,10 @@ h1 .accent {
   color: #bdc1c6;
   margin-top: 4px;
 }
+.result-content > p b {
+  font-weight: 600;
+  color: #e8eaed;
+}
 .result-menu {
   position: relative;
   flex-shrink: 0;

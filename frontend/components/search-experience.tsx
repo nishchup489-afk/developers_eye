@@ -23,7 +23,7 @@ import {
   Link2,
   LoaderCircle,
   MessageCircle,
-  MoreVertical,
+  MoreHorizontal,
   Search,
   X,
 } from "lucide-react";
@@ -131,6 +131,22 @@ function siteName(url: URL, source: Source) {
   const name = parts.length > 1 ? parts[parts.length - 2] : parts[0];
   if (!name) return sourceNames[source];
   return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+/** Bolds the words of the query wherever they appear in the snippet. */
+function Snippet({ text, query }: { text: string; query: string }) {
+  const terms = query
+    .toLowerCase()
+    .split(/\W+/)
+    .filter((term) => term.length > 1);
+  if (!terms.length) return <p>{text}</p>;
+  const escaped = terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const parts = text.split(new RegExp(`\\b(${escaped.join("|")})`, "gi"));
+  return (
+    <p>
+      {parts.map((part, i) => (i % 2 ? <b key={i}>{part}</b> : part))}
+    </p>
+  );
 }
 
 /** The site's own favicon, falling back to the source icon if it fails to load. */
@@ -724,7 +740,10 @@ export default function SearchExperience({
                         >
                           {result.title}
                         </a>
-                        <p>{result.snippet}</p>
+                        <Snippet
+                          text={result.snippet}
+                          query={showSaved ? "" : (response?.query ?? "")}
+                        />
                       </div>
                       <div className="result-menu" data-result-menu>
                         <button
@@ -734,7 +753,7 @@ export default function SearchExperience({
                           aria-expanded={menuOpen}
                           onClick={() => setMenuFor(menuOpen ? null : result.url)}
                         >
-                          <MoreVertical size={18} />
+                          <MoreHorizontal size={18} />
                         </button>
                         {menuOpen && (
                           <div className="result-menu-list" role="menu">
