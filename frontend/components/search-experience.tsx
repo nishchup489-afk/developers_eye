@@ -20,8 +20,10 @@ import {
   GitFork,
   Globe2,
   Layers3,
+  Link2,
   LoaderCircle,
   MessageCircle,
+  MoreVertical,
   Search,
   X,
 } from "lucide-react";
@@ -123,6 +125,38 @@ function splitQuery(value: string): [text: string, code: string] {
   return value.includes("\n") ? ["", value] : [value, ""];
 }
 
+/** A readable site name from the hostname, e.g. "docs.python.org" → "Python". */
+function siteName(url: URL, source: Source) {
+  const parts = url.hostname.replace(/^www\./, "").split(".");
+  const name = parts.length > 1 ? parts[parts.length - 2] : parts[0];
+  if (!name) return sourceNames[source];
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+/** The site's own favicon, falling back to the source icon if it fails to load. */
+function Favicon({ url, source }: { url: URL; source: Source }) {
+  const [failed, setFailed] = useState(false);
+  const Icon = icons[source];
+  return (
+    <span className="result-favicon" aria-hidden="true">
+      {failed ? (
+        <Icon size={14} />
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={`${url.origin}/favicon.ico`}
+          alt=""
+          width={18}
+          height={18}
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={() => setFailed(true)}
+        />
+      )}
+    </span>
+  );
+}
+
 /** Splits text into per-character spans for the headline reveal. */
 function Chars({ text }: { text: string }) {
   return Array.from(text, (char, i) => (
@@ -158,6 +192,25 @@ export default function SearchExperience({
   const [saved, setSaved] = useState<SearchResult[]>([]);
   const showSaved = savedPage;
   const [storageError, setStorageError] = useState("");
+  const [menuFor, setMenuFor] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!menuFor) return;
+    const close = (event: Event) => {
+      if (
+        event instanceof KeyboardEvent
+          ? event.key === "Escape"
+          : !(event.target as HTMLElement).closest("[data-result-menu]")
+      )
+        setMenuFor(null);
+    };
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", close);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", close);
+    };
+  }, [menuFor]);
 
   const search = useCallback(
     async (text: string, updateUrl = true, source: SearchFilter = "all") => {
@@ -634,26 +687,35 @@ export default function SearchExperience({
               </div>
             ) : (
               <div className="result-list">
-                {visible.map((result, index) => {
-                  const Icon = icons[result.source];
+                {visible.map((result) => {
                   const isSaved = saved.some((item) => item.url === result.url);
+                  const url = new URL(result.url);
+                  const crumbs = url.pathname
+                    .split("/")
+                    .filter(Boolean)
+                    .map((part) => decodeURIComponent(part));
+                  const menuOpen = menuFor === result.url;
                   return (
-                    <article
-                      className="result-row"
-                      key={result.url}
-                      data-spotlight
-                    >
-                      <span className="result-number">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
+                    <article className="result-row" key={result.url}>
                       <div className="result-content">
-                        <div className="result-source">
-                          <Icon size={13} />
-                          <span>{sourceNames[result.source]}</span>
-                          <span className="result-domain">
-                            {new URL(result.url).hostname}
+                        <a
+                          className="result-site"
+                          href={result.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          tabIndex={-1}
+                        >
+                          <Favicon url={url} source={result.source} />
+                          <span className="result-site-text">
+                            <span className="result-site-name">
+                              {siteName(url, result.source)}
+                            </span>
+                            <cite className="result-breadcrumb">
+                              {url.origin}
+                              {crumbs.length > 0 && ` › ${crumbs.join(" › ")}`}
+                            </cite>
                           </span>
-                        </div>
+                        </a>
                         <a
                           className="result-title"
                           href={result.url}
@@ -661,26 +723,49 @@ export default function SearchExperience({
                           rel="noopener noreferrer"
                         >
                           {result.title}
-                          <ArrowUpRight size={18} />
                         </a>
                         <p>{result.snippet}</p>
-                        <div className="tags">
-                          {result.tags?.map((tag) => (
-                            <span key={tag}>{tag}</span>
-                          ))}
-                        </div>
                       </div>
-                      <button
-                        className={`bookmark-button icon-button ${isSaved ? "is-saved" : ""}`}
-                        aria-label={`${isSaved ? "Unsave" : "Save"} ${result.title}`}
-                        aria-pressed={isSaved}
-                        onClick={() => toggleSave(result)}
-                      >
-                        <Bookmark
-                          size={18}
-                          fill={isSaved ? "currentColor" : "none"}
-                        />
-                      </button>
+                      <div className="result-menu" data-result-menu>
+                        <button
+                          className={`result-menu-button icon-button ${isSaved ? "is-saved" : ""}`}
+                          aria-label={`More options for ${result.title}`}
+                          aria-haspopup="menu"
+                          aria-expanded={menuOpen}
+                          onClick={() => setMenuFor(menuOpen ? null : result.url)}
+                        >
+                          <MoreVertical size={18} />
+                        </button>
+                        {menuOpen && (
+                          <div className="result-menu-list" role="menu">
+                            <button
+                              role="menuitem"
+                              onClick={() => {
+                                toggleSave(result);
+                                setMenuFor(null);
+                              }}
+                            >
+                              <Bookmark
+                                size={15}
+                                fill={isSaved ? "currentColor" : "none"}
+                              />
+                              {isSaved ? "Unsave" : "Save"}
+                            </button>
+                            <button
+                              role="menuitem"
+                              onClick={() => {
+                                void navigator.clipboard
+                                  ?.writeText(result.url)
+                                  .catch(() => {});
+                                setMenuFor(null);
+                              }}
+                            >
+                              <Link2 size={15} />
+                              Copy link
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </article>
                   );
                 })}
