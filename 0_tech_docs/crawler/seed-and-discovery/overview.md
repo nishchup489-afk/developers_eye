@@ -1,27 +1,34 @@
 # Seeds and discovery
 
-Area: crawler · Status: stub
+Area: crawler · Status: active
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+
+Registers approved sources and discovers initial/page/sitemap/feed/API targets. A configured source or generic JSON parser does not prove every named platform integration exists.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
 ## Code
-- `crawler/src/crawler/seed/`
+
+- [`crawler/src/crawler/seed`](../../../crawler/src/crawler/seed)
+- [`crawler/src/crawler/main.py`](../../../crawler/src/crawler/main.py)
 
 ## How-it-works docs
-- `crawler/src/crawler/seed/guide.md`
-- `crawler/src/crawler/seed/docs/`
+
+- [`crawler/src/crawler/seed/guide.md`](../../../crawler/src/crawler/seed/guide.md)
+- [`crawler/src/crawler/seed/docs/sitemap_discovery.md`](../../../crawler/src/crawler/seed/docs/sitemap_discovery.md)
 
 ## Records
+
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0014](ADR-0014-registered-sources-and-queued-discovery.md) | decision | Register sources and enqueue discovery through the same frontier | accepted |
 
 ## Decisions to record
-Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] Source registry kept as JSON plus CSV/XLSX, upserted by `seed.py`
-- [ ] Bootstrap discovery through sitemaps, feeds and API endpoints
-- [ ] `source.kind` limited to `website`, `rss`, `api`
+The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
+
+- Route new discovery paths through enqueue_targets.
+- Keep registry behavior separate from future source coverage claims.

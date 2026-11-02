@@ -1,91 +1,78 @@
-# Tech docs (why the system is built this way)
+# Tech docs: why Developer's Eye is built this way
 
-These docs record **why**: decisions, the algorithms we chose and rejected, and the incidents that taught us something. They are written for senior engineers and AI agents who need to change the system without repeating old mistakes. **How** the code works lives next to the code (`*/docs/`, package READMEs); start at `technical_handoff.md` for the overall picture.
+These records preserve decisions, architecture, rejected approaches, experiments, incidents and future optimization targets for senior engineers and AI agents. Mechanics belong beside the code in `docs/` and package guides. This index covers the repository through **2026-11-02, commit `facd333`**.
 
-## Layout
+## Start here
 
-```
-0_tech_docs/
-  _templates/                 copy from here, never edit in place
-  <area>/<feature>/
-    overview.md               purpose, code, record index, rules for future changes
-    ADR-0001-<slug>.md        a decision
-    INC-0001-<slug>.md        an incident (disaster log)
-    EXP-0001-<slug>.md        an experiment or benchmark
-```
+- [Current architecture and integration status](infra/system-architecture/architecture.md)
+- [Decision history and abandoned directions](infra/system-architecture/decision-history.md)
+- [Historical test reports and fix-log evidence](infra/system-architecture/evidence-catalog.md)
+- [All ADRs, incidents and experiments](record-index.md)
+- [Optimization targets and measurement gates](infra/performance-and-scaling/optimization-plan.md)
+- [Evidence, scope and validation](evidence-and-validation.md)
 
-Areas: `crawler`, `indexer`, `backend`, `frontend`, `infra`. A record that spans features lives in the feature that owns the change and is linked from the others.
+## How to read status
 
-## Rules
+“Implemented” means source exists. “Connected” means the inspected caller uses it. Neither proves production deployment. New BM25 statistics/types, query planning, merge and snippets are components; the public API still uses the earlier FTS service. BM25 scoring is unfinished; fuzzy imports and vocabulary maintenance have open defects. Proposals remain proposals even when their configuration types exist.
 
-1. **Numbers are global per type** (`ADR-0007` is unique across the repo). Take the next free number: `ls 0_tech_docs/*/*/ADR-* | sort | tail -1`.
-2. **Accepted ADRs are not rewritten.** To change a decision, write a new ADR with `supersedes: ADR-000N` and set the old one to `superseded`.
-3. **Every record lists the code it governs** in its front matter (`code:`). Put `# ADR-000N` (or `// ADR-000N`) in a comment on the line that enforces the decision so a reader of the code can find the reason.
-4. **Separate measured facts from assumptions.** Link the test, log, benchmark or commit.
-5. **Update the feature's `overview.md`** (records table, rules for future changes) in the same commit as the record.
-6. Keep records short. A decision that needs more than two pages is probably two decisions.
+Existing accepted ADRs are preserved. New retrospective alternatives are engineering comparisons unless a commit, prototype or benchmark proves they were actually tried. No production traffic, corpus size, latency, deployment or quality result is invented from screenshots, commit messages or earlier plans.
 
-## For AI agents
+## Templates and maintenance rules
 
-Before changing a feature: read its `overview.md`, then every `accepted` ADR and every INC it lists. Do not break a rule under "Rules for future changes" without writing a new ADR. When you fix a non-trivial bug, add an INC record.
+Use the existing [decision](_templates/decision.md), [incident](_templates/incident.md), [experiment](_templates/experiment.md) and [feature overview](_templates/feature-overview.md) templates. Records live at `<area>/<feature>/<type>-<global-number>-<slug>.md`.
 
-## Features
+1. IDs are globally unique per type. Check the record index before choosing the next number.
+2. Do not rewrite an accepted decision to erase history. Write a successor ADR and update supersession metadata when behavior changes.
+3. List governed code paths and link evidence. Add an enforcement-point record reference when modifying governed runtime code; this retrospective documentation PR does not scatter comments through otherwise unchanged application files.
+4. Update the owning feature overview and global record index with each new record.
+5. Label planned work, unrun experiments, inferred rationale and historical measured results explicitly.
+6. Keep feature overviews current. Read their accepted decisions and incidents before editing a subsystem.
+7. Use the navigation generator for its marked blocks; validate local links and template fields before publishing.
 
-### Crawler (`crawler/src/crawler`)
+## Feature catalog
 
-| Feature | Folder |
-| --- | --- |
-| [Seeds and discovery](crawler/seed-and-discovery/overview.md) | `crawler/seed-and-discovery/` |
-| [URL frontier and crawl scope](crawler/url-frontier/overview.md) | `crawler/url-frontier/` |
-| [Scheduler and leases](crawler/scheduler-and-leases/overview.md) | `crawler/scheduler-and-leases/` |
-| [URL safety (SSRF, DNS, redirects)](crawler/url-safety/overview.md) | `crawler/url-safety/` |
-| [Robots.txt and politeness](crawler/robots-and-politeness/overview.md) | `crawler/robots-and-politeness/` |
-| [Fetcher](crawler/fetcher/overview.md) | `crawler/fetcher/` |
-| [Parser (HTML, sitemaps, feeds, JSON APIs)](crawler/parser/overview.md) | `crawler/parser/` |
-| [Content processing](crawler/content-processing/overview.md) | `crawler/content-processing/` |
-| [Document and attempt writer](crawler/document-writer/overview.md) | `crawler/document-writer/` |
-| [Worker runtime](crawler/worker-runtime/overview.md) | `crawler/worker-runtime/` |
-| [Monitoring and telemetry](crawler/monitoring-and-telemetry/overview.md) | `crawler/monitoring-and-telemetry/` |
-
-### Indexer (`crawler/src/indexer`)
-
-| Feature | Folder |
-| --- | --- |
-| [Freshness selection (no queue)](indexer/freshness-selection/overview.md) | `indexer/freshness-selection/` |
-| [Document snapshot and field weighting](indexer/document-analysis/overview.md) | `indexer/document-analysis/` |
-| [Search vectors](indexer/search-vectors/overview.md) | `indexer/search-vectors/` |
-| [Index writer consistency](indexer/index-writer/overview.md) | `indexer/index-writer/` |
-| [Reindex and index versioning](indexer/reindex-and-versioning/overview.md) | `indexer/reindex-and-versioning/` |
-| [Coverage reporting](indexer/coverage-reporting/overview.md) | `indexer/coverage-reporting/` |
-| [Fuzzy search vocabulary](indexer/vocubulary/overview.md) | `indexer/vocubulary/` |
-
-### Backend API and database (`backend/`)
-
-| Feature | Folder |
-| --- | --- |
-| [Database schema and migrations](backend/database-schema/overview.md) | `backend/database-schema/` |
-| [Read-only admin API](backend/admin-api/overview.md) | `backend/admin-api/` |
-| [Backend and crawler package boundary](backend/package-boundary/overview.md) | `backend/package-boundary/` |
-| [Search API](backend/search-api/overview.md) | `backend/search-api/` |
-
-### Frontend (`frontend/`)
-
-| Feature | Folder |
-| --- | --- |
-| [Landing page and animated eye](frontend/landing-eye/overview.md) | `frontend/landing-eye/` |
-| [Search experience and demo mode](frontend/search-experience/overview.md) | `frontend/search-experience/` |
-| [Public API docs page](frontend/api-docs-page/overview.md) | `frontend/api-docs-page/` |
-| [Admin authentication](frontend/admin-auth/overview.md) | `frontend/admin-auth/` |
-| [Admin console and backend proxy](frontend/admin-console/overview.md) | `frontend/admin-console/` |
-
-### Configuration, tooling and operations
-
-| Feature | Folder |
-| --- | --- |
-| [Configuration and secrets](infra/configuration-and-secrets/overview.md) | `infra/configuration-and-secrets/` |
-| [Local development and testing](infra/local-dev-and-testing/overview.md) | `infra/local-dev-and-testing/` |
-| [CI and containers (planned)](infra/ci-and-containers/overview.md) | `infra/ci-and-containers/` |
-| [Docs navigation](infra/docs-navigation/overview.md) | `infra/docs-navigation/` |
+| Area / feature | Source-level status | Entry point |
+| --- | --- | --- |
+| infra/system-architecture | active | [System architecture and implementation status](infra/system-architecture/overview.md) |
+| crawler/seed-and-discovery | active | [Seeds and discovery](crawler/seed-and-discovery/overview.md) |
+| crawler/url-frontier | active | [URL frontier and crawl scope](crawler/url-frontier/overview.md) |
+| crawler/scheduler-and-leases | active | [Scheduler and leases](crawler/scheduler-and-leases/overview.md) |
+| crawler/url-safety | active | [URL safety and pinned transport](crawler/url-safety/overview.md) |
+| crawler/robots-and-politeness | active | [Robots and politeness](crawler/robots-and-politeness/overview.md) |
+| crawler/fetcher | active | [Bounded fetcher](crawler/fetcher/overview.md) |
+| crawler/parser | active | [HTML and structured resource parsing](crawler/parser/overview.md) |
+| crawler/content-processing | active | [Content normalization, classification and fingerprints](crawler/content-processing/overview.md) |
+| crawler/document-writer | active | [Document persistence and availability](crawler/document-writer/overview.md) |
+| crawler/worker-runtime | active | [Worker lifecycle and recovery](crawler/worker-runtime/overview.md) |
+| crawler/monitoring-and-telemetry | active | [Crawler telemetry](crawler/monitoring-and-telemetry/overview.md) |
+| indexer/freshness-selection | active | [Freshness-derived index work](indexer/freshness-selection/overview.md) |
+| indexer/document-analysis | active | [Document snapshots and weighted fields](indexer/document-analysis/overview.md) |
+| indexer/search-vectors | active | [Weighted PostgreSQL text and code vectors](indexer/search-vectors/overview.md) |
+| indexer/index-writer | active | [Index writer consistency](indexer/index-writer/overview.md) |
+| indexer/reindex-and-versioning | active | [Reindex and index format versioning](indexer/reindex-and-versioning/overview.md) |
+| indexer/vocubulary | active | [Fuzzy vocabulary and repair](indexer/vocubulary/overview.md) |
+| indexer/coverage-reporting | active | [Index and vocabulary coverage reporting](indexer/coverage-reporting/overview.md) |
+| backend/database-schema | active | [Database schema and migrations](backend/database-schema/overview.md) |
+| backend/package-boundary | active | [Backend and worker package boundary](backend/package-boundary/overview.md) |
+| backend/search-api | active | [Public search API and integration boundary](backend/search-api/overview.md) |
+| backend/admin-api | active | [Read-only admin API](backend/admin-api/overview.md) |
+| backend/query-planning | active | [Query analysis and explicit retrieval planning](backend/query-planning/overview.md) |
+| backend/retrieval | active | [Text and code candidate retrieval](backend/retrieval/overview.md) |
+| backend/fuzzy-correction | planned | [Conservative fuzzy correction](backend/fuzzy-correction/overview.md) |
+| backend/merge-and-contracts | active | [Candidate merge and data contracts](backend/merge-and-contracts/overview.md) |
+| backend/bm25-statistics | active | [BM25 statistics component](backend/bm25-statistics/overview.md) |
+| backend/ranking | planned | [BM25 ranking plan](backend/ranking/overview.md) |
+| backend/snippets | active | [Query-aware snippets](backend/snippets/overview.md) |
+| frontend/search-experience | active | [Public search, code preview and local saves](frontend/search-experience/overview.md) |
+| frontend/admin-auth | active | [Admin authentication](frontend/admin-auth/overview.md) |
+| frontend/admin-console | active | [Admin console and server proxy](frontend/admin-console/overview.md) |
+| frontend/landing-eye | active | [Progressive landing visuals](frontend/landing-eye/overview.md) |
+| frontend/api-docs-page | active | [Public API documentation page](frontend/api-docs-page/overview.md) |
+| infra/configuration-and-secrets | active | [Configuration and secret handling](infra/configuration-and-secrets/overview.md) |
+| infra/local-dev-and-testing | active | [Local development and validation tiers](infra/local-dev-and-testing/overview.md) |
+| infra/ci-and-containers | planned | [CI and container plan](infra/ci-and-containers/overview.md) |
+| infra/docs-navigation | active | [Documentation layers and navigation](infra/docs-navigation/overview.md) |
+| infra/performance-and-scaling | planned | [Optimization and scaling plan](infra/performance-and-scaling/overview.md) |
 
 <!-- docs-nav:start -->
 ## Documentation map
@@ -111,6 +98,12 @@ Every project doc, grouped by area. Generated by `scripts/update_docs_nav.py`; e
 - [Table notes: robot](../backend/docs/db/robot.md) `backend/docs/db/robot.md`
 - [Table notes: search_index](../backend/docs/db/search_index.md) `backend/docs/db/search_index.md`
 - [Table notes: source](../backend/docs/db/source.md) `backend/docs/db/source.md`
+- [Snippet engine](../backend/src/backend/search/snippets/docs/README.md) `backend/src/backend/search/snippets/docs/README.md`
+- [Snippet Engine](../backend/src/backend/search/snippets/docs/snippets_docs.md) `backend/src/backend/search/snippets/docs/snippets_docs.md`
+- [Test cases](../backend/src/backend/tests/test_cases.md) `backend/src/backend/tests/test_cases.md`
+- [Developer's Eye: Fuzzy Retrieval Test Cases](../backend/tests/fuzzy_test_case.md) `backend/tests/fuzzy_test_case.md`
+- [Backend test cases](../backend/tests/test_case.md) `backend/tests/test_case.md`
+- [Developer's Eye: retrieval/code.py Test Cases](../backend/tests/test_case_code.md) `backend/tests/test_case_code.md`
 
 **Crawler: seeds and frontier**
 
@@ -197,9 +190,12 @@ Every project doc, grouped by area. Generated by `scripts/update_docs_nav.py`; e
 
 - [Developer's Eye indexer service + writer](../crawler/src/indexer/README.md) `crawler/src/indexer/README.md`
 - [Developer's Eye: Indexer Analyzer](../crawler/src/indexer/docs/ANALYZER.md) `crawler/src/indexer/docs/ANALYZER.md`
+- [ADR: Maintain Developer's Eye Vocabulary Consistency in the Existing Indexer](../crawler/src/indexer/docs/adr-vocabulary-consistency-pr4.md) `crawler/src/indexer/docs/adr-vocabulary-consistency-pr4.md`
 - [Developer's Eye — Indexer: Builder](../crawler/src/indexer/docs/builder.md) `crawler/src/indexer/docs/builder.md`
 - [Indexer configuration](../crawler/src/indexer/docs/config.md) `crawler/src/indexer/docs/config.md`
 - [Indexer file responsibilities](../crawler/src/indexer/docs/file_task.md) `crawler/src/indexer/docs/file_task.md`
+- [Pr#3-vocubulary-fixes](../crawler/src/indexer/docs/pr%233-vocubulary-fixes.md) `crawler/src/indexer/docs/pr#3-vocubulary-fixes.md`
+- [Developer's Eye: Vocabulary Consistency (PR #4)](../crawler/src/indexer/docs/pr4-vocabulary-consistency.md) `crawler/src/indexer/docs/pr4-vocabulary-consistency.md`
 - [reporting.py — indexer coverage report](../crawler/src/indexer/docs/reporting.md) `crawler/src/indexer/docs/reporting.md`
 - [Developer's Eye — Indexer: Selector](../crawler/src/indexer/docs/selector.md) `crawler/src/indexer/docs/selector.md`
 - [Developer's Eye: Indexer service](../crawler/src/indexer/docs/service.md) `crawler/src/indexer/docs/service.md`
@@ -219,4 +215,5 @@ Every project doc, grouped by area. Generated by `scripts/update_docs_nav.py`; e
 **Other**
 
 - [Faced problems](../crawler/faced_problems.md) `crawler/faced_problems.md`
+- [New terms](../new_terms.md) `new_terms.md`
 <!-- docs-nav:end -->

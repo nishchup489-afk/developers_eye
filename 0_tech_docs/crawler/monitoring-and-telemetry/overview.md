@@ -1,26 +1,34 @@
-# Monitoring and telemetry
+# Crawler telemetry
 
-Area: crawler · Status: stub
+Area: crawler · Status: active
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+
+Persists stage events and worker heartbeats and exposes them through backend-owned read-only reports. Event volume and retention need measurement; heartbeat presence does not prove successful crawl progress.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
 ## Code
-- `crawler/src/crawler/worker/telemetry.py`
-- `crawler/src/crawler/worker/monitoring.py`
-- `crawler/src/crawler/worker/logging_config.py`
+
+- [`crawler/src/crawler/worker/telemetry.py`](../../../crawler/src/crawler/worker/telemetry.py)
+- [`backend/src/backend/models/crawl_monitor.py`](../../../backend/src/backend/models/crawl_monitor.py)
+- [`backend/src/backend/admin_services`](../../../backend/src/backend/admin_services)
 
 ## How-it-works docs
-- _none yet_
+
+- [`crawler/src/crawler/worker/tests/README.md`](../../../crawler/src/crawler/worker/tests/README.md)
 
 ## Records
+
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0030](../../backend/admin-api/ADR-0030-read-only-observability-plane.md) | decision | Expose read-only operational reports from backend-owned query services | accepted |
 
 ## Decisions to record
-Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] Stage events and worker heartbeats stored in Postgres (`crawl_event`, `crawl_worker`)
+The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
+
+- Separate operational write commands into a new design and permission model.
+- Keep secrets server-side and report status meanings explicit.

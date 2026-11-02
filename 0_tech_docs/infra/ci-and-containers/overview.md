@@ -1,24 +1,34 @@
-# CI and containers (planned)
+# CI and container plan
 
-Area: infra · Status: stub
+Area: infra · Status: planned
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+
+Records the proposed disposable PostgreSQL and frontend validation gates. No Dockerfile, Compose or CI workflow is present at the inspected baseline; provider and rollout choices are uncommitted.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
 ## Code
-- _none yet_
+
+- [`backend/pyproject.toml`](../../../backend/pyproject.toml)
+- [`crawler/pyproject.toml`](../../../crawler/pyproject.toml)
+- [`frontend/package.json`](../../../frontend/package.json)
 
 ## How-it-works docs
-- _none yet_
+
+The linked source contracts and tests are the current mechanics reference; no separate mechanics guide is claimed.
 
 ## Records
+
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0039](ADR-0039-reproducible-ci-and-containers-plan.md) | decision | Add disposable PostgreSQL verification before automating deployment | proposed |
 
 ## Decisions to record
-Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] `compose.yaml` for Postgres and a CI workflow (not built yet)
+Pending implementation/evaluation choices are recorded as proposals: ADR-0039. Do not mark them accepted solely because this overview exists.
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
+
+- Make readiness checks distinct from liveness checks.
+- Do not mark CI/container work complete until files exist and a run is verified.

@@ -3,35 +3,35 @@
 Area: crawler · Status: active
 
 ## Purpose
-Hands out crawl work. `crawl_target` is both the URL frontier and the job queue: workers claim due rows with leases, then complete or fail them, and expired leases are put back in the queue. This feature decides which URL is fetched next and protects against two workers fetching the same URL. It does not fetch, parse or decide crawl scope (see `url-frontier`, `worker-runtime`).
+
+Claims due work with target-row leases, source rotation and priority-before-depth ordering. This is best-effort round-robin fairness, not strict distributed FIFO or pure global BFS. Source-row claim locks were removed after the recorded concurrency benchmark.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
 ## Code
-- `crawler/src/crawler/schedular/`
+
+- [`crawler/src/crawler/schedular`](../../../crawler/src/crawler/schedular)
+- [`crawler/src/crawler/worker/recovery.py`](../../../crawler/src/crawler/worker/recovery.py)
 
 ## How-it-works docs
-- `crawler/src/crawler/schedular/DOCS/`
+
+- [`crawler/src/crawler/schedular/DOCS/REPOSITORY_README.md`](../../../crawler/src/crawler/schedular/DOCS/REPOSITORY_README.md)
 
 ## Records
+
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
 | [ADR-0001](ADR-0001-round-robin-claims-without-source-locks.md) | decision | Round-robin claims without holding source row locks | accepted |
-| [EXP-0001](EXP-0001-claim-path-concurrency-benchmark.md) | experiment | Claim path latency and multi-worker drain | done, adopt |
 | [ADR-0004](ADR-0004-postgres-frontier-as-job-queue-with-leases.md) | decision | PostgreSQL crawl_target table is the job queue, with time-boxed leases | accepted |
-| [ADR-0005](ADR-0005-round-robin-bfs-claim-order.md) | decision | Round robin across sources, then priority and BFS depth inside a source | accepted |
-| [ADR-0006](ADR-0006-capped-exponential-retry-backoff.md) | decision | Capped exponential retry backoff on failure_count | accepted |
+| [ADR-0005](ADR-0005-round-robin-bfs-claim-order.md) | decision | Claim order is round robin across sources, then priority and BFS depth inside a source | accepted |
+| [ADR-0006](ADR-0006-capped-exponential-retry-backoff.md) | decision | Failed targets retry with capped exponential backoff on failure_count, forever | accepted |
+| [EXP-0001](EXP-0001-claim-path-concurrency-benchmark.md) | experiment | Claim path latency and multi-worker drain, source-locked vs unlocked round robin | done |
 
 ## Decisions to record
-Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [x] PostgreSQL as the job queue instead of an external broker (ADR-0004)
-- [x] Claim ordering `priority DESC, next_fetch_at, id` with `FOR UPDATE SKIP LOCKED` (see `crawler/faced_problems.md`), replaced by round-robin BFS below (recorded as option B in ADR-0005)
-- [x] Round-robin BFS claiming to stop feed starvation: sources take turns by `source.last_claimed_at`, and inside a source `priority DESC, depth ASC` (ADR-0005)
-- [x] Claim concurrently without holding source row locks (ADR-0001, EXP-0001)
-- [x] Exponential backoff with `failure_count` (ADR-0006)
-- [x] Lease recovery for expired leases (ADR-0004)
+The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
 
 - Do not lock `source` rows inside the `claim_targets()` loop (`FOR UPDATE`, with or without `SKIP LOCKED`) without a new ADR (ADR-0001).
 - Keep the `flush()` after each lease and the ascending-id `last_claimed_at` update at the end of `claim_targets()` (ADR-0001).

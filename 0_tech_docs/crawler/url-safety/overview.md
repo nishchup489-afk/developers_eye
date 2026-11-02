@@ -1,34 +1,36 @@
-# URL safety (SSRF, DNS, redirects)
+# URL safety and pinned transport
 
 Area: crawler · Status: active
 
 ## Purpose
-Decides whether a URL may be requested at all: exact host allowlist, public-only DNS with the connection pinned to the approved IPs, and a fresh check on every redirect hop. It protects the machine running the crawler from SSRF. It does not decide crawl scope by depth or path (`url-frontier`) or robots and rate limits (`robots-and-politeness`).
+
+Approves hosts, resolves and rejects unsafe destinations, pins approved IPs and checks each redirect. Shared exception identity and exact URL/Host/TLS validation are security boundaries.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
 ## Code
-- `crawler/src/crawler/policy_and_politeness/host_policy.py`
-- `crawler/src/crawler/policy_and_politeness/dns_policy.py`
-- `crawler/src/crawler/policy_and_politeness/redirect_policy.py`
-- `crawler/src/crawler/policy_and_politeness/policy_coordinator.py`
-- `crawler/src/crawler/fetcher/transport.py`, `crawler/src/crawler/fetcher/client.py`
+
+- [`crawler/src/crawler/policy_and_politeness`](../../../crawler/src/crawler/policy_and_politeness)
+- [`crawler/src/crawler/fetcher/transport.py`](../../../crawler/src/crawler/fetcher/transport.py)
 
 ## How-it-works docs
-- `crawler/src/crawler/policy_and_politeness/docs/`
+
+- [`crawler/src/crawler/policy_and_politeness/docs/2_dns_policy.md`](../../../crawler/src/crawler/policy_and_politeness/docs/2_dns_policy.md)
+- [`crawler/src/crawler/policy_and_politeness/docs/5_redirect_policy.md`](../../../crawler/src/crawler/policy_and_politeness/docs/5_redirect_policy.md)
 
 ## Records
+
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
-| [ADR-0007](ADR-0007-fail-closed-ssrf-checks-with-ip-pinning.md) | decision | Exact host allowlist, then public-only DNS pinned into the transport, on every hop | accepted |
-| [INC-0005](INC-0005-pinned-transport-accepted-unchecked-urls.md) | incident | Pinned transport accepted unchecked URLs on an approved origin | resolved |
+| [ADR-0007](ADR-0007-fail-closed-ssrf-checks-with-ip-pinning.md) | decision | Every request hop passes an exact host allowlist, then public-only DNS pinned into the transport | accepted |
+| [INC-0005](INC-0005-pinned-transport-accepted-unchecked-urls.md) | incident | Pinned transport accepted any path, Host header or TLS server name on an approved origin | resolved |
 
 ## Decisions to record
-Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [x] Two-stage URL validation: cheap allowlist first, then DNS (ADR-0007)
-- [x] Block private IP ranges and pin resolved IPs against DNS rebinding (ADR-0007)
-- [x] Re-check policy on every redirect hop (ADR-0007)
+The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
+
 - Never create an HTTP client for crawling outside `PolicyCoordinator` → `HTTPXHopFetcher` → `create_pinned_client()`; never enable `follow_redirects` (ADR-0007).
 - Allowlist before DNS, DNS before any request, on every hop (ADR-0007).
 - Reject the whole DNS answer if any address is not public (ADR-0007).
