@@ -18,6 +18,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path, PurePosixPath
+from urllib.parse import quote
 
 START = "<!-- docs-nav:start -->"
 END = "<!-- docs-nav:end -->"
@@ -123,7 +124,7 @@ def render(root: Path, docs: list[str], readme: str) -> str:
         lines += ["", f"**{title}**", ""]
         for doc in groups[title]:
             rel = os.path.relpath(doc, here.as_posix() or ".").replace(os.sep, "/")
-            link = f"[{label_for(root, doc)}]({rel.replace(' ', '%20')})"
+            link = f"[{label_for(root, doc)}]({quote(rel, safe='/')})"
             marker = " (you are here)" if doc == readme else ""
             lines.append(f"- {link} `{doc}`{marker}")
     lines.append(END)

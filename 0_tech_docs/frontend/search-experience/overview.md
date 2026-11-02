@@ -1,30 +1,35 @@
-# Search experience and demo mode
+# Public search, code preview and local saves
 
-Area: frontend · Status: stub
+Area: frontend · Status: active
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+
+The frontend displays a validated live/demo contract, cancels superseded requests, and saves results locally. Code preview affects presentation; it does not prove that backend code routing or exact-symbol retrieval is active.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
 ## Code
-- `frontend/app/search/`
-- `frontend/app/api/search/`
-- `frontend/components/search-experience.tsx`
-- `frontend/lib/search.ts`
-- `frontend/lib/demo.ts`
-- `frontend/lib/axios.js` (browser and server axios clients)
+
+- [`frontend/components/search-experience.tsx`](../../../frontend/components/search-experience.tsx)
+- [`frontend/app/api/search/route.ts`](../../../frontend/app/api/search/route.ts)
+- [`frontend/lib/search.ts`](../../../frontend/lib/search.ts)
+- [`frontend/lib/axios.js`](../../../frontend/lib/axios.js)
 
 ## How-it-works docs
-- _none yet_
+
+- [`frontend/public/api-reference.md`](../../../frontend/public/api-reference.md)
 
 ## Records
+
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0031](ADR-0031-same-origin-search-and-explicit-demo.md) | decision | Use a validated same-origin search bridge with explicit demo mode | accepted |
 
 ## Decisions to record
-Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] Same-origin `/api/search` proxy with demo fallback when `BACKEND_URL` is unset
-- [ ] Saved results in `localStorage`
+The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
+
+- Change backend response schemas and frontend validators together.
+- Keep timeout, no-store and redirect behavior when changing the HTTP abstraction.

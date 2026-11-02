@@ -1,0 +1,36 @@
+# Optimization and scaling plan
+
+Area: infra · Status: planned
+
+## Purpose
+
+Captures future targets with prerequisites, measurements and acceptance gates. Current correctness and integration come before cache, broker, sharding or deployment changes.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
+
+## Code
+
+- [`backend/src/backend/search`](../../../backend/src/backend/search)
+- [`crawler/src/indexer`](../../../crawler/src/indexer)
+- [`crawler/src/crawler/policy_and_politeness`](../../../crawler/src/crawler/policy_and_politeness)
+
+## How-it-works docs
+
+The linked source contracts and tests are the current mechanics reference; no separate mechanics guide is claimed.
+
+## Records
+
+| ID | Type | Title | Status |
+| --- | --- | --- | --- |
+| [ADR-0038](ADR-0038-measure-before-adding-search-infrastructure.md) | decision | Optimize measured bottlenecks before adding caches, brokers or distributed workers | proposed |
+| [EXP-0005](EXP-0005-search-and-ingestion-capacity-baseline.md) | experiment | Measure search latency and ingestion interference before scaling | planned |
+
+## Decisions to record
+
+Pending implementation/evaluation choices are recorded as proposals: ADR-0038, EXP-0005. Do not mark them accepted solely because this overview exists.
+
+## Rules for future changes
+
+- Measure before and after with the same workload and report regressions.
+- Define cache invalidation and failure behavior before implementing caching.
+- Keep infrastructure plans distinct from shipped features.

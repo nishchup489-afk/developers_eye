@@ -1,31 +1,42 @@
-# Admin console and backend proxy
+# Admin console and server proxy
 
-Area: frontend · Status: stub
+Area: frontend · Status: active
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+
+The crawler, indexer and vocabulary views consume backend-owned read-only reports. Server routes validate session, configuration and response shape; browser code never receives the shared service key.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
 ## Code
-- `frontend/app/admin/`
-- `frontend/app/api/admin/`
-- `frontend/components/admin/`
-- `frontend/lib/crawler-proxy.ts`
-- `frontend/lib/axios.js` (every axios instance: `api` for the browser, `backend` for FastAPI and GitHub)
+
+- [`frontend/components/admin`](../../../frontend/components/admin)
+- [`frontend/app/api/admin`](../../../frontend/app/api/admin)
+- [`frontend/lib/crawler-proxy.ts`](../../../frontend/lib/crawler-proxy.ts)
+- [`frontend/lib/axios.js`](../../../frontend/lib/axios.js)
 
 ## How-it-works docs
-- _none yet_
+
+- [`frontend/tests/test_case.md`](../../../frontend/tests/test_case.md)
 
 ## Records
+
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0030](../../backend/admin-api/ADR-0030-read-only-observability-plane.md) | decision | Expose read-only operational reports from backend-owned query services | accepted |
+| [ADR-0032](../admin-auth/ADR-0032-github-admin-auth-and-service-key-boundary.md) | decision | Authenticate admins with GitHub and keep the backend key behind server routes | accepted |
+| [ADR-0037](../../indexer/coverage-reporting/ADR-0037-operational-coverage-snapshot-semantics.md) | decision | Treat coverage and vocabulary reports as operational observations | accepted |
 
 ## Decisions to record
-Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] Server routes hold the service key; the browser never sees it
-- [ ] Backend base derived from `CRAWLER_REPORT_API_URL`
+The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
 
 - HTTP goes through axios, not raw `fetch`: browser components use `api` and server routes use `backend` / `adminGet`, all from `lib/axios.js`; `backend` keeps the fetch adapter, `cache: "no-store"`, `redirect: "error"` and the timeouts. Both clients resolve every status, so check `response.status` and map errors yourself.
+- Separate operational write commands into a new design and permission model.
+- Keep secrets server-side and report status meanings explicit.
+- Keep OAuth state/PKCE and signed-cookie checks covered by regression tests.
+- Rotate exposed credentials; deleting a tracked file alone is not remediation.
+- Label snapshot limitations and keep report queries read-only.
+- Use a dedicated reconciliation/query plan for correctness checks.

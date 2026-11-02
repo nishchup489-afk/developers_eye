@@ -1,27 +1,35 @@
-# Backend and crawler package boundary
+# Backend and worker package boundary
 
 Area: backend · Status: active
 
 ## Purpose
-Keeps the dependency between the two Python projects one-way: `crawler` (with `indexer`) depends on `backend`, and `backend` never imports either. Shared models, sessions and report queries live in `backend`.
+
+Crawler/indexer depend on the relative backend package for shared models and sessions. API/report query code belongs to backend/admin_services, so serving the API does not import the worker runtime.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
 ## Code
-- `backend/tests/test_package_boundary.py`
+
+- [`backend/pyproject.toml`](../../../backend/pyproject.toml)
+- [`crawler/pyproject.toml`](../../../crawler/pyproject.toml)
+- [`backend/src/backend/admin_services`](../../../backend/src/backend/admin_services)
 
 ## How-it-works docs
-- _none yet_
+
+- [`backend/README.md`](../../../backend/README.md)
 
 ## Records
+
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
-| [ADR-0012](ADR-0012-crawler-depends-on-backend-never-reverse.md) | decision | The crawler depends on the backend, never the reverse | accepted |
+| [ADR-0012](ADR-0012-crawler-depends-on-backend-never-reverse.md) | decision | The crawler package depends on the backend package, never the reverse | accepted |
 
 ## Decisions to record
-Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [x] Crawler depends on the backend package, never the reverse (ADR-0012)
+The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
+
 - Never import `crawler` or `indexer` from `backend`; move shared code into `backend` (ADR-0012).
 - Keep path dependencies relative (ADR-0012).
 - Keep passing: `backend/tests/test_package_boundary.py`.

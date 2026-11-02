@@ -1,5 +1,7 @@
 # Developer's Eye technical handoff
 
+> Historical handoff from 2026-10-27. For the reviewed 2026-11-02 architecture, implemented search path, open defects and future plans, see [the current technical architecture](0_tech_docs/infra/system-architecture/architecture.md). Status statements below describe the older snapshot and may be superseded.
+
 Status as of 2026-10-27 (commit `d3d74bb` on `main`, one commit ahead of `origin/main`).
 
 Developer's Eye is a developer-focused search engine built from the crawler up. Today the crawler, the document store, the indexer and the admin monitoring console work end to end. Public search does not yet query the index: the web search page runs on a labeled demo collection until a backend `GET /search` endpoint exists.

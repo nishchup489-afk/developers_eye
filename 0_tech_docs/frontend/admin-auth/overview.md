@@ -1,28 +1,34 @@
 # Admin authentication
 
-Area: frontend · Status: stub
+Area: frontend · Status: active
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+
+GitHub OAuth plus an ID allowlist establishes a signed-cookie admin session. Service credentials stay in server requests and every admin request is re-authorized.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
 ## Code
-- `frontend/lib/admin-auth.ts`
-- `frontend/lib/admin-session.ts`
-- `frontend/app/api/auth/`
-- `frontend/app/admin/login/`
+
+- [`frontend/lib/admin-session.ts`](../../../frontend/lib/admin-session.ts)
+- [`frontend/lib/admin-auth.ts`](../../../frontend/lib/admin-auth.ts)
+- [`frontend/app/api/auth`](../../../frontend/app/api/auth)
 
 ## How-it-works docs
-- _none yet_
+
+- [`frontend/README.md`](../../../frontend/README.md)
 
 ## Records
+
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0032](ADR-0032-github-admin-auth-and-service-key-boundary.md) | decision | Authenticate admins with GitHub and keep the backend key behind server routes | accepted |
 
 ## Decisions to record
-Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] GitHub OAuth with state and S256 PKCE
-- [ ] Signed HttpOnly session cookie (8 h) checked against `ADMIN_GITHUB_IDS` on every request
+The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
+
+- Keep OAuth state/PKCE and signed-cookie checks covered by regression tests.
+- Rotate exposed credentials; deleting a tracked file alone is not remediation.

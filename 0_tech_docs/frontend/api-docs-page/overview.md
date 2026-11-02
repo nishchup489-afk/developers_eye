@@ -1,25 +1,38 @@
-# Public API docs page
+# Public API documentation page
 
-Area: frontend · Status: stub
+Area: frontend · Status: active
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+
+Explains caller-visible routes and live/demo contracts. Public documentation is a maintained presentation of the schema; it is not automatic evidence that a proposed backend pipeline is complete.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
 ## Code
-- `frontend/app/docs/`
-- `frontend/components/docs-toc.tsx`
+
+- [`frontend/app/docs/page.tsx`](../../../frontend/app/docs/page.tsx)
+- [`frontend/public/api-reference.md`](../../../frontend/public/api-reference.md)
+- [`backend/src/backend/schema/search.py`](../../../backend/src/backend/schema/search.py)
 
 ## How-it-works docs
-- `frontend/public/api-reference.md`
+
+- [`frontend/public/api-reference.md`](../../../frontend/public/api-reference.md)
 
 ## Records
+
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0031](../search-experience/ADR-0031-same-origin-search-and-explicit-demo.md) | decision | Use a validated same-origin search bridge with explicit demo mode | accepted |
+| [ADR-0034](../../infra/docs-navigation/ADR-0034-two-documentation-layers-and-navigation.md) | decision | Keep mechanics separate from decision history and generate shared navigation | accepted |
 
 ## Decisions to record
-Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] _none identified yet_
+The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
+
+- Change backend response schemas and frontend validators together.
+- Keep timeout, no-store and redirect behavior when changing the HTTP abstraction.
+- Do not rewrite accepted rationale to invent history.
+- Update public API documentation and validators with contract changes.
+- Use the generator for generated navigation blocks.
