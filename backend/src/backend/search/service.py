@@ -1,63 +1,186 @@
-"""Public search: FTS candidates from search_index, shaped for the frontend.
+"""Online search orchestration for Developer's Eye.
 
-Ranking comes from ``get_full_text_search``. This module only loads the
-matching available documents, maps each to a public category, and builds a
-plain-text snippet with ``ts_headline``.
+Analyzer -> selector -> text/code retrieval -> merge -> BM25 ->
+metadata filtering -> pagination -> snippets -> public result objects.
+
+CorpusStatistics are prepared once during application startup, not scanned
+for every query. The snapshot becomes stale as the index changes; refresh
+it operationally (initially by restarting the application) after large
+index updates. This remains approximate candidate-set BM25 ranking.
+
+Fuzzy query correction is deliberately not silently applied. The current
+fuzzy candidate lookup/correction must be repaired and its suggestion
+exposed through an explicit API contract before enabling that feature.
 """
 
 from __future__ import annotations
 
+import re
+from dataclasses import dataclass
 from urllib.parse import urlsplit
 
-from sqlalchemy import func, literal, select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.models import Document
+from backend.models.documents import Document
 from backend.schema.search import SearchCategory, SearchResultOut
-from backend.search.retrieval.fts import get_full_text_search
+from backend.search.config import SearchConfig
+from backend.search.merge import merge_hits
+from backend.search.pagination import paginate_hits
+from backend.search.query_analyzer.analyzer import analyze_query
+from backend.search.query_selector.planner import SearchMode, select_query_plan
+from backend.search.ranking.orchestrator import rank_candidates
+from backend.search.ranking.types import CorpusStatistics
+from backend.search.retrieval.code import search_code
+from backend.search.retrieval.fts import search_text
+from backend.search.snippets.snippets import generate_snippet
+from backend.search.types import RankedHit, RetrievalHit
 
-# Over-fetch so a category filter, applied after mapping, still fills a page.
-CANDIDATE_LIMIT = 100
-SNIPPET_SOURCE_CHARS = 5000
-_HEADLINE_OPTIONS = 'StartSel="",StopSel="",MaxWords=35,MinWords=15,ShortWord=2'
+CANDIDATES_PER_CHANNEL = 100  # ranker hard limit: 200 unique IDs
+MAX_SNIPPET_SOURCE_CHARS = 12_000
 
-_HOST_CATEGORIES: tuple[tuple[str, SearchCategory], ...] = (
-    ("github.com", "github"),
-    ("gitlab.com", "github"),
-    ("stackoverflow.com", "stackoverflow"),
-    ("stackexchange.com", "stackoverflow"),
-    ("reddit.com", "reddit"),
-    ("leetcode.com", "practice"),
-    ("hackerrank.com", "practice"),
-    ("exercism.org", "practice"),
-    ("codewars.com", "practice"),
-)
+# Per-worker, immutable snapshots; set by main.py at startup.
+@dataclass(frozen=True, slots=True)
+class _CorpusSnapshots:
+    text: CorpusStatistics
+    code: CorpusStatistics
 
-_TYPE_CATEGORIES: dict[str, SearchCategory] = {
-    "documentation": "docs",
-    "tutorial": "articles",
-    "blog": "articles",
-    "question": "stackoverflow",
-    "issue": "github",
-    "repository": "github",
-    "event": "events",
-}
+
+_corpus_snapshots: _CorpusSnapshots | None = None
+
+
+def set_corpus_statistics(text: CorpusStatistics, code: CorpusStatistics) -> None:
+    """Install a precomputed per-channel corpus snapshot."""
+    if not isinstance(text, CorpusStatistics) or not isinstance(code, CorpusStatistics):
+        raise TypeError("text and code must be CorpusStatistics")
+    global _corpus_snapshots
+    _corpus_snapshots = _CorpusSnapshots(text=text, code=code)
+
+
+def clear_corpus_statistics() -> None:
+    """Discard the cached snapshot on application shutdown."""
+    global _corpus_snapshots
+    _corpus_snapshots = None
 
 
 def categorize(url: str, document_type: str) -> SearchCategory:
-    """Known platforms win over the classifier's document type."""
-    host = (urlsplit(url).hostname or "").lower()
-    for domain, category in _HOST_CATEGORIES:
+    """Assign the existing frontend's supported source category."""
+    try:
+        host = (urlsplit(url).hostname or "").lower()
+    except ValueError:
+        return "articles"
+
+    platform_categories: tuple[tuple[str, SearchCategory], ...] = (
+        ("github.com", "github"),
+        ("gitlab.com", "github"),
+        ("stackoverflow.com", "stackoverflow"),
+        ("stackexchange.com", "stackoverflow"),
+        ("reddit.com", "reddit"),
+        ("leetcode.com", "practice"),
+        ("hackerrank.com", "practice"),
+        ("exercism.org", "practice"),
+        ("codewars.com", "practice"),
+    )
+    for domain, category in platform_categories:
         if host == domain or host.endswith("." + domain):
             return category
-    return _TYPE_CATEGORIES.get(document_type, "articles")
+    by_type: dict[str, SearchCategory] = {
+        "documentation": "docs",
+        "tutorial": "articles",
+        "blog": "articles",
+        "question": "stackoverflow",
+        "issue": "github",
+        "repository": "github",
+        "event": "events",
+    }
+    return by_type.get(document_type, "articles")
+
+
+def _valid_url(url: str) -> bool:
+    try:
+        parsed = urlsplit(url)
+        return parsed.scheme in ("http", "https") and bool(parsed.hostname)
+    except (TypeError, ValueError):
+        return False
 
 
 def _tags(metadata: object) -> list[str]:
-    tags = metadata.get("tags") if isinstance(metadata, dict) else None
+    if not isinstance(metadata, dict):
+        return []
+    tags = metadata.get("tags")
     if not isinstance(tags, list):
         return []
     return [tag for tag in tags if isinstance(tag, str) and tag][:8]
+
+
+def _snippet_terms(query: str) -> tuple[str, ...]:
+    """Use surface words for highlights, not PostgreSQL's stemmed lexemes."""
+    terms: list[str] = []
+    seen: set[str] = set()
+    for term in re.findall(r"[A-Za-z_][A-Za-z0-9_+#.-]*", query):
+        folded = term.casefold()
+        if folded in {"and", "or", "not"} or folded in seen:
+            continue
+        if len(term) > 128:
+            continue
+        seen.add(folded)
+        terms.append(term)
+        if len(terms) == 32:
+            break
+    return tuple(terms)
+
+
+async def _retrieve_candidates(
+    session: AsyncSession,
+    query: str,
+    mode: SearchMode,
+) -> list[RetrievalHit]:
+    """Run retrieval paths sequentially on one SQLAlchemy AsyncSession."""
+    groups: list[list[RetrievalHit]] = []
+    if mode in (SearchMode.ALL, SearchMode.TEXT):
+        groups.append(await search_text(session, query, limit=CANDIDATES_PER_CHANNEL))
+    if mode in (SearchMode.ALL, SearchMode.CODE):
+        code_hits = await search_code(session, query, limit=CANDIDATES_PER_CHANNEL)
+        groups.append([
+            RetrievalHit(document_id=hit.document_id, code_rank=hit.score)
+            for hit in code_hits
+        ])
+    return merge_hits(*groups)
+
+
+async def _metadata_for_candidates(
+    session: AsyncSession,
+    ranked: list[RankedHit],
+    category: SearchCategory | None,
+) -> tuple[list[RankedHit], dict[int, object]]:
+    """Filter available, URL-valid and category-compatible documents before paging."""
+    if not ranked:
+        return [], {}
+    ids = [hit.document_id for hit in ranked]
+    result = await session.execute(
+        select(
+            Document.id,
+            Document.canonical_url,
+            Document.document_type,
+            Document.title,
+            Document.description,
+            Document.metadata_,
+        ).where(Document.id.in_(ids), Document.is_available.is_(True))
+    )
+    meta = {int(row.id): row for row in result.all()}
+    eligible = [
+        hit for hit in ranked
+        if hit.document_id in meta
+        and _valid_url(meta[hit.document_id].canonical_url)
+        and (
+            category is None
+            or categorize(
+                meta[hit.document_id].canonical_url,
+                meta[hit.document_id].document_type,
+            ) == category
+        )
+    ]
+    return eligible, meta
 
 
 async def search_documents(
@@ -66,56 +189,90 @@ async def search_documents(
     *,
     category: SearchCategory | None = None,
     limit: int = 20,
+    page: int = 1,
+    mode: SearchMode | str = SearchMode.ALL,
 ) -> list[SearchResultOut]:
-    hits = await get_full_text_search(query, session, limit=CANDIDATE_LIMIT)
-    if not hits:
+    """Return one page of BM25-ranked results with plain-text snippets.
+
+    Session ownership remains with the API. Metadata filtering happens before
+    paging, and document bodies are loaded only for the selected page.
+    """
+    settings = SearchConfig()
+    if type(limit) is not int or not 1 <= limit <= settings.max_limit:
+        raise ValueError(f"limit must be between 1 and {settings.max_limit}")
+    if type(page) is not int or page < 1:
+        raise ValueError("page must be a positive integer")
+    if (page - 1) * limit > settings.max_offset:
+        raise ValueError(f"offset cannot exceed {settings.max_offset}")
+
+    normalized = analyze_query(query, config=settings)
+    plan = select_query_plan(normalized, mode=mode)
+    candidates = await _retrieve_candidates(session, plan.query, plan.mode)
+    if not candidates:
         return []
-    scores = {hit["document_id"]: hit["search_rank"] + hit["code_rank"] for hit in hits}
 
-    text_source = func.concat_ws(
-        " ", Document.description, func.left(Document.body, SNIPPET_SOURCE_CHARS)
-    )
-    snippet = func.ts_headline(
-        "english",
-        text_source,
-        func.websearch_to_tsquery("english", query),
-        literal(_HEADLINE_OPTIONS),
-    ).label("snippet")
-    rows = await session.execute(
-        select(
-            Document.id,
-            Document.canonical_url,
-            Document.document_type,
-            Document.title,
-            Document.description,
-            Document.metadata_,
-            snippet,
-        ).where(Document.id.in_(scores), Document.is_available.is_(True))
-    )
+    snapshot = _corpus_snapshots
+    if snapshot is None:
+        raise RuntimeError("BM25 corpus statistics not initialized; run app lifespan")
 
-    # Keep the retriever's order: score desc, then document id.
-    order = {document_id: i for i, document_id in enumerate(scores)}
-    ranked: list[tuple[int, SearchResultOut]] = []
-    for row in rows:
-        url = row.canonical_url
-        if urlsplit(url).scheme not in ("http", "https"):
-            continue
-        source = categorize(url, row.document_type)
-        if category is not None and source != category:
-            continue
-        text = " ".join((row.snippet or row.description or "").split())
-        ranked.append((
-            order[row.id],
+    ranked = await rank_candidates(
+        session,
+        plan.query,
+        candidates,
+        mode=plan.mode,
+        text_corpus=snapshot.text,
+        code_corpus=snapshot.code,
+        tokenizer_config=settings,
+    )
+    eligible, metadata = await _metadata_for_candidates(session, ranked, category)
+    page_result = paginate_hits(eligible, page=page, limit=limit, config=settings)
+    if not page_result.hits:
+        return []
+
+    ids = tuple(hit.document_id for hit in page_result.hits)
+    body_query = select(
+        Document.id,
+        func.left(Document.body, MAX_SNIPPET_SOURCE_CHARS).label("body"),
+    ).where(Document.id.in_(ids), Document.is_available.is_(True))
+    bodies = {
+        int(row.id): row.body or ""
+        for row in (await session.execute(body_query)).all()
+    }
+
+    terms = _snippet_terms(plan.query)
+    results: list[SearchResultOut] = []
+    for hit in page_result.hits:
+        record = metadata[hit.document_id]
+        if hit.document_id not in bodies:
+            continue  # Deleted/disabled between metadata and body queries.
+        snippet_source = bodies[hit.document_id]
+        preserve_code = plan.mode is SearchMode.CODE
+        if preserve_code and isinstance(record.metadata_, dict):
+            blocks = record.metadata_.get("code_blocks")
+            if isinstance(blocks, list):
+                snippet_source = "\n\n".join(
+                    block for block in blocks
+                    if isinstance(block, str)
+                )[:MAX_SNIPPET_SOURCE_CHARS] or snippet_source
+        snippet = generate_snippet(
+            snippet_source,
+            terms,
+            description=record.description,
+            max_chars=settings.snippet_length,
+            preserve_code=preserve_code,
+        )
+        results.append(
             SearchResultOut(
-                title=row.title,
-                source=source,
-                url=url,
-                snippet=text,
-                score=round(scores[row.id], 6),
-                tags=_tags(row.metadata_),
-                type=row.document_type,
-            ),
-        ))
+                title=record.title,
+                source=categorize(record.canonical_url, record.document_type),
+                url=record.canonical_url,
+                snippet=snippet.text,
+                score=round(hit.score, 6),
+                tags=_tags(record.metadata_),
+                type=record.document_type,
+            )
+        )
+    return results
 
-    ranked.sort(key=lambda item: item[0])
-    return [result for _, result in ranked[:limit]]
+
+__all__ = ["categorize", "search_documents", "set_corpus_statistics", "clear_corpus_statistics"]

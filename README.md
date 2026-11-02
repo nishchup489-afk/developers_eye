@@ -32,7 +32,7 @@
 
 - [x] Source discovery, frontier scheduling, robots/host policies, and concurrent crawling
 - [x] HTML/XML processing, document persistence, and crawler monitoring
-- [ ] Search indexing and BM25-style ranking
+- [x] Search indexing and BM25-style ranking
 - [ ] Public search API and end-to-end search experience
 - [ ] Agent-facing API / MCP integration
 

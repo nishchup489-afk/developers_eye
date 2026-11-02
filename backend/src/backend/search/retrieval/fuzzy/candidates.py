@@ -1,89 +1,99 @@
-"""Exact vocabulary reads and authoritative frequency upserts.
+"""Read vocabulary-based fuzzy candidates from search_terms via pg_trgm.
 
-The indexer, not the query-serving layer, owns frequency maintenance.
-A frequency is the number of indexed documents containing the term.
-Writes do not commit; the caller controls the transaction.
+The offline indexer owns vocabulary mutation. Query-serving code reads only.
+Requires PostgreSQL pg_trgm extension and the existing GIN trigram index.
 """
 
 from __future__ import annotations
 
 from collections.abc import Mapping
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.models.search_terms import SearchTerm
-from backend.schema.search_term import SearchTermRead
+from backend.schema.search_term import FuzzyCandidate, SearchTermRead
 
 MAX_TERM_CHARS = 128
 
 
 def normalize_term(term: str) -> str:
-    """Normalize vocabulary keys consistently for reads and writes."""
     if not isinstance(term, str):
         raise TypeError("term must be a string")
     return term.strip().lower()
 
 
-async def get_exact_term(
-    term: str, session: AsyncSession
-) -> SearchTermRead | None:
-    """Look up a term exactly using the primary-key B-tree index."""
+async def get_exact_term(term: str, session: AsyncSession) -> SearchTermRead | None:
     normalized = normalize_term(term)
     if not normalized or len(normalized) > MAX_TERM_CHARS:
         return None
-
-    stmt = select(SearchTerm).where(SearchTerm.term == normalized)
-    record = await session.scalar(stmt)
+    record = await session.scalar(select(SearchTerm).where(SearchTerm.term == normalized))
     return SearchTermRead.model_validate(record) if record is not None else None
+
+
+async def find_fuzzy_candidates(
+    term: str,
+    session: AsyncSession,
+    *,
+    limit: int = 20,
+) -> list[FuzzyCandidate]:
+    """Find similar vocabulary lexemes; correction logic decides which to use."""
+    normalized = normalize_term(term)
+    if type(limit) is not int or not 1 <= limit <= 50:
+        raise ValueError("limit must be an integer between 1 and 50")
+    if len(normalized) < 3 or len(normalized) > MAX_TERM_CHARS:
+        return []
+    similarity = func.similarity(SearchTerm.term, normalized).label("similarity")
+    statement = (
+        select(SearchTerm.term, SearchTerm.document_frequency, similarity)
+        .where(SearchTerm.term.bool_op("%")(normalized))
+        .order_by(similarity.desc(), SearchTerm.document_frequency.desc(), SearchTerm.term.asc())
+        .limit(limit)
+    )
+    rows = (await session.execute(statement)).all()
+    return [
+        FuzzyCandidate(
+            term=row.term,
+            document_frequency=int(row.document_frequency),
+            similarity=float(row.similarity),
+        )
+        for row in rows
+    ]
 
 
 async def upsert_term_frequencies(
     frequencies: Mapping[str, int], session: AsyncSession
 ) -> int:
-    """Set absolute document frequencies supplied by the offline indexer.
-
-    Zero-frequency terms are removed. This is not an increment operation:
-    reprocessing an existing document must not inflate frequencies.
-    Terms absent from this batch remain unchanged.
-    """
+    """Legacy absolute-frequency utility, not used by the online search service."""
     if not isinstance(frequencies, Mapping):
         raise TypeError("frequencies must be a mapping")
-
     normalized: dict[str, int] = {}
     for raw_term, frequency in frequencies.items():
         term = normalize_term(raw_term)
         if not term or len(term) > MAX_TERM_CHARS:
             raise ValueError("term length must be between 1 and 128")
-        if isinstance(frequency, bool) or not isinstance(frequency, int):
-            raise TypeError("document frequency must be an integer")
-        if frequency < 0:
-            raise ValueError("document frequency cannot be negative")
+        if type(frequency) is not int or frequency < 0:
+            raise ValueError("document frequency must be a non-negative integer")
         if term in normalized and normalized[term] != frequency:
             raise ValueError("conflicting frequencies for normalized term")
         normalized[term] = frequency
-
     if not normalized:
         return 0
-
     expired = [term for term, count in normalized.items() if count == 0]
     active = [
         {"term": term, "document_frequency": count}
-        for term, count in normalized.items()
-        if count > 0
+        for term, count in normalized.items() if count > 0
     ]
-
     if expired:
         await session.execute(delete(SearchTerm).where(SearchTerm.term.in_(expired)))
-
-    # Batch to stay below PostgreSQL's bind-parameter limits.
     for start in range(0, len(active), 1000):
-        statement = insert(SearchTerm).values(active[start : start + 1000])
-        statement = statement.on_conflict_do_update(
+        stmt = insert(SearchTerm).values(active[start:start + 1000])
+        await session.execute(stmt.on_conflict_do_update(
             index_elements=[SearchTerm.term],
-            set_={"document_frequency": statement.excluded.document_frequency},
-        )
-        await session.execute(statement)
-
+            set_={"document_frequency": stmt.excluded.document_frequency},
+        ))
     return len(normalized)
+
+
+__all__ = ["normalize_term", "get_exact_term", "find_fuzzy_candidates", "upsert_term_frequencies"]
