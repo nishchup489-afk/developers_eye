@@ -7,7 +7,6 @@ from backend.search.ranking.types import BM25Parameters, ChannelStatistics
 def calculate_BM25_formula(
         N : int , # corpus.count 
         
-        t : str , # term 
         df: int , 
         tf: int , 
         dl: int , 
