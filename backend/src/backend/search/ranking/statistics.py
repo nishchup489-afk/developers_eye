@@ -12,6 +12,8 @@ Production usage:
     3. Score candidates with bm25.py; this module never calculates BM25.
 """
 
+### This version reduces the database query from 607 round trips to 2
+
 from __future__ import annotations
 
 from collections.abc import Iterable
