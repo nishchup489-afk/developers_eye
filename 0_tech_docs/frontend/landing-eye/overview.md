@@ -1,26 +1,34 @@
-# Landing page and animated eye
+# Progressive landing visuals
 
-Area: frontend · Status: stub
+Area: frontend · Status: active
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+
+Procedural three.js/GSAP visuals supply the product identity with non-WebGL and reduced-motion paths. Graphics performance remains something to measure, not infer from a successful build.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
 ## Code
-- `frontend/components/moody-eye.tsx`
-- `frontend/components/brand-eye.tsx`
-- `frontend/components/ambient.tsx`
+
+- [`frontend/components/moody-eye.tsx`](../../../frontend/components/moody-eye.tsx)
+- [`frontend/components/brand-eye.tsx`](../../../frontend/components/brand-eye.tsx)
+- [`frontend/components/ambient.tsx`](../../../frontend/components/ambient.tsx)
 
 ## How-it-works docs
-- _none yet_
+
+- [`frontend/README.md`](../../../frontend/README.md)
 
 ## Records
+
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0033](ADR-0033-progressive-eye-and-code-presentation.md) | decision | Keep visual effects optional and code presentation separate from search semantics | accepted |
 
 ## Decisions to record
-Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] three.js and GSAP for the eye
+The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
+
+- Verify keyboard, reduced-motion and unavailable-WebGL paths when changing visuals.
+- Keep frontend code preview claims separate from backend code retrieval.

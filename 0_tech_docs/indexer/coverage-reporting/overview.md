@@ -1,25 +1,35 @@
-# Coverage reporting
+# Index and vocabulary coverage reporting
 
-Area: indexer · Status: stub
+Area: indexer · Status: active
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+
+Describes index coverage/version freshness and current vocabulary observations. Reports do not verify exact frequency reconciliation, quality, or a single consistent cross-query snapshot.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
 ## Code
-- `crawler/src/indexer/reporting.py`
-- `backend/src/backend/services/indexer_reporting.py`
+
+- [`backend/src/backend/admin_services/indexer_reporting.py`](../../../backend/src/backend/admin_services/indexer_reporting.py)
+- [`backend/src/backend/admin_services/vocabulary_reporting.py`](../../../backend/src/backend/admin_services/vocabulary_reporting.py)
+- [`crawler/src/indexer/reporting.py`](../../../crawler/src/indexer/reporting.py)
 
 ## How-it-works docs
-- `crawler/src/indexer/docs/reporting.md`
+
+- [`crawler/src/indexer/docs/reporting.md`](../../../crawler/src/indexer/docs/reporting.md)
+- [`crawler/src/indexer/operations.md`](../../../crawler/src/indexer/operations.md)
 
 ## Records
+
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0037](ADR-0037-operational-coverage-snapshot-semantics.md) | decision | Treat coverage and vocabulary reports as operational observations | accepted |
 
 ## Decisions to record
-Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] Two READ COMMITTED queries instead of one snapshot (numbers may drift)
+The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
+
+- Label snapshot limitations and keep report queries read-only.
+- Use a dedicated reconciliation/query plan for correctness checks.

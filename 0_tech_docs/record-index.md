@@ -1,0 +1,77 @@
+# Decision, incident and experiment index
+
+Baseline: `facd333`, reviewed 2026-11-02. Dates on new retrospective records are documentation dates; historical event dates are in their evidence. Existing accepted ADRs and measured benchmark bodies are preserved.
+
+Accepted means a decision describes an adopted component/strategy, not that every integration is complete or every implementation defect is fixed. Proposed means the replacement is not yet adopted. Incident severity is an engineering impact assessment; production impact is stated only when evidenced.
+
+## Decisions
+
+| ID | Feature | Record | Status |
+| --- | --- | --- | --- |
+| ADR-0001 | crawler/scheduler-and-leases | [Round-robin claims without holding source row locks](crawler/scheduler-and-leases/ADR-0001-round-robin-claims-without-source-locks.md) | accepted |
+| ADR-0002 | indexer/vocubulary | [Fuzzy vocabulary is a projection of stored index lexemes, kept in the index writer's transaction](indexer/vocubulary/ADR-0002-vocabulary-as-projection-of-index-lexemes.md) | accepted |
+| ADR-0003 | backend/search-api | [GET /search ranks Postgres FTS matches on both vectors by summed ts_rank_cd](backend/search-api/ADR-0003-search-endpoint-on-postgres-fts.md) | accepted |
+| ADR-0004 | crawler/scheduler-and-leases | [PostgreSQL crawl_target table is the job queue, with time-boxed leases](crawler/scheduler-and-leases/ADR-0004-postgres-frontier-as-job-queue-with-leases.md) | accepted |
+| ADR-0005 | crawler/scheduler-and-leases | [Claim order is round robin across sources, then priority and BFS depth inside a source](crawler/scheduler-and-leases/ADR-0005-round-robin-bfs-claim-order.md) | accepted |
+| ADR-0006 | crawler/scheduler-and-leases | [Failed targets retry with capped exponential backoff on failure_count, forever](crawler/scheduler-and-leases/ADR-0006-capped-exponential-retry-backoff.md) | accepted |
+| ADR-0007 | crawler/url-safety | [Every request hop passes an exact host allowlist, then public-only DNS pinned into the transport](crawler/url-safety/ADR-0007-fail-closed-ssrf-checks-with-ip-pinning.md) | accepted |
+| ADR-0008 | indexer/freshness-selection | [Indexer finds work by comparing document and index freshness, with no queue or lease table](indexer/freshness-selection/ADR-0008-indexer-work-derived-from-freshness-no-queue.md) | accepted |
+| ADR-0009 | indexer/reindex-and-versioning | [Reindexing is driven by a version prefix in indexed_hash and a reindex:pending marker, never by deleting rows](indexer/reindex-and-versioning/ADR-0009-versioned-index-hash-and-pending-marker.md) | accepted |
+| ADR-0010 | indexer/search-vectors | [Index each document as two weighted Postgres tsvectors, english for prose and simple for code](indexer/search-vectors/ADR-0010-two-weighted-tsvectors-in-postgres.md) | accepted |
+| ADR-0011 | crawler/document-writer | [A 404 or 410 marks stored documents unavailable instead of deleting them, and they can come back](crawler/document-writer/ADR-0011-soft-availability-for-removed-pages.md) | accepted |
+| ADR-0012 | backend/package-boundary | [The crawler package depends on the backend package, never the reverse](backend/package-boundary/ADR-0012-crawler-depends-on-backend-never-reverse.md) | accepted |
+| ADR-0013 | infra/system-architecture | [Separate acquisition, indexing, and query serving around PostgreSQL](infra/system-architecture/ADR-0013-offline-online-process-boundaries.md) | accepted |
+| ADR-0014 | crawler/seed-and-discovery | [Register sources and enqueue discovery through the same frontier](crawler/seed-and-discovery/ADR-0014-registered-sources-and-queued-discovery.md) | accepted |
+| ADR-0015 | crawler/url-frontier | [Normalize URL identity conservatively and enforce crawl scope at insertion](crawler/url-frontier/ADR-0015-url-identity-and-bounded-frontier.md) | accepted |
+| ADR-0016 | crawler/fetcher | [Stream bounded responses through a policy-approved single-hop transport](crawler/fetcher/ADR-0016-bounded-hop-fetching.md) | accepted |
+| ADR-0017 | crawler/robots-and-politeness | [Cache robots per origin and coordinate conservative host pacing](crawler/robots-and-politeness/ADR-0017-robots-cache-and-host-politeness.md) | accepted |
+| ADR-0018 | crawler/parser | [Parse HTML, sitemap, feed and JSON resources into explicit shared contracts](crawler/parser/ADR-0018-bounded-format-adapters.md) | accepted |
+| ADR-0019 | crawler/content-processing | [Normalize before deterministic classification and content fingerprinting](crawler/content-processing/ADR-0019-normalize-classify-fingerprint.md) | accepted |
+| ADR-0020 | crawler/worker-runtime | [Keep network I/O outside replayable lease-checked database transactions](crawler/worker-runtime/ADR-0020-worker-transactions-and-recovery.md) | accepted |
+| ADR-0021 | crawler/document-writer | [Persist extracted documents rather than raw HTML in the primary store](crawler/document-writer/ADR-0021-extracted-content-and-writer-ownership.md) | accepted |
+| ADR-0022 | backend/database-schema | [Use reviewed Alembic revisions as the schema authority](backend/database-schema/ADR-0022-forward-only-schema-repair.md) | accepted |
+| ADR-0023 | backend/query-planning | [Keep query normalization and retrieval planning pure and explicit](backend/query-planning/ADR-0023-pure-query-analysis-and-explicit-planning.md) | accepted |
+| ADR-0024 | backend/retrieval | [Use bounded PostgreSQL candidate retrieval before final ranking](backend/retrieval/ADR-0024-bounded-postgres-candidate-retrieval.md) | accepted |
+| ADR-0025 | backend/fuzzy-correction | [Suggest bounded spelling corrections without silently rewriting developer queries](backend/fuzzy-correction/ADR-0025-conservative-fuzzy-suggestions.md) | proposed |
+| ADR-0026 | backend/merge-and-contracts | [Merge candidates by document ID while retaining independent channel evidence](backend/merge-and-contracts/ADR-0026-merge-channel-scores-by-document.md) | accepted |
+| ADR-0027 | backend/bm25-statistics | [Batch query statistics and keep full-corpus aggregation outside the request path](backend/bm25-statistics/ADR-0027-batch-ranking-statistics-and-external-corpus.md) | accepted |
+| ADR-0028 | backend/ranking | [Introduce BM25 reranking only after statistics and relevance validation](backend/ranking/ADR-0028-candidate-bm25-ranking-plan.md) | proposed |
+| ADR-0029 | backend/snippets | [Generate bounded plain-text passages with separate highlight offsets](backend/snippets/ADR-0029-plain-text-query-aware-snippets.md) | accepted |
+| ADR-0030 | backend/admin-api | [Expose read-only operational reports from backend-owned query services](backend/admin-api/ADR-0030-read-only-observability-plane.md) | accepted |
+| ADR-0031 | frontend/search-experience | [Use a validated same-origin search bridge with explicit demo mode](frontend/search-experience/ADR-0031-same-origin-search-and-explicit-demo.md) | accepted |
+| ADR-0032 | frontend/admin-auth | [Authenticate admins with GitHub and keep the backend key behind server routes](frontend/admin-auth/ADR-0032-github-admin-auth-and-service-key-boundary.md) | accepted |
+| ADR-0033 | frontend/landing-eye | [Keep visual effects optional and code presentation separate from search semantics](frontend/landing-eye/ADR-0033-progressive-eye-and-code-presentation.md) | accepted |
+| ADR-0034 | infra/docs-navigation | [Keep mechanics separate from decision history and generate shared navigation](infra/docs-navigation/ADR-0034-two-documentation-layers-and-navigation.md) | accepted |
+| ADR-0035 | infra/local-dev-and-testing | [Keep configuration explicit and distinguish test tiers from deployment evidence](infra/local-dev-and-testing/ADR-0035-configuration-and-validation-boundaries.md) | accepted |
+| ADR-0036 | indexer/vocubulary | [Keep vocabulary maintenance transactional and rebuild it with a one-shot CLI](indexer/vocubulary/ADR-0036-vocabulary-maintenance-and-lock-boundary.md) | accepted |
+| ADR-0037 | indexer/coverage-reporting | [Treat coverage and vocabulary reports as operational observations](indexer/coverage-reporting/ADR-0037-operational-coverage-snapshot-semantics.md) | accepted |
+| ADR-0038 | infra/performance-and-scaling | [Optimize measured bottlenecks before adding caches, brokers or distributed workers](infra/performance-and-scaling/ADR-0038-measure-before-adding-search-infrastructure.md) | proposed |
+| ADR-0039 | infra/ci-and-containers | [Add disposable PostgreSQL verification before automating deployment](infra/ci-and-containers/ADR-0039-reproducible-ci-and-containers-plan.md) | proposed |
+
+## Incidents
+
+| ID | Feature | Record | Status |
+| --- | --- | --- | --- |
+| INC-0001 | backend/database-schema | [Autogenerated vocabulary migrations were empty, so search_terms was never created](backend/database-schema/INC-0001-empty-autogenerated-vocabulary-migrations.md) | mitigated |
+| INC-0002 | crawler/worker-runtime | [Multi-worker stress test deadlocked crawl finalization and left attempts unfinished](crawler/worker-runtime/INC-0002-deadlocks-in-crawl-finalization.md) | resolved |
+| INC-0003 | crawler/url-frontier | [Source max_depth was configured but never read, so the frontier grew without limit](crawler/url-frontier/INC-0003-crawl-scope-limits-never-enforced.md) | resolved |
+| INC-0004 | crawler/robots-and-politeness | [Python's urllib.robotparser ignored wildcard Disallow rules and longest-match Allow](crawler/robots-and-politeness/INC-0004-stdlib-robots-parser-ignored-wildcards.md) | resolved |
+| INC-0005 | crawler/url-safety | [Pinned transport accepted any path, Host header or TLS server name on an approved origin](crawler/url-safety/INC-0005-pinned-transport-accepted-unchecked-urls.md) | resolved |
+| INC-0006 | infra/configuration-and-secrets | [Live CRAWLER_REPORT_API_KEY committed to git in crawler/src/crawler/.env.local](infra/configuration-and-secrets/INC-0006-reporting-api-key-committed-to-git.md) | open |
+| INC-0007 | indexer/vocubulary | [Vocabulary bulk additions repeat and one removal path skips the mutex](indexer/vocubulary/INC-0007-vocabulary-overcount-and-uncoordinated-removal.md) | open |
+| INC-0008 | backend/fuzzy-correction | [Fuzzy correction imports missing and self-referenced symbols](backend/fuzzy-correction/INC-0008-fuzzy-import-contract-broken.md) | open |
+| INC-0009 | backend/snippets | [Code snippet boundary adjustment could exceed max_chars](backend/snippets/INC-0009-snippet-window-budget-regression.md) | resolved |
+| INC-0010 | crawler/fetcher | [Transport exceptions and shadowed policy errors broke classification](crawler/fetcher/INC-0010-transport-error-identity.md) | resolved |
+| INC-0011 | crawler/worker-runtime | [Expired jobs left unfinished attempts and bypassed failure backoff](crawler/worker-runtime/INC-0011-abandoned-attempt-accounting.md) | resolved |
+| INC-0012 | crawler/parser | [Later or bot-specific robots metadata restrictions were ignored](crawler/parser/INC-0012-robots-metadata-union.md) | resolved |
+
+## Experiments
+
+| ID | Feature | Record | Status |
+| --- | --- | --- | --- |
+| EXP-0001 | crawler/scheduler-and-leases | [Claim path latency and multi-worker drain, source-locked vs unlocked round robin](crawler/scheduler-and-leases/EXP-0001-claim-path-concurrency-benchmark.md) | done |
+| EXP-0002 | indexer/vocubulary | [Vocabulary worker prototype versus indexer-owned projection](indexer/vocubulary/EXP-0002-abandoned-vocabulary-worker.md) | done |
+| EXP-0003 | backend/bm25-statistics | [Static round-trip audit of batched ranking statistics](backend/bm25-statistics/EXP-0003-ranking-statistics-round-trip-audit.md) | done |
+| EXP-0004 | backend/ranking | [Evaluate candidate recall and BM25 relevance against the FTS baseline](backend/ranking/EXP-0004-lexical-relevance-evaluation.md) | planned |
+| EXP-0005 | infra/performance-and-scaling | [Measure search latency and ingestion interference before scaling](infra/performance-and-scaling/EXP-0005-search-and-ingestion-capacity-baseline.md) | planned |
+| EXP-0006 | indexer/vocubulary | [Measure global vocabulary mutex cost after correctness repair](indexer/vocubulary/EXP-0006-vocabulary-lock-contention.md) | planned |

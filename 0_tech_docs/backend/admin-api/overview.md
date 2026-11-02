@@ -1,26 +1,34 @@
 # Read-only admin API
 
-Area: backend · Status: stub
+Area: backend · Status: active
 
 ## Purpose
-_One paragraph: what this feature is responsible for and what it is not._
+
+Returns operational reports and inspections behind the shared bearer key. It is a visibility plane and does not expose worker control or destructive operations.
+
+Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
 ## Code
-- `backend/src/backend/api/`
-- `backend/src/backend/services/`
+
+- [`backend/src/backend/api/crawler_report.py`](../../../backend/src/backend/api/crawler_report.py)
+- [`backend/src/backend/api/indexer_report.py`](../../../backend/src/backend/api/indexer_report.py)
+- [`backend/src/backend/admin_services`](../../../backend/src/backend/admin_services)
 
 ## How-it-works docs
-- _none yet_
+
+- [`backend/README.md`](../../../backend/README.md)
 
 ## Records
+
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0030](ADR-0030-read-only-observability-plane.md) | decision | Expose read-only operational reports from backend-owned query services | accepted |
 
 ## Decisions to record
-Found in `technical_handoff.md` and the code. Turn each into an ADR file in this folder, then tick it.
 
-- [ ] Admin plane is read-only
-- [ ] One shared bearer key (`CRAWLER_REPORT_API_KEY`) for all admin routes
+The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
-_Short, enforceable rules distilled from the records above. Agents read this first._
+
+- Separate operational write commands into a new design and permission model.
+- Keep secrets server-side and report status meanings explicit.
