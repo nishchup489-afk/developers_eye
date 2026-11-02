@@ -8,14 +8,11 @@ No database access, SQL execution, or HTML generation.
 from __future__ import annotations
 
 import re
-import unicodedata
-from collections import Counter
-from dataclasses import dataclass
 from typing import Iterable
 
 from backend.search.snippets.ranking import _score_with_pattern
-from .types import MAX_QUERY_TERMS , MAX_TERM_CHARS , Snippet , Passage
-from .validation import _normalize_terms , _pattern , _positive_integer , normalize_snippet_text
+from .types import Snippet, Passage
+from .validation import _normalize_terms, _pattern, _positive_integer, normalize_snippet_text
 
 
 
@@ -105,6 +102,10 @@ def _window(
 
         while end > start and text[end - 1].isspace():
             end -= 1
+
+    # Boundary adjustments must never exceed the requested character budget.
+    if end - start > max_chars:
+        end = start + max_chars
 
     return Passage(
         text=text[start:end],
