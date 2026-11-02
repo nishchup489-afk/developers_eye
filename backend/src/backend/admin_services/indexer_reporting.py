@@ -14,7 +14,7 @@ from sqlalchemy import and_, case, func, literal, select
 from backend.models.documents import Document
 from backend.models.search_index import SearchIndex
 from backend.models.source import Source
-from backend.services.crawler_reporting import _percentage, _utc
+from backend.admin_services.crawler_reporting import _percentage, _utc
 
 REINDEX_MARKER = "reindex:pending"
 # Matches the worker's default poll interval plus one batch of slack.

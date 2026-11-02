@@ -3,7 +3,7 @@ import asyncio
 import selectors
 import sys
 
-from backend.services.crawler_reporting import (
+from backend.admin_services.crawler_reporting import (
     _utc, _percentage, build_report, format_text_report, main, parse_args,
 )
 

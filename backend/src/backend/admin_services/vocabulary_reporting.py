@@ -10,7 +10,7 @@ from sqlalchemy import func, select
 
 from backend.models.search_index import SearchIndex
 from backend.models.search_terms import SearchTerm
-from backend.services.crawler_reporting import _percentage, _utc
+from backend.admin_services.crawler_reporting import _percentage, _utc
 
 LIST_LIMIT = 30
 # Inclusive lower bounds; the last bucket is open-ended.

@@ -17,7 +17,7 @@ from backend.models.documents import Document
 from backend.models.search_index import SearchIndex
 from backend.models.source import Source
 from backend.schema.crawler_frontier import CrawlTargetCreate, CrawlTargetRead
-from backend.services.crawler_monitoring import build_monitor, inspect_document
+from backend.admin_services.crawler_monitoring import build_monitor, inspect_document
 from crawler.frontier.repository import enqueue_targets
 from crawler.policy_and_politeness.policy_coordinator import FetchResult, PolicyCoordinator
 from crawler.policy_and_politeness.politeness_policy import PolitenessManager

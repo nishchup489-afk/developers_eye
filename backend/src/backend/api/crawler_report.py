@@ -36,7 +36,7 @@ async def crawler_report(
     top_sources: Annotated[int, Query(ge=1, le=100)] = 20,
     recent_errors: Annotated[int, Query(ge=0, le=100)] = 20,
 ) -> dict:
-    from backend.services.crawler_reporting import build_report
+    from backend.admin_services.crawler_reporting import build_report
     response.headers["Cache-Control"] = "private, no-store"
     try:
         async with SessionFactory() as session:
@@ -74,7 +74,7 @@ async def crawler_monitor(
     frontier_state: Literal["due", "scheduled", "expired", "retry", "queued", "leased", "blocked", "disabled"] | None = None,
     before_event_id: Annotated[int | None, Query(gt=0)] = None,
 ):
-    from backend.services.crawler_monitoring import build_monitor
+    from backend.admin_services.crawler_monitoring import build_monitor
     return await monitor_query(response, build_monitor, days=days, source_id=source_id, status=status,
         category=category, q=q, document_page=document_page, frontier_page=frontier_page,
         frontier_state=frontier_state, before_event_id=before_event_id)
@@ -82,11 +82,11 @@ async def crawler_monitor(
 
 @router.get("/documents/{document_id}", dependencies=[Depends(require_report_key)])
 async def crawler_document(response: Response, document_id: Annotated[int, Path(gt=0)]):
-    from backend.services.crawler_monitoring import inspect_document
+    from backend.admin_services.crawler_monitoring import inspect_document
     return await monitor_query(response, inspect_document, document_id=document_id)
 
 
 @router.get("/attempts/{attempt_id}", dependencies=[Depends(require_report_key)])
 async def crawler_attempt(response: Response, attempt_id: Annotated[int, Path(gt=0)]):
-    from backend.services.crawler_monitoring import inspect_attempt
+    from backend.admin_services.crawler_monitoring import inspect_attempt
     return await monitor_query(response, inspect_attempt, attempt_id=attempt_id)

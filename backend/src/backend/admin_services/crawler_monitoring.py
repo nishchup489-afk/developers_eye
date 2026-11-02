@@ -8,7 +8,7 @@ from backend.models.crawl_monitor import CrawlEvent as Event, CrawlWorker as Wor
 from backend.models.crawler_frontier import CrawlTarget as Target
 from backend.models.documents import Document
 from backend.models.source import Source
-from backend.services.crawler_reporting import _utc
+from backend.admin_services.crawler_reporting import _utc
 
 
 def measurement(key, kind=Integer):
