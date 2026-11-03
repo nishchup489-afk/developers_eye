@@ -121,3 +121,6 @@ next-env.d.ts
 
 
 bs.py
+
+# Crawler runtime logs
+crawler/logs/
