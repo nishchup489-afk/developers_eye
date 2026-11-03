@@ -47,6 +47,8 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0037 | indexer/coverage-reporting | [Treat coverage and vocabulary reports as operational observations](indexer/coverage-reporting/ADR-0037-operational-coverage-snapshot-semantics.md) | accepted |
 | ADR-0038 | infra/performance-and-scaling | [Optimize measured bottlenecks before adding caches, brokers or distributed workers](infra/performance-and-scaling/ADR-0038-measure-before-adding-search-infrastructure.md) | proposed |
 | ADR-0039 | infra/ci-and-containers | [Add disposable PostgreSQL verification before automating deployment](infra/ci-and-containers/ADR-0039-reproducible-ci-and-containers-plan.md) | proposed |
+| ADR-0040 | crawler/scheduler-and-leases | [Bounded vocabulary updates and reduced advisory-lock contention](crawler/scheduler-and-leases/ADR-0040-vocubulary-lock-resolving.md) | proposed |
+| ADR-0041 | infra/configuration-and-secrets | [Rotate exposed credentials and enforce automated secret scanning](infra/configuration-and-secrets/ADR-0041-credential-rotation-and-secret-scanning.md) | accepted |
 
 ## Incidents
 
@@ -57,13 +59,14 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | INC-0003 | crawler/url-frontier | [Source max_depth was configured but never read, so the frontier grew without limit](crawler/url-frontier/INC-0003-crawl-scope-limits-never-enforced.md) | resolved |
 | INC-0004 | crawler/robots-and-politeness | [Python's urllib.robotparser ignored wildcard Disallow rules and longest-match Allow](crawler/robots-and-politeness/INC-0004-stdlib-robots-parser-ignored-wildcards.md) | resolved |
 | INC-0005 | crawler/url-safety | [Pinned transport accepted any path, Host header or TLS server name on an approved origin](crawler/url-safety/INC-0005-pinned-transport-accepted-unchecked-urls.md) | resolved |
-| INC-0006 | infra/configuration-and-secrets | [Live CRAWLER_REPORT_API_KEY committed to git in crawler/src/crawler/.env.local](infra/configuration-and-secrets/INC-0006-reporting-api-key-committed-to-git.md) | open |
+| INC-0006 | infra/configuration-and-secrets | [CRAWLER_REPORT_API_KEY exposed in git commit 5752803 (absorbs the former INC-0013 note)](infra/configuration-and-secrets/INC-0006-reporting-api-key-committed-to-git.md) | resolved |
 | INC-0007 | indexer/vocubulary | [Vocabulary bulk additions repeat and one removal path skips the mutex](indexer/vocubulary/INC-0007-vocabulary-overcount-and-uncoordinated-removal.md) | open |
 | INC-0008 | backend/fuzzy-correction | [Fuzzy correction imports missing and self-referenced symbols](backend/fuzzy-correction/INC-0008-fuzzy-import-contract-broken.md) | open |
 | INC-0009 | backend/snippets | [Code snippet boundary adjustment could exceed max_chars](backend/snippets/INC-0009-snippet-window-budget-regression.md) | resolved |
 | INC-0010 | crawler/fetcher | [Transport exceptions and shadowed policy errors broke classification](crawler/fetcher/INC-0010-transport-error-identity.md) | resolved |
 | INC-0011 | crawler/worker-runtime | [Expired jobs left unfinished attempts and bypassed failure backoff](crawler/worker-runtime/INC-0011-abandoned-attempt-accounting.md) | resolved |
 | INC-0012 | crawler/parser | [Later or bot-specific robots metadata restrictions were ignored](crawler/parser/INC-0012-robots-metadata-union.md) | resolved |
+| INC-0032 | crawler/scheduler-and-leases | [Crawler pipeline stalled by PostgreSQL advisory-lock contention](crawler/scheduler-and-leases/INC-0032-crawler-pipeline-stalled-by-postgres-advisory-lock-contention.md) | open |
 
 ## Experiments
 
