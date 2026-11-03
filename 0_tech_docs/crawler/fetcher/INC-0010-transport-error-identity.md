@@ -57,7 +57,7 @@ Catch the concrete httpcore classes from the conversion table, preserve causes, 
 
 ## Evidence
 
-Historical fix logs: [transport](../../../crawler/src/crawler/test/update_log/01_transport_errors.md) and [policy rejection](../../../crawler/src/crawler/test/update_log/02_policy_rejections.md). No new live-network run is claimed.
+Historical fix logs: [transport](../../journal/update-log/01_transport_errors.md) and [policy rejection](../../journal/update-log/02_policy_rejections.md). No new live-network run is claimed.
 
 - [`crawler/src/crawler/fetcher/transport.py`](../../../crawler/src/crawler/fetcher/transport.py)
 - [`crawler/src/crawler/fetcher/errors.py`](../../../crawler/src/crawler/fetcher/errors.py)

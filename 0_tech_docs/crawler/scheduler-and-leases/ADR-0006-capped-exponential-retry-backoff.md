@@ -24,7 +24,7 @@ related: [ADR-0004]
 When a crawl fails in a way that might succeed later, the target goes back to `queued` with `failure_count + 1` and `next_fetch_at = now + min(60 s × 2^(failure_count − 1), 3600 s)`. A success resets `failure_count` to 0. A server's `Retry-After` can push the next attempt later, up to 24 h, but never earlier. Permanent refusals (robots deny, 401/403, out-of-scope redirect) are not retried at all; they move to `blocked`. There is no maximum retry count.
 
 ## Context
-Before commit `f19c53b` (2026-10-20), a target whose lease expired was cleared and immediately due again, without counting the failure (see `crawler/src/crawler/test/update_log/08_failure_recovery.md`). A URL that timed out or crashed the worker was retried as soon as the next claim ran, so one bad URL could take a worker slot over and over and hit the remote host every few seconds.
+Before commit `f19c53b` (2026-10-20), a target whose lease expired was cleared and immediately due again, without counting the failure (see `0_tech_docs/journal/update-log/08_failure_recovery.md`). A URL that timed out or crashed the worker was retried as soon as the next claim ran, so one bad URL could take a worker slot over and over and hit the remote host every few seconds.
 
 Constraints: be polite to hosts that are down or rate-limiting, keep transient failures (timeouts, 5xx, empty 200 bodies) cheap to recover from, and keep the rule simple enough to test.
 

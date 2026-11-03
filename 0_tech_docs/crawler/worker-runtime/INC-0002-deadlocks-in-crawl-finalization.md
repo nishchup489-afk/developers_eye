@@ -78,5 +78,5 @@ Sorting removes the cycle that was observed in `crawl_target`; the retry covers 
 - Keep passing: `worker/tests/test_deadlock_retry.py`, `worker/tests/test_postgres_pipeline.py`, `frontier/tests/`.
 
 ## References
-- `crawler/src/crawler/test/upadte_log/update_10_20_2026_8_39_PM.md` (original long write-up)
-- `crawler/src/crawler/test/update_log/06_deadlock_retry.md`, `08_failure_recovery.md`
+- `0_tech_docs/journal/update-log/2026-10-20-deadlock-fix/update_10_20_2026_8_39_PM.md` (original long write-up)
+- `0_tech_docs/journal/update-log/06_deadlock_retry.md`, `08_failure_recovery.md`

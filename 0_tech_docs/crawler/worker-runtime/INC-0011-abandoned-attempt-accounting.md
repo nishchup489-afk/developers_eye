@@ -58,7 +58,7 @@ Persist the attempt lease token; close failed jobs in an independent transaction
 
 ## Evidence
 
-[Historical recovery log](../../../crawler/src/crawler/test/update_log/08_failure_recovery.md) and its linked regression suites.
+[Historical recovery log](../../journal/update-log/08_failure_recovery.md) and its linked regression suites.
 
 - [`crawler/src/crawler/worker/recovery.py`](../../../crawler/src/crawler/worker/recovery.py)
 - [`crawler/src/crawler/worker/jobs/jobs.py`](../../../crawler/src/crawler/worker/jobs/jobs.py)

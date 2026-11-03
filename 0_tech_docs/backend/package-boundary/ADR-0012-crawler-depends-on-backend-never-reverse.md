@@ -22,7 +22,7 @@ related: []
 `backend` (FastAPI, models, migrations, read-only report services) is a standalone Poetry package. `crawler` (which contains both the `crawler` and `indexer` packages) depends on it through a relative path dependency, `backend = {path = "../backend", develop = true}`. The backend never imports `crawler` or `indexer`; a test enforces this by failing on any such import. Code that both sides need (models, sessions, report queries) lives in `backend`.
 
 ## Context
-Before commit `a99f417` (2026-10-20), each project listed the other as a dependency through an absolute path, `C:/Users/nishc/...`. That had two problems (`crawler/src/crawler/test/update_log/10_portable_packages.md`):
+Before commit `a99f417` (2026-10-20), each project listed the other as a dependency through an absolute path, `C:/Users/nishc/...`. That had two problems (`0_tech_docs/journal/update-log/10_portable_packages.md`):
 - the repository only installed on one machine, in one folder;
 - the dependency was circular: the backend imported crawler implementation modules just to build the admin reports, so the API could not start without the whole crawler and its HTTP and parsing dependencies installed.
 

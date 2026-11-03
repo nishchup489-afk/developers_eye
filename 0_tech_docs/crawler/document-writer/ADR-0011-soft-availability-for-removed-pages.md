@@ -23,7 +23,7 @@ related: [ADR-0002, ADR-0008]
 When a page the crawler has stored returns HTTP 404 or 410, its `document` rows are kept but marked `is_available = false` with `unavailable_at` and `unavailable_http_status`, and their `search_index` rows are removed in the same transaction. The target stays scheduled and is checked again after the normal recrawl interval. If a later fetch succeeds, the writer clears the three fields and the page is indexed again. Search never shows a dead page, and nothing is lost if the 404 was temporary.
 
 ## Context
-Before commit `9a29b29` (2026-10-20), a 404/410 permanently disabled the crawl target, and the stored document stayed exactly as it was: still `document` content, still in `search_index`, indistinguishable from a live page, and never checked again (`crawler/src/crawler/test/update_log/09_content_availability.md`). So search could return pages that no longer existed, forever.
+Before commit `9a29b29` (2026-10-20), a 404/410 permanently disabled the crawl target, and the stored document stayed exactly as it was: still `document` content, still in `search_index`, indistinguishable from a live page, and never checked again (`0_tech_docs/journal/update-log/09_content_availability.md`). So search could return pages that no longer existed, forever.
 
 Websites return 404 for reasons that are not permanent: a deploy in progress, a moved docs version, a CDN glitch. Deleting the document on the first 404 would throw away content that might be back an hour later.
 

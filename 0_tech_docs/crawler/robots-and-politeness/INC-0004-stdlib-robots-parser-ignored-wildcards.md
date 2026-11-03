@@ -68,6 +68,6 @@ The robots cache (`robots_cache`, expiry per origin) and the allow / deny / defe
 - Keep passing: `policy_and_politeness/tests/test_robots_rules.py`, `test_robots_policy.py`.
 
 ## References
-- `crawler/src/crawler/test/update_log/04_robots_rules.md`
+- `0_tech_docs/journal/update-log/04_robots_rules.md`
 - RFC 9309: https://www.rfc-editor.org/rfc/rfc9309.html
 - Related, same day: robots meta tags were only read from the first generic tag, so a later `noindex` was missed (`update_log/05_robots_metadata.md`, commit `feccf25`).

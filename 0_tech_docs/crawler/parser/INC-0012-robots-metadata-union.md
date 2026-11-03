@@ -56,7 +56,7 @@ Merge every generic and own-bot tag, preserve restrictive directives, ignore oth
 
 ## Evidence
 
-[Historical metadata log](../../../crawler/src/crawler/test/update_log/05_robots_metadata.md).
+[Historical metadata log](../../journal/update-log/05_robots_metadata.md).
 
 - [`crawler/src/crawler/parser/html/metadata.py`](../../../crawler/src/crawler/parser/html/metadata.py)
 - [`crawler/src/crawler/config.py`](../../../crawler/src/crawler/config.py)

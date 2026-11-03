@@ -83,7 +83,7 @@ Constraints:
 - Worker killed mid-job: lease expires, the next claim requeues the row with backoff and closes the attempt as `lease_expired`.
 - Clock: all lease times use the database's `clock_timestamp()`, never the worker's clock, so client clock skew does not matter.
 - Job runs past its lease despite the timeout (blocked event loop): another worker may claim and fetch the same URL. The first worker's `complete_target()` then matches nothing and its result is dropped. Duplicate fetches are possible; duplicate writes of the target state are not.
-- Real incidents in this area: deadlocks during finalization and abandoned attempts (see `crawler/src/crawler/test/update_log/06_deadlock_retry.md`, `08_failure_recovery.md`).
+- Real incidents in this area: deadlocks during finalization and abandoned attempts (see `0_tech_docs/journal/update-log/06_deadlock_retry.md`, `08_failure_recovery.md`).
 
 ## Evidence
 - Tests: `schedular/tests/test_repository.py`, `schedular/tests/test_concurrent_claims.py`, `worker/tests/test_postgres_pipeline.py` (concurrent claims, lease ownership, recovery).

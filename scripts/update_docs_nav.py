@@ -38,21 +38,19 @@ LABELS = {
     "crawler/src/crawler/schedular/DOCS/new_concept_to_note.md": "Scheduler concepts to note",
     "crawler/src/crawler/seed/guide.md": "Seed guide",
     "crawler/src/crawler/seed/seed_list.md": "Seed list",
-    "crawler/src/crawler/test/order.md": "Test run order",
     "crawler/src/indexer/docs/config.md": "Indexer configuration",
     "crawler/src/indexer/docs/file_task.md": "Indexer file responsibilities",
 }
 
 # (title, path prefix) in display order. The first matching prefix wins.
 SECTIONS = [
-    ("Start here", ("README.md", "technical_handoff.md", "crawler/DEVELOPERS_EYE_CHECKLIST.md")),
+    ("Start here", ("README.md", "technical_handoff.md")),
     ("Tech docs (why)", ("0_tech_docs/README.md",)),
     ("Backend (FastAPI, database)", ("backend/",)),
     ("Crawler: seeds and frontier", ("crawler/src/crawler/README.md", "crawler/src/crawler/seed/", "crawler/src/crawler/frontier/", "crawler/src/crawler/schedular/")),
     ("Crawler: fetch and policy", ("crawler/src/crawler/fetcher/", "crawler/src/crawler/policy_and_politeness/")),
     ("Crawler: parse, process, write", ("crawler/src/crawler/parser/", "crawler/src/crawler/processing/", "crawler/src/crawler/writer/")),
     ("Crawler: worker and ingestion", ("crawler/src/crawler/worker/", "crawler/tests/")),
-    ("Crawler: fix log", ("crawler/src/crawler/test/",)),
     ("Indexer", ("crawler/src/indexer/",)),
     ("Frontend (Next.js, admin)", ("frontend/",)),
 ]

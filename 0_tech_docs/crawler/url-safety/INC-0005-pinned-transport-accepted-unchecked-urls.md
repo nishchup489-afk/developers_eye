@@ -54,4 +54,4 @@ In `8a91e50`:
 - Keep passing: `fetcher/tests/fetcher_tests/tests/test_fetcher.py`, `policy_and_politeness/tests/test_policy_coordinator.py`.
 
 ## References
-- `crawler/src/crawler/test/update_log/02_policy_rejections.md`, `03_pinned_requests.md`
+- `0_tech_docs/journal/update-log/02_policy_rejections.md`, `03_pinned_requests.md`

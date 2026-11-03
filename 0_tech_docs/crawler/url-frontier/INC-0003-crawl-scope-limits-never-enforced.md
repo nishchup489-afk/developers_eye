@@ -63,4 +63,4 @@ Commit `6f1ab68`:
 - Keep passing: `frontier/tests/test_scope.py`, `frontier/tests/test_enqueue_target.py`, `worker/tests/test_postgres_pipeline.py`.
 
 ## References
-- `crawler/src/crawler/test/update_log/07_crawl_scope.md`
+- `0_tech_docs/journal/update-log/07_crawl_scope.md`

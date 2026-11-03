@@ -2,7 +2,7 @@
 
 
 - ---
-![alt text](image.png)
+![alt text](scheduler-test-1.png)
 - ---
 ## 1. `test_repository.py`
 

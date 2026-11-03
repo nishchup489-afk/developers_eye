@@ -88,7 +88,7 @@ The final URL is checked again in the job: a 200 whose final URL is outside the 
 ## Evidence
 - Tests: `policy_and_politeness/tests/test_host_policy.py`, `test_dns_policy.py` (own runner, needs network), `test_redirect_policy.py`, `test_policy_coordinator.py`; case list in `tests/test_case.md`.
 - Measured: none (no latency cost measured for per-hop DNS and no keep-alive).
-- Incidents: `crawler/src/crawler/test/update_log/02_policy_rejections.md`, `03_pinned_requests.md`.
+- Incidents: `0_tech_docs/journal/update-log/02_policy_rejections.md`, `03_pinned_requests.md`.
 - Commits: `3a84cd7` (host and DNS policy), `cf39613` (redirect policy).
 - How-it-works: `crawler/src/crawler/policy_and_politeness/docs/1_host_policy.md`, `2_dns_policy.md`, `5_redirect_policy.md`, `6_policy_coordinator.md`.
 
