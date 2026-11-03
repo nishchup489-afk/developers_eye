@@ -17,7 +17,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 ## How-it-works docs
 
 - [`crawler/tests/README.md`](../../../crawler/tests/README.md)
-- [`crawler/src/indexer/tests/README.md`](../../../crawler/src/indexer/tests/README.md)
+- [`crawler/tests/test_case.md`](../../../crawler/tests/test_case.md#indexer)
 - [`frontend/tests/README.md`](../../../frontend/tests/README.md)
 
 ## Records

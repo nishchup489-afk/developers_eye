@@ -171,11 +171,11 @@ Always apply migrations before restarting workers after a schema change. Useful 
 
 | Suite | Command | Needs |
 | --- | --- | --- |
-| Crawler offline regression | `.\crawler\.venv\Scripts\python.exe -m pytest crawler/src/crawler backend/tests crawler/tests -q --ignore=crawler/src/crawler/worker/tests/test_live_pipeline.py --ignore=crawler/src/crawler/writer/tests/test_database_writer.py --ignore=crawler/src/crawler/policy_and_politeness/tests/test_dns_policy.py` (repo root) | nothing |
-| DNS policy (own runner) | `.\crawler\.venv\Scripts\python.exe -m crawler.policy_and_politeness.tests.test_dns_policy` | network |
-| Indexer | `poetry run pytest src/indexer/tests -v -rs` (from `crawler/`) | `TEST_DATABASE_URL` for the PostgreSQL lifecycle tests |
-| PostgreSQL pipeline / writer | see `crawler/tests/README.md` and `crawler/src/crawler/worker/tests/README.md` | dedicated test database |
-| Live crawl | `crawler/src/crawler/worker/tests/test_live_pipeline.py` | internet; run deliberately |
+| Crawler offline regression | `.\crawler\.venv\Scripts\python.exe -m pytest crawler/tests backend/tests -q --ignore=crawler/tests/crawler/worker/test_live_pipeline.py --ignore=crawler/tests/crawler/writer/test_database_writer.py --ignore=crawler/tests/crawler/policy_and_politeness/test_dns_policy.py` (repo root) | nothing |
+| DNS policy (own runner) | `.\crawler\.venv\Scripts\python.exe crawler/tests/crawler/policy_and_politeness/test_dns_policy.py` | network |
+| Indexer | `poetry run pytest tests/indexer -v -rs` (from `crawler/`) | `TEST_DATABASE_URL` for the PostgreSQL lifecycle tests |
+| PostgreSQL pipeline / writer | see `crawler/tests/README.md` and `crawler/tests/test_case.md` | dedicated test database |
+| Live crawl | `crawler/tests/crawler/worker/test_live_pipeline.py` | internet; run deliberately |
 | Frontend | `npm run lint`, `npm run build`, `npm run test:integration` | production build for integration |
 | Admin | `npm run test:admin:unit`, `npm run test:admin:routes`, `npm run test:admin` | Node 22.18+; build first for routes/integration |
 

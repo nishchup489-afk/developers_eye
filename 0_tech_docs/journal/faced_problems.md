@@ -14,7 +14,7 @@
 
 **Lesson.** `SKIP LOCKED` on a "parent" row like `source` skips all of its children for everyone else until commit. Lock the rows that are actually being handed out (the targets), and keep shared bookkeeping writes short and in a fixed order.
 
-Details: `0_tech_docs/crawler/scheduler-and-leases/ADR-0001-round-robin-claims-without-source-locks.md` and `EXP-0001-claim-path-concurrency-benchmark.md`. Tests: `crawler/src/crawler/schedular/tests/test_concurrent_claims.py`.
+Details: `0_tech_docs/crawler/scheduler-and-leases/ADR-0001-round-robin-claims-without-source-locks.md` and `EXP-0001-claim-path-concurrency-benchmark.md`. Tests: `crawler/tests/crawler/schedular/test_concurrent_claims.py`.
 
 ## Search index test row without `code_vector` (2026-10-27)
 

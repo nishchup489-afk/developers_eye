@@ -50,7 +50,7 @@ Commit `6f1ab68`:
 - The budget counts every target of the source, including disabled and blocked ones. Raising or lowering `max_pages` never deletes rows.
 
 ## Prevention
-- Regression tests: `crawler/src/crawler/frontier/tests/test_scope.py` (depth limits, path traversal, invalid config), `test_enqueue_target.py` (duplicates, full budgets), `worker/tests/test_postgres_pipeline.py::test_concurrent_claims_atomic_writes_and_shared_source_budget`.
+- Regression tests: `crawler/tests/crawler/frontier/test_scope.py` (depth limits, path traversal, invalid config), `test_enqueue_target.py` (duplicates, full budgets), `worker/tests/test_postgres_pipeline.py::test_concurrent_claims_atomic_writes_and_shared_source_budget`.
 - Monitoring: none. The admin monitor shows frontier size per source, but there is no alert.
 - Remaining risk:
   - the per-source advisory lock serializes link inserts for one source across all workers;

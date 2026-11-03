@@ -652,7 +652,7 @@ From the repository root in PowerShell, using the test module's package layout:
 
 ```powershell
 $env:PYTHONPATH = (Resolve-Path '.\crawler\src').Path
-poetry -C crawler run python -m crawler.robot.tests.test_dns_policy
+poetry -C crawler run python crawler/tests/crawler/policy_and_politeness/test_dns_policy.py
 ```
 
 If you moved the tests to `crawler.policy_and_politeness.tests`, update the module path in the command accordingly. Also ensure the test file's import of `dns_policy` matches the actual location.

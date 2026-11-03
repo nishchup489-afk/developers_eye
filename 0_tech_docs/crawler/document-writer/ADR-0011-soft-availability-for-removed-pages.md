@@ -69,7 +69,7 @@ Websites return 404 for reasons that are not permanent: a deploy in progress, a 
 - The index removal goes through `remove_indexed_documents()`, never a bare `DELETE` on `search_index`.
 
 ## Evidence
-- Tests: 404 and 410 finalization, search invalidation, kept document rows and restoration (`crawler/src/crawler/worker/tests/test_postgres_pipeline.py::test_removed_page_invalidates_index_and_recovers_when_restored`), `indexer/tests/test_indexer.py` steps 8 and 9 (soft-unavailable removal, revived document).
+- Tests: 404 and 410 finalization, search invalidation, kept document rows and restoration (`crawler/tests/crawler/worker/test_postgres_pipeline.py::test_removed_page_invalidates_index_and_recovers_when_restored`), `indexer/tests/test_indexer.py` steps 8 and 9 (soft-unavailable removal, revived document).
 - Measured: none.
 - Commits: `9a29b29`, `4043255` (Postgres coverage), `c0d1690` (vocabulary-aware removal).
 

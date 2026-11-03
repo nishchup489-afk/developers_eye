@@ -23,7 +23,7 @@ Run after applying migrations to a dedicated database, from `crawler/`:
 
 ```powershell
 $env:TEST_DATABASE_URL = "postgresql+asyncpg://USER:PASSWORD@localhost/developers_eye_test"
-poetry run pytest src/crawler/writer/tests/test_database_writer.py src/crawler/worker/tests/test_postgres_pipeline.py -q
+poetry run pytest tests/crawler/writer/test_database_writer.py tests/crawler/worker/test_postgres_pipeline.py -q
 ```
 
 The database name must contain `test`. No live website is crawled by these tests.

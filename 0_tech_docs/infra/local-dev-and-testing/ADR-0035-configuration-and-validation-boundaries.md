@@ -75,7 +75,7 @@ Code inspected at [facd333](https://github.com/nishchup489-afk/developers_eye/co
 Regression coverage to run when changing behavior (not a claim of a new test run):
 
 - [`backend/tests/test_package_boundary.py`](../../../backend/tests/test_package_boundary.py)
-- [`crawler/src/indexer/tests`](../../../crawler/src/indexer/tests)
+- [`crawler/tests/indexer`](../../../crawler/tests/indexer)
 - [`frontend/tests`](../../../frontend/tests)
 
 ## Revisit when

@@ -92,9 +92,9 @@ Constraints:
 
 ## Evidence
 - Tests:
-  - `crawler/src/indexer/tests/test_vocabulary.py`: the filter keeps developer terms and drops artifacts; unchanged lexemes write nothing; decrement to 0 deletes; a missing row raises.
-  - `crawler/src/indexer/tests/test_indexer.py` (Postgres, `TEST_DATABASE_URL`, temp `search_terms` table): counts after first index, after an update, after soft removal; rebuild finds one document; shared removal empties the vocabulary.
-  - `crawler/src/indexer/tests/test_service_writer.py`: lock and helper are called.
+  - `crawler/tests/indexer/test_vocabulary.py`: the filter keeps developer terms and drops artifacts; unchanged lexemes write nothing; decrement to 0 deletes; a missing row raises.
+  - `crawler/tests/indexer/test_indexer.py` (Postgres, `TEST_DATABASE_URL`, temp `search_terms` table): counts after first index, after an update, after soft removal; rebuild finds one document; shared removal empties the vocabulary.
+  - `crawler/tests/indexer/test_service_writer.py`: lock and helper are called.
 - Measured: rebuild of 15,600 documents into 18,432 terms in about 6 s (sample log in `crawler/src/indexer/operations.md`).
 
   > **Question for nish:** is that log from a real run on your database, or an illustrative example? If real, add the machine and Postgres version.

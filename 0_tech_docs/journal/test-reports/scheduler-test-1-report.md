@@ -92,9 +92,9 @@ When a worker encounters an error:
 From the project root:
 
 ```powershell
-python -m crawler.schedular.tests.test_repository
-python -m crawler.schedular.tests.test_complete_target
-python -m crawler.schedular.tests.test_fail_target
+python crawler/tests/crawler/schedular/test_repository.py
+python crawler/tests/crawler/schedular/test_complete_target.py
+python crawler/tests/crawler/schedular/test_fail_target.py
 ```
 
 Colorama provides colored terminal output:

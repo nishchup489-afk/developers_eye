@@ -105,13 +105,13 @@ When executed in PostgreSQL, this might yield `'async':2A 'python':1A 'tutori':3
 
 ## Tests
 
-Place the test file at `crawler/src/indexer/tests/test_vector.py`. This project already has shared fixtures in `crawler/src/indexer/tests/conftest.py` (`config`, `make_index_document`). Do not create another `tests/indexer/` directory.
+Place the test file at `crawler/tests/indexer/test_vector.py`. This project already has shared fixtures in `crawler/tests/indexer/conftest.py` (`config`, `make_index_document`). Do not create another `tests/indexer/` directory.
 
 From the `crawler/` directory:
 
 ```powershell
-poetry run pytest src/indexer/tests/test_vector.py -v
-poetry run pytest src/indexer/tests -v
+poetry run pytest tests/indexer/test_vector.py -v
+poetry run pytest tests/indexer -v
 ```
 
 The test file covers typed SQL generation, parameter binding (including SQL-injection-looking input), valid weights, invalid text/configuration, empty vectors, field order, deterministic compilation, dataclass metadata, analyzer integration, and argument validation.
@@ -120,7 +120,7 @@ The optional PostgreSQL execution test is skipped unless `TEST_DATABASE_URL` is 
 
 ```powershell
 $env:TEST_DATABASE_URL = "postgresql+asyncpg://USER:PASSWORD@localhost:5432/developers_eye_test"
-poetry run pytest src/indexer/tests/test_vector.py -v
+poetry run pytest tests/indexer/test_vector.py -v
 ```
 
 Unlike the SQL-compilation tests, this test checks actual PostgreSQL lexeme normalization and weights. It performs a `SELECT` only and never modifies tables. Use a **test** database URL.

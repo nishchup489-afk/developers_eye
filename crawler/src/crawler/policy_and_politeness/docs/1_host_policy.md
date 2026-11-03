@@ -280,7 +280,7 @@ From the repository root in **PowerShell**:
 
 ```powershell
 $env:PYTHONPATH = (Resolve-Path '.\crawler\src').Path
-poetry -C crawler run python -m crawler.robot.tests.test_host_policy
+poetry -C crawler run python crawler/tests/crawler/policy_and_politeness/test_host_policy.py
 ```
 
 The test module imports `crawler.policy_and_politeness.host_policy`; that path must match the actual package layout.

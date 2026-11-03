@@ -9,7 +9,7 @@ feature: fuzzy-correction
 code:
 - backend/src/backend/search/retrieval/fuzzy/candidates.py
 - backend/src/backend/search/retrieval/fuzzy/correction.py
-- backend/src/backend/tests/integration/test_fuzzy.py
+- backend/tests/integration/test_fuzzy.py
 fix_commits: []
 related:
 - ADR-0025
@@ -59,4 +59,4 @@ Code inspected at [facd333](https://github.com/nishchup489-afk/developers_eye/co
 
 - [`backend/src/backend/search/retrieval/fuzzy/candidates.py`](../../../backend/src/backend/search/retrieval/fuzzy/candidates.py)
 - [`backend/src/backend/search/retrieval/fuzzy/correction.py`](../../../backend/src/backend/search/retrieval/fuzzy/correction.py)
-- [`backend/src/backend/tests/integration/test_fuzzy.py`](../../../backend/src/backend/tests/integration/test_fuzzy.py)
+- [`backend/tests/integration/test_fuzzy.py`](../../../backend/tests/integration/test_fuzzy.py)

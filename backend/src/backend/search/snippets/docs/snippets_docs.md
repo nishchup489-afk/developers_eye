@@ -2,7 +2,7 @@
 
 **Module:** `backend.search.snippets`  
 **Implementation:** `backend/src/backend/search/snippets.py`  
-**Tests:** `backend/src/backend/tests/unit/test_snippets.py`
+**Tests:** `backend/tests/unit/test_snippets.py`
 
 ## Purpose
 
@@ -168,7 +168,7 @@ Before integration, make sure the service's query-term extraction matches how yo
 From the `backend` directory, with your backend environment active:
 
 ```powershell
-python -m pytest src/backend/tests/unit/test_snippets.py -v
+python -m pytest tests/unit/test_snippets.py -v
 ```
 
 The test suite covers normalization, matching, ranking, candidate windows, fallbacks, code indentation, Unicode, input validation, and output invariants. It does not measure performance under production-scale document sizes or test the Next.js highlighting implementation.

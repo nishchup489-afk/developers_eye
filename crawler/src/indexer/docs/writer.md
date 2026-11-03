@@ -115,18 +115,18 @@ From `crawler/`:
 
 ```powershell
 # Mocked service/writer unit tests
-poetry run pytest src/indexer/tests/test_service_writer.py -v
+poetry run pytest tests/indexer/test_service_writer.py -v
 
 # Real builder/analyzer/vector transformations (no DB), plus a separate
 # PostgreSQL end-to-end test when TEST_DATABASE_URL is set
-poetry run pytest src/indexer/tests/test_final_indexer.py -v -rs
+poetry run pytest tests/indexer/test_final_indexer.py -v -rs
 ```
 
 In PowerShell, set the optional Postgres test connection:
 
 ```powershell
 $env:TEST_DATABASE_URL = "postgresql+asyncpg://USER:PASSWORD@localhost:5432/developers_eye_test"
-poetry run pytest src/indexer/tests/test_final_indexer.py -v -rs
+poetry run pytest tests/indexer/test_final_indexer.py -v -rs
 Remove-Item Env:TEST_DATABASE_URL
 ```
 

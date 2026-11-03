@@ -67,7 +67,7 @@ Code inspected at [facd333](https://github.com/nishchup489-afk/developers_eye/co
 Regression coverage to run when changing behavior (not a claim of a new test run):
 
 - [`crawler/tests`](../../../crawler/tests)
-- [`crawler/src/crawler/parser/tests`](../../../crawler/src/crawler/parser/tests)
+- [`crawler/tests/crawler/parser`](../../../crawler/tests/crawler/parser)
 
 ## Revisit when
 

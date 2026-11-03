@@ -65,7 +65,7 @@ The write-up says the two-worker example is an illustration, not a reconstructio
 Sorting removes the cycle that was observed in `crawl_target`; the retry covers cycles that sorting cannot rule out (documents, advisory locks); the recovery path makes sure a job that still fails leaves consistent state.
 
 ## Prevention
-- Regression tests: `crawler/src/crawler/worker/tests/test_deadlock_retry.py` (eventual success, exhaustion, non-deadlock errors, cancellation), `worker/tests/test_postgres_pipeline.py` (concurrent claims and writes on Postgres).
+- Regression tests: `crawler/tests/crawler/worker/test_deadlock_retry.py` (eventual success, exhaustion, non-deadlock errors, cancellation), `worker/tests/test_postgres_pipeline.py` (concurrent claims and writes on Postgres).
 - Monitoring: deadlock retries are logged at WARNING (`Database deadlock, retry n/4`) and exhaustion at ERROR. There is no counter or alert.
 - Design change: none recorded as an ADR; the rules below are the design.
 - Remaining risk: PR #4 added a global advisory lock (`lock_vocabulary()`) to every `_finalize()` (ADR-0002). That serializes all finalizations, which removes most cycles but costs throughput, and makes the lock order (advisory lock first, then rows) a new rule.

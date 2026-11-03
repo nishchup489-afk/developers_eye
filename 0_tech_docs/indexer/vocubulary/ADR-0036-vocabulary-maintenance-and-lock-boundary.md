@@ -68,9 +68,9 @@ Code inspected at [facd333](https://github.com/nishchup489-afk/developers_eye/co
 
 Regression coverage to run when changing behavior (not a claim of a new test run):
 
-- [`crawler/src/indexer/tests/test_vocabulary.py`](../../../crawler/src/indexer/tests/test_vocabulary.py)
-- [`crawler/src/indexer/tests/test_vocabulary_rebuild_cli.py`](../../../crawler/src/indexer/tests/test_vocabulary_rebuild_cli.py)
-- [`crawler/src/crawler/worker/tests/test_postgres_pipeline.py`](../../../crawler/src/crawler/worker/tests/test_postgres_pipeline.py)
+- [`crawler/tests/indexer/test_vocabulary.py`](../../../crawler/tests/indexer/test_vocabulary.py)
+- [`crawler/tests/indexer/test_vocabulary_rebuild_cli.py`](../../../crawler/tests/indexer/test_vocabulary_rebuild_cli.py)
+- [`crawler/tests/crawler/worker/test_postgres_pipeline.py`](../../../crawler/tests/crawler/worker/test_postgres_pipeline.py)
 
 ## Revisit when
 

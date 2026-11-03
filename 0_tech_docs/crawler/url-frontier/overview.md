@@ -15,7 +15,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 
 ## How-it-works docs
 
-- [`crawler/src/crawler/frontier/tests/test_case.md`](../../../crawler/src/crawler/frontier/tests/test_case.md)
+- [`crawler/tests/test_case.md`](../../../crawler/tests/test_case.md#frontier)
 
 ## Records
 

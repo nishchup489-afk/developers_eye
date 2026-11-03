@@ -118,7 +118,7 @@ An HTTP `X-Robots-Tag: noindex` applies to all imported entries. `nofollow` stop
 From the repository root:
 
 ```powershell
-.\crawler\.venv\Scripts\python.exe -m pytest crawler/tests/test_feeds.py crawler/tests/test_ingestion_jobs.py -q
+.\crawler\.venv\Scripts\python.exe -m pytest crawler/tests/crawler/ingestion/test_feeds.py crawler/tests/crawler/ingestion/test_ingestion_jobs.py -q
 ```
 
 The parser tests use literal XML. Worker tests run the real parser and processor while replacing network and finalization with test doubles. They verify scope filtering, pagination, HTTP directives and malformed-feed retry behavior. They do not claim to test a live website or PostgreSQL transaction.

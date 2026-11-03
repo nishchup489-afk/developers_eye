@@ -10,7 +10,7 @@ These retained reports and fix logs complement the ADR/INC/EXP records. They des
 | [Early scheduler report](../../journal/test-reports/scheduler-test-1-report.md) | Initial claim/complete/fail/recovery contract and test sequence | Predates round-robin changes and later concurrent tests; its remaining-work checklist is historical |
 | [Claim concurrency benchmark](../../crawler/scheduler-and-leases/EXP-0001-claim-path-concurrency-benchmark.md) | Declared machine/workload, source-lock comparison, latency and drain throughput | Historical synthetic benchmark, not rerun and not production QPS |
 | [Structured-ingestion verification](../../journal/update-log/18_structured_ingestion_edges.md) | Reported 456 offline tests and 33 subtests, six DB skips in the offline run, 13 PostgreSQL persistence tests and 73 DNS checks | Specific historical session on a separate PostgreSQL 18 cluster; not a guarantee for every supported PostgreSQL version |
-| [Indexer test guide](../../../crawler/src/indexer/tests/README.md) | Test inventory and environment requirements | Describes how to run; does not certify the current test outcome |
+| [Indexer test guide](../../../crawler/tests/test_case.md#indexer) | Test inventory and environment requirements | Describes how to run; does not certify the current test outcome |
 | [Snippet PR #6](https://github.com/nishchup489-afk/developers_eye/pull/6) | Budget fix, authored regressions and docs | PR states those tests were not executed in that session |
 | [Vocabulary PR #4](https://github.com/nishchup489-afk/developers_eye/pull/4) | Forward schema repair, shared removals, rebuild and tests | PR states live PostgreSQL/CI verification was not run; current defects remain documented |
 

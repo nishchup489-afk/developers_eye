@@ -43,7 +43,7 @@ Removing a lock before proving correctness and contention risks replacing a simp
 Existing regression suites, from crawler/:
 
 ```bash
-poetry run pytest src/indexer/tests/test_vocabulary.py src/indexer/tests/test_service_writer.py src/crawler/worker/tests/test_postgres_pipeline.py -v -rs
+poetry run pytest tests/indexer/test_vocabulary.py tests/indexer/test_service_writer.py tests/crawler/worker/test_postgres_pipeline.py -v -rs
 ```
 
 Set TEST_DATABASE_URL to a disposable PostgreSQL database. No contention benchmark exists yet; add a bounded harness and raw-result capture after fixing INC-0007. Never run a recount concurrently with uncontrolled production writers for this experiment.

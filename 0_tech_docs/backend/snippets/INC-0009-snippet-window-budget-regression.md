@@ -8,7 +8,7 @@ area: backend
 feature: snippets
 code:
 - backend/src/backend/search/snippets/snippets.py
-- backend/src/backend/search/snippets/tests/test_snippet_bounds.py
+- backend/tests/unit/test_snippet_bounds.py
 fix_commits:
 - d2229b6ffb8a7f9aff270889f40ebcd115069723
 related:
@@ -58,4 +58,4 @@ The final window computation clamps end to start+max_chars when needed. PR #6 al
 Source and merged PR [#6](https://github.com/nishchup489-afk/developers_eye/pull/6); this PR does not claim a new full backend test run.
 
 - [`backend/src/backend/search/snippets/snippets.py`](../../../backend/src/backend/search/snippets/snippets.py)
-- [`backend/src/backend/search/snippets/tests/test_snippet_bounds.py`](../../../backend/src/backend/search/snippets/tests/test_snippet_bounds.py)
+- [`backend/tests/unit/test_snippet_bounds.py`](../../../backend/tests/unit/test_snippet_bounds.py)

@@ -68,7 +68,7 @@ Constraints: no new column or table if avoidable; rebuilding must not make docum
 - `INDEXER_INDEX_VERSION` is the same for the indexer worker and the backend.
 
 ## Evidence
-- Tests: `crawler/src/indexer/tests/test_builder.py` (hash), `test_selector.py` (old-version rows selected), `test_service_writer.py` (version refresh), `test_indexer.py` (Postgres lifecycle).
+- Tests: `crawler/tests/indexer/test_builder.py` (hash), `test_selector.py` (old-version rows selected), `test_service_writer.py` (version refresh), `test_indexer.py` (Postgres lifecycle).
 - Measured: none.
 - Commits: `b58e156` (builder), `0aedb4c` (reindex CLI and runner).
 

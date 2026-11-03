@@ -1,6 +1,6 @@
 # Developer's Eye: Backend Test Cases
 
-One document for every backend test case: the tests written in `backend/tests/`, plus the retrieval suites (FTS, code, fuzzy) whose test modules live in `backend/src/backend/tests/`.
+One document for every backend test case: the tests written in `backend/tests/`, plus the retrieval suites (FTS, code, fuzzy) whose test modules live in `backend/tests/`.
 
 ## Contents
 
@@ -19,9 +19,9 @@ One document for every backend test case: the tests written in `backend/tests/`,
 |---|---|---|---|---|
 | Package boundary | `backend/tests/test_package_boundary.py` | 1 | 1 | Not run |
 | Ranking orchestrator | `backend/tests/unit/test_ranking_orchestrator.py` | 14 | 17 | Passed (commit `b818adc`) |
-| Full-text search | `backend/src/backend/tests/integration/test_fts.py` | 14 | 25 | Passed (commit `563b83d`) |
-| Code retrieval | `backend/src/backend/tests/unit/test_code.py` | 18 matrix rows | See section | Not recorded |
-| Fuzzy retrieval | `backend/src/backend/tests/integration/test_fuzzy.py` | 15 | 26 | Not run |
+| Full-text search | `backend/tests/integration/test_fts.py` | 14 | 25 | Passed (commit `563b83d`) |
+| Code retrieval | `backend/tests/unit/test_code.py` | 18 matrix rows | See section | Not recorded |
+| Fuzzy retrieval | `backend/tests/integration/test_fuzzy.py` | 15 | 26 | Not run |
 
 Empty placeholder files (0 bytes, no tests yet): `backend/tests/unit/test_analyzer.py`, `unit/test_planner.py`, `unit/test_ranking.py`, `integration/test_retrieval.py`, `api/test_search.py`.
 
@@ -80,7 +80,7 @@ BM25 arithmetic, candidate merging, validation and ordering use the real code.
 ## Full-text search (FTS)
 
 **Component:** `backend.search.retrieval.fts.get_full_text_search`  
-**Test file:** `backend/src/backend/tests/integration/test_fts.py`  
+**Test file:** `backend/tests/integration/test_fts.py`  
 **Test type:** PostgreSQL integration tests plus validation unit tests
 
 | ID | Test name | Scenario | Expected result |
@@ -126,7 +126,7 @@ BM25 arithmetic, candidate merging, validation and ordering use the real code.
 ## Code retrieval
 
 **Component:** `retrieval/code.py` (`search_code`)  
-**Test file:** `backend/src/backend/tests/unit/test_code.py`
+**Test file:** `backend/tests/unit/test_code.py`
 
 ### Contract
 
@@ -203,7 +203,7 @@ For production query-plan assessment, run `EXPLAIN (ANALYZE, BUFFERS)` against a
 ## Fuzzy retrieval
 
 **Module under test:** `backend.search.retrieval.fuzzy.get_fuzzy_search`  
-**Test file:** `backend/src/backend/tests/integration/test_fuzzy.py`
+**Test file:** `backend/tests/integration/test_fuzzy.py`
 
 ### Expected v1 behavior
 
@@ -275,7 +275,7 @@ poetry run pytest tests -v
 
 # Retrieval suites (integration cases need a dedicated test database)
 $env:TEST_DATABASE_URL = "postgresql+asyncpg://YOUR_USERNAME:YOUR_PASSWORD@localhost:5432/developers_eye_test"
-poetry run pytest src/backend/tests/integration/test_fts.py src/backend/tests/unit/test_code.py src/backend/tests/integration/test_fuzzy.py -v --tb=short
+poetry run pytest tests/integration/test_fts.py tests/unit/test_code.py tests/integration/test_fuzzy.py -v --tb=short
 ```
 
 - Never point `TEST_DATABASE_URL` at the crawler's production database, and never commit credentials. URL-encode reserved characters in the password.
@@ -291,3 +291,7 @@ poetry run pytest src/backend/tests/integration/test_fts.py src/backend/tests/un
 | BM25 / statistics functions in isolation | `backend/tests/unit/test_ranking.py` |
 | Retrieval against a real PostgreSQL database | `backend/tests/integration/test_retrieval.py` |
 | Search HTTP endpoint | `backend/tests/api/test_search.py` |
+
+## Search pipeline cases (merged from the old backend/tests)
+
+

@@ -78,7 +78,7 @@ What the indexer needs is different from the crawler:
 - Concurrency of two writers on the same document and "document changes while the writer waits for the lock" are handled by the design, but not covered by tests (see `crawler/src/indexer/README.md`, handoff gap 4).
 
 ## Evidence
-- Tests: `crawler/src/indexer/tests/test_selector.py`, `test_service_writer.py` and `test_indexer.py` (Postgres lifecycle: new, unchanged, updated, unavailable, revived, hard-deleted documents; 152 indexer tests at `172b30f`).
+- Tests: `crawler/tests/indexer/test_selector.py`, `test_service_writer.py` and `test_indexer.py` (Postgres lifecycle: new, unchanged, updated, unavailable, revived, hard-deleted documents; 152 indexer tests at `172b30f`).
 - Measured: none (no scan cost or throughput numbers).
 - Commits: `7faee9a` (selector), `99061a1` (selector query fix), `5d7ffcd` (writer and service), `0aedb4c` (runner, reporting, reindex).
 

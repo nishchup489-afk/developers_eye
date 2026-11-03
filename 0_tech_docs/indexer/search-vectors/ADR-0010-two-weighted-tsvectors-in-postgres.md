@@ -81,7 +81,7 @@ Everything else already lived in PostgreSQL: documents, frontier, attempts. The 
 - Any change to the table above bumps `INDEXER_INDEX_VERSION`.
 
 ## Evidence
-- Tests: `crawler/src/indexer/tests/test_analyzer.py`, `test_vector.py` (72 tests at `6c3b24d`), `test_indexer.py` (Postgres).
+- Tests: `crawler/tests/indexer/test_analyzer.py`, `test_vector.py` (72 tests at `6c3b24d`), `test_indexer.py` (Postgres).
 - Measured: none (no relevance or latency numbers).
 - Commits: `423f1da` (analyzer), `6c3b24d` (vector), `28efc23fadfc` migration (`code_vector`).
 - Related known gap: the `code_vector` migration adds a `NOT NULL` column without a default, so it fails on a non-empty `search_index` (handoff gap 3).

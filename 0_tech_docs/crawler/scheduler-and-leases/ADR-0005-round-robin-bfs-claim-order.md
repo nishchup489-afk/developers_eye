@@ -76,7 +76,7 @@ Inside a source, ordering only by priority and time also let the crawler follow 
 - `last_claimed_at` only moves forward (`GREATEST`) and uses `clock_timestamp()`.
 
 ## Evidence
-- Tests: `crawler/src/crawler/schedular/tests/test_round_robin.py` (21 checks: rotation inside a call and across calls, BFS order, `last_claimed_at` updates, skipped sources, `source_id`, lease length, validation).
+- Tests: `crawler/tests/crawler/schedular/test_round_robin.py` (21 checks: rotation inside a call and across calls, BFS order, `last_claimed_at` updates, skipped sources, `source_id`, lease length, validation).
 - Measured: none for fairness itself. EXP-0001 measured claim throughput after the lock change.
 - Commits: `e019701` (round robin BFS), `003ed97` (docs and tests), `8f63063` (lock fix, ADR-0001).
 - How-it-works: `crawler/src/crawler/schedular/DOCS/REPOSITORY_README.md`.

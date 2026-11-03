@@ -100,7 +100,7 @@ An extracted URL is a candidate. It still needs allowed-host, DNS/IP, redirect, 
 From the repository root:
 
 ```powershell
-.\crawler\.venv\Scripts\python.exe -m pytest crawler/tests/test_sitemap.py -q
+.\crawler\.venv\Scripts\python.exe -m pytest crawler/tests/crawler/ingestion/test_sitemap.py -q
 ```
 
 These tests use XML bytes in memory. They do not crawl a website or connect to PostgreSQL.

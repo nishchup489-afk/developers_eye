@@ -105,7 +105,7 @@ poetry run python -m crawler.worker.runner --once --batch-size 5 --concurrency 2
 This is a real crawl and performs database writes. For an isolated test from the repository root:
 
 ```powershell
-.\crawler\.venv\Scripts\python.exe -m pytest crawler/tests/test_sitemap_discovery.py -q
+.\crawler\.venv\Scripts\python.exe -m pytest crawler/tests/crawler/ingestion/test_sitemap_discovery.py -q
 ```
 
 Those tests check seed construction, robots declarations, host/path filtering, nested depth and the worker's policy-to-finalization dispatch without using a live database.

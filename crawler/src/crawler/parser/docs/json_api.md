@@ -139,7 +139,7 @@ The worker records parser failures and uses its existing retry schedule. It resp
 From the repository root:
 
 ```powershell
-.\crawler\.venv\Scripts\python.exe -m pytest crawler/tests/test_json_api.py crawler/tests/test_ingestion_jobs.py -q
+.\crawler\.venv\Scripts\python.exe -m pytest crawler/tests/crawler/ingestion/test_json_api.py crawler/tests/crawler/ingestion/test_ingestion_jobs.py -q
 ```
 
 Parser tests cover root shapes, nested fields, HTML bodies, duplicate URLs, invalid mappings and input limits. Worker tests run the actual parser and content processor with mocked network/finalization, checking scope filtering, pagination and noindex behavior.

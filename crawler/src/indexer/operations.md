@@ -74,10 +74,10 @@ poetry run python -m indexer.reindex --all --dry-run
 poetry run python -m indexer.reindex --all --batch-size 100
 
 # Unit tests
-poetry run pytest src/indexer/tests/test_indexer_operations.py -v
+poetry run pytest tests/indexer/test_indexer_operations.py -v
 
 # All indexer tests
-poetry run pytest src/indexer/tests -v --tb=short
+poetry run pytest tests/indexer -v --tb=short
 ```
 
 Use `INDEXER_INDEX_VERSION=2` only **after** deploying matching writer/vector
@@ -134,7 +134,7 @@ not be treated as a high-throughput design.
 Test the CLI argument and logging contract:
 
 ```powershell
-poetry run pytest src/indexer/tests/test_vocabulary_rebuild_cli.py -v
+poetry run pytest tests/indexer/test_vocabulary_rebuild_cli.py -v
 ```
 
 ## Limitations and operations policy

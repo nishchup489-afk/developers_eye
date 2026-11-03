@@ -77,9 +77,9 @@ Constraints: no new infrastructure, no ranking model yet, and no relevance test 
 
 ## Evidence
 - Tests:
-  - `backend/src/backend/tests/api/test_search_route.py`: results shape, 422 on bad input, 503 on database error.
-  - `backend/src/backend/tests/integration/test_search.py` (Postgres, `TEST_DATABASE_URL`): frontend-shaped results, unavailable documents hidden, category filter and limit, no-match returns empty, `categorize()` table.
-  - `backend/src/backend/tests/integration/test_fts.py` (25 tests, `563b83d`).
+  - `backend/tests/api/test_search_route.py`: results shape, 422 on bad input, 503 on database error.
+  - `backend/tests/integration/test_search.py` (Postgres, `TEST_DATABASE_URL`): frontend-shaped results, unavailable documents hidden, category filter and limit, no-match returns empty, `categorize()` table.
+  - `backend/tests/integration/test_fts.py` (25 tests, `563b83d`).
 - Measured: nothing yet. No latency or relevance numbers.
 - Commits: `bad199e` (FTS), `563b83d`, `e9e8726` (endpoint).
 

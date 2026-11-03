@@ -68,7 +68,7 @@ Code inspected at [facd333](https://github.com/nishchup489-afk/developers_eye/co
 
 Regression coverage to run when changing behavior (not a claim of a new test run):
 
-- [`crawler/src/indexer/tests`](../../../crawler/src/indexer/tests)
+- [`crawler/tests/indexer`](../../../crawler/tests/indexer)
 - [`frontend/tests/indexer-report-unit.mjs`](../../../frontend/tests/indexer-report-unit.mjs)
 
 ## Revisit when

@@ -71,7 +71,7 @@ Regression coverage to run when changing behavior (not a claim of a new test run
 
 - [`backend/tests/test_package_boundary.py`](../../../backend/tests/test_package_boundary.py)
 - [`frontend/tests/admin-routes.mjs`](../../../frontend/tests/admin-routes.mjs)
-- [`crawler/src/crawler/worker/tests/test_monitoring.py`](../../../crawler/src/crawler/worker/tests/test_monitoring.py)
+- [`crawler/tests/crawler/worker/test_monitoring.py`](../../../crawler/tests/crawler/worker/test_monitoring.py)
 
 ## Revisit when
 

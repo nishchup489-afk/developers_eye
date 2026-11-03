@@ -9,7 +9,7 @@ feature: vocubulary
 code:
 - crawler/src/indexer/vocabulary.py
 - crawler/src/indexer/writer.py
-- crawler/src/indexer/tests/test_vocabulary.py
+- crawler/tests/indexer/test_vocabulary.py
 fix_commits: []
 related:
 - ADR-0002
@@ -61,4 +61,4 @@ Code inspected at [facd333](https://github.com/nishchup489-afk/developers_eye/co
 
 - [`crawler/src/indexer/vocabulary.py`](../../../crawler/src/indexer/vocabulary.py)
 - [`crawler/src/indexer/writer.py`](../../../crawler/src/indexer/writer.py)
-- [`crawler/src/indexer/tests/test_vocabulary.py`](../../../crawler/src/indexer/tests/test_vocabulary.py)
+- [`crawler/tests/indexer/test_vocabulary.py`](../../../crawler/tests/indexer/test_vocabulary.py)

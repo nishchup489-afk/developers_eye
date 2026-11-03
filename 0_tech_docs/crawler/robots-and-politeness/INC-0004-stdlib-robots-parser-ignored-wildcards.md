@@ -58,7 +58,7 @@ Commit `d154dcc` replaced it with `robots_rules.py`, a small network-free matche
 The robots cache (`robots_cache`, expiry per origin) and the allow / deny / defer outcomes did not change.
 
 ## Prevention
-- Regression tests: `crawler/src/crawler/policy_and_politeness/tests/test_robots_rules.py` (wildcards, `$`, rule order, duplicate groups, user-agent matching, comments, query strings, Unicode and reserved escapes), plus `test_robots_policy.py` and `test_policy_coordinator.py` for integration.
+- Regression tests: `crawler/tests/crawler/policy_and_politeness/test_robots_rules.py` (wildcards, `$`, rule order, duplicate groups, user-agent matching, comments, query strings, Unicode and reserved escapes), plus `test_robots_policy.py` and `test_policy_coordinator.py` for integration.
 - Monitoring: none.
 - Remaining risk: agent matching is a substring test (`agent in product`), so a group for `bot` or `eye` would also apply to us. RFC 9309 asks for a case-insensitive match of the product token. We also maintain our own robots parser. Edge cases not in the tests (very long files, odd line endings, `crawl-delay`) behave however the code happens to handle them.
 

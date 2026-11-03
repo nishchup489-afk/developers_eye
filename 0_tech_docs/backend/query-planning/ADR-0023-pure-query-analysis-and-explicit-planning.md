@@ -66,7 +66,7 @@ Code inspected at [facd333](https://github.com/nishchup489-afk/developers_eye/co
 
 Regression coverage to run when changing behavior (not a claim of a new test run):
 
-- [`backend/src/backend/tests/integration/test_analyzer.py`](../../../backend/src/backend/tests/integration/test_analyzer.py)
+- [`backend/tests/integration/test_analyzer.py`](../../../backend/tests/integration/test_analyzer.py)
 
 ## Revisit when
 

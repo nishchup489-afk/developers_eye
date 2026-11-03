@@ -112,13 +112,13 @@ In production, the **worker** owns concurrency and failure handling. Each parall
 Quick unit tests (mocked DB):
 
 ```powershell
-poetry run pytest src/indexer/tests/test_service_writer.py -v
+poetry run pytest tests/indexer/test_service_writer.py -v
 ```
 
 Final pipeline test (unit path plus opt-in PostgreSQL TEMP-table lifecycle):
 
 ```powershell
-poetry run pytest src/indexer/tests/test_final_indexer.py -v -rs
+poetry run pytest tests/indexer/test_final_indexer.py -v -rs
 ```
 
 Set `TEST_DATABASE_URL` to run the live-PostgreSQL test. See `docs/writer.md` for isolation and schema prerequisites.

@@ -21,8 +21,8 @@ PR #3 integrated a per-document vocabulary into the existing search index writer
 | `crawler/src/indexer/vocabulary_rebuild.py` | Added | Recompute all term document frequencies from existing index vectors. |
 | `crawler/src/indexer/writer.py` | Modified | Coordinate index writes with the vocabulary mutex; use shared removal helper. |
 | `crawler/src/crawler/worker/jobs/utility.py` | Modified | Decrement vocabulary on HTTP 404/410 and `noindex` removals. |
-| `crawler/src/indexer/tests/test_indexer.py` | Modified | Isolate vocabulary in a temp table; add frequency and rebuild assertions. |
-| `crawler/src/indexer/tests/test_service_writer.py` | Modified | Update mocks for the new lock and deletion helper. |
+| `crawler/tests/indexer/test_indexer.py` | Modified | Isolate vocabulary in a temp table; add frequency and rebuild assertions. |
+| `crawler/tests/indexer/test_service_writer.py` | Modified | Update mocks for the new lock and deletion helper. |
 
 **Not changed in PR #4:** `indexer/repository.py`, `backend/models/search_terms.py`, and the underlying `vocabulary_terms()` / `synchronize_vocabulary()` algorithms. Those were already present, chiefly from PR #3.
 
@@ -215,7 +215,7 @@ The older `4f9fab47f6a0` and `da03da123834` migrations had empty upgrade bodies.
 
 ## 9. PostgreSQL and writer tests
 
-### `crawler/src/indexer/tests/test_indexer.py`
+### `crawler/tests/indexer/test_indexer.py`
 
 - Adds a temporary `search_terms` table to the existing per-connection TEMP fixtures.
 - Asserts `python` gets document frequency 1 on the first indexed document.
@@ -226,7 +226,7 @@ The older `4f9fab47f6a0` and `da03da123834` migrations had empty upgrade bodies.
 
 It requires a PostgreSQL connection through `TEST_DATABASE_URL`; otherwise the database smoke test is skipped. The fixture does not itself create a disposable database; use a database dedicated to tests.
 
-### `crawler/src/indexer/tests/test_service_writer.py`
+### `crawler/tests/indexer/test_service_writer.py`
 
 - Mocks `lock_vocabulary` for several writer cases.
 - Mocks the new `remove_indexed_documents()` function for removal cases.
@@ -286,13 +286,13 @@ Expected: a nonempty vocabulary when eligible indexed lexemes exist, no nonposit
 Run unit tests from `crawler/`:
 
 ```powershell
-poetry run pytest src/indexer/tests/test_vocabulary.py src/indexer/tests/test_service_writer.py -v
+poetry run pytest tests/indexer/test_vocabulary.py tests/indexer/test_service_writer.py -v
 ```
 
 Run the optional PostgreSQL integration test **only with a disposable test database** configured in `TEST_DATABASE_URL`:
 
 ```powershell
-poetry run pytest src/indexer/tests/test_indexer.py -v -rs
+poetry run pytest tests/indexer/test_indexer.py -v -rs
 ```
 
 The merge did not have a verified passing PostgreSQL/CI run, and the unchanged-index unit test has a known defect. The commands above are validation steps, not assertions that the tests pass.

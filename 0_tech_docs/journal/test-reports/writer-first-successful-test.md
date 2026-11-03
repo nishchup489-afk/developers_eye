@@ -66,7 +66,7 @@ ModuleNotFoundError: No module named 'crawler.parser'
 I initially ran the test as:
 
 ```powershell
-python -m crawler.src.crawler.writer.tests.test_database_writer
+python -m crawler.src.crawler/tests/crawler/writer/test_database_writer.py
 ```
 
 Our repository uses a `src/` layout:
@@ -101,7 +101,7 @@ from crawler.src.crawler.parser.schemas import ParsedDocument
 From the `crawler/` directory:
 
 ```powershell
-python -m pytest -v -s src/crawler/writer/tests/test_database_writer.py
+python -m pytest -v -s tests/crawler/writer/test_database_writer.py
 ```
 
 When troubleshooting imports from the repository root, we also set `PYTHONPATH` to include `crawler/src` and `backend/src`. In a properly installed editable package, that manual setting may not be necessary.
@@ -439,7 +439,7 @@ Imagine someone searches **"asyncio Python examples"** on Developer's Eye. The a
 **Command from `crawler/`:**
 
 ```powershell
-python -m pytest -v -s src/crawler/writer/tests/test_database_writer.py --tb=short
+python -m pytest -v -s tests/crawler/writer/test_database_writer.py --tb=short
 ```
 
 **Environment reported by pytest:**

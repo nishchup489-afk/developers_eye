@@ -75,9 +75,9 @@ The `flush()` after each lease is required. `SKIP LOCKED` only skips rows locked
 - Measured: EXP-0001 (one source x 2000 targets and 50 sources x 40 targets, 1, 4 and 8 workers).
 - Assumed: worker counts stay in the single digits per database, as in the runner's defaults.
 - Tests:
-  - `crawler/src/crawler/schedular/tests/test_concurrent_claims.py` (pytest, `TEST_DATABASE_URL`): overlapping claims on one source get different targets (3 + 3); overlapping claims on two sources each get one target per source; 4 parallel workers drain 1 x 60 and 6 x 10 targets with no duplicates and no empty claims while work is left. All four fail on the first version and pass now.
-  - `crawler/src/crawler/worker/tests/test_postgres_pipeline.py::test_concurrent_claims_atomic_writes_and_shared_source_budget` passes again (2 and 2).
-  - `crawler/src/crawler/schedular/tests/test_round_robin.py` still passes (21 checks), so the order when claims run one after another is unchanged.
+  - `crawler/tests/crawler/schedular/test_concurrent_claims.py` (pytest, `TEST_DATABASE_URL`): overlapping claims on one source get different targets (3 + 3); overlapping claims on two sources each get one target per source; 4 parallel workers drain 1 x 60 and 6 x 10 targets with no duplicates and no empty claims while work is left. All four fail on the first version and pass now.
+  - `crawler/tests/crawler/worker/test_postgres_pipeline.py::test_concurrent_claims_atomic_writes_and_shared_source_budget` passes again (2 and 2).
+  - `crawler/tests/crawler/schedular/test_round_robin.py` still passes (21 checks), so the order when claims run one after another is unchanged.
 - Commits: `e019701` (round-robin BFS with source locks); this change.
 
 ## Revisit when

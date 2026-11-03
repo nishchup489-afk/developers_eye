@@ -12,7 +12,7 @@ code:
   - crawler/src/indexer/writer.py:remove_search_index
   - crawler/src/crawler/worker/jobs/utility.py:_finalize
   - crawler/src/indexer/vocabulary_rebuild.py:rebuild_vocabulary
-  - crawler/src/indexer/tests/test_vocabulary.py
+  - crawler/tests/indexer/test_vocabulary.py
 supersedes:
 superseded_by:
 related:
