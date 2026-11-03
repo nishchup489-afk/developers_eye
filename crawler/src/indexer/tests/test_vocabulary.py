@@ -47,14 +47,32 @@ async def test_addition_issues_conflict_safe_upsert():
 @pytest.mark.asyncio
 async def test_removal_decrements_and_deletes_zero_count():
     session = AsyncMock()
+
     result = MagicMock()
-    result.scalar_one_or_none.return_value = 0
+
+    # Simulate PostgreSQL UPDATE ... RETURNING
+    result.all.return_value = [
+        ("django", 0)
+    ]
+
     session.execute.return_value = result
+
     await synchronize_vocabulary(
-        session, old_lexemes=["django"], new_lexemes=[],
+        session,
+        old_lexemes=["django"],
+        new_lexemes=[],
     )
+
+    # One UPDATE + one DELETE
     assert session.execute.await_count == 2
 
+    statements = [
+        str(call.args[0])
+        for call in session.execute.await_args_list
+    ]
+
+    assert "UPDATE search_terms" in statements[0]
+    assert "DELETE FROM search_terms" in statements[1]
 
 @pytest.mark.asyncio
 async def test_missing_frequency_raises_and_caller_rolls_back():
@@ -66,3 +84,17 @@ async def test_missing_frequency_raises_and_caller_rolls_back():
         await synchronize_vocabulary(
             session, old_lexemes=["django"], new_lexemes=[],
         )
+
+
+@pytest.mark.asyncio
+async def test_multiple_additions_do_not_repeat_upserts():
+    session = AsyncMock()
+
+    await synchronize_vocabulary(
+        session,
+        old_lexemes=[],
+        new_lexemes=["python", "django", "fastapi"],
+    )
+
+    # Three terms, one batched database statement.
+    assert session.execute.await_count == 1

@@ -51,56 +51,89 @@ def vocabulary_terms(lexemes: Iterable[str]) -> frozenset[str]:
     return frozenset(selected)
 
 
+
 async def synchronize_vocabulary(
     session: AsyncSession,
     *,
     old_lexemes: Iterable[str],
     new_lexemes: Iterable[str],
 ) -> None:
-    """Apply per-document frequency deltas within the caller's transaction.
+    """Synchronize document frequencies atomically.
 
-    Lock terms in consistent alphabetical order across concurrent writers.
-    Missing decrement rows indicate vocabulary drift and abort the transaction.
+    The caller must hold the shared vocabulary advisory lock
+    and manage the surrounding database transaction.
     """
+
     old_terms = vocabulary_terms(old_lexemes)
     new_terms = vocabulary_terms(new_lexemes)
-    changes = {term: -1 for term in old_terms - new_terms}
-    changes.update({term: 1 for term in new_terms - old_terms})
 
-    for term in sorted(changes):
-        if changes[term] == 1:
-            added = sorted(new_terms - old_terms)
+    added = sorted(new_terms - old_terms)
+    removed = sorted(old_terms - new_terms)
 
-            if added:
-                stmt = insert(SearchTerm).values([
-                    {"term": term, "document_frequency": 1}
-                    for term in added
-                ])
+    if not added and not removed:
+        return
 
-                await session.execute(
-                    stmt.on_conflict_do_update(
-                        index_elements=[SearchTerm.term],
-                        set_={
-                            "document_frequency":
-                                SearchTerm.document_frequency + 1
-                        },
-                    )
-                )
-            continue
+    batch_size = 500
 
-        result = await session.execute(
-            update(SearchTerm)
-            .where(SearchTerm.term == term, SearchTerm.document_frequency > 0)
-            .values(document_frequency=SearchTerm.document_frequency - 1)
-            .returning(SearchTerm.document_frequency)
+    # Increment new terms exactly once per document.
+    for start in range(0, len(added), batch_size):
+        batch = added[start:start + batch_size]
+
+        stmt = insert(SearchTerm).values([
+            {"term": term, "document_frequency": 1}
+            for term in batch
+        ])
+
+        stmt = stmt.on_conflict_do_update(
+            index_elements=[SearchTerm.term],
+            set_={
+                "document_frequency":
+                    SearchTerm.document_frequency + 1
+            },
         )
-        remaining = result.scalar_one_or_none()
-        if remaining is None:
-            raise RuntimeError(f"Vocabulary count drift detected for {term!r}")
-        if remaining == 0:
+
+        await session.execute(stmt)
+
+    # Decrement terms no longer present in this document.
+    for start in range(0, len(removed), batch_size):
+        batch = removed[start:start + batch_size]
+
+        stmt = (
+            update(SearchTerm)
+            .where(
+                SearchTerm.term.in_(batch),
+                SearchTerm.document_frequency > 0,
+            )
+            .values(
+                document_frequency=
+                    SearchTerm.document_frequency - 1
+            )
+            .returning(
+                SearchTerm.term,
+                SearchTerm.document_frequency,
+            )
+        )
+
+        rows = (await session.execute(stmt)).all()
+        updated = {term: count for term, count in rows}
+
+        missing = set(batch) - updated.keys()
+
+        if missing:
+            raise RuntimeError(
+                f"Vocabulary frequency drift: {sorted(missing)}"
+            )
+
+        zero_terms = [
+            term
+            for term, count in updated.items()
+            if count == 0
+        ]
+
+        if zero_terms:
             await session.execute(
                 delete(SearchTerm).where(
-                    SearchTerm.term == term,
+                    SearchTerm.term.in_(zero_terms),
                     SearchTerm.document_frequency == 0,
                 )
             )

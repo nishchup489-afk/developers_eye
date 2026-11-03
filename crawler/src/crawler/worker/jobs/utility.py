@@ -314,7 +314,20 @@ async def _finalize(
 
             # Acquire the shared mutex before locking/changing documents, so
             # indexer and crawler cannot race vocabulary frequency changes.
-            await lock_vocabulary(session)
+            requires_vocabulary_lock = (
+                action == "complete"
+                and (
+                    http_status in (404, 410)
+                    or (
+                        parsed is not None
+                        and processed is not None
+                        and bool(_noindex_urls(parsed, processed))
+                    )
+                )
+            )
+
+            if requires_vocabulary_lock:
+                await lock_vocabulary(session)
 
             if action == "complete" and http_status in (404, 410):
                 unavailable_ids = (await session.scalars(update(Document).where(
