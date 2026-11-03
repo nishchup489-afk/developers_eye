@@ -1,68 +1,168 @@
 ---
 id: INC-0006
-title: Live CRAWLER_REPORT_API_KEY committed to git in crawler/src/crawler/.env.local
-status: open
-date: 2026-10-20
+title: CRAWLER_REPORT_API_KEY Exposed in Git Commit 5752803
+status: resolved
+date: 2026-11-02
 severity: high
-area: infra
-feature: configuration-and-secrets
+area: backend
+feature: admin-api
 code:
+  - backend/src/backend/core/config.py
+  - backend/src/backend/api/crawler_report.py
+  - frontend/lib/crawler-proxy.ts
+  - backend/.env.example
   - crawler/src/crawler/.env.local
   - crawler/src/crawler/.env
   - crawler/src/crawler/.env.production
-  - crawler/src/crawler/.gitignore
   - .gitignore
-fix_commits: []
-related: []
+fix_commits:
+  - 98daf6c0ca644fd46de0845f68e88876cbcd1c32
+related:
+  - ADR-0041
+  - INC-0006
 ---
 
-# INC-0006: Live reporting API key committed to git
+# INC-0006: CRAWLER_REPORT_API_KEY Exposed in Git History
 
 ## Signature
+
+**Exposure commit:** [5752803e81edc07f33e6f183d88dda3100cc7000](https://github.com/nishchup489-afk/developers_eye/commit/5752803e81edc07f33e6f183d88dda3100cc7000)
+
+**Commit message:** `feat: reporting frontend added`
+
+**Sensitive configuration:**
+
+```dotenv
+CRAWLER_REPORT_API_KEY=<redacted>
 ```
-git ls-files | grep '\.env'
-crawler/src/crawler/.env
-crawler/src/crawler/.env.local
-crawler/src/crawler/.env.production
+
+**Verified credential-rotation result:**
+
+```text
+Old key HTTP status: 401
+New key HTTP status: 200
+PASS: rotation verified locally.
 ```
 
 ## Summary
-`crawler/src/crawler/.env.local` is tracked by git (first added in `fc34675` on 2026-10-08, changed in `5752803` on 2026-10-20) and contains `CRAWLER_REPORT_API_KEY`. That key is the single bearer token protecting every `/admin/*` route on the backend. It is pushed to `origin/main`. As of 2026-11-01 the value in that file is still identical to the one in `backend/.env` (checked by comparing hashes, not by printing it), so **the key has not been rotated**. Anyone with read access to the repository can read every admin report: crawl history, stored documents, attempts and errors.
 
-`crawler/src/crawler/.env` and `.env.production` are tracked too.
+On October 20, 2026, Developer's Eye committed an active `CRAWLER_REPORT_API_KEY` to GitHub.
 
-> **Question for nish:** is the GitHub repository public or private? That decides how urgent rotation is. Either way, the key should be rotated.
+The key appeared in `crawler/src/crawler/.env.local` and `backend/.env.example`.
+
+This credential was used to authenticate requests to the FastAPI administrative reporting endpoints, including crawler monitoring and indexed-document inspection.
+
+Because the exposed key remained in Git history, anyone with sufficient repository read access could potentially retrieve it and authenticate directly against a reachable backend.
+
+**Impact:**
+- Confidential administrative API credential exposed through source control.
+- Potential unauthorized access to operational monitoring data.
+- Administrative API authentication boundary weakened until the key was rotated.
+- No confirmed unauthorized access, data deletion, or database modification.
+
+The credential was subsequently rotated, and local validation confirmed that the old key returned HTTP 401 while the replacement returned HTTP 200.
 
 ## Expected vs actual
-- Expected: only `*.env.example` files are tracked; real values live in untracked files.
-- Actual: three real env files under `crawler/src/crawler/` are tracked, one with the live admin key.
+
+**Expected:**
+- Real API keys stored outside Git.
+- Only sanitized `.env.example` files committed.
+- Backend admin endpoints accessible only with valid, non-compromised credentials.
+- Exposed credentials immediately invalidated.
+- Secret-scanning checks preventing new credential commits.
+
+**Actual:**
+- The reporting API key was committed to repository history.
+- Tracked environment files retained sensitive configuration.
+- Existing `.gitignore` rules did not retroactively untrack committed files.
+- The old credential remained valid after its initial exposure.
+- Automated secret scanning was not yet part of the original exposure-prevention process.
+
+## Timeline
+
+| Date | Event |
+| --- | --- |
+| 2026-10-08 | Commit `fc34675` initially added crawler environment files. |
+| 2026-10-20 | Commit `5752803` introduced the exposed reporting API key into tracked configuration. |
+| 2026-11-01 | Investigation documented the exposed credential and reported that the configured backend key still matched it. |
+| 2026-11-02 | API-key rotation performed for the applicable environments, as reported by the project owner. |
+| 2026-11-02 | Initial local test returned HTTP 401 for both old and new keys. |
+| 2026-11-02 | Backend configuration check confirmed the replacement key was loaded correctly. |
+| 2026-11-02 | Final local test returned HTTP 401 for the old key and HTTP 200 for the new key. |
+| 2026-11-02 | Automated GitHub secret scanning was configured; the project owner reported no leaks detected. |
+| 2026-11-02 | Commit `98daf6c` added the incident record draft and excluded `temp_test.py` from Git. |
 
 ## Root cause
-1. The files were committed in the very first crawler commit, before any ignore rules covered them.
-2. Once a file is tracked, `.gitignore` no longer applies to it. The ignore rules added later (`.env*.local` at the root, `*.env` and `*.env.local` in `crawler/src/crawler/.gitignore`) match these names but cannot untrack them. (The handoff suspected the crawler patterns do not match `.env.local`; in gitignore `*` can match an empty string, so they do. Tracking is the real cause.)
-3. The same key value is shared between `backend/.env`, `frontend/.env.local` and this file, so the crawler copy is a copy of a live production secret rather than a separate test value.
 
-> **Question for nish:** does the crawler actually read `CRAWLER_REPORT_API_KEY` from its own `.env.local` any more? Since the reporting moved into the backend (ADR-0012), the crawler copy may not be needed at all.
+The primary cause was committing active environment secrets into source control.
+
+The exposure occurred in commit:
+
+`5752803e81edc07f33e6f183d88dda3100cc7000`
+
+Two configuration files contained a nonempty `CRAWLER_REPORT_API_KEY` at that revision:
+
+- `crawler/src/crawler/.env.local`
+- `backend/.env.example`
+
+The problem persisted because `.gitignore` does not remove files Git already tracks.
+
+Additionally, using a shared bearer credential across admin endpoints increased the impact of compromising that single secret.
+
+**This was a credential-management failure, not an authentication-algorithm failure.**
+
+The authentication implementation correctly rejected the previous key after rotation.
 
 ## Fixes that did not work
+
 | Attempt | Why it failed |
 | --- | --- |
-| Adding ignore patterns (`.env*.local`, `*.env`, `*.env.local`) | Ignore rules do not affect files that are already tracked. |
+| Add `.gitignore` patterns after files were tracked | Git continued tracking already committed files. |
+| Remove secrets from the current working tree alone | Historical Git commits still retained the exposed value. |
+| Initial credential verification | Both keys returned HTTP 401; it did not establish that the replacement worked against the running server. |
+| Inline PowerShell `python -c` configuration check | Nested quoting caused a Python `SyntaxError`; the check was rerun using a PowerShell here-string. |
 
 ## Resolution
-**Not done yet.** Steps, in order:
-1. Generate a new key (32+ random characters) and put it in `backend/.env` and `frontend/.env.local`. Restart both. The old key stops working immediately.
-2. `git rm --cached crawler/src/crawler/.env crawler/src/crawler/.env.local crawler/src/crawler/.env.production` and commit. Keep `.env.example`.
-3. Optional: rewrite history (`git filter-repo`) to remove the old values. This only matters if the old key is still valid somewhere; after step 1 it is not, so rotation is the real fix.
+
+The incident was resolved operationally by replacing the exposed API credential and validating authentication against the local backend.
+
+**Verified test:**
+
+```text
+Previously exposed key:
+New API key:
+Old key HTTP status: 401
+New key HTTP status: 200
+PASS: rotation verified locally.
+```
+
+This proves that the tested backend rejected the exposed credential and accepted the replacement.
+
+The project owner also reported updating applicable environments and confirming that the backend and frontend use the new key without committing it.
+
+The implementation, prevention checklist, alternatives, and future security requirements are documented separately in **ADR-0041**.
+
+**Associated fix commit:**
+
+`98daf6c0ca644fd46de0845f68e88876cbcd1c32`
+
+This commit added the initial incident documentation and ignored the temporary verification script. The actual credential rotation occurred outside Git; the commit does not independently establish that rotation.
 
 ## Prevention
-- Regression test: none. A cheap check is a CI step (or pre-commit hook) that fails if `git ls-files` lists any `.env` file other than `*.env.example`.
-- Monitoring: none. The backend does not log failed admin auth attempts.
-- Design change: one shared key for all admin routes (`backend/admin-api` decision to record) means one leak exposes everything.
-- Remaining risk: until step 1 is done, the admin API is effectively unauthenticated for anyone who can read the repository.
+
+- **Regression test:** Verify that a revoked key returns HTTP 401 and a valid key successfully authenticates.
+- **Monitoring / alert:** Automated GitHub Actions secret scanning with Gitleaks and tracked-environment-file validation.
+- **Design change (ADR):** ADR-0041 defines credential rotation, secure environment storage, secret scanning, and operational safeguards.
+- **Remaining risk:** The exposed value remains recoverable from historical commits unless Git history is rewritten. The tested local key is revoked, but independently verifying every external deployment is a separate operational responsibility. Secret scanning also cannot guarantee detection of every secret format.
 
 ## Rules for future changes
-- Never commit a file with real secrets; only `*.env.example` with placeholder values.
-- After adding an ignore rule for a file that was ever committed, run `git rm --cached` on it.
-- When a secret reaches git, rotate it first; cleaning history is secondary.
-- Do not reuse the same secret value across services' env files unless they genuinely need the same one.
+
+- Never commit real API keys, tokens, passwords, or production configuration.
+- Keep `.env.example` files free of valid credentials.
+- Rotate exposed credentials before treating repository cleanup as sufficient.
+- Never interpret `.gitignore` as protection for already tracked files.
+- Verify key revocation through an actual authenticated HTTP request.
+- Keep authentication credentials on the server side.
+- Preserve automated secret scanning for pushes and pull requests.
+- Review ADR-0041 before changing secret storage or rotation procedures.
+- Never print credentials in diagnostic logs or commit verification scripts containing real values.
