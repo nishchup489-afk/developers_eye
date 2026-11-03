@@ -1,7 +1,7 @@
 """Benchmark claim_targets(): single-worker latency and multi-worker drain.
 
 Usage (from crawler/):
-    poetry run python tests/crawler/schedular/bench_claim.py src/crawler/schedular/repository.py current
+    poetry run python tests/crawler/scheduler/bench_claim.py src/crawler/scheduler/repository.py current
 
 The first argument is the repository.py to measure, so an older copy can be
 compared with the current one. Needs BENCH_DATABASE_URL: an asyncpg URL to a

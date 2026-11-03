@@ -15,7 +15,7 @@ from colorama import Fore , Back , init
 
 init(autoreset=True)
 
-from crawler.schedular.repository import (
+from crawler.scheduler.repository import (
     claim_targets,
     recover_expired_leases,
 )

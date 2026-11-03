@@ -4,7 +4,7 @@ import logging
 from sqlalchemy import select
 
 from backend.models.crawler_frontier import CrawlTarget
-from crawler.schedular.repository import fail_target
+from crawler.scheduler.repository import fail_target
 from crawler.writer.attempts import close_abandoned_attempts
 
 logger = logging.getLogger(__name__)

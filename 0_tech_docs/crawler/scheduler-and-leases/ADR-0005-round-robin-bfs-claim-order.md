@@ -6,7 +6,7 @@ date: 2026-10-27
 area: crawler
 feature: scheduler-and-leases
 code:
-  - crawler/src/crawler/schedular/repository.py:claim_targets
+  - crawler/src/crawler/scheduler/repository.py:claim_targets
   - crawler/src/crawler/frontier/priority.py:calculate_priority
   - backend/src/backend/models/source.py:last_claimed_at
   - backend/alembic/versions/5fc9efde409c_add_source_last_claimed_timestamp.py
@@ -76,10 +76,10 @@ Inside a source, ordering only by priority and time also let the crawler follow 
 - `last_claimed_at` only moves forward (`GREATEST`) and uses `clock_timestamp()`.
 
 ## Evidence
-- Tests: `crawler/tests/crawler/schedular/test_round_robin.py` (21 checks: rotation inside a call and across calls, BFS order, `last_claimed_at` updates, skipped sources, `source_id`, lease length, validation).
+- Tests: `crawler/tests/crawler/scheduler/test_round_robin.py` (21 checks: rotation inside a call and across calls, BFS order, `last_claimed_at` updates, skipped sources, `source_id`, lease length, validation).
 - Measured: none for fairness itself. EXP-0001 measured claim throughput after the lock change.
 - Commits: `e019701` (round robin BFS), `003ed97` (docs and tests), `8f63063` (lock fix, ADR-0001).
-- How-it-works: `crawler/src/crawler/schedular/DOCS/REPOSITORY_README.md`.
+- How-it-works: `crawler/src/crawler/scheduler/docs/REPOSITORY_README.md`.
 
 ## Revisit when
 - Large sources fall far behind because small sources take as many turns (consider weights, option C).
@@ -90,4 +90,4 @@ Inside a source, ordering only by priority and time also let the crawler follow 
 - Do not go back to a single global priority order without a new ADR.
 - Keep `clock_timestamp()` for turn times and `GREATEST` on the update.
 - Changing `calculate_priority()` values changes order inside a source only; check `test_round_robin.py` still passes.
-- Keep passing: `schedular/tests/test_round_robin.py`, `schedular/tests/test_repository.py`.
+- Keep passing: `scheduler/tests/test_round_robin.py`, `scheduler/tests/test_repository.py`.

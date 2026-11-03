@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock
 
 from sqlalchemy.dialects import postgresql
 
-from crawler.schedular import repository
+from crawler.scheduler import repository
 from crawler.worker import recovery, runner
 from crawler.writer.attempts import close_abandoned_attempts
 

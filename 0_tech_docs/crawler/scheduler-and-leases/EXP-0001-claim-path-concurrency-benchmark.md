@@ -36,9 +36,9 @@ This decides whether `claim_targets()` needs more database coordination (advisor
 From `crawler/`, against a migrated database with `test` in its name:
 ```
 $env:BENCH_DATABASE_URL = "postgresql+asyncpg://user:pass@localhost/developers_eye_test"
-git show e019701:crawler/src/crawler/schedular/repository.py | Out-File -Encoding utf8 ..\repo_baseline.py
-poetry run python tests/crawler/schedular/bench_claim.py ..\repo_baseline.py baseline
-poetry run python tests/crawler/schedular/bench_claim.py src/crawler/schedular/repository.py current
+git show e019701:crawler/src/crawler/scheduler/repository.py | Out-File -Encoding utf8 ..\repo_baseline.py
+poetry run python tests/crawler/scheduler/bench_claim.py ..\repo_baseline.py baseline
+poetry run python tests/crawler/scheduler/bench_claim.py src/crawler/scheduler/repository.py current
 ```
 
 ## Results

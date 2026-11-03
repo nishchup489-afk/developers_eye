@@ -9,6 +9,6 @@ kind = how the source provide data
 base_url = starting url for the source 
 allowed_hosts = whatever passes robots.txt or permitted to 
 crawl_interval_seconds = interval between scheduled crawls so it dont be a DDoS 
-is_enables = should the schedular process the source 
+is_enables = should the scheduler process the source 
 config = source specific settings 
 created_at = you know

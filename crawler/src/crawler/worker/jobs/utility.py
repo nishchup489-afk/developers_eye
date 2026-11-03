@@ -32,7 +32,7 @@ from crawler.policy_and_politeness.robots_policy import RobotsDecision, USER_AGE
 from crawler.processing.normalize.normalize import normalize_document
 from crawler.processing.processing import process
 from crawler.processing.schemas import ProcessingResult, SkipReason
-from crawler.schedular.repository import complete_target, fail_target
+from crawler.scheduler.repository import complete_target, fail_target
 from crawler.worker.jobs.schemas import JobOutcome, JobResult, TargetAction
 from crawler.worker.jobs.constants import _AGENT_SCOPE, _DIRECTIVE_SPLIT, _RETRY_AFTER_CAP_SECONDS
 from crawler.writer.attempts import finish_attempt, start_attempt

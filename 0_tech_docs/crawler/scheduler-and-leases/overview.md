@@ -10,12 +10,12 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 
 ## Code
 
-- [`crawler/src/crawler/schedular`](../../../crawler/src/crawler/schedular)
+- [`crawler/src/crawler/scheduler`](../../../crawler/src/crawler/scheduler)
 - [`crawler/src/crawler/worker/recovery.py`](../../../crawler/src/crawler/worker/recovery.py)
 
 ## How-it-works docs
 
-- [`crawler/src/crawler/schedular/DOCS/REPOSITORY_README.md`](../../../crawler/src/crawler/schedular/DOCS/REPOSITORY_README.md)
+- [`crawler/src/crawler/scheduler/docs/REPOSITORY_README.md`](../../../crawler/src/crawler/scheduler/docs/REPOSITORY_README.md)
 
 ## Records
 
@@ -40,4 +40,4 @@ The identified decisions for this feature are indexed above. Record new decision
 - Never start network work inside the claim transaction, and never hold a transaction open across a fetch (ADR-0004).
 - Update a leased target only with the `lease_until = :expected AND lease_until > clock_timestamp()` guard (ADR-0004).
 - Keep `job_timeout_seconds <= lease_seconds - 15` and `claim_limit = min(batch_size, concurrency)` (ADR-0004).
-- Keep these passing: `schedular/tests/test_concurrent_claims.py`, `schedular/tests/test_round_robin.py`, `worker/tests/test_postgres_pipeline.py`.
+- Keep these passing: `scheduler/tests/test_concurrent_claims.py`, `scheduler/tests/test_round_robin.py`, `worker/tests/test_postgres_pipeline.py`.

@@ -135,7 +135,7 @@ from typing import Any
 
 from backend.db.session import SessionFactory, engine
 from backend.schema.crawler_frontier import CrawlTargetRead
-from crawler.schedular.repository import claim_targets, recover_expired_leases
+from crawler.scheduler.repository import claim_targets, recover_expired_leases
 ```
 
 | Import | What it does in our Runner |

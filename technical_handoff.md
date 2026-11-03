@@ -90,7 +90,7 @@ There is **no `GET /search` endpoint yet**.
 | --- | --- |
 | `seed/` | Source registry (`sources/*.json`, `developers_eye_source_registry.csv/.xlsx`), `seed.py` upserts sources, `discovery.py` / `sitemap.py` / `feeds.py` / `api_discovery.py` insert initial targets. Entry point `crawler.main {seed,discover,bootstrap}`. |
 | `frontier/` | URL normalization (`urls.py`), crawl scope by depth/page budget/path prefix (`scope.py`), enqueueing (`repository.py`). |
-| `schedular/` | Claiming due targets with leases, completing, failing with exponential backoff, recovering expired leases (`repository.py`). |
+| `scheduler/` | Claiming due targets with leases, completing, failing with exponential backoff, recovering expired leases (`repository.py`). |
 | `policy_and_politeness/` | Host allowlist, DNS/IP safety (blocks private ranges, pins resolved IPs), robots.txt fetch/cache/rules, per-host politeness delays and concurrency, redirect checks, and `policy_coordinator.py` that runs them in order. |
 | `fetcher/` | HTTPX hop fetcher with size/media-type limits and typed errors. |
 | `parser/` | HTML extraction (body, metadata, links, robots meta), sitemaps, RSS/Atom, configurable JSON API records. |

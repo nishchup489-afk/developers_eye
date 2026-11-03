@@ -51,7 +51,7 @@ from crawler.policy_and_politeness.robots_policy import RobotsDecision, USER_AGE
 from crawler.processing.normalize.normalize import normalize_document
 from crawler.processing.processing import process
 from crawler.processing.schemas import ProcessingResult, SkipReason
-from crawler.schedular.repository import complete_target, fail_target
+from crawler.scheduler.repository import complete_target, fail_target
 from crawler.worker.jobs.utility import _add_x_robots, _create_discovered_targets, _finalize, _x_robots_directives
 from crawler.worker.jobs.constants import _HTML_MEDIA_TYPES
 from crawler.writer.attempts import finish_attempt, start_attempt

@@ -22,7 +22,7 @@ from crawler.frontier.repository import enqueue_targets
 from crawler.policy_and_politeness.policy_coordinator import FetchResult, PolicyCoordinator
 from crawler.policy_and_politeness.politeness_policy import PolitenessManager
 from crawler.policy_and_politeness.robots_policy import RobotsDecision
-from crawler.schedular.repository import claim_targets, recover_expired_leases
+from crawler.scheduler.repository import claim_targets, recover_expired_leases
 from crawler.worker.jobs.jobs import process_job
 from crawler.worker.recovery import recover_failed_claim
 from crawler.writer.attempts import start_attempt

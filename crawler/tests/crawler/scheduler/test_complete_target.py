@@ -11,7 +11,7 @@ from backend.db.session import SessionFactory
 from backend.models.source import Source
 from backend.models.crawler_frontier import CrawlTarget
 
-from crawler.schedular.repository import complete_target
+from crawler.scheduler.repository import complete_target
 
 
 just_fix_windows_console()

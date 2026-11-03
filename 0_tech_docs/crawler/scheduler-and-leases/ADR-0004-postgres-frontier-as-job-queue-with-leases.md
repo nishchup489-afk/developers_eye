@@ -6,10 +6,10 @@ date: 2026-10-31
 area: crawler
 feature: scheduler-and-leases
 code:
-  - crawler/src/crawler/schedular/repository.py:claim_targets
-  - crawler/src/crawler/schedular/repository.py:complete_target
-  - crawler/src/crawler/schedular/repository.py:fail_target
-  - crawler/src/crawler/schedular/repository.py:recover_expired_leases
+  - crawler/src/crawler/scheduler/repository.py:claim_targets
+  - crawler/src/crawler/scheduler/repository.py:complete_target
+  - crawler/src/crawler/scheduler/repository.py:fail_target
+  - crawler/src/crawler/scheduler/repository.py:recover_expired_leases
   - crawler/src/crawler/worker/runner.py:claim_batch
   - crawler/src/crawler/worker/runner.py:RunnerConfig
   - crawler/src/crawler/worker/recovery.py:recover_failed_claim
@@ -86,7 +86,7 @@ Constraints:
 - Real incidents in this area: deadlocks during finalization and abandoned attempts (see `0_tech_docs/journal/update-log/06_deadlock_retry.md`, `08_failure_recovery.md`).
 
 ## Evidence
-- Tests: `schedular/tests/test_repository.py`, `schedular/tests/test_concurrent_claims.py`, `worker/tests/test_postgres_pipeline.py` (concurrent claims, lease ownership, recovery).
+- Tests: `scheduler/tests/test_repository.py`, `scheduler/tests/test_concurrent_claims.py`, `worker/tests/test_postgres_pipeline.py` (concurrent claims, lease ownership, recovery).
 - Measured: EXP-0001 (claim latency 39 to 115 ms p50 to p95 for `limit=10`; up to about 570 targets/s claimed with 8 workers on one source).
 - Assumed: single-digit worker counts per database.
 - Commits: `4cc31cc` (claim), `ec80e89` (complete), `90e9ef3` (all scheduler functions), `f19c53b` (abandoned attempts and safe backoff), `d83a429ce034` migration (attempt leases).
@@ -103,4 +103,4 @@ Constraints:
 - Use `clock_timestamp()` for lease times, not `now()` and not Python's clock.
 - Keep `job_timeout_seconds` at least 15 s under `lease_seconds`, and keep `claim_limit = min(batch_size, concurrency)`.
 - Do not hold a database transaction open across a fetch.
-- Keep passing: `schedular/tests/test_repository.py`, `schedular/tests/test_concurrent_claims.py`, `worker/tests/test_postgres_pipeline.py`.
+- Keep passing: `scheduler/tests/test_repository.py`, `scheduler/tests/test_concurrent_claims.py`, `worker/tests/test_postgres_pipeline.py`.

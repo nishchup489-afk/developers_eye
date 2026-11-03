@@ -533,7 +533,7 @@ Each URL check also asserts the method starts with `rules:` and confidence is be
 
 A script-style check with no `test_` functions or asserts; it prints results at import time. It builds three `NormalizedDocument`s and prints whether the hash is the same for the same content on a different URL (expected `True`), different for changed body content on the same URL (expected `False`), and 64 characters long.
 
-## schedular
+## scheduler
 
 ### Running the scheduler tests
 
@@ -544,10 +544,10 @@ The four scripts below are standalone, not pytest tests. Each one needs PostgreS
 From the repository root:
 
 ```powershell
-.\crawler\.venv\Scripts\python.exe crawler/tests/crawler/schedular/test_repository.py
-.\crawler\.venv\Scripts\python.exe crawler/tests/crawler/schedular/test_complete_target.py
-.\crawler\.venv\Scripts\python.exe crawler/tests/crawler/schedular/test_fail_target.py
-.\crawler\.venv\Scripts\python.exe crawler/tests/crawler/schedular/test_round_robin.py
+.\crawler\.venv\Scripts\python.exe crawler/tests/crawler/scheduler/test_repository.py
+.\crawler\.venv\Scripts\python.exe crawler/tests/crawler/scheduler/test_complete_target.py
+.\crawler\.venv\Scripts\python.exe crawler/tests/crawler/scheduler/test_fail_target.py
+.\crawler\.venv\Scripts\python.exe crawler/tests/crawler/scheduler/test_round_robin.py
 ```
 
 Each prints PASS lines and a final success message, then `Test transaction rolled back`. A failed check prints FAIL and raises.
@@ -562,7 +562,7 @@ On Windows the scripts switch to a selector event loop themselves, which asyncpg
 
 ```powershell
 $env:TEST_DATABASE_URL = "postgresql+asyncpg://user:pass@localhost/developers_eye_test"
-poetry run pytest tests/crawler/schedular/test_concurrent_claims.py -v
+poetry run pytest tests/crawler/scheduler/test_concurrent_claims.py -v
 ```
 
 ##### Claim benchmark
@@ -571,12 +571,12 @@ poetry run pytest tests/crawler/schedular/test_concurrent_claims.py -v
 
 ```powershell
 $env:BENCH_DATABASE_URL = $env:TEST_DATABASE_URL
-poetry run python tests/crawler/schedular/bench_claim.py src/crawler/schedular/repository.py current
+poetry run python tests/crawler/scheduler/bench_claim.py src/crawler/scheduler/repository.py current
 ```
 
 ### Scheduler test cases
 
-Integration tests for `crawler.schedular.repository`. Four files are script-style (`python <file>`, with a `main()` and a selector event loop on Windows). Each one opens a real PostgreSQL transaction, creates a uniquely named temporary `Source` and `CrawlTarget` rows, and rolls everything back at the end. `test1_report.md` and `image.png` in this folder are an earlier run report. `test_concurrent_claims.py` is a pytest file instead, because it needs committed rows and two connections; `bench_claim.py` is a benchmark, not a test.
+Integration tests for `crawler.scheduler.repository`. Four files are script-style (`python <file>`, with a `main()` and a selector event loop on Windows). Each one opens a real PostgreSQL transaction, creates a uniquely named temporary `Source` and `CrawlTarget` rows, and rolls everything back at the end. `test1_report.md` and `image.png` in this folder are an earlier run report. `test_concurrent_claims.py` is a pytest file instead, because it needs committed rows and two connections; `bench_claim.py` is a benchmark, not a test.
 
 #### test_repository.py
 
@@ -594,7 +594,7 @@ Claiming targets and recovering expired leases (`claim_targets`, `recover_expire
 
 #### test_round_robin.py
 
-Round-robin BFS claiming (`claim_targets`), 21 checks. How the claim works is in [REPOSITORY_README.md](../src/crawler/schedular/DOCS/REPOSITORY_README.md#how-claim_targets-picks-work-round-robin-bfs). `claim_targets()` looks across every source, so the test first disables all other sources inside its transaction; the rollback turns them back on. Each section creates its own sources so earlier ones cannot interleave.
+Round-robin BFS claiming (`claim_targets`), 21 checks. How the claim works is in [REPOSITORY_README.md](../src/crawler/scheduler/docs/REPOSITORY_README.md#how-claim_targets-picks-work-round-robin-bfs). `claim_targets()` looks across every source, so the test first disables all other sources inside its transaction; the rollback turns them back on. Each section creates its own sources so earlier ones cannot interleave.
 
 | Section | What it verifies |
 | --- | --- |

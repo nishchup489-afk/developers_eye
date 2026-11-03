@@ -9,7 +9,7 @@ feature: worker-runtime
 code:
 - crawler/src/crawler/worker/recovery.py
 - crawler/src/crawler/worker/jobs/jobs.py
-- crawler/src/crawler/schedular/repository.py
+- crawler/src/crawler/scheduler/repository.py
 - backend/src/backend/models/crawl_attempt.py
 fix_commits:
 - f19c53beec6ba5b152d09c64a503f13e45a447a2
@@ -62,5 +62,5 @@ Persist the attempt lease token; close failed jobs in an independent transaction
 
 - [`crawler/src/crawler/worker/recovery.py`](../../../crawler/src/crawler/worker/recovery.py)
 - [`crawler/src/crawler/worker/jobs/jobs.py`](../../../crawler/src/crawler/worker/jobs/jobs.py)
-- [`crawler/src/crawler/schedular/repository.py`](../../../crawler/src/crawler/schedular/repository.py)
+- [`crawler/src/crawler/scheduler/repository.py`](../../../crawler/src/crawler/scheduler/repository.py)
 - [`backend/src/backend/models/crawl_attempt.py`](../../../backend/src/backend/models/crawl_attempt.py)

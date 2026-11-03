@@ -12,7 +12,7 @@ code:
   - crawler/src/crawler/worker/jobs/jobs.py:process_job
   - crawler/src/crawler/worker/jobs/utility.py:_finalize
   - crawler/src/crawler/worker/recovery.py:recover_failed_claim
-  - crawler/src/crawler/schedular/repository.py:recover_expired_leases
+  - crawler/src/crawler/scheduler/repository.py:recover_expired_leases
 fix_commits: [0653690, 5e6b49e, f19c53b]
 related: [ADR-0004, ADR-0006]
 ---

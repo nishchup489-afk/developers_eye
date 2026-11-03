@@ -7,7 +7,7 @@ area: infra
 feature: performance-and-scaling
 code:
 - backend/src/backend/search/ranking/statistics.py
-- crawler/src/crawler/schedular/repository.py
+- crawler/src/crawler/scheduler/repository.py
 - crawler/src/indexer/vocabulary.py
 - crawler/src/crawler/policy_and_politeness/politeness_policy.py
 supersedes: null
@@ -63,7 +63,7 @@ Round-trip reduction, server execution time, useful crawl throughput and result 
 Code inspected at [facd333](https://github.com/nishchup489-afk/developers_eye/commit/facd3336285f2da58b4f9c73efcd0d5ed6a05492). This is a retrospective record of the implementation, not a load-test result. Alternatives without a linked prototype are design comparisons, not experiments that were run. Existing historical scheduler measurements remain in EXP-0001; planned studies are EXP-0004 through EXP-0006. Detailed targets and gates are in optimization-plan.md.
 
 - [`backend/src/backend/search/ranking/statistics.py`](../../../backend/src/backend/search/ranking/statistics.py)
-- [`crawler/src/crawler/schedular/repository.py`](../../../crawler/src/crawler/schedular/repository.py)
+- [`crawler/src/crawler/scheduler/repository.py`](../../../crawler/src/crawler/scheduler/repository.py)
 - [`crawler/src/indexer/vocabulary.py`](../../../crawler/src/indexer/vocabulary.py)
 - [`crawler/src/crawler/policy_and_politeness/politeness_policy.py`](../../../crawler/src/crawler/policy_and_politeness/politeness_policy.py)
 

@@ -12,7 +12,7 @@ from backend.db.session import SessionFactory
 from backend.models.source import Source
 from backend.models.crawler_frontier import CrawlTarget
 
-from crawler.schedular.repository import (
+from crawler.scheduler.repository import (
     fail_target,
     calculate_retry_delay,
 )

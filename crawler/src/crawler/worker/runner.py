@@ -46,7 +46,7 @@ from crawler.worker.logging_config import setup_logging
 from crawler.policy_and_politeness.politeness_policy import (PolitenessManager,)
 from backend.db.session import SessionFactory, engine
 from backend.schema.crawler_frontier import CrawlTargetRead
-from crawler.schedular.repository import claim_targets, recover_expired_leases
+from crawler.scheduler.repository import claim_targets, recover_expired_leases
 from crawler.worker.telemetry import WorkerMonitor, active_targets, checkpoint
 from crawler.worker.recovery import recover_failed_claim
 from backend.models.crawl_attempt import CrawlAttempt

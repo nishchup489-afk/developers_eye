@@ -17,7 +17,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from backend.models.crawler_frontier import CrawlTarget
 from backend.models.source import Source
-from crawler.schedular.repository import claim_targets
+from crawler.scheduler.repository import claim_targets
 
 
 @asynccontextmanager

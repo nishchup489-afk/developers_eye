@@ -6,10 +6,10 @@ date: 2026-10-31
 area: crawler
 feature: scheduler-and-leases
 code:
-  - crawler/src/crawler/schedular/repository.py:calculate_retry_delay
-  - crawler/src/crawler/schedular/repository.py:fail_target
-  - crawler/src/crawler/schedular/repository.py:complete_target
-  - crawler/src/crawler/schedular/repository.py:recover_expired_leases
+  - crawler/src/crawler/scheduler/repository.py:calculate_retry_delay
+  - crawler/src/crawler/scheduler/repository.py:fail_target
+  - crawler/src/crawler/scheduler/repository.py:complete_target
+  - crawler/src/crawler/scheduler/repository.py:recover_expired_leases
   - crawler/src/crawler/worker/jobs/jobs.py
   - crawler/src/crawler/worker/jobs/utility.py:_finalize
   - crawler/src/crawler/worker/jobs/constants.py:_RETRY_AFTER_CAP_SECONDS
@@ -74,7 +74,7 @@ Constraints: be polite to hosts that are down or rate-limiting, keep transient f
 - `block` and `disable` never schedule a retry.
 
 ## Evidence
-- Tests: `schedular/tests/test_repository.py` (delay values, cap, `fail_target` ownership), worker offline tests for timeout accounting and expired-lease backoff (see `08_failure_recovery.md`).
+- Tests: `scheduler/tests/test_repository.py` (delay values, cap, `fail_target` ownership), worker offline tests for timeout accounting and expired-lease backoff (see `08_failure_recovery.md`).
 - Measured: none.
 - Commits: `90e9ef3` (scheduler functions), `f19c53b` (backoff on abandoned attempts and expired leases).
 
@@ -88,4 +88,4 @@ Constraints: be polite to hosts that are down or rate-limiting, keep transient f
 - Never reset `failure_count` anywhere except `complete_target()`.
 - Do not let `Retry-After` shorten a delay.
 - Do not add a new retryable outcome without deciding whether it is `retry` or `block`; a permanent refusal must be `block`.
-- Keep passing: `schedular/tests/test_repository.py`, `worker/tests/` offline suite.
+- Keep passing: `scheduler/tests/test_repository.py`, `worker/tests/` offline suite.
