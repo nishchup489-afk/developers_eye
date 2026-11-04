@@ -19,7 +19,6 @@ code:
 supersedes:
 superseded_by:
 related:
-  - INC-0013
   - INC-0006
   - ADR-0017
   - ADR-0032
@@ -169,7 +168,7 @@ Potential implementations include a PostgreSQL-backed host limiter or a shared R
 
 ## Remediation checklist
 
-Recorded against INC-0013 on November 2, 2026.
+Recorded against INC-0006 on November 2, 2026.
 
 - [x] Rotate `CRAWLER_REPORT_API_KEY` in every applicable environment.
 - [x] Verify that the previously exposed key returns HTTP 401/403.
@@ -209,7 +208,7 @@ The workflow file exists in the inspected repository.
 
 ## Why
 
-The chosen solution directly addresses the failure observed in INC-0013.
+The chosen solution directly addresses the failure observed in INC-0006.
 
 ### Security
 
@@ -290,7 +289,7 @@ Gitleaks and the repository's existing GitHub Actions workflow fit the current l
 | Secret scanner reports a false positive | Investigate and document before any narrow exception |
 | Multiple crawlers exceed host politeness limits | Monitor responses, throttle concurrency, or implement a shared limiter |
 
-Related incident: INC-0013.
+Related incident: INC-0006.
 
 ## Evidence
 
