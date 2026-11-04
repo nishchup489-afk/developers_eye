@@ -26,12 +26,12 @@ indexes refresh on every commit. `--check` exits 1 when they are stale.
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**68 test files, 607 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**70 test files, 618 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 19 | 213 | `cd backend && poetry run pytest` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 21 | 224 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 10 | 93 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 32 | 301 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 7 | 0 | npm scripts in `frontend/package.json` (see below) |
@@ -50,9 +50,11 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [integration/test_code.py](../backend/tests/integration/test_code.py) | tests | 17 | [test_case.md](../backend/tests/test_case.md#code-retrieval) |
 | [integration/test_fts.py](../backend/tests/integration/test_fts.py) | tests | 14 | [test_case.md](../backend/tests/test_case.md#full-text-search-fts) |
 | [integration/test_fuzzy.py](../backend/tests/integration/test_fuzzy.py) | tests | 15 | [test_case.md](../backend/tests/test_case.md#fuzzy-retrieval) |
+| [integration/test_ranking_developer_queries.py](../backend/tests/integration/test_ranking_developer_queries.py) | tests | 4 |  |
 | [integration/test_ranking_statistics.py](../backend/tests/integration/test_ranking_statistics.py) | tests | 7 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
 | [integration/test_retrieval.py](../backend/tests/integration/test_retrieval.py) | tests | 6 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
 | [integration/test_search.py](../backend/tests/integration/test_search.py) | tests | 5 | [test_case.md](../backend/tests/test_case.md#search-service-against-postgresql) |
+| [integration/test_system_reporting.py](../backend/tests/integration/test_system_reporting.py) | tests | 7 | [test_case.md](../backend/tests/test_case.md#admin-system-reporting-postgresql) |
 | [test_case.md](../backend/tests/test_case.md) | write-up |  |  |
 | [test_package_boundary.py](../backend/tests/test_package_boundary.py) | tests | 1 | [test_case.md](../backend/tests/test_case.md#package-boundary) |
 | [unit/test_analyzer.py](../backend/tests/unit/test_analyzer.py) | tests | 13 | [test_case.md](../backend/tests/test_case.md#query-analyzer) |
@@ -139,6 +141,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [crawler-monitor-unit.mjs](../frontend/tests/crawler-monitor-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#crawler-monitor-unitmjs) |
 | [fixtures/crawler-monitor.mjs](../frontend/tests/fixtures/crawler-monitor.mjs) | fixture data |  | [test_case.md](../frontend/tests/test_case.md#fixtures) |
 | [fixtures/crawler-report.mjs](../frontend/tests/fixtures/crawler-report.mjs) | fixture data |  | [test_case.md](../frontend/tests/test_case.md#fixtures) |
+| [fixtures/system-report.mjs](../frontend/tests/fixtures/system-report.mjs) | fixture data |  |  |
 | [indexer-report-unit.mjs](../frontend/tests/indexer-report-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#indexer-report-unitmjs) |
 | [integration.mjs](../frontend/tests/integration.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#integrationmjs) |
 | [preview-crawler.mjs](../frontend/tests/preview-crawler.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#preview-crawlermjs) |

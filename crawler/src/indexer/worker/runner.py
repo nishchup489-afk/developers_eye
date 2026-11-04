@@ -202,8 +202,12 @@ async def run_worker(
     *,
     config: IndexerConfig,
     forever: bool = False,
+    monitor=None,
 ) -> int:
-    """Run once or poll indefinitely; return nonzero after any failed work."""
+    """Run once or poll indefinitely; return nonzero after any failed work.
+
+    `monitor` (an IndexerMonitor) receives per-batch counts for the admin heartbeat.
+    """
     index_cursor = removal_cursor = 0
     failures = 0
     cycles = 0
@@ -225,6 +229,8 @@ async def run_worker(
             )
             cycles += 1
             failures += report.failed
+            if monitor is not None:
+                monitor.record(indexed=report.outcomes[IndexStatus.INDEXED.value], failed=report.failed)
             index_cursor = report.next_index_cursor
             removal_cursor = report.next_removal_cursor
             if not forever:
@@ -263,9 +269,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 async def _main(config: IndexerConfig, forever: bool) -> int:
     from backend.db.session import SessionFactory, engine
+    from indexer.worker.heartbeat import IndexerMonitor
 
     try:
-        return await run_worker(SessionFactory, config=config, forever=forever)
+        async with IndexerMonitor(SessionFactory, batch_size=config.batch_size, concurrency=config.concurrency) as monitor:
+            return await run_worker(SessionFactory, config=config, forever=forever, monitor=monitor)
     finally:
         await engine.dispose()
 

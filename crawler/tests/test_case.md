@@ -117,6 +117,39 @@ Replace the three occurrences of `except httpcore.HTTPError as exc:` with `excep
 
 Also verify `PolicyCoordinator` imports shared `FetcherSecurityError` / `ResponseTooLargeError` from `crawler.fetcher.errors` rather than redefining them.
 
+#### test_fetcher.py
+
+Offline tests for `crawler.fetcher` (config, IP pinning, streaming, transport). HTTPX `MockTransport` and fake HTTPCore objects stand in for the network; nothing goes out.
+
+| Test | What it checks |
+| --- | --- |
+| `test_chunk_size_is_16_kib` | `DEFAULT_CHUNK_SIZE` is 16,384 bytes. |
+| `test_reject_invalid_chunk_size` (5 cases) | `FetcherConfig` rejects 0, −1, `True`, 1.5 and `"16"`. |
+| `test_media_types_and_suffixes` | HTML with charset, `+json` and `+xml` suffixes and upper-case `APPLICATION/JSON` are permitted; `image/png`, `application/octet-stream` and a missing type are not. |
+| `test_media_type_config_validation` | An empty or non-frozen `allowed_media_types` is rejected. |
+| `test_public_ip_deduplication_ipv4_and_ipv6` | Duplicate approved IPs collapse, order kept, IPv4 and IPv6 both allowed. |
+| `test_bad_ip_lists_are_rejected` (12 cases) | An empty list, a bare string, `localhost`, private, loopback, link-local, scoped (`%eth0`), mixed public/private and `None` raise `FetcherSecurityError`. |
+| `test_200_html_returns_body_headers_and_expected_request` | A 200 HTML response returns body and headers; the request is a plain GET to the expected URL. |
+| `test_non_200_returns_headers_without_reading_body` (11 cases) | 2xx other than 200, redirects, 4xx and 5xx return headers without reading the body; the stream is closed. |
+| `test_content_type_missing_skips_body` / `test_unsupported_content_type_skips_body` | No or disallowed `Content-Type` (e.g. `image/png`) gives an empty body and nothing is read. |
+| `test_json_is_accepted` | `application/problem+json` bodies are read. |
+| `test_small_chunks_join_correctly` | Small stream chunks are joined in order. |
+| `test_declared_content_length_larger_than_limit_rejected_before_read` | An oversized `Content-Length` raises `ResponseTooLargeError` before any chunk is read. |
+| `test_streaming_overflow_stops_and_closes` | A body that grows past the limit stops reading and closes the stream. |
+| `test_malformed_content_length_rejected` (4 cases) | `-2`, `nope`, `2.5` and `" 10 "` are rejected. |
+| `test_unexpected_compression_rejected` | A `Content-Encoding: gzip` response is rejected. |
+| `test_httpx_read_timeout_propagates` / `test_total_deadline_times_out` | Read timeouts propagate; a slow response hits the total deadline. |
+| `test_invalid_fetch_arguments_fail_before_network` (8 cases) | A body limit of 0 or `True`, a negative or NaN timeout, an empty or header-injecting user agent, a private IP and an `ftp://` URL fail before a client is created. |
+| `test_backend_uses_numeric_ip_and_fallback` / `test_backend_all_connections_failed` | The pinned backend connects to approved IPs in order, falls back to the next, and fails once all are down. |
+| `test_backend_rejects_unapproved_destination` / `test_backend_rejects_unix_sockets` | Other hosts, ports, local addresses and Unix sockets are refused. |
+| `test_backend_sleep_delegates` | `sleep` goes to the real backend. |
+| `test_httpcore_exception_conversion` | HTTPCore timeouts and errors map to the matching HTTPX exceptions. |
+| `test_core_body_stream_yields_and_closes` / `test_core_body_stream_maps_read_error` | The body stream yields chunks, closes the source, and maps read errors. |
+| `test_pinned_transport_checks_get_and_origin` | One connection per pool; only GET to the approved origin is allowed. |
+| `test_pinned_transport_preserves_hostname_for_http_and_tls` | The Host header and TLS SNI keep the real hostname while connecting to the pinned IP. |
+| `test_client_disables_redirects_and_environment_proxies` | The client never follows redirects and ignores proxy environment variables. |
+| `test_security_rejects_custom_host_header` / `test_security_rejects_custom_sni_extension` / `test_security_rejects_other_path_on_same_host` | Custom Host headers, custom `sni_hostname` and a different path on the approved origin are refused. |
+
 ## frontier
 
 ### Running the frontier tests
@@ -757,6 +790,33 @@ PostgreSQL regression tests. They are skipped unless `TEST_DATABASE_URL` is set,
 
 A live, rollback-only script (`python crawler/tests/crawler/worker/test_live_pipeline.py`). It is not a pytest test. It runs `PolicyCoordinator -> HTTPXHopFetcher -> parser -> processor` against real URLs (by default five `docs.python.org` pages, or `--url` / `--allow-host`), with one request per host and a 2 s interval. It prints the policy decision, redirect chain, parsed documents, processing results, and a sample of discovered links (never enqueued), and applies `X-Robots-Tag` headers for this bot or `*`. It needs `DATABASE_URL` for the robots cache, rolls the session back, and writes no documents, targets, or index rows. It exits `0` only if at least one document was accepted and there were no errors.
 
+## writer
+
+### Running the writer tests
+
+PostgreSQL only, no HTTP and no worker. From `crawler/`:
+
+```bash
+TEST_DATABASE_URL=postgresql+asyncpg://USER:PASS@localhost/developers_eye_test \
+poetry run pytest -v -s tests/crawler/writer/test_database_writer.py
+```
+
+The database name must contain `test`. Each test seeds its own source and target and rolls back. (The module docstring still names the old file `test_writer.py`.)
+
+### Writer test cases
+
+#### test_database_writer.py
+
+| Test | What it checks |
+| --- | --- |
+| `test_attempt_starts_and_finishes` | `start_attempt` creates an unfinished row for the target; `finish_attempt` sets outcome `success`, HTTP 200, 1234 bytes and `finished_at`. |
+| `test_attempt_cannot_be_finished_twice` | A second `finish_attempt` returns false and the first outcome (`failed`, "Timeout") is kept. |
+| `test_attempt_validates_inputs` | Invalid IDs, statuses, byte counts and outcomes are rejected. |
+| `test_document_insert_and_unchanged_recrawl` | The first crawl inserts the document with title, type, hash and code blocks. The same data again keeps the ID and `updated_at` and only refreshes `last_seen_at`. |
+| `test_changed_content_updates_existing_document` | A changed body updates the same row: new body and hash, newer `updated_at`. |
+| `test_metadata_only_change_counts_as_update` | A tag change with the same `content_hash` is saved and moves `updated_at` forward. |
+| `test_writer_respects_worker_transaction_rollback` | When the worker rolls back, neither the attempt nor the document persists. |
+
 ## indexer
 
 ### Running the indexer tests
@@ -815,6 +875,8 @@ Tests for the search indexer: `selector -> service (builder -> analyzer -> vecto
 | `test_service_writer.py` | service and writer | No (mocked repository) |
 | `test_pipeline.py` | builder to analyzer contract | No |
 | `test_indexer.py` | full lifecycle | One test yes, one no |
+| `test_vocabulary.py` | vocabulary (`search_terms`) | No (mocked session) |
+| `test_vocabulary_rebuild_cli.py` | vocabulary rebuild CLI | No |
 
 #### conftest.py
 
@@ -952,3 +1014,30 @@ The lifecycle steps in `test_final_indexer_lifecycle_against_postgresql`:
 | Test | What it checks |
 | --- | --- |
 | `test_document_flows_from_builder_to_analyzer` | Smoke test of the builder and analyzer contract: a document prepared by the builder keeps its ID and timestamp through the analyzer, gets a version-prefixed hash, and its body and first code block appear unchanged in the analyzed text and code fields. |
+
+#### test_vocabulary.py
+
+Unit tests for `indexer.vocabulary` (the `search_terms` table that feeds spelling suggestions). The session is an `AsyncMock`; no database.
+
+| Test | What it checks |
+| --- | --- |
+| `test_vocabulary_filters_artifacts_and_keeps_developer_terms` | Terms are lower-cased; developer terms like `c++`, `c#`, `asyncio` and stems like `applic` are kept; file names, hex IDs and SQL fragments are dropped. |
+| `test_vocabulary_rejects_non_string_lexemes` | A `None` lexeme raises `TypeError`. |
+| `test_unchanged_document_does_not_write_counts` | Same set of lexemes before and after (duplicates ignored) issues no SQL. |
+| `test_addition_issues_conflict_safe_upsert` | New terms are added with one `INSERT ... ON CONFLICT`. |
+| `test_removal_decrements_and_deletes_zero_count` | Removed terms are decremented with `UPDATE search_terms ... RETURNING`, and rows that reach 0 are deleted. |
+| `test_missing_frequency_raises_and_caller_rolls_back` | Decrementing a term with no row raises `RuntimeError` ("drift") so the caller rolls back. |
+| `test_multiple_additions_do_not_repeat_upserts` | Several new terms are written in one batched statement. |
+
+#### test_vocabulary_rebuild_cli.py
+
+CLI contract for `indexer.vocabulary_rebuild` (the one-shot rebuild of `search_terms`). No database.
+
+| Test | What it checks |
+| --- | --- |
+| `test_default_options_are_one_shot` | Defaults: `--once` off, progress every 1000, write batch 500, log level INFO. |
+| `test_explicit_options` | Every option is parsed. |
+| `test_reject_invalid_positive_options` (5 cases) | Zero, negative, non-numeric and `nan` values exit with code 2. |
+| `test_cli_runs_and_logs_success` | `main()` passes the options to the rebuild and logs START, COMPLETE and the document and term counts. |
+| `test_cli_returns_nonzero_when_rebuild_fails` | A failing rebuild logs FAILED and exits with code 1. |
+| `test_rebuild_validates_limits_before_connecting` (4 cases) | Invalid `progress_every` / `write_batch_size` raise `ValueError` before any connection. |

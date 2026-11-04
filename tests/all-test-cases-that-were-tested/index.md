@@ -97,6 +97,15 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_invalid_limit_rejected_before_database`
 - `test_database_error_propagates_to_caller`
 
+### [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
+
+4 cases
+
+- `test_multi_term_text_query_scores_all_terms`: Two occurrences of each search term outrank one occurrence of each.
+- `test_identifier_queries_score_repeat_above_single`: Use real PostgreSQL tokenizer/retrieval, then real CODE BM25 scoring.
+- `test_repeating_a_query_identifier_does_not_double_count_bm25`
+- `test_all_mode_weighted_fusion_for_multi_term_query`
+
 ### [backend/tests/integration/test_ranking_statistics.py](../../backend/tests/integration/test_ranking_statistics.py)
 
 7 cases · write-up: [test_case.md](../../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql)
@@ -129,6 +138,18 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_category_filter_and_limit`
 - `test_no_match_returns_empty`
 - `test_categorize`
+
+### [backend/tests/integration/test_system_reporting.py](../../backend/tests/integration/test_system_reporting.py)
+
+7 cases · write-up: [test_case.md](../../backend/tests/test_case.md#admin-system-reporting-postgresql)
+
+- `test_system_report_budget_progress_and_yield`
+- `test_budget_status_thresholds`
+- `test_host_report_rates_and_flags`
+- `test_problems_detect_stale_workers_throttling_and_retention`
+- `test_problems_quiet_on_healthy_system`
+- `test_purge_events_deletes_only_old_rows`
+- `test_indexer_report_lists_heartbeats`
 
 ### [backend/tests/test_package_boundary.py](../../backend/tests/test_package_boundary.py)
 
@@ -951,4 +972,10 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 ### [frontend/tests/preview-crawler.mjs](../../frontend/tests/preview-crawler.mjs)
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#preview-crawlermjs)
+
+## Not in any write-up yet
+
+These test files have no matching heading in a `test_case.md`.
+
+- [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 <!-- test-index:end -->
