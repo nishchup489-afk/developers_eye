@@ -388,3 +388,36 @@
 @media (prefers-reduced-motion: reduce) {
   .cc-main *, .cc-inspector * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* System, hosts and problems (admin Priority 1 pages) */
+.sys-meter-track { position: relative; }
+.sys-meter-track em { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--a-amber); z-index: 1; }
+.sys-flags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.sys-flags .cc-badge { padding: 2px 7px; font-size: 11px; }
+.admin-profile > a { margin-left: auto; color: #8b987e; padding: 5px; }
+.admin-profile > a:hover { color: var(--a-text); }
+.sys-problems { margin: 16px 37px 0; border: 1px solid #635033; background: #2b2519; color: #e1bd84; border-radius: 10px; }
+.sys-problems.critical { border-color: #82594e; background: #3d2824; color: #ffc2b9; }
+.sys-problems.info { border-color: var(--a-border); background: var(--a-panel); color: #c9d3bf; }
+.sys-problems-toggle { width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px 16px; color: inherit; text-align: left; font-size: 13px; }
+.sys-problems-toggle strong { font-weight: 550; min-width: 0; overflow-wrap: anywhere; }
+.sys-problems-toggle span { font-size: 12px; opacity: .85; white-space: nowrap; }
+.sys-problems-toggle small { margin-left: auto; font-size: 11px; opacity: .8; white-space: nowrap; }
+.sys-problems-toggle svg { flex-shrink: 0; transition: transform .15s; }
+.sys-problems-toggle svg.expanded { transform: rotate(180deg); }
+.sys-problems ul { list-style: none; margin: 0; padding: 0 16px 14px; display: flex; flex-direction: column; gap: 10px; }
+.sys-problems li { display: flex; gap: 10px; align-items: flex-start; padding-top: 10px; border-top: 1px solid #ffffff14; }
+.sys-problems li svg { flex-shrink: 0; margin-top: 2px; }
+.sys-problems li.critical svg { color: #ffc2b9; } .sys-problems li.warning svg { color: var(--a-amber); } .sys-problems li.info svg { color: var(--a-muted); }
+.sys-problems li strong { font-size: 13px; font-weight: 550; }
+.sys-problems li p { font-size: 12px; margin-top: 3px; line-height: 1.6; opacity: .9; overflow-wrap: anywhere; }
+.cc-main .cc-note code, .cc-table code { font-family: var(--font-mono); font-size: 12px; overflow-wrap: anywhere; }
+@media (max-width: 650px) {
+  .sys-problems { margin: 12px 17px 0; }
+  .sys-problems-toggle { flex-wrap: wrap; }
+  .sys-problems-toggle small { margin-left: 0; width: 100%; }
+}
+/* The banner renders before each page's topbar; show it just under the topbar instead. */
+.admin-content:has(> .sys-problems) { display: flex; flex-direction: column; }
+.admin-content:has(> .sys-problems) > .admin-topbar { order: -1; }
+.admin-content:has(> .sys-problems) > .admin-main { width: 100%; box-sizing: border-box; }

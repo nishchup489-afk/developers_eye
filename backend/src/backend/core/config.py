@@ -13,6 +13,13 @@ class Settings(BaseSettings):
     crawler_report_api_key: SecretStr | None = None
     # Must match the indexer worker's INDEXER_INDEX_VERSION.
     indexer_index_version: int = 1
+    # Admin capacity planning: database disk budget and document goal.
+    admin_db_budget_gb: float = 120.0
+    admin_target_documents: int = 5_000_000
+    # Matches the crawler's DEFAULT_MIN_INTERVAL_SECONDS (per process, per host).
+    admin_host_min_interval_seconds: float = 2.0
+    # crawl_event rows older than this are purged by admin_services.maintenance.
+    admin_event_retention_days: int = 14
 
 
     model_config = SettingsConfigDict(

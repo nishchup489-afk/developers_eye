@@ -4,13 +4,15 @@ Mirrors the coverage definitions of crawler/src/indexer/reporting.py, but lives
 in the backend so the API never imports the worker package. It reads committed
 `document` and `search_index` rows only: it does not run, claim, or mark work.
 
-Liveness is inferred from committed writes. The indexer has no heartbeat table,
-so "indexing" means rows were written recently, not that a process is alive.
+Status is inferred from committed writes ("indexing" means rows were written
+recently). Process liveness comes separately from `indexer_worker` heartbeats,
+reported as `workers` and `activity.online_workers`.
 """
 from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import and_, case, func, literal, select
 
+from backend.models.crawl_monitor import IndexerWorker
 from backend.models.documents import Document
 from backend.models.search_index import SearchIndex
 from backend.models.source import Source
@@ -19,6 +21,8 @@ from backend.admin_services.crawler_reporting import _percentage, _utc
 REINDEX_MARKER = "reindex:pending"
 # Matches the worker's default poll interval plus one batch of slack.
 ACTIVE_WITHIN = timedelta(minutes=2)
+# Heartbeats are written every 5 s; allow a few misses before calling it offline.
+HEARTBEAT_ONLINE = timedelta(seconds=20)
 LIST_LIMIT = 30
 
 
@@ -81,6 +85,15 @@ async def build_indexer_report(session, *, index_version: int = 1, source_id: in
                     last_document_change_at=_utc(last_change),
                     docs_per_minute=round(activity["indexed_last_5m"] / 5, 2))
 
+    heartbeats = (await session.scalars(select(IndexerWorker).where(IndexerWorker.heartbeat_at >= now - timedelta(days=1))
+        .order_by(IndexerWorker.heartbeat_at.desc()).limit(20))).all()
+    workers = [dict(id=w.id, hostname=w.hostname, pid=w.pid, started_at=_utc(w.started_at), heartbeat_at=_utc(w.heartbeat_at),
+                    last_batch_at=_utc(w.last_batch_at), batch_size=w.batch_size, concurrency=w.concurrency,
+                    indexed_total=w.indexed_total, failed_total=w.failed_total,
+                    status="stopped" if w.stopped_at else "online" if now - w.heartbeat_at <= HEARTBEAT_ONLINE else "offline")
+               for w in heartbeats]
+    activity["online_workers"] = sum(w["status"] == "online" for w in workers)
+
     # One bucket per minute; a document re-indexed later moves to its newest minute.
     start = (now - timedelta(minutes=59)).replace(second=0, microsecond=0)
     minute = func.date_trunc("minute", SearchIndex.indexed_at)
@@ -113,7 +126,7 @@ async def build_indexer_report(session, *, index_version: int = 1, source_id: in
 
     return dict(
         version=1, generated_at=_utc(now), index_version=index_version,
-        coverage=coverage, activity=activity, throughput=throughput,
+        coverage=coverage, activity=activity, throughput=throughput, workers=workers,
         recent=[dict(document_id=doc.id, title=doc.title, canonical_url=doc.canonical_url, source=slug,
                      indexed_at=_utc(indexed_at), index_version=hash_.split(":", 1)[0] if ":" in hash_ else hash_,
                      current=bool(is_current)) for doc, slug, indexed_at, hash_, is_current in recent],

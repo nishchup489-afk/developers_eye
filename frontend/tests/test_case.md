@@ -6,7 +6,7 @@ Node test scripts for the Next.js frontend, using `node:assert/strict` (no test 
 | --- | --- |
 | `integration.mjs` | `npm run test:integration` |
 | `admin-integration.mjs` | `npm run test:admin` |
-| `admin-unit.mjs`, `crawler-monitor-unit.mjs` | `npm run test:admin:unit` |
+| `admin-unit.mjs`, `crawler-monitor-unit.mjs`, `indexer-report-unit.mjs` | `npm run test:admin:unit` |
 | `admin-routes.mjs` | `npm run test:admin:routes` |
 | `preview-crawler.mjs` | Run manually; it is a preview server, not a test. |
 
@@ -52,6 +52,8 @@ Calls the compiled production route handlers directly from `.next` (or `NEXT_BUI
 | OAuth handlers | Initiation uses PKCE `S256` and seals the state in the flow cookie. A wrong state is rejected before any token exchange. A good callback exchanges the code (sending the client secret and code verifier), loads the GitHub user, redirects to `/admin/crawler`, sets a signed session that does not contain the access token, and clears the flow cookie. A GitHub user not on the allowlist gets `error=denied` and no session. |
 | Logout handler | A cross-origin logout returns 403; same-origin returns 303 and clears every cookie. |
 
+| Read-only access | A listed viewer (`ADMIN_VIEWER_GITHUB_IDS`) signs in through the OAuth callback, is not an administrator, and reads the crawler monitor, crawler report, system report, hosts and problems routes (200, `private, no-store`). The system report's `slow_queries` is `null` for viewers and guests and present for admins. `days` outside 1–90 and `minutes` outside 5–1440 return 400; no session returns 401; a malformed upstream returns 502. With `ADMIN_VIEWER_ACCESS=public` a request with no cookie reads reports; switching back to `off` and clearing viewer ids revokes the viewer at once. |
+
 ## admin-unit.mjs
 
 Unit tests for `lib/admin-session.ts` and `lib/crawler-report.ts`, run with `--experimental-strip-types`.
@@ -63,6 +65,8 @@ Unit tests for `lib/admin-session.ts` and `lib/crawler-report.ts`, run with `--e
 | Cookie flags | Cookies are `Secure`, `HttpOnly`, and `SameSite=Lax` on an HTTPS app URL. |
 | Report contract | `isCrawlerReport` accepts 7, 30, and 90 day fixtures and null metrics when there are no samples, and rejects a missing section, negative counts, a success rate over 100, an empty `by_state`, a date-only timestamp, a missing day, a non-boolean `enabled`, and an HTTP status of 900. |
 | Safe links | `safeHttpUrl` rejects `javascript:`, `data:`, credentialed, host-less, and relative URLs, and accepts a normal https URL. |
+| Read-only roles | `viewerFromSession` returns `admin` for admin ids, `viewer` for `ADMIN_VIEWER_GITHUB_IDS` or any valid identity with `ADMIN_VIEWER_ACCESS=github`, and an anonymous `guest` only with `public`. `userFromSession` never accepts a viewer, unknown access modes fall back to `off`, and removing a viewer id revokes the session. |
+| System report contracts | `isSystemReport`, `isHostReport` and `isProblemsReport` accept the fixtures and reject an unknown budget status, negative sizes, a percent over 100, missing telemetry, unknown host flags and unknown severities. Null projections (no documents yet) are valid. Viewer and guest redaction drops `slow_queries`. `bytes()` and `eta()` format sizes and long ETAs. |
 
 ## crawler-monitor-unit.mjs
 
@@ -74,6 +78,16 @@ Unit tests for the validators in `lib/crawler-monitor.ts`.
 | Malformed monitor data | A string latency, negative persisted count, `null` event details, a numeric worker URL, a short throughput series, a string `documents_has_more`, and an invalid `next_fetch_at` are rejected. |
 | Empty monitor | Null metrics and empty workers, events, documents, and frontier lists are accepted. |
 | Details | A document whose `latest_attempt` has a bad ID and an attempt with array telemetry are rejected. An unavailable document with numeric `unavailable_http_status` (410) is accepted, but a string status is rejected. |
+
+## indexer-report-unit.mjs
+
+Unit test for the validator in `lib/indexer-report.ts`, behind the `/admin/indexer` page.
+
+| Area | What it checks |
+| --- | --- |
+| Valid report | `isIndexerReport` accepts a full report: coverage, activity, a 60-point throughput series, recent, pending and per-source rows. |
+| Malformed reports | A wrong `version`, a negative pending count, coverage over 100%, an unknown activity status, a 59-point throughput series, an unknown pending reason, a non-boolean `current` and an invalid timestamp are each rejected. |
+| Empty index | Null coverage and timestamps, status `empty`, and empty recent, pending and source lists are accepted. |
 
 ## preview-crawler.mjs
 

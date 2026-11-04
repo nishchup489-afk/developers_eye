@@ -3,10 +3,13 @@ export type PendingReason = "missing" | "reindex_requested" | "old_version" | "c
 export type IndexedDocument = { document_id: number; title: string; canonical_url: string; source: string; indexed_at: string; index_version: string; current: boolean };
 export type PendingDocument = { document_id: number; title: string; canonical_url: string; source: string; updated_at: string; indexed_at: string | null; reason: PendingReason };
 export type IndexerSource = { id: number; slug: string; name: string; available: number; current: number; missing: number; stale: number; coverage_percent: number | null; last_indexed_at: string | null };
+export type IndexerWorker = { id: string; hostname: string; pid: number; started_at: string; heartbeat_at: string; last_batch_at: string | null; batch_size: number; concurrency: number; indexed_total: number; failed_total: number; status: "online" | "offline" | "stopped" };
 export type IndexerReport = {
   version: 1; generated_at: string; index_version: number;
   coverage: { total_documents: number; available_documents: number; indexed_rows: number; current_documents: number; missing_documents: number; stale_documents: number; pending_documents: number; reindex_requested: number; unavailable_index_rows: number; coverage_percent: number | null };
-  activity: { status: IndexerStatus; last_indexed_at: string | null; last_document_change_at: string | null; indexed_last_5m: number; indexed_last_hour: number; indexed_last_24h: number; docs_per_minute: number };
+  activity: { status: IndexerStatus; last_indexed_at: string | null; last_document_change_at: string | null; indexed_last_5m: number; indexed_last_hour: number; indexed_last_24h: number; docs_per_minute: number; online_workers?: number };
+  // Present once the indexer heartbeat migration is applied.
+  workers?: IndexerWorker[];
   throughput: { at: string; indexed: number }[];
   recent: IndexedDocument[]; pending: PendingDocument[]; sources: IndexerSource[];
 };
@@ -32,5 +35,7 @@ export function isIndexerReport(v: unknown): v is IndexerReport {
   const doc = (d: unknown): d is Record<string, unknown> => object(d) && count(d.document_id) && strings(d, ["title", "canonical_url", "source"]);
   if (!Array.isArray(v.recent) || v.recent.length > 30 || !v.recent.every(d => doc(d) && stamp(d.indexed_at) && typeof d.index_version === "string" && typeof d.current === "boolean")) return false;
   if (!Array.isArray(v.pending) || v.pending.length > 30 || !v.pending.every(d => doc(d) && stamp(d.updated_at) && nullableStamp(d.indexed_at) && ["missing", "reindex_requested", "old_version", "content_changed"].includes(String(d.reason)))) return false;
+  if (a.online_workers !== undefined && !count(a.online_workers)) return false;
+  if (v.workers !== undefined && !(Array.isArray(v.workers) && v.workers.every(w => object(w) && strings(w, ["id", "hostname"]) && counts(w, ["pid", "batch_size", "concurrency", "indexed_total", "failed_total"]) && stamp(w.started_at) && stamp(w.heartbeat_at) && nullableStamp(w.last_batch_at) && ["online", "offline", "stopped"].includes(String(w.status))))) return false;
   return Array.isArray(v.sources) && v.sources.every(s => object(s) && counts(s, ["id", "available", "current", "missing", "stale"]) && strings(s, ["slug", "name"]) && percent(s.coverage_percent) && nullableStamp(s.last_indexed_at));
 }

@@ -34,3 +34,19 @@ class CrawlWorker(Base):
     concurrency: Mapped[int] = mapped_column(Integer)
     batch_size: Mapped[int] = mapped_column(Integer)
     active_targets: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, default=list)
+
+
+class IndexerWorker(Base):
+    """Heartbeat of one indexer process, so admin liveness is a fact, not a guess."""
+    __tablename__ = "indexer_worker"
+    id: Mapped[str] = mapped_column(Text, primary_key=True)
+    hostname: Mapped[str] = mapped_column(Text)
+    pid: Mapped[int] = mapped_column(Integer)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    heartbeat_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    stopped_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_batch_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    concurrency: Mapped[int] = mapped_column(Integer)
+    batch_size: Mapped[int] = mapped_column(Integer)
+    indexed_total: Mapped[int] = mapped_column(BigInteger, default=0)
+    failed_total: Mapped[int] = mapped_column(BigInteger, default=0)

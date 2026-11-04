@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { getAdmin } from "@/lib/admin-auth";
+import { getViewer } from "@/lib/admin-auth";
 
 export default async function AdminPage() {
-  redirect(await getAdmin() ? "/admin/crawler" : "/admin/login");
+  redirect(await getViewer() ? "/admin/crawler" : "/admin/login");
 }

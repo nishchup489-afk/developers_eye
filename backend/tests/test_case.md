@@ -533,3 +533,18 @@ poetry run pytest tests/integration -v --tb=short
 ## Search pipeline cases (merged from the old backend/tests)
 
 
+
+
+## Admin system reporting (PostgreSQL)
+
+`tests/integration/test_system_reporting.py` builds the full schema in a throwaway schema inside one rolled-back transaction. Requires `TEST_DATABASE_URL` (database name containing `test`, with `pg_trgm`).
+
+| Test | What it checks |
+|---|---|
+| `test_system_report_budget_progress_and_yield` | Database size equals budget `used_bytes`; bytes per document, target bytes per document and documents that fit; table list includes `indexer_worker`; progress counts DEDUP `new` events for per-day rate and ETA; per-source yield, duplicates by content hash; events past retention. |
+| `test_budget_status_thresholds` | `ok` under 80%, `warning` at 80% or when the projection to the goal overflows, `critical` at 95%; no documents gives null projections. |
+| `test_host_report_rates_and_flags` | Host extracted from URLs with query strings; attempts, 5-minute rate, share, 429 counts; `throttled` and `hot` flags; polite and worst-case rates from the configured gap and online workers. |
+| `test_problems_detect_stale_workers_throttling_and_retention` | Stale crawler and indexer heartbeats, no crawler online with due work, index lag, critical budget, projection over budget, host throttling and old events; critical problems sort first. |
+| `test_problems_quiet_on_healthy_system` | A healthy system (worker online, everything indexed, within budget) reports no problems. |
+| `test_purge_events_deletes_only_old_rows` | Dry run counts old events; purge in batches of 1 deletes only rows older than the retention window. |
+| `test_indexer_report_lists_heartbeats` | The indexer report lists heartbeat rows with `online` / `stopped` status and counts online workers. |

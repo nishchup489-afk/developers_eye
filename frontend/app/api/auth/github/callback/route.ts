@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { backend, isOk } from "@/lib/axios";
-import { adminConfig, cookieOptions, FLOW_COOKIE, seal, SESSION_COOKIE, SESSION_SECONDS, unseal } from "@/lib/admin-session";
+import { adminConfig, cookieOptions, FLOW_COOKIE, roleFor, seal, SESSION_COOKIE, SESSION_SECONDS, unseal } from "@/lib/admin-session";
 
 export const runtime = "nodejs";
 
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     });
     if (!isOk(profileResponse.status)) return finish("/admin/login?error=provider");
     const profile = profileResponse.data;
-    if (!Number.isSafeInteger(profile?.id) || !config.ids.includes(String(profile.id)) ||
+    if (!Number.isSafeInteger(profile?.id) || !roleFor(profile.id) ||
       typeof profile.login !== "string" || !/^[a-zA-Z0-9-]{1,39}$/.test(profile.login)) return finish("/admin/login?error=denied");
     const response = finish("/admin/crawler");
     // Store only verified public identity. GitHub tokens never enter the session.

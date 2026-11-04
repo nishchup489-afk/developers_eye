@@ -1,4 +1,4 @@
-import { getAdmin } from "@/lib/admin-auth";
+import { getViewer } from "@/lib/admin-auth";
 import { adminGet, isOk, isTimeout } from "@/lib/axios";
 import { isCrawlerReport } from "@/lib/crawler-report";
 
@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   const json = (body: unknown, status = 200) => Response.json(body, { status, headers: { "Cache-Control": "private, no-store", Vary: "Cookie" } });
-  if (!await getAdmin()) return json({ error: "Your admin session has expired. Sign in again." }, 401);
+  if (!await getViewer()) return json({ error: "Your admin session has expired. Sign in again." }, 401);
   const params = new URL(request.url).searchParams;
   const limits = { days: [1, 365, 7], top_sources: [1, 100, 20], recent_errors: [0, 100, 20] };
   const query = new URLSearchParams();

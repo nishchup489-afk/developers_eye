@@ -10,6 +10,7 @@ from sqlalchemy import text
 from backend.api.crawler_report import router as crawler_report_router
 from backend.api.indexer_report import router as indexer_report_router
 from backend.api.search import router as search_router
+from backend.api.system_report import router as system_report_router
 from backend.core.config import settings
 from backend.db.session import SessionFactory, engine
 from backend.search.ranking.statistics import get_corpus_statistics
@@ -34,6 +35,7 @@ app = FastAPI(title=settings.app_name, version="1.0.0", lifespan=lifespan)
 
 app.include_router(crawler_report_router)
 app.include_router(indexer_report_router)
+app.include_router(system_report_router)
 app.include_router(search_router)
 app.add_middleware(
     CORSMiddleware,

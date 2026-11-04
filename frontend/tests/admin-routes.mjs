@@ -7,6 +7,7 @@ import { resolve } from "node:path";
 import { seal, unseal, userFromSession } from "../lib/admin-session.ts";
 import { fixture } from "./fixtures/crawler-report.mjs";
 import { monitorFixture, documentFixture, attemptFixture } from "./fixtures/crawler-monitor.mjs";
+import { hostsFixture, problemsFixture, systemFixture } from "./fixtures/system-report.mjs";
 
 const require = createRequire(import.meta.url);
 globalThis.AsyncLocalStorage = AsyncLocalStorage;
@@ -20,6 +21,9 @@ const inspectRoute = load("admin/crawler/inspect");
 const githubRoute = load("auth/github");
 const callbackRoute = load("auth/github/callback");
 const logoutRoute = load("auth/logout");
+const systemRoute = load("admin/system/report");
+const hostsRoute = load("admin/system/hosts");
+const problemsRoute = load("admin/system/problems");
 const base = "http://localhost:3000";
 const serviceKey = randomBytes(32).toString("hex");
 Object.assign(process.env, { NODE_ENV: "production", ADMIN_APP_URL: base, ADMIN_SESSION_SECRET: randomBytes(32).toString("hex"), ADMIN_GITHUB_IDS: "42", GITHUB_CLIENT_ID: "test-client", GITHUB_CLIENT_SECRET: "test-secret", CRAWLER_REPORT_API_URL: "http://reporting.test/admin/crawler/report", CRAWLER_REPORT_API_KEY: serviceKey });
@@ -56,6 +60,9 @@ globalThis.fetch = async (input, init) => {
     if (responseMode === "malformed") return Response.json({});
     if (responseMode === "notfound") return Response.json({}, { status: 404 });
     if (url.pathname.endsWith("/monitor")) return Response.json(monitorFixture());
+    if (url.pathname.endsWith("/system/report")) return Response.json(systemFixture());
+    if (url.pathname.endsWith("/system/hosts")) return Response.json(hostsFixture());
+    if (url.pathname.endsWith("/system/problems")) return Response.json(problemsFixture());
     if (url.pathname.includes("/documents/")) return Response.json(documentFixture());
     if (url.pathname.includes("/attempts/")) return Response.json(attemptFixture());
     return Response.json(fixture(Number(url.searchParams.get("days"))));
@@ -132,6 +139,41 @@ try {
   assert.match(denied.headers.get("location"), /error=denied/);
   assert.ok(!denied.headers.getSetCookie().some((cookie) => cookie.startsWith("de_admin_session=")));
   console.log("PASS production OAuth handlers: PKCE initiation, state validation, mocked token exchange, verified identity, allowlist denial, signed session");
+
+  // Read-only viewers: listed ids sign in and read every report; slow query text stays admin-only.
+  process.env.ADMIN_VIEWER_GITHUB_IDS = "77";
+  profileId = 77;
+  responseMode = "ok";
+  const viewerLogin = await callbackRoute.routeModule.userland.GET(request(callbackUrl, flowCookie));
+  assert.equal(new URL(viewerLogin.headers.get("location")).pathname, "/admin/crawler");
+  const viewerToken = viewerLogin.headers.getSetCookie().find((cookie) => cookie.startsWith("de_admin_session=")).split(";")[0].split("=")[1];
+  assert.equal(userFromSession(viewerToken), null);
+  for (const [route, path] of [[monitorRoute, "/api/admin/crawler/monitor"], [systemRoute, "/api/admin/system/report"], [hostsRoute, "/api/admin/system/hosts"], [problemsRoute, "/api/admin/system/problems"]]) {
+    const result = await monitoring(route, viewerToken, path);
+    assert.equal(result.status, 200, `${path} ${result.status} ${await result.clone().text()}`);
+    assert.equal(result.headers.get("cache-control"), "private, no-store");
+  }
+  assert.equal((await report(viewerToken)).status, 200);
+  assert.equal((await (await monitoring(systemRoute, viewerToken, "/api/admin/system/report")).json()).slow_queries, null);
+  assert.equal((await (await monitoring(systemRoute, session, "/api/admin/system/report?days=30")).json()).slow_queries.length, 1);
+  assert.equal(calls.at(-1).url.pathname, "/admin/system/report");
+  assert.equal(calls.at(-1).url.searchParams.get("days"), "30");
+  for (const query of ["days=0", "days=91", "days=x"]) assert.equal((await monitoring(systemRoute, session, `/api/admin/system/report?${query}`)).status, 400);
+  for (const query of ["minutes=4", "minutes=1441", "minutes=1e3"]) assert.equal((await monitoring(hostsRoute, session, `/api/admin/system/hosts?${query}`)).status, 400);
+  for (const route of [systemRoute, hostsRoute, problemsRoute]) assert.equal((await monitoring(route, undefined, "/api/admin/system/problems")).status, 401);
+  responseMode = "malformed";
+  assert.equal((await monitoring(systemRoute, session, "/api/admin/system/report")).status, 502);
+  responseMode = "ok";
+  // Public mode: anonymous guests read, but never through a forged or unknown session.
+  process.env.ADMIN_VIEWER_ACCESS = "public";
+  const guest = await monitoring(problemsRoute, undefined, "/api/admin/system/problems");
+  assert.equal(guest.status, 200);
+  assert.equal((await (await monitoring(systemRoute, undefined, "/api/admin/system/report")).json()).slow_queries, null);
+  assert.equal((await report(undefined)).status, 200);
+  process.env.ADMIN_VIEWER_ACCESS = "off";
+  process.env.ADMIN_VIEWER_GITHUB_IDS = "";
+  assert.equal((await monitoring(systemRoute, viewerToken, "/api/admin/system/report")).status, 401);
+  console.log("PASS read-only access: viewer sign-in, viewer and guest report reads, admin-only slow queries, query limits, revocation");
 
   const deniedLogout = await logoutRoute.routeModule.userland.POST(request("/api/auth/logout", undefined, { method: "POST", headers: { Origin: "https://other.example" } }));
   assert.equal(deniedLogout.status, 403);
