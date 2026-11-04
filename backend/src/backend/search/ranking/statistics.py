@@ -20,7 +20,7 @@ from collections.abc import Iterable
 from typing import Literal, cast as type_cast
 
 from sqlalchemy import cast, func, literal, select, true, union_all
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB , TSQUERY
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.models.search_index import SearchIndex
@@ -110,21 +110,21 @@ async def _get_total_number_of_indexed_document(
     stmt = select(func.count()).select_from(SearchIndex)
     return int(await session.scalar(stmt) or 0)
 
+def _exact_lexeme_query(term: str):
+    """Convert an indexed lexeme into a TSQUERY without stemming."""
+    escaped = term.replace("\\", "\\\\").replace("'", "''")
+    return cast(literal(f"'{escaped}'"), TSQUERY)
+
 
 async def _get_document_frequencies(
     session: AsyncSession,
     terms: Iterable[str],
     mode: str,
 ) -> dict[str, int]:
-    """Get DF for all query lexemes in one round trip via indexed lookups.
-
-    Calls plainto_tsquery once per term using the same language configuration
-    as retrieval. Caller must supply normalized single lexemes, never the
-    complete raw query or negated/operator terms.
-    """
+    """Count documents containing each exact indexed lexeme."""
     lexemes = _validate_terms(terms)
     vector = _get_vector(mode)
-    config = _search_config(mode)
+
     if not lexemes:
         return {}
 
@@ -134,12 +134,26 @@ async def _get_document_frequencies(
             func.count().label("document_frequency"),
         )
         .select_from(SearchIndex)
-        .where(vector.bool_op("@@")(func.plainto_tsquery(config, term)))
+        .where(
+            vector.bool_op("@@")(
+                _exact_lexeme_query(term)
+            )
+        )
         for term in lexemes
     ]
-    stmt = queries[0] if len(queries) == 1 else union_all(*queries)
+
+    stmt = (
+        queries[0]
+        if len(queries) == 1
+        else union_all(*queries)
+    )
+
     rows = (await session.execute(stmt)).all()
-    return {str(term): int(count) for term, count in rows}
+
+    return {
+        str(term): int(count)
+        for term, count in rows
+    }
 
 
 async def _number_of_document_containing_term_t(

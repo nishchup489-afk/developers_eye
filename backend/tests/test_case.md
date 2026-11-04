@@ -10,8 +10,19 @@ One document for every backend test case: the tests written in `backend/tests/`,
 4. [Full-text search (FTS)](#full-text-search-fts)
 5. [Code retrieval](#code-retrieval)
 6. [Fuzzy retrieval](#fuzzy-retrieval)
-7. [Running tests](#running-tests)
-8. [Not covered yet](#not-covered-yet)
+7. [Query analyzer](#query-analyzer)
+8. [Query planner](#query-planner)
+9. [BM25 formula and ranking types](#bm25-formula-and-ranking-types)
+10. [Ranking statistics retrieval (PostgreSQL)](#ranking-statistics-retrieval-postgresql)
+11. [Search service pipeline](#search-service-pipeline)
+12. [Search service against PostgreSQL](#search-service-against-postgresql)
+13. [Pagination](#pagination)
+14. [Snippets](#snippets)
+15. [Fuzzy suggestions](#fuzzy-suggestions)
+16. [App startup (lifespan)](#app-startup-lifespan)
+17. [Search HTTP API](#search-http-api)
+18. [Running tests](#running-tests)
+19. [Not covered yet](#not-covered-yet)
 
 ## Inventory
 
@@ -20,10 +31,21 @@ One document for every backend test case: the tests written in `backend/tests/`,
 | Package boundary | `backend/tests/test_package_boundary.py` | 1 | 1 | Not run |
 | Ranking orchestrator | `backend/tests/unit/test_ranking_orchestrator.py` | 14 | 17 | Passed (commit `b818adc`) |
 | Full-text search | `backend/tests/integration/test_fts.py` | 14 | 25 | Passed (commit `563b83d`) |
-| Code retrieval | `backend/tests/unit/test_code.py` | 18 matrix rows | See section | Not recorded |
-| Fuzzy retrieval | `backend/tests/integration/test_fuzzy.py` | 15 | 26 | Not run |
+| Code retrieval | `backend/tests/integration/test_code.py` | 17 | See section | 1 failing (see section) |
+| Fuzzy retrieval | `backend/tests/integration/test_fuzzy.py` | 15 | 26 | Import error (see section) |
+| Query analyzer | `backend/tests/unit/test_analyzer.py` | 13 | 57 | Passed (local run 2026-11-04) |
+| Query planner | `backend/tests/unit/test_planner.py` | 11 | 28 | Passed (local run 2026-11-04) |
+| BM25 formula and ranking types | `backend/tests/unit/test_ranking.py` | 22 | 43 | Passed (local run 2026-11-04) |
+| Ranking statistics retrieval | `backend/tests/integration/test_retrieval.py` | 6 | 6 | Passed (local run 2026-11-04) |
+| Search service pipeline | `backend/tests/unit/test_search_pipeline.py` | 10 | 10 | Passed (local run 2026-11-04) |
+| Search service against PostgreSQL | `backend/tests/integration/test_search.py` | 5 | 14 | 3 failing (see section) |
+| Pagination | `backend/tests/unit/test_pagination.py` | 3 | 8 | Passed (local run 2026-11-04) |
+| Snippets | `backend/tests/unit/test_snippets.py`, `unit/test_snippet_bounds.py` | 60 | 88 | Passed (local run 2026-11-04) |
+| Fuzzy suggestions | `backend/tests/unit/test_fuzzy_suggestions.py` | 3 | 3 | Passed (local run 2026-11-04) |
+| App startup | `backend/tests/unit/test_main_lifespan_search.py` | 1 | 1 | Passed (local run 2026-11-04) |
+| Search HTTP API | `backend/tests/api/test_search_route.py`, `api/test_search.py` | 3 + 8 | 8 + 16 | Passed (local run 2026-11-04) |
 
-Empty placeholder files (0 bytes, no tests yet): `backend/tests/unit/test_analyzer.py`, `unit/test_planner.py`, `unit/test_ranking.py`, `integration/test_retrieval.py`, `api/test_search.py`.
+"Local run 2026-11-04" means Python 3.14 with PostgreSQL 16 and `TEST_DATABASE_URL` set, so the integration cases ran rather than skipped.
 
 Status rules: "Passed" is used only where a commit records a passing run. Everything else is an expected result, not a claim of passing. Record new pass/fail evidence here only after running pytest.
 
@@ -126,7 +148,9 @@ BM25 arithmetic, candidate merging, validation and ordering use the real code.
 ## Code retrieval
 
 **Component:** `retrieval/code.py` (`search_code`)  
-**Test file:** `backend/tests/unit/test_code.py`
+**Test file:** `backend/tests/integration/test_code.py`
+
+> **Known failure (2026-11-04):** `test_normalizes_query_and_binds_pagination` still expects `plainto_tsquery('simple', ...)`, but `code.py` now uses `websearch_to_tsquery('simple', ...)`. The test is stale, not the code.
 
 ### Contract
 
@@ -263,6 +287,225 @@ The PostgreSQL fixture populates a **temporary** table whose name is derived fro
 
 ---
 
+## Query analyzer
+
+**Module under test:** `backend.search.query_analyzer.analyzer.analyze_query`, `backend.search.config.SearchConfig`  
+**Test file:** `backend/tests/unit/test_analyzer.py` (moved from `integration/` on 2026-11-04: it never touches a database)
+
+| ID | Test function | Input / scenario | Expected result | Status |
+|---|---|---|---|---|
+| QA-01 | `test_valid_queries` | 19 queries: mixed whitespace, quoted phrases, `C++`, `C#`, `std::vector<T>`, `--version`, combining accents, Devanagari, emoji ZWJ, 256 chars | Whitespace collapsed outside quotes, kept inside closed quotes; NFC applied; symbols kept | Passed (local run 2026-11-04) |
+| QA-02 | `test_empty_queries` | `""`, spaces, tabs, em space | `QueryValidationError` with `EMPTY` | Passed (local run 2026-11-04) |
+| QA-03 | `test_disallowed_controls` | NUL, DEL, ANSI escape, VT, NEL, lone surrogates, noncharacters | `INVALID_UNICODE` or `DISALLOWED_CHARACTER`; raw input never in the message | Passed (local run 2026-11-04) |
+| QA-04 | `test_rejects_unsafe_format_controls` | Bidi overrides, zero-width chars, BOM, soft hyphen (10 code points) | `DISALLOWED_CHARACTER` | Passed (local run 2026-11-04) |
+| QA-05 | `test_normalized_length_rejected` | 257 chars | `TOO_LONG` | Passed (local run 2026-11-04) |
+| QA-06 | `test_raw_length_checked_before_scan` | NUL plus 1024 spaces | `TOO_LONG` (length check runs before the character scan) | Passed (local run 2026-11-04) |
+| QA-07 | `test_extra_whitespace_within_raw_limit` | 500 spaces + `python` + 500 spaces | `python` | Passed (local run 2026-11-04) |
+| QA-08 | `test_custom_config` | `max_query_length=8` | 6 chars pass, 9 chars `TOO_LONG` | Passed (local run 2026-11-04) |
+| QA-09 | `test_rejects_nonstrings` | `None`, int, dict, list, bool, bytes | `TypeError` | Passed (local run 2026-11-04) |
+| QA-10 | `test_rejects_nonconfig` | `config="bad"` | `TypeError` | Passed (local run 2026-11-04) |
+| QA-11 | `test_config_rejects_invalid_raw_limits` | raw limit below normalized limit, limits above 4096 / 16384 | `SearchConfigError` | Passed (local run 2026-11-04) |
+| QA-12 | `test_config_read_from_env` | `SEARCH_MAX_QUERY_LENGTH=512`, `SEARCH_MAX_RAW_QUERY_LENGTH=2048` | Values read | Passed (local run 2026-11-04) |
+| QA-13 | `test_invalid_env` | `SEARCH_MAX_RAW_QUERY_LENGTH=nope` | `SearchConfigError` | Passed (local run 2026-11-04) |
+
+---
+
+## Query planner
+
+**Module under test:** `backend.search.query_selector.planner.select_query_plan`  
+**Test file:** `backend/tests/unit/test_planner.py`
+
+| ID | Test function | Input / scenario | Expected result | Status |
+|---|---|---|---|---|
+| QP-01 | `test_mode_selects_targets` | `ALL`, `TEXT`, `CODE` | `(TEXT, CODE)`, `(TEXT,)`, `(CODE,)` | Passed (local run 2026-11-04) |
+| QP-02 | `test_default_mode_is_all` | No mode | `ALL`, both targets | Passed (local run 2026-11-04) |
+| QP-03 | `test_default_mode_is_used_when_mode_is_none` | `default_mode="code"`, with and without `mode="text"` | Default used only when mode is `None` | Passed (local run 2026-11-04) |
+| QP-04 | `test_mode_strings_are_trimmed_and_case_insensitive` | `"TEXT"`, `" Text "`, `"\tcode\n"`, `"ALL"` | Parsed to the matching `SearchMode` | Passed (local run 2026-11-04) |
+| QP-05 | `test_query_is_trimmed` | `"  python   async \n"` | `"python   async"` (inner spacing left to the analyzer) | Passed (local run 2026-11-04) |
+| QP-06 | `test_empty_query_is_rejected` | `""`, spaces, tabs | `ValueError` | Passed (local run 2026-11-04) |
+| QP-07 | `test_non_string_query_is_rejected` | `None`, int, bytes, list | `TypeError` | Passed (local run 2026-11-04) |
+| QP-08 | `test_unknown_mode_is_rejected` | `""`, `fuzzy`, `texts`, `all code` | `ValueError` "Unsupported search mode" | Passed (local run 2026-11-04) |
+| QP-09 | `test_non_string_mode_is_rejected` | int, float, list, bytes | `TypeError` | Passed (local run 2026-11-04) |
+| QP-10 | `test_invalid_default_mode_is_rejected_when_used` | `default_mode="nope"` | `ValueError` | Passed (local run 2026-11-04) |
+| QP-11 | `test_plan_is_immutable` | Assign to `plan.mode` | `FrozenInstanceError` | Passed (local run 2026-11-04) |
+
+---
+
+## BM25 formula and ranking types
+
+**Modules under test:** `backend.search.ranking.bm25`, `backend.search.ranking.types`, input checks in `backend.search.ranking.statistics`  
+**Test file:** `backend/tests/unit/test_ranking.py` (no database)
+
+Expected scores come from `reference()`, a textbook BM25 (`idf = ln(1 + (N − df + 0.5)/(df + 0.5))`) written separately from `bm25.py`.
+
+| ID | Test function | Input / scenario | Expected result | Status |
+|---|---|---|---|---|
+| RK-01 | `test_formula_matches_reference` | 4 parameter sets incl. `df = N`, `b = 0` | Equals `reference()` | Passed (local run 2026-11-04) |
+| RK-02 | `test_rarer_terms_score_higher` | df 2 vs df 90 of 100 | Rare > common > 0 | Passed (local run 2026-11-04) |
+| RK-03 | `test_term_frequency_saturates` | tf 1, 2, 10, 1000 | Increasing, always below `idf · (k1 + 1)` | Passed (local run 2026-11-04) |
+| RK-04 | `test_longer_documents_score_lower_when_b_positive` | dl 5 vs 50 | Shorter scores higher | Passed (local run 2026-11-04) |
+| RK-05 | `test_b_zero_ignores_document_length` | `b = 0`, dl 5 vs 500 | Same score | Passed (local run 2026-11-04) |
+| RK-06 | `test_apply_scores_every_candidate_and_sums_terms` | 3 candidates, terms `python`, `async` | Every candidate scored; per-term scores summed; no-match doc scores 0 | Passed (local run 2026-11-04) |
+| RK-07 | `test_apply_counts_repeated_query_terms_once` | `["python", "python"]` | Same as `["python"]` | Passed (local run 2026-11-04) |
+| RK-08 | `test_apply_with_no_candidates_is_empty` | No documents | `{}` | Passed (local run 2026-11-04) |
+| RK-09 | `test_apply_uses_given_parameters` | `k1 = 2, b = 0` | Matches reference with those parameters | Passed (local run 2026-11-04) |
+| RK-10 | `test_apply_rejects_invalid_terms` | `""`, `None` in terms | `ValueError` | Passed (local run 2026-11-04) |
+| RK-11 | `test_apply_rejects_wrong_argument_types` | dict instead of stats / parameters | `TypeError` | Passed (local run 2026-11-04) |
+| RK-12 | `test_bm25_parameter_defaults` | Defaults | `k1 = 1.2`, `b = 0.75` | Passed (local run 2026-11-04) |
+| RK-13 | `test_bm25_parameters_reject_invalid_values` | `k1 ≤ 0`, `b` outside 0..1, inf, NaN, bool, string | `ValueError` | Passed (local run 2026-11-04) |
+| RK-14 | `test_ranking_config_rejects_bad_weights` | Negative weight, both weights 0, wrong `bm25` type | `ValueError` / `TypeError`; one zero weight allowed | Passed (local run 2026-11-04) |
+| RK-15 | `test_corpus_statistics_reject_invalid_values` | Negative / float count, negative avgdl, empty corpus with avgdl > 0 | `ValueError` | Passed (local run 2026-11-04) |
+| RK-16 | `test_document_statistics_validation_and_freezing` | Mutate TF, id 0, tf > dl, blank term | Mapping is read-only; each invalid value raises `ValueError` | Passed (local run 2026-11-04) |
+| RK-17 | `test_channel_statistics_cross_checks` | Key ≠ document_id, more candidates than N, df > N, zero avgdl with non-empty doc, wrong value type | `ValueError` / `TypeError` | Passed (local run 2026-11-04) |
+| RK-18 | `test_ranking_statistics_requires_both_channels` | `code=None` | `TypeError` | Passed (local run 2026-11-04) |
+| RK-19 | `test_statistics_mode_is_case_insensitive` | `text`, `TEXT`, `Code` | Upper-cased mode | Passed (local run 2026-11-04) |
+| RK-20 | `test_statistics_mode_picks_vector_and_config` | `text`, `code`, `all` | `english`, `simple`; `all` raises `ValueError` | Passed (local run 2026-11-04) |
+| RK-21 | `test_statistics_reject_non_lexeme_terms` | `""`, leading space, two words, tab, 257 chars | `ValueError` | Passed (local run 2026-11-04) |
+| RK-22 | `test_statistics_term_and_id_limits` | Duplicate terms, a bare string, 33 terms, 201 IDs, id 0, `True` | Duplicates removed; limits and bad IDs rejected | Passed (local run 2026-11-04) |
+
+---
+
+## Ranking statistics retrieval (PostgreSQL)
+
+**Module under test:** `backend.search.ranking.statistics` (DF, TF, DL read from `search_index`)  
+**Test file:** `backend/tests/integration/test_retrieval.py`. Stemming, corpus averages and the BM25 flow are covered by `integration/test_ranking_statistics.py`.
+
+### Fixture
+
+Temporary `search_index` shadowing the real one (same approach as FTS). Words are chosen so the English stem equals the word.
+
+| document_id | `search_vector` (english) | `code_vector` (simple) |
+|---|---|---|
+| 1 | `python async python` (python 2, async 1, DL 3) | empty (DL 0) |
+| 2 | `python web` (DL 2) | `async def main` (DL 3) |
+| 3 | `rust` (DL 1) | `async async` (async 2, DL 2) |
+
+### Test cases
+
+| ID | Test function | Input / scenario | Expected result | Status |
+|---|---|---|---|---|
+| RS-01 | `test_document_frequencies_in_one_query` | TEXT: python, async, web, missing; CODE: async, python; empty list | `{python: 2, async: 1, web: 1, missing: 0}`, `{async: 2, python: 0}`, `{}` | Passed (local run 2026-11-04) |
+| RS-02 | `test_candidate_term_frequencies_and_lengths` | IDs 1, 2, 3, 99 in TEXT | Doc 1: DL 3, python 2, async 1; doc 2: DL 2, python 1; doc 3: DL 1, no terms; 99 left out | Passed (local run 2026-11-04) |
+| RS-03 | `test_code_channel_reads_code_vector` | IDs 1, 3 in CODE | Doc 1 DL 0; doc 3 DL 2, async 2 | Passed (local run 2026-11-04) |
+| RS-04 | `test_single_document_helpers` | `_get_term_frequency`, `_get_document_length` | 2, 0, `None` for an unindexed ID; code DL 3 | Passed (local run 2026-11-04) |
+| RS-05 | `test_load_channel_statistics_without_candidates_skips_queries` | No candidate IDs | Same corpus object, empty DF and documents | Passed (local run 2026-11-04) |
+| RS-06 | `test_load_channel_statistics_validates_inputs` | `corpus=None`, mode `ALL`, term `python async` | `TypeError`, `ValueError`, `ValueError` | Passed (local run 2026-11-04) |
+
+---
+
+## Search service pipeline
+
+**Module under test:** `backend.search.service.search_documents`, `categorize`  
+**Test file:** `backend/tests/unit/test_search_pipeline.py` (retrieval, ranking and the session are mocked)
+
+| ID | Test function | Input / scenario | Expected result | Status |
+|---|---|---|---|---|
+| SP-01 | `test_all_mode_merges_candidates_preserves_scores_and_generates_snippets` | Same doc from text (0.6) and code (0.9) | One hit with both ranks passed to BM25; BM25 score kept; snippet contains the term; query normalized | Passed (local run 2026-11-04) |
+| SP-02 | `test_text_mode_does_not_query_code` | `mode=TEXT` | Code retrieval never awaited | Passed (local run 2026-11-04) |
+| SP-03 | `test_code_mode_does_not_query_text_and_uses_code_block` | `mode=CODE` | Text retrieval never awaited; snippet keeps the code block | Passed (local run 2026-11-04) |
+| SP-04 | `test_filter_before_pagination_and_preserve_bm25_order` | Category filter with pages | Filter runs before paging; BM25 order kept; 2 DB round trips | Passed (local run 2026-11-04) |
+| SP-05 | `test_unavailable_and_invalid_urls_removed_before_paging` | Unavailable doc and invalid URL | Removed before paging | Passed (local run 2026-11-04) |
+| SP-06 | `test_no_hits_skips_bm25_and_metadata` | No retrieval hits | `[]`; ranking and metadata never queried | Passed (local run 2026-11-04) |
+| SP-07 | `test_invalid_pagination_rejected_without_db_access` | page 0 / bool, limit 0 / bool, too large | `ValueError`; no DB call | Passed (local run 2026-11-04) |
+| SP-08 | `test_uninitialized_stats_rejected_with_nonempty_retrieval` | Corpus snapshots cleared | `RuntimeError` | Passed (local run 2026-11-04) |
+| SP-09 | `test_source_category_host_must_match_domain_boundary` | `notgithub.com`, `docs.github.com`, `stackoverflow.com` | `articles`, `github`, `stackoverflow` | Passed (local run 2026-11-04) |
+| SP-10 | `test_no_eligible_metadata_skips_body_and_snippet` | Metadata filters out every hit | Body and snippet never loaded | Passed (local run 2026-11-04) |
+
+---
+
+## Search service against PostgreSQL
+
+**Module under test:** `backend.search.service.search_documents`, `categorize`  
+**Test file:** `backend/tests/integration/test_search.py` (temporary `document` and `search_index` tables)
+
+| ID | Test function | Input / scenario | Expected result | Status |
+|---|---|---|---|---|
+| SS-01 | `test_returns_frontend_shaped_results` | Query `async` | Results shaped for the frontend (url, source, snippet, tags) | Failing: `RuntimeError` BM25 corpus statistics not initialized |
+| SS-02 | `test_unavailable_documents_are_hidden` | Query matching only an unavailable doc | `[]` | Failing: same cause |
+| SS-03 | `test_category_filter_and_limit` | `category="github"` and a limit | Only the GitHub issue | Failing: same cause |
+| SS-04 | `test_no_match_returns_empty` | `kubernetes` | `[]` | Passed (local run 2026-11-04) |
+| SS-05 | `test_categorize` | 5 URL / type pairs | Expected category | Passed (local run 2026-11-04) |
+
+> **Known failure (2026-11-04):** the fixture predates BM25 ranking. It never loads corpus snapshots, so any query with hits raises `RuntimeError`. The fixture needs to load corpus statistics (as `main.lifespan` does) before searching.
+
+---
+
+## Pagination
+
+**Module under test:** `backend.search.pagination.paginate_hits`  
+**Test file:** `backend/tests/unit/test_pagination.py`
+
+| ID | Test function | Input / scenario | Expected result | Status |
+|---|---|---|---|---|
+| PG-01 | `test_pages_preserve_ranking` | 12 hits, page 2, limit 5 | IDs 6 to 10; 3 pages; has next and previous; input not mutated | Passed (local run 2026-11-04) |
+| PG-02 | `test_empty_page_and_empty_pool` | Empty pool; page past the end | 0 pages; empty page with no next | Passed (local run 2026-11-04) |
+| PG-03 | `test_invalid_args` | page 0 / bool / 500, limit 0 / bool / 51 | `ValueError` | Passed (local run 2026-11-04) |
+
+---
+
+## Snippets
+
+**Module under test:** `backend.search.snippets` (pure Python)  
+**Test files:** `backend/tests/unit/test_snippets.py`, `backend/tests/unit/test_snippet_bounds.py`
+
+| Group | Tests | What is checked | Status |
+|---|---|---|---|
+| `TestNormalizeSnippetText` | 8 | Prose whitespace collapsed, CRLF/CR normalized, NFC, code indentation kept, blank input empty, bad types rejected | Passed (local run 2026-11-04) |
+| `TestHighlightSpans` | 15 | End-exclusive offsets, case-insensitive, whole words only, longest overlapping term wins, punctuation literal, duplicates once, Unicode code points, term count and length limits | Passed (local run 2026-11-04) |
+| `TestPassageScore` | 6 | Zero for no match, distinct-term coverage rewarded, repeat bonus capped at 3, invalid passage rejected | Passed (local run 2026-11-04) |
+| `TestCandidatePassages` | 10 | Short doc returned whole, matches near the end found, sorted by relevance, slices match normalized text, prefix fallback, count capped, bad limits rejected | Passed (local run 2026-11-04) |
+| `TestGenerateSnippet` | 18 | Window around the match, description fallback, body match beats description, code mode indentation, HTML kept as plain text, one-shot generators, immutability, highlights inside the final text | Passed (local run 2026-11-04) |
+| `test_snippet_never_exceeds_character_budget` | 10 | Budgets 1 to 80, prose and code | Text never longer than the budget; highlights in range | Passed (local run 2026-11-04) |
+| `test_candidate_windows_respect_budget` | 2 | Candidate passages, prose and code | Every passage within `max_chars` | Passed (local run 2026-11-04) |
+| `test_fallback_description_is_bounded` | 1 | Long description fallback, budget 17 | Within budget, no highlights | Passed (local run 2026-11-04) |
+
+---
+
+## Fuzzy suggestions
+
+**Module under test:** `backend.search.retrieval.fuzzy.correction.suggest_query_correction`  
+**Test file:** `backend/tests/unit/test_fuzzy_suggestions.py` (vocabulary lookups mocked)
+
+| ID | Test function | Input / scenario | Expected result | Status |
+|---|---|---|---|---|
+| FS-01 | `test_corrects_spelling_using_vocabulary` | `pythonn`, candidate `python` (similarity 0.9) | Suggests `python`, edit distance 1 | Passed (local run 2026-11-04) |
+| FS-02 | `test_does_not_modify_exact_terms` | `python` exists in vocabulary | Unchanged; fuzzy lookup never awaited | Passed (local run 2026-11-04) |
+| FS-03 | `test_does_not_correct_technical_identifier` | `AsyncSession fastapi.utils` | Unchanged; fuzzy lookup never awaited | Passed (local run 2026-11-04) |
+
+---
+
+## App startup (lifespan)
+
+**Module under test:** `backend.main.lifespan`  
+**Test file:** `backend/tests/unit/test_main_lifespan_search.py`
+
+| ID | Test function | Input / scenario | Expected result | Status |
+|---|---|---|---|---|
+| LS-01 | `test_startup_loads_both_corpus_snapshots` | Lifespan with stubbed session and statistics | TEXT then CODE corpus loaded once at startup; snapshots cleared and engine disposed on shutdown | Passed (local run 2026-11-04) |
+
+---
+
+## Search HTTP API
+
+**Module under test:** `backend.api.search` (`GET /search`, `GET /search/suggest`)  
+**Test files:** `backend/tests/api/test_search_route.py` (basic contract), `backend/tests/api/test_search.py` (parameters, error mapping, suggestions). The session factory and services are stubbed; no database.
+
+| ID | Test function | Input / scenario | Expected result | Status |
+|---|---|---|---|---|
+| API-01 | `test_search_route.py::test_returns_results` | `q="  fastapi   async "`, `source=docs` | 200, `Cache-Control: no-store`, normalized query, frontend shape | Passed (local run 2026-11-04) |
+| API-02 | `test_search_route.py::test_rejects_invalid_input` | No q, blank q, 301 chars, NUL, bad source, limit 0 | 422; service not called | Passed (local run 2026-11-04) |
+| API-03 | `test_search_route.py::test_database_error_is_503` | Service raises `OperationalError` | 503; error detail not leaked | Passed (local run 2026-11-04) |
+| API-04 | `test_default_request_keeps_old_call_signature` | Only `q` | `page` and `mode` not passed to the service | Passed (local run 2026-11-04) |
+| API-05 | `test_page_and_mode_are_forwarded` | page 3, mode code, limit 50 | Forwarded as `page=3`, `mode=SearchMode.CODE`, `limit=50` | Passed (local run 2026-11-04) |
+| API-06 | `test_out_of_range_parameters_are_422` | limit 51, page 0 / −1, mode fuzzy, limit "ten", 1025-char q | 422; service not called | Passed (local run 2026-11-04) |
+| API-07 | `test_service_validation_errors_are_422` | Service raises `ValueError` / `QueryValidationError` | 422 | Passed (local run 2026-11-04) |
+| API-08 | `test_uninitialized_engine_is_503` | Service raises `RuntimeError` | 503 "Search engine is not initialized"; no detail leaked | Passed (local run 2026-11-04) |
+| API-09 | `test_suggest_returns_correction_for_normalized_query` | `/search/suggest?q=  pyhton   async ` | Service gets `pyhton async`; correction returned | Passed (local run 2026-11-04) |
+| API-10 | `test_suggest_rejects_invalid_query` | No q, blank, NUL | 422; service not called | Passed (local run 2026-11-04) |
+| API-11 | `test_suggest_database_error_is_503` | Service raises `OperationalError` | 503; detail not leaked | Passed (local run 2026-11-04) |
+
+---
+
 ## Running tests
 
 From `developers-eye/backend/` (Windows PowerShell):
@@ -275,7 +518,7 @@ poetry run pytest tests -v
 
 # Retrieval suites (integration cases need a dedicated test database)
 $env:TEST_DATABASE_URL = "postgresql+asyncpg://YOUR_USERNAME:YOUR_PASSWORD@localhost:5432/developers_eye_test"
-poetry run pytest tests/integration/test_fts.py tests/unit/test_code.py tests/integration/test_fuzzy.py -v --tb=short
+poetry run pytest tests/integration -v --tb=short
 ```
 
 - Never point `TEST_DATABASE_URL` at the crawler's production database, and never commit credentials. URL-encode reserved characters in the password.
@@ -284,13 +527,8 @@ poetry run pytest tests/integration/test_fts.py tests/unit/test_code.py tests/in
 
 ## Not covered yet
 
-| Area | Placeholder file |
-|---|---|
-| Query analyzer | `backend/tests/unit/test_analyzer.py` |
-| Query planner / `SearchMode` selection | `backend/tests/unit/test_planner.py` |
-| BM25 / statistics functions in isolation | `backend/tests/unit/test_ranking.py` |
-| Retrieval against a real PostgreSQL database | `backend/tests/integration/test_retrieval.py` |
-| Search HTTP endpoint | `backend/tests/api/test_search.py` |
+- `integration/test_fuzzy.py` imports `get_fuzzy_search` from `backend.search.retrieval.fuzzy`, which no longer exists (fuzzy now lives in `candidates.py` and `correction.py`), so the whole file fails to import.
+- `test_package_boundary.py` fails: it imports `backend.services.crawler_monitoring`, but the package is now `backend.admin_services`.
 
 ## Search pipeline cases (merged from the old backend/tests)
 

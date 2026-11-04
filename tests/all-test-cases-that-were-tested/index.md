@@ -15,31 +15,26 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ## Backend (FastAPI, search)
 
+### [backend/tests/api/test_search.py](../../backend/tests/api/test_search.py)
+
+8 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-http-api)
+
+- `test_default_request_keeps_old_call_signature`: Page 1 and mode=all are not passed, so older service signatures still work.
+- `test_page_and_mode_are_forwarded`
+- `test_out_of_range_parameters_are_422`
+- `test_service_validation_errors_are_422`
+- `test_uninitialized_engine_is_503`: RuntimeError (e.g. BM25 corpus statistics not loaded) maps to 503, without details.
+- `test_suggest_returns_correction_for_normalized_query`
+- `test_suggest_rejects_invalid_query`
+- `test_suggest_database_error_is_503`
+
 ### [backend/tests/api/test_search_route.py](../../backend/tests/api/test_search_route.py)
 
-3 cases
+3 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-http-api)
 
 - `test_returns_results`
 - `test_rejects_invalid_input`
 - `test_database_error_is_503`
-
-### [backend/tests/integration/test_analyzer.py](../../backend/tests/integration/test_analyzer.py)
-
-13 cases
-
-- `test_valid_queries`
-- `test_empty_queries`
-- `test_disallowed_controls`
-- `test_rejects_unsafe_format_controls`
-- `test_normalized_length_rejected`
-- `test_raw_length_checked_before_scan`
-- `test_extra_whitespace_within_raw_limit`
-- `test_custom_config`
-- `test_rejects_nonstrings`
-- `test_rejects_nonconfig`
-- `test_config_rejects_invalid_raw_limits`
-- `test_config_read_from_env`
-- `test_invalid_env`
 
 ### [backend/tests/integration/test_code.py](../../backend/tests/integration/test_code.py)
 
@@ -102,9 +97,32 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_invalid_limit_rejected_before_database`
 - `test_database_error_propagates_to_caller`
 
+### [backend/tests/integration/test_ranking_statistics.py](../../backend/tests/integration/test_ranking_statistics.py)
+
+7 cases · write-up: [test_case.md](../../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql)
+
+- `test_universe_is_stemmed_once_by_postgresql`
+- `test_df_matches_exact_lexemes_not_double_stems`
+- `test_text_and_code_have_independent_df`
+- `test_tf_and_dl_use_exact_indexed_positions`
+- `test_channel_corpus_counts_and_average_lengths`
+- `test_fixed_df_flows_into_bm25`
+- `test_exact_lexeme_query_handles_quoting`
+
+### [backend/tests/integration/test_retrieval.py](../../backend/tests/integration/test_retrieval.py)
+
+6 cases · write-up: [test_case.md](../../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql)
+
+- `test_document_frequencies_in_one_query`: DF per lexeme, with 0 for a lexeme no document contains.
+- `test_candidate_term_frequencies_and_lengths`: TF counts positions; DL sums all positions; unknown IDs are left out.
+- `test_code_channel_reads_code_vector`: CODE mode reads code_vector; an empty code vector has length 0.
+- `test_single_document_helpers`
+- `test_load_channel_statistics_without_candidates_skips_queries`
+- `test_load_channel_statistics_validates_inputs`
+
 ### [backend/tests/integration/test_search.py](../../backend/tests/integration/test_search.py)
 
-5 cases
+5 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-service-against-postgresql)
 
 - `test_returns_frontend_shaped_results`
 - `test_unavailable_documents_are_hidden`
@@ -118,9 +136,27 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 - `test_backend_import_and_routes_do_not_require_crawler`
 
+### [backend/tests/unit/test_analyzer.py](../../backend/tests/unit/test_analyzer.py)
+
+13 cases · write-up: [test_case.md](../../backend/tests/test_case.md#query-analyzer)
+
+- `test_valid_queries`
+- `test_empty_queries`
+- `test_disallowed_controls`
+- `test_rejects_unsafe_format_controls`
+- `test_normalized_length_rejected`
+- `test_raw_length_checked_before_scan`
+- `test_extra_whitespace_within_raw_limit`
+- `test_custom_config`
+- `test_rejects_nonstrings`
+- `test_rejects_nonconfig`
+- `test_config_rejects_invalid_raw_limits`
+- `test_config_read_from_env`
+- `test_invalid_env`
+
 ### [backend/tests/unit/test_fuzzy_suggestions.py](../../backend/tests/unit/test_fuzzy_suggestions.py)
 
-3 cases
+3 cases · write-up: [test_case.md](../../backend/tests/test_case.md#fuzzy-suggestions)
 
 - `test_corrects_spelling_using_vocabulary`
 - `test_does_not_modify_exact_terms`
@@ -128,17 +164,60 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/unit/test_main_lifespan_search.py](../../backend/tests/unit/test_main_lifespan_search.py)
 
-1 cases
+1 cases · write-up: [test_case.md](../../backend/tests/test_case.md#app-startup-lifespan)
 
 - `test_startup_loads_both_corpus_snapshots`
 
 ### [backend/tests/unit/test_pagination.py](../../backend/tests/unit/test_pagination.py)
 
-3 cases
+3 cases · write-up: [test_case.md](../../backend/tests/test_case.md#pagination)
 
 - `test_pages_preserve_ranking`
 - `test_empty_page_and_empty_pool`
 - `test_invalid_args`
+
+### [backend/tests/unit/test_planner.py](../../backend/tests/unit/test_planner.py)
+
+11 cases · write-up: [test_case.md](../../backend/tests/test_case.md#query-planner)
+
+- `test_mode_selects_targets`: Each mode picks its retrieval channels; ALL searches text first, then code.
+- `test_default_mode_is_all`: No mode and no default searches both channels.
+- `test_default_mode_is_used_when_mode_is_none`: default_mode applies only when the caller gave no mode.
+- `test_mode_strings_are_trimmed_and_case_insensitive`: Mode strings from query parameters are normalized before parsing.
+- `test_query_is_trimmed`: Outer whitespace is removed; inner spacing is left to the analyzer.
+- `test_empty_query_is_rejected`
+- `test_non_string_query_is_rejected`
+- `test_unknown_mode_is_rejected`
+- `test_non_string_mode_is_rejected`
+- `test_invalid_default_mode_is_rejected_when_used`
+- `test_plan_is_immutable`: SearchPlan is frozen, so a plan cannot be changed after selection.
+
+### [backend/tests/unit/test_ranking.py](../../backend/tests/unit/test_ranking.py)
+
+22 cases · write-up: [test_case.md](../../backend/tests/test_case.md#bm25-formula-and-ranking-types)
+
+- `test_formula_matches_reference`
+- `test_rarer_terms_score_higher`
+- `test_term_frequency_saturates`: More occurrences score higher, but never past idf * (k1 + 1).
+- `test_longer_documents_score_lower_when_b_positive`
+- `test_b_zero_ignores_document_length`
+- `test_apply_scores_every_candidate_and_sums_terms`
+- `test_apply_counts_repeated_query_terms_once`
+- `test_apply_with_no_candidates_is_empty`
+- `test_apply_uses_given_parameters`
+- `test_apply_rejects_invalid_terms`
+- `test_apply_rejects_wrong_argument_types`
+- `test_bm25_parameter_defaults`
+- `test_bm25_parameters_reject_invalid_values`
+- `test_ranking_config_rejects_bad_weights`
+- `test_corpus_statistics_reject_invalid_values`
+- `test_document_statistics_validation_and_freezing`
+- `test_channel_statistics_cross_checks`
+- `test_ranking_statistics_requires_both_channels`
+- `test_statistics_mode_is_case_insensitive`
+- `test_statistics_mode_picks_vector_and_config`
+- `test_statistics_reject_non_lexeme_terms`
+- `test_statistics_term_and_id_limits`
 
 ### [backend/tests/unit/test_ranking_orchestrator.py](../../backend/tests/unit/test_ranking_orchestrator.py)
 
@@ -161,7 +240,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/unit/test_search_pipeline.py](../../backend/tests/unit/test_search_pipeline.py)
 
-10 cases
+10 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-service-pipeline)
 
 - `test_all_mode_merges_candidates_preserves_scores_and_generates_snippets`
 - `test_text_mode_does_not_query_code`
@@ -176,7 +255,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/unit/test_snippet_bounds.py](../../backend/tests/unit/test_snippet_bounds.py)
 
-3 cases
+3 cases · write-up: [test_case.md](../../backend/tests/test_case.md#snippets)
 
 - `test_snippet_never_exceeds_character_budget`
 - `test_candidate_windows_respect_budget`
@@ -184,7 +263,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/unit/test_snippets.py](../../backend/tests/unit/test_snippets.py)
 
-57 cases
+57 cases · write-up: [test_case.md](../../backend/tests/test_case.md#snippets)
 
 - `TestNormalizeSnippetText.test_collapses_prose_whitespace`
 - `TestNormalizeSnippetText.test_normalizes_windows_and_old_mac_line_endings`
@@ -368,7 +447,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [crawler/tests/indexer/test_vocabulary.py](../../crawler/tests/indexer/test_vocabulary.py)
 
-7 cases
+7 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_vocabularypy)
 
 - `test_vocabulary_filters_artifacts_and_keeps_developer_terms`
 - `test_vocabulary_rejects_non_string_lexemes`
@@ -380,7 +459,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [crawler/tests/indexer/test_vocabulary_rebuild_cli.py](../../crawler/tests/indexer/test_vocabulary_rebuild_cli.py)
 
-6 cases
+6 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_vocabulary_rebuild_clipy)
 
 - `test_default_options_are_one_shot`
 - `test_explicit_options`
@@ -393,7 +472,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [crawler/tests/crawler/fetcher/test_fetcher.py](../../crawler/tests/crawler/fetcher/test_fetcher.py)
 
-33 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#developers-eye-fetcher-tests)
+33 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_fetcherpy)
 
 - `test_chunk_size_is_16_kib`
 - `test_reject_invalid_chunk_size`
@@ -833,7 +912,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/writer/test_database_writer.py](../../crawler/tests/crawler/writer/test_database_writer.py)
 
-7 cases
+7 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_database_writerpy)
 
 - `test_attempt_starts_and_finishes`
 - `test_attempt_cannot_be_finished_twice`
@@ -863,7 +942,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 
 ### [frontend/tests/indexer-report-unit.mjs](../../frontend/tests/indexer-report-unit.mjs)
 
-Script-style file, run as a whole
+Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#indexer-report-unitmjs)
 
 ### [frontend/tests/integration.mjs](../../frontend/tests/integration.mjs)
 
@@ -872,30 +951,4 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 ### [frontend/tests/preview-crawler.mjs](../../frontend/tests/preview-crawler.mjs)
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#preview-crawlermjs)
-
-## Empty placeholders (no tests yet)
-
-- [backend/tests/api/test_search.py](../../backend/tests/api/test_search.py)
-- [backend/tests/integration/test_retrieval.py](../../backend/tests/integration/test_retrieval.py)
-- [backend/tests/unit/test_analyzer.py](../../backend/tests/unit/test_analyzer.py)
-- [backend/tests/unit/test_planner.py](../../backend/tests/unit/test_planner.py)
-- [backend/tests/unit/test_ranking.py](../../backend/tests/unit/test_ranking.py)
-
-## Not in any write-up yet
-
-These test files have no matching heading in a `test_case.md`.
-
-- [backend/tests/api/test_search_route.py](../../backend/tests/api/test_search_route.py)
-- [backend/tests/integration/test_analyzer.py](../../backend/tests/integration/test_analyzer.py)
-- [backend/tests/integration/test_search.py](../../backend/tests/integration/test_search.py)
-- [backend/tests/unit/test_fuzzy_suggestions.py](../../backend/tests/unit/test_fuzzy_suggestions.py)
-- [backend/tests/unit/test_main_lifespan_search.py](../../backend/tests/unit/test_main_lifespan_search.py)
-- [backend/tests/unit/test_pagination.py](../../backend/tests/unit/test_pagination.py)
-- [backend/tests/unit/test_search_pipeline.py](../../backend/tests/unit/test_search_pipeline.py)
-- [backend/tests/unit/test_snippet_bounds.py](../../backend/tests/unit/test_snippet_bounds.py)
-- [backend/tests/unit/test_snippets.py](../../backend/tests/unit/test_snippets.py)
-- [crawler/tests/crawler/writer/test_database_writer.py](../../crawler/tests/crawler/writer/test_database_writer.py)
-- [crawler/tests/indexer/test_vocabulary.py](../../crawler/tests/indexer/test_vocabulary.py)
-- [crawler/tests/indexer/test_vocabulary_rebuild_cli.py](../../crawler/tests/indexer/test_vocabulary_rebuild_cli.py)
-- [frontend/tests/indexer-report-unit.mjs](../../frontend/tests/indexer-report-unit.mjs)
 <!-- test-index:end -->

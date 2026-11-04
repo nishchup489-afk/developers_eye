@@ -26,12 +26,12 @@ indexes refresh on every commit. `--check` exits 1 when they are stale.
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**63 test files, 553 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**68 test files, 607 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 14 | 159 | `cd backend && poetry run pytest` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 19 | 213 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 10 | 93 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 32 | 301 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 7 | 0 | npm scripts in `frontend/package.json` (see below) |
@@ -45,26 +45,26 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | File | Kind | Cases | Write-up |
 |---|---|---:|---|
 | [__init__.py](../backend/tests/__init__.py) | helper |  |  |
-| [api/test_search.py](../backend/tests/api/test_search.py) | empty placeholder |  |  |
-| [api/test_search_route.py](../backend/tests/api/test_search_route.py) | tests | 3 |  |
-| [integration/test_analyzer.py](../backend/tests/integration/test_analyzer.py) | tests | 13 |  |
+| [api/test_search.py](../backend/tests/api/test_search.py) | tests | 8 | [test_case.md](../backend/tests/test_case.md#search-http-api) |
+| [api/test_search_route.py](../backend/tests/api/test_search_route.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#search-http-api) |
 | [integration/test_code.py](../backend/tests/integration/test_code.py) | tests | 17 | [test_case.md](../backend/tests/test_case.md#code-retrieval) |
 | [integration/test_fts.py](../backend/tests/integration/test_fts.py) | tests | 14 | [test_case.md](../backend/tests/test_case.md#full-text-search-fts) |
 | [integration/test_fuzzy.py](../backend/tests/integration/test_fuzzy.py) | tests | 15 | [test_case.md](../backend/tests/test_case.md#fuzzy-retrieval) |
-| [integration/test_retrieval.py](../backend/tests/integration/test_retrieval.py) | empty placeholder |  |  |
-| [integration/test_search.py](../backend/tests/integration/test_search.py) | tests | 5 |  |
+| [integration/test_ranking_statistics.py](../backend/tests/integration/test_ranking_statistics.py) | tests | 7 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
+| [integration/test_retrieval.py](../backend/tests/integration/test_retrieval.py) | tests | 6 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
+| [integration/test_search.py](../backend/tests/integration/test_search.py) | tests | 5 | [test_case.md](../backend/tests/test_case.md#search-service-against-postgresql) |
 | [test_case.md](../backend/tests/test_case.md) | write-up |  |  |
 | [test_package_boundary.py](../backend/tests/test_package_boundary.py) | tests | 1 | [test_case.md](../backend/tests/test_case.md#package-boundary) |
-| [unit/test_analyzer.py](../backend/tests/unit/test_analyzer.py) | empty placeholder |  |  |
-| [unit/test_fuzzy_suggestions.py](../backend/tests/unit/test_fuzzy_suggestions.py) | tests | 3 |  |
-| [unit/test_main_lifespan_search.py](../backend/tests/unit/test_main_lifespan_search.py) | tests | 1 |  |
-| [unit/test_pagination.py](../backend/tests/unit/test_pagination.py) | tests | 3 |  |
-| [unit/test_planner.py](../backend/tests/unit/test_planner.py) | empty placeholder |  |  |
-| [unit/test_ranking.py](../backend/tests/unit/test_ranking.py) | empty placeholder |  |  |
+| [unit/test_analyzer.py](../backend/tests/unit/test_analyzer.py) | tests | 13 | [test_case.md](../backend/tests/test_case.md#query-analyzer) |
+| [unit/test_fuzzy_suggestions.py](../backend/tests/unit/test_fuzzy_suggestions.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#fuzzy-suggestions) |
+| [unit/test_main_lifespan_search.py](../backend/tests/unit/test_main_lifespan_search.py) | tests | 1 | [test_case.md](../backend/tests/test_case.md#app-startup-lifespan) |
+| [unit/test_pagination.py](../backend/tests/unit/test_pagination.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#pagination) |
+| [unit/test_planner.py](../backend/tests/unit/test_planner.py) | tests | 11 | [test_case.md](../backend/tests/test_case.md#query-planner) |
+| [unit/test_ranking.py](../backend/tests/unit/test_ranking.py) | tests | 22 | [test_case.md](../backend/tests/test_case.md#bm25-formula-and-ranking-types) |
 | [unit/test_ranking_orchestrator.py](../backend/tests/unit/test_ranking_orchestrator.py) | tests | 14 | [test_case.md](../backend/tests/test_case.md#ranking-orchestrator) |
-| [unit/test_search_pipeline.py](../backend/tests/unit/test_search_pipeline.py) | tests | 10 |  |
-| [unit/test_snippet_bounds.py](../backend/tests/unit/test_snippet_bounds.py) | tests | 3 |  |
-| [unit/test_snippets.py](../backend/tests/unit/test_snippets.py) | tests | 57 |  |
+| [unit/test_search_pipeline.py](../backend/tests/unit/test_search_pipeline.py) | tests | 10 | [test_case.md](../backend/tests/test_case.md#search-service-pipeline) |
+| [unit/test_snippet_bounds.py](../backend/tests/unit/test_snippet_bounds.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#snippets) |
+| [unit/test_snippets.py](../backend/tests/unit/test_snippets.py) | tests | 57 | [test_case.md](../backend/tests/test_case.md#snippets) |
 
 ### Indexer
 
@@ -79,8 +79,8 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [test_selector.py](../crawler/tests/indexer/test_selector.py) | tests | 7 | [test_case.md](../crawler/tests/test_case.md#test_selectorpy) |
 | [test_service_writer.py](../crawler/tests/indexer/test_service_writer.py) | tests | 9 | [test_case.md](../crawler/tests/test_case.md#test_service_writerpy) |
 | [test_vector.py](../crawler/tests/indexer/test_vector.py) | tests | 29 | [test_case.md](../crawler/tests/test_case.md#test_vectorpy) |
-| [test_vocabulary.py](../crawler/tests/indexer/test_vocabulary.py) | tests | 7 |  |
-| [test_vocabulary_rebuild_cli.py](../crawler/tests/indexer/test_vocabulary_rebuild_cli.py) | tests | 6 |  |
+| [test_vocabulary.py](../crawler/tests/indexer/test_vocabulary.py) | tests | 7 | [test_case.md](../crawler/tests/test_case.md#test_vocabularypy) |
+| [test_vocabulary_rebuild_cli.py](../crawler/tests/indexer/test_vocabulary_rebuild_cli.py) | tests | 6 | [test_case.md](../crawler/tests/test_case.md#test_vocabulary_rebuild_clipy) |
 
 ### Crawler
 
@@ -89,7 +89,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [README.md](../crawler/tests/README.md) | write-up |  |  |
 | [benchmarks/bench_claim.py](../crawler/tests/benchmarks/bench_claim.py) | helper |  | [test_case.md](../crawler/tests/test_case.md#claim-benchmark) |
 | [crawler/fetcher/conftest.py](../crawler/tests/crawler/fetcher/conftest.py) | fixtures |  | [test_case.md](../crawler/tests/test_case.md#conftestpy) |
-| [crawler/fetcher/test_fetcher.py](../crawler/tests/crawler/fetcher/test_fetcher.py) | tests | 33 | [test_case.md](../crawler/tests/test_case.md#developers-eye-fetcher-tests) |
+| [crawler/fetcher/test_fetcher.py](../crawler/tests/crawler/fetcher/test_fetcher.py) | tests | 33 | [test_case.md](../crawler/tests/test_case.md#test_fetcherpy) |
 | [crawler/frontier/test_enqueue_target.py](../crawler/tests/crawler/frontier/test_enqueue_target.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_enqueue_targetpy) |
 | [crawler/frontier/test_scope.py](../crawler/tests/crawler/frontier/test_scope.py) | tests | 5 | [test_case.md](../crawler/tests/test_case.md#test_scopepy) |
 | [crawler/frontier/test_urls.py](../crawler/tests/crawler/frontier/test_urls.py) | tests | 3 | [test_case.md](../crawler/tests/test_case.md#test_urlspy) |
@@ -120,7 +120,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [crawler/worker/test_monitoring.py](../crawler/tests/crawler/worker/test_monitoring.py) | tests | 4 | [test_case.md](../crawler/tests/test_case.md#test_monitoringpy) |
 | [crawler/worker/test_postgres_pipeline.py](../crawler/tests/crawler/worker/test_postgres_pipeline.py) | tests | 4 | [test_case.md](../crawler/tests/test_case.md#test_postgres_pipelinepy) |
 | [crawler/worker/test_recovery.py](../crawler/tests/crawler/worker/test_recovery.py) | tests | 5 | [test_case.md](../crawler/tests/test_case.md#test_recoverypy) |
-| [crawler/writer/test_database_writer.py](../crawler/tests/crawler/writer/test_database_writer.py) | tests | 7 |  |
+| [crawler/writer/test_database_writer.py](../crawler/tests/crawler/writer/test_database_writer.py) | tests | 7 | [test_case.md](../crawler/tests/test_case.md#test_database_writerpy) |
 | [test_case.md](../crawler/tests/test_case.md) | write-up |  |  |
 
 ### Frontend (Next.js, admin)
@@ -139,7 +139,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [crawler-monitor-unit.mjs](../frontend/tests/crawler-monitor-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#crawler-monitor-unitmjs) |
 | [fixtures/crawler-monitor.mjs](../frontend/tests/fixtures/crawler-monitor.mjs) | fixture data |  | [test_case.md](../frontend/tests/test_case.md#fixtures) |
 | [fixtures/crawler-report.mjs](../frontend/tests/fixtures/crawler-report.mjs) | fixture data |  | [test_case.md](../frontend/tests/test_case.md#fixtures) |
-| [indexer-report-unit.mjs](../frontend/tests/indexer-report-unit.mjs) | tests | script |  |
+| [indexer-report-unit.mjs](../frontend/tests/indexer-report-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#indexer-report-unitmjs) |
 | [integration.mjs](../frontend/tests/integration.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#integrationmjs) |
 | [preview-crawler.mjs](../frontend/tests/preview-crawler.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#preview-crawlermjs) |
 | [test_case.md](../frontend/tests/test_case.md) | write-up |  |  |
