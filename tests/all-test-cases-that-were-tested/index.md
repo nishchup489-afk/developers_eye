@@ -458,6 +458,17 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_missing_frequency_is_logged_not_fatal`
 - `test_multiple_additions_do_not_repeat_upserts`
 
+### [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
+
+6 cases
+
+- `test_concurrent_writers_never_lose_a_count`
+- `test_removal_decrements_then_deletes_at_zero`
+- `test_add_and_remove_in_one_batch_cancel_out`
+- `test_rolled_back_write_queues_nothing`
+- `test_large_backlog_drains_across_batches_and_empties_the_queue`
+- `test_second_drainer_steps_aside_and_loses_nothing`
+
 ### [crawler/tests/indexer/test_vocabulary_rebuild_cli.py](../../crawler/tests/indexer/test_vocabulary_rebuild_cli.py)
 
 6 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_vocabulary_rebuild_clipy)
@@ -976,4 +987,5 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
 - [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
+- [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
 <!-- test-index:end -->

@@ -26,13 +26,13 @@ indexes refresh on every commit. `--check` exits 1 when they are stale.
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**70 test files, 613 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**71 test files, 619 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
 | [Backend (FastAPI, search)](#backend-fastapi-search) | 20 | 209 | `cd backend && poetry run pytest` |
-| [Indexer](#indexer) | 10 | 93 | `cd crawler && poetry run pytest tests/indexer` |
+| [Indexer](#indexer) | 11 | 99 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 33 | 311 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 7 | 0 | npm scripts in `frontend/package.json` (see below) |
 
@@ -81,6 +81,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [test_service_writer.py](../crawler/tests/indexer/test_service_writer.py) | tests | 9 | [test_case.md](../crawler/tests/test_case.md#test_service_writerpy) |
 | [test_vector.py](../crawler/tests/indexer/test_vector.py) | tests | 29 | [test_case.md](../crawler/tests/test_case.md#test_vectorpy) |
 | [test_vocabulary.py](../crawler/tests/indexer/test_vocabulary.py) | tests | 7 | [test_case.md](../crawler/tests/test_case.md#test_vocabularypy) |
+| [test_vocabulary_outbox.py](../crawler/tests/indexer/test_vocabulary_outbox.py) | tests | 6 |  |
 | [test_vocabulary_rebuild_cli.py](../crawler/tests/indexer/test_vocabulary_rebuild_cli.py) | tests | 6 | [test_case.md](../crawler/tests/test_case.md#test_vocabulary_rebuild_clipy) |
 
 ### Crawler
@@ -89,6 +90,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 |---|---|---:|---|
 | [README.md](../crawler/tests/README.md) | write-up |  |  |
 | [benchmarks/bench_claim.py](../crawler/tests/benchmarks/bench_claim.py) | helper |  | [test_case.md](../crawler/tests/test_case.md#claim-benchmark) |
+| [benchmarks/bench_indexer.py](../crawler/tests/benchmarks/bench_indexer.py) | helper |  |  |
 | [benchmarks/fake_web_load.py](../crawler/tests/benchmarks/fake_web_load.py) | helper |  |  |
 | [crawler/fetcher/conftest.py](../crawler/tests/crawler/fetcher/conftest.py) | fixtures |  | [test_case.md](../crawler/tests/test_case.md#conftestpy) |
 | [crawler/fetcher/test_fetcher.py](../crawler/tests/crawler/fetcher/test_fetcher.py) | tests | 33 | [test_case.md](../crawler/tests/test_case.md#test_fetcherpy) |
