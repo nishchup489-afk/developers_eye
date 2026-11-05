@@ -295,7 +295,7 @@ async def get_corpus_statistics(
         table if total <= sample_size
         else table.tablesample(func.system(100.0 * sample_size / total))
     )
-    t = _lexemes(vector)
+    t = _lexemes(sampled.c[vector.key])
     lengths = (
         select(
             sampled.c.document_id,

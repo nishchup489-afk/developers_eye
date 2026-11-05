@@ -88,7 +88,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/integration/test_ranking_statistics.py](../../backend/tests/integration/test_ranking_statistics.py)
 
-7 cases · write-up: [test_case.md](../../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql)
+8 cases · write-up: [test_case.md](../../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql)
 
 - `test_universe_is_stemmed_once_by_postgresql`
 - `test_df_matches_exact_lexemes_not_double_stems`
@@ -97,6 +97,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_channel_corpus_counts_and_average_lengths`
 - `test_fixed_df_flows_into_bm25`
 - `test_exact_lexeme_query_handles_quoting`
+- `test_corpus_statistics_sample_path_runs_on_a_large_index`: Above the sample size avgdl comes from TABLESAMPLE, on a different FROM.
 
 ### [backend/tests/integration/test_retrieval.py](../../backend/tests/integration/test_retrieval.py)
 

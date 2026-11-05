@@ -243,3 +243,13 @@ async def test_exact_lexeme_query_handles_quoting(
     assert await _get_document_frequencies(
         db_session, (lexeme,), "CODE"
     ) == {lexeme: 1}
+
+
+@pytest.mark.asyncio
+async def test_corpus_statistics_sample_path_runs_on_a_large_index(db_session: AsyncSession):
+    """Above the sample size avgdl comes from TABLESAMPLE, on a different FROM."""
+    full = await get_corpus_statistics(db_session, "TEXT")
+    assert full.document_count > 1
+    sampled = await get_corpus_statistics(db_session, "TEXT", sample_size=1)
+    assert sampled.document_count == full.document_count
+    assert sampled.average_document_length >= 0
