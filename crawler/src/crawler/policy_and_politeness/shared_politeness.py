@@ -94,13 +94,14 @@ class SharedPolitenessManager(PolitenessManager):
         because the holder usually finishes long before the hold would expire.
         """
         async with self.session_factory() as session, session.begin():
-            taken = await session.scalar(_TAKE, {"host": host, "hold": self.hold_seconds})
+            take = {"host": host, "hold": self.hold_seconds}
+            taken = await session.scalar(_TAKE, take)
             if taken is not None:
                 return None
             backoff = await session.scalar(_WAIT, {"host": host})
-            if backoff is None:
+            if backoff is None:  # First visit, e.g. a redirect to a new host.
                 await session.execute(_REGISTER, {"host": host})
-                return 0.0
+                return None if await session.scalar(_TAKE, take) is not None else 0.0
             return max(float(backoff), 0.0)
 
     async def acquire(self, url: str) -> str:
