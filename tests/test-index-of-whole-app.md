@@ -89,6 +89,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 |---|---|---:|---|
 | [README.md](../crawler/tests/README.md) | write-up |  |  |
 | [benchmarks/bench_claim.py](../crawler/tests/benchmarks/bench_claim.py) | helper |  | [test_case.md](../crawler/tests/test_case.md#claim-benchmark) |
+| [benchmarks/fake_web_load.py](../crawler/tests/benchmarks/fake_web_load.py) | helper |  |  |
 | [crawler/fetcher/conftest.py](../crawler/tests/crawler/fetcher/conftest.py) | fixtures |  | [test_case.md](../crawler/tests/test_case.md#conftestpy) |
 | [crawler/fetcher/test_fetcher.py](../crawler/tests/crawler/fetcher/test_fetcher.py) | tests | 33 | [test_case.md](../crawler/tests/test_case.md#test_fetcherpy) |
 | [crawler/frontier/test_enqueue_target.py](../crawler/tests/crawler/frontier/test_enqueue_target.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_enqueue_targetpy) |
