@@ -1,7 +1,7 @@
 ---
 id: ADR-0036
 title: Keep vocabulary maintenance transactional and rebuild it with a one-shot CLI
-status: accepted
+status: superseded
 date: '2026-11-02'
 area: indexer
 feature: vocubulary
@@ -11,7 +11,7 @@ code:
 - crawler/src/indexer/writer.py
 - crawler/src/crawler/worker/jobs/utility.py
 supersedes: null
-superseded_by: null
+superseded_by: ADR-0043
 related:
 - ADR-0002
 - INC-0007
