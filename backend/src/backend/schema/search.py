@@ -7,6 +7,8 @@ from pydantic import BaseModel
 SearchCategory = Literal[
     "docs", "github", "stackoverflow", "reddit", "articles", "events", "practice"
 ]
+# What a request may filter by: any category, or the combined Discussions view.
+SearchFilter = SearchCategory | Literal["discussions"]
 
 
 class SearchResultOut(BaseModel):

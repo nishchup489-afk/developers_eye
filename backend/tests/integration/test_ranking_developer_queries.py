@@ -86,7 +86,8 @@ async def ranking_session():
                         CREATE TEMP TABLE search_index (
                             document_id BIGINT PRIMARY KEY,
                             search_vector TSVECTOR NOT NULL,
-                            code_vector TSVECTOR NOT NULL
+                            code_vector TSVECTOR NOT NULL,
+                            category TEXT NOT NULL DEFAULT 'articles'
                         ) ON COMMIT DROP
                         """
                     )

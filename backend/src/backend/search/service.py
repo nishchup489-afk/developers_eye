@@ -3,10 +3,10 @@
 Analyzer -> selector -> text/code retrieval -> merge -> BM25 ->
 metadata filtering -> pagination -> snippets -> public result objects.
 
-CorpusStatistics are prepared once during application startup, not scanned
-for every query. The snapshot becomes stale as the index changes; refresh
-it operationally (initially by restarting the application) after large
-index updates. This remains approximate candidate-set BM25 ranking.
+CorpusStatistics come from a snapshot that main.py refreshes in the background,
+never from a scan per query. A snapshot trails the index slightly, and
+load_channel_statistics keeps it consistent with live counts. This remains
+approximate candidate-set BM25 ranking.
 
 Fuzzy query correction is deliberately not silently applied. The current
 fuzzy candidate lookup/correction must be repaired and its suggestion
@@ -23,13 +23,15 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.models.documents import Document
-from backend.schema.search import SearchCategory, SearchResultOut
+from backend.schema.search import SearchFilter, SearchResultOut
+from backend.search.categories import categories_for_filter, categorize
 from backend.search.config import SearchConfig
 from backend.search.merge import merge_hits
 from backend.search.pagination import paginate_hits
 from backend.search.query_analyzer.analyzer import analyze_query
 from backend.search.query_selector.planner import SearchMode, select_query_plan
 from backend.search.ranking.orchestrator import rank_candidates
+from backend.search.ranking.statistics import DocumentFrequencyCache
 from backend.search.ranking.types import CorpusStatistics
 from backend.search.retrieval.code import search_code
 from backend.search.retrieval.fts import search_text
@@ -39,7 +41,7 @@ from backend.search.types import RankedHit, RetrievalHit
 CANDIDATES_PER_CHANNEL = 100  # ranker hard limit: 200 unique IDs
 MAX_SNIPPET_SOURCE_CHARS = 12_000
 
-# Per-worker, immutable snapshots; set by main.py at startup.
+# Per-worker, immutable snapshots; installed and refreshed by main.py.
 @dataclass(frozen=True, slots=True)
 class _CorpusSnapshots:
     text: CorpusStatistics
@@ -47,6 +49,7 @@ class _CorpusSnapshots:
 
 
 _corpus_snapshots: _CorpusSnapshots | None = None
+_df_cache = DocumentFrequencyCache()
 
 
 def set_corpus_statistics(text: CorpusStatistics, code: CorpusStatistics) -> None:
@@ -61,39 +64,7 @@ def clear_corpus_statistics() -> None:
     """Discard the cached snapshot on application shutdown."""
     global _corpus_snapshots
     _corpus_snapshots = None
-
-
-def categorize(url: str, document_type: str) -> SearchCategory:
-    """Assign the existing frontend's supported source category."""
-    try:
-        host = (urlsplit(url).hostname or "").lower()
-    except ValueError:
-        return "articles"
-
-    platform_categories: tuple[tuple[str, SearchCategory], ...] = (
-        ("github.com", "github"),
-        ("gitlab.com", "github"),
-        ("stackoverflow.com", "stackoverflow"),
-        ("stackexchange.com", "stackoverflow"),
-        ("reddit.com", "reddit"),
-        ("leetcode.com", "practice"),
-        ("hackerrank.com", "practice"),
-        ("exercism.org", "practice"),
-        ("codewars.com", "practice"),
-    )
-    for domain, category in platform_categories:
-        if host == domain or host.endswith("." + domain):
-            return category
-    by_type: dict[str, SearchCategory] = {
-        "documentation": "docs",
-        "tutorial": "articles",
-        "blog": "articles",
-        "question": "stackoverflow",
-        "issue": "github",
-        "repository": "github",
-        "event": "events",
-    }
-    return by_type.get(document_type, "articles")
+    _df_cache.clear()
 
 
 def _valid_url(url: str) -> bool:
@@ -134,13 +105,14 @@ async def _retrieve_candidates(
     session: AsyncSession,
     query: str,
     mode: SearchMode,
+    categories: tuple[str, ...] | None = None,
 ) -> list[RetrievalHit]:
     """Run retrieval paths sequentially on one SQLAlchemy AsyncSession."""
     groups: list[list[RetrievalHit]] = []
     if mode in (SearchMode.ALL, SearchMode.TEXT):
-        groups.append(await search_text(session, query, limit=CANDIDATES_PER_CHANNEL))
+        groups.append(await search_text(session, query, limit=CANDIDATES_PER_CHANNEL, categories=categories))
     if mode in (SearchMode.ALL, SearchMode.CODE):
-        code_hits = await search_code(session, query, limit=CANDIDATES_PER_CHANNEL)
+        code_hits = await search_code(session, query, limit=CANDIDATES_PER_CHANNEL, categories=categories)
         groups.append([
             RetrievalHit(document_id=hit.document_id, code_rank=hit.score)
             for hit in code_hits
@@ -151,7 +123,7 @@ async def _retrieve_candidates(
 async def _metadata_for_candidates(
     session: AsyncSession,
     ranked: list[RankedHit],
-    category: SearchCategory | None,
+    categories: tuple[str, ...] | None,
 ) -> tuple[list[RankedHit], dict[int, object]]:
     """Filter available, URL-valid and category-compatible documents before paging."""
     if not ranked:
@@ -173,11 +145,11 @@ async def _metadata_for_candidates(
         if hit.document_id in meta
         and _valid_url(meta[hit.document_id].canonical_url)
         and (
-            category is None
+            categories is None
             or categorize(
                 meta[hit.document_id].canonical_url,
                 meta[hit.document_id].document_type,
-            ) == category
+            ) in categories
         )
     ]
     return eligible, meta
@@ -187,7 +159,7 @@ async def search_documents(
     session: AsyncSession,
     query: str,
     *,
-    category: SearchCategory | None = None,
+    category: SearchFilter | None = None,
     limit: int = 20,
     page: int = 1,
     mode: SearchMode | str = SearchMode.ALL,
@@ -207,7 +179,8 @@ async def search_documents(
 
     normalized = analyze_query(query, config=settings)
     plan = select_query_plan(normalized, mode=mode)
-    candidates = await _retrieve_candidates(session, plan.query, plan.mode)
+    categories = categories_for_filter(category)
+    candidates = await _retrieve_candidates(session, plan.query, plan.mode, categories)
     if not candidates:
         return []
 
@@ -223,8 +196,9 @@ async def search_documents(
         text_corpus=snapshot.text,
         code_corpus=snapshot.code,
         tokenizer_config=settings,
+        df_cache=_df_cache,
     )
-    eligible, metadata = await _metadata_for_candidates(session, ranked, category)
+    eligible, metadata = await _metadata_for_candidates(session, ranked, categories)
     page_result = paginate_hits(eligible, page=page, limit=limit, config=settings)
     if not page_result.hits:
         return []

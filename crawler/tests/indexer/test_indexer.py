@@ -63,6 +63,7 @@ CREATE TEMP TABLE search_index (
     document_id BIGINT PRIMARY KEY REFERENCES document(id) ON DELETE CASCADE,
     search_vector TSVECTOR NOT NULL,
     code_vector TSVECTOR NOT NULL,
+    category TEXT NOT NULL DEFAULT 'articles',
     indexed_hash TEXT NOT NULL,
     indexed_at TIMESTAMPTZ NOT NULL DEFAULT now()
 ) ON COMMIT PRESERVE ROWS

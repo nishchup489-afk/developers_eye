@@ -12,6 +12,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.models import SearchIndex
 from backend.search.types import RetrievalHit
 
+CANDIDATE_POOL = 20_000
+
 
 async def get_full_text_search(
     query: str,
@@ -62,8 +64,14 @@ async def search_text(
     query: str,
     *,
     limit: int = 100,
+    categories: tuple[str, ...] | None = None,
 ) -> list[RetrievalHit]:
-    """Return text matches ranked provisionally by PostgreSQL."""
+    """Return text matches ranked provisionally by PostgreSQL.
+
+    ts_rank_cd must read each matching vector, so ranking every match of a common
+    word would take seconds at millions of documents. Ranking stops at
+    CANDIDATE_POOL matches, and category filters apply before that limit.
+    """
     if not isinstance(query, str):
         raise TypeError("query must be a string")
     normalized = query.strip()
@@ -75,11 +83,16 @@ async def search_text(
         return []
 
     tsquery = func.websearch_to_tsquery("english", normalized)
-    score = func.ts_rank_cd(SearchIndex.search_vector, tsquery).label("score")
+    matches = select(SearchIndex.document_id, SearchIndex.search_vector).where(
+        SearchIndex.search_vector.bool_op("@@")(tsquery)
+    )
+    if categories is not None:
+        matches = matches.where(SearchIndex.category.in_(categories))
+    pool = matches.limit(CANDIDATE_POOL).subquery()
+    score = func.ts_rank_cd(pool.c.search_vector, tsquery).label("score")
     statement = (
-        select(SearchIndex.document_id, score)
-        .where(SearchIndex.search_vector.bool_op("@@")(tsquery))
-        .order_by(score.desc(), SearchIndex.document_id.asc())
+        select(pool.c.document_id, score)
+        .order_by(score.desc(), pool.c.document_id.asc())
         .limit(limit)
     )
     rows = (await session.execute(statement)).all()

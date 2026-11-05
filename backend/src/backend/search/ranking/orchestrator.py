@@ -18,7 +18,7 @@ from backend.search.config import SearchConfig
 from backend.search.merge import merge_hits
 from backend.search.query_selector.planner import SearchMode
 from backend.search.ranking.bm25 import apply_BM25
-from backend.search.ranking.statistics import MAX_CANDIDATES, load_channel_statistics
+from backend.search.ranking.statistics import DocumentFrequencyCache, MAX_CANDIDATES, load_channel_statistics
 from backend.search.ranking.types import CorpusStatistics, RankingConfig
 from backend.search.tokenizer import tokenize_query
 from backend.search.types import RankedHit, RetrievalHit
@@ -55,6 +55,7 @@ async def rank_candidates(
     config: RankingConfig | None = None,
     text_corpus: CorpusStatistics | None = None,
     code_corpus: CorpusStatistics | None = None,
+    df_cache: DocumentFrequencyCache | None = None,
     tokenizer_config: SearchConfig | None = None,
 ) -> list[RankedHit]:
     """Score and sort existing retrieval candidates with channel-aware BM25.
@@ -111,6 +112,7 @@ async def rank_candidates(
         return []
 
     document_ids = tuple(hit.document_id for hit in candidates)
+    cache = {"df_cache": df_cache} if df_cache is not None else {}
     text_scores: dict[int, float] = {}
     code_scores: dict[int, float] = {}
     indexed_ids: set[int] = set()
@@ -122,6 +124,7 @@ async def rank_candidates(
             text_terms,
             "TEXT",
             corpus=text_corpus,
+            **cache,
         )
         text_scores = apply_BM25(text_stats, text_terms, config.bm25)
         indexed_ids.update(text_stats.documents)
@@ -133,6 +136,7 @@ async def rank_candidates(
             code_terms,
             "CODE",
             corpus=code_corpus,
+            **cache,
         )
         code_scores = apply_BM25(code_stats, code_terms, config.bm25)
         indexed_ids.update(code_stats.documents)

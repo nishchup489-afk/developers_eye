@@ -55,7 +55,8 @@ async def test_normalizes_query_and_binds_pagination():
 
     assert await search_code(session, "\t FastAPI\n  APIRouter  ", limit=12, offset=8) == []
     sql, params = session.execute.await_args.args
-    assert params == {"query_text": "FastAPI APIRouter", "limit": 12, "offset": 8}
+    assert params == {"query_text": "FastAPI APIRouter", "limit": 12, "offset": 8,
+                      "pool": 20_000, "categories": None}
     assert "FROM search_index" in str(sql)
     assert "code_vector @@" in str(sql)
     assert "websearch_to_tsquery('simple'" in str(sql)
@@ -71,6 +72,8 @@ async def test_defaults_are_correct():
         "query_text": "include_router",
         "limit": 50,
         "offset": 0,
+        "pool": 20_000,
+        "categories": None,
     }
 
 
@@ -201,7 +204,7 @@ async def test_postgresql_temp_index_end_to_end():
                     text(
                         "CREATE TEMP TABLE search_index ("
                         "document_id BIGINT PRIMARY KEY, "
-                        "code_vector TSVECTOR NOT NULL) ON COMMIT DROP"
+                        "code_vector TSVECTOR NOT NULL, category TEXT NOT NULL DEFAULT 'articles') ON COMMIT DROP"
                     )
                 )
                 await session.execute(

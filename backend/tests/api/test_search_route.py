@@ -28,6 +28,10 @@ def stub(monkeypatch):
         return [SearchResultOut(title="T", source="docs", url="https://a.dev/x",
                                 snippet="s", score=0.5, tags=["python"], type="documentation")]
 
+    async def no_deadline(session):
+        return None
+
+    monkeypatch.setattr(search_api, "apply_query_deadline", no_deadline)
     monkeypatch.setattr(search_api, "SessionFactory", fake_session)
     monkeypatch.setattr(search_api, "search_documents", fake_search)
     return calls

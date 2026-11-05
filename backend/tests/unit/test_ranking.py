@@ -9,6 +9,8 @@ import math
 
 import pytest
 
+from backend.search.ranking.statistics import DocumentFrequencyCache, _consistent_corpus
+
 from backend.search.ranking import statistics as stats_module
 from backend.search.ranking.bm25 import apply_BM25, calculate_BM25_formula
 from backend.search.ranking.types import (
@@ -237,3 +239,34 @@ def test_statistics_term_and_id_limits():
         stats_module._validate_ids([1, 0])
     with pytest.raises(ValueError, match="positive"):
         stats_module._validate_ids([True])
+
+
+def test_live_counts_above_an_old_snapshot_raise_n_instead_of_failing():
+    old = CorpusStatistics(document_count=10, average_document_length=20)
+    documents = {1: DocumentStatistics(document_id=1, document_length=5, term_frequencies={"python": 1})}
+    corpus = _consistent_corpus(old, {"python": 12}, documents)
+    assert corpus.document_count == 12
+    ChannelStatistics(corpus=corpus, document_frequencies={"python": 12}, documents=documents)
+
+
+def test_consistent_snapshot_is_left_alone():
+    corpus = CorpusStatistics(document_count=10, average_document_length=20)
+    assert _consistent_corpus(corpus, {"python": 4}, {}) is corpus
+
+
+def test_empty_snapshot_with_live_documents_gets_a_usable_average():
+    empty = CorpusStatistics(document_count=0, average_document_length=0)
+    documents = {1: DocumentStatistics(document_id=1, document_length=8, term_frequencies={})}
+    corpus = _consistent_corpus(empty, {}, documents)
+    assert corpus.document_count == 1 and corpus.average_document_length == 8
+
+
+def test_df_cache_expires_and_never_mixes_channels():
+    cache = DocumentFrequencyCache(ttl_seconds=60)
+    cache.put_many("TEXT", {"python": 3})
+    assert cache.get_many("TEXT", ["python"]) == {"python": 3}
+    assert cache.get_many("CODE", ["python"]) == {}
+    assert DocumentFrequencyCache(ttl_seconds=-1).get_many("TEXT", ["python"]) == {}
+    expired = DocumentFrequencyCache(ttl_seconds=-1)
+    expired.put_many("TEXT", {"python": 3})
+    assert expired.get_many("TEXT", ["python"]) == {}

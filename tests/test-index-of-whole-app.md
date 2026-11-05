@@ -26,12 +26,12 @@ indexes refresh on every commit. `--check` exits 1 when they are stale.
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**71 test files, 619 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**71 test files, 623 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 20 | 209 | `cd backend && poetry run pytest` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 20 | 213 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 11 | 99 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 33 | 311 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 7 | 0 | npm scripts in `frontend/package.json` (see below) |
@@ -61,7 +61,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [unit/test_main_lifespan_search.py](../backend/tests/unit/test_main_lifespan_search.py) | tests | 1 | [test_case.md](../backend/tests/test_case.md#app-startup-lifespan) |
 | [unit/test_pagination.py](../backend/tests/unit/test_pagination.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#pagination) |
 | [unit/test_planner.py](../backend/tests/unit/test_planner.py) | tests | 11 | [test_case.md](../backend/tests/test_case.md#query-planner) |
-| [unit/test_ranking.py](../backend/tests/unit/test_ranking.py) | tests | 22 | [test_case.md](../backend/tests/test_case.md#bm25-formula-and-ranking-types) |
+| [unit/test_ranking.py](../backend/tests/unit/test_ranking.py) | tests | 26 | [test_case.md](../backend/tests/test_case.md#bm25-formula-and-ranking-types) |
 | [unit/test_ranking_orchestrator.py](../backend/tests/unit/test_ranking_orchestrator.py) | tests | 14 | [test_case.md](../backend/tests/test_case.md#ranking-orchestrator) |
 | [unit/test_search_pipeline.py](../backend/tests/unit/test_search_pipeline.py) | tests | 10 | [test_case.md](../backend/tests/test_case.md#search-service-pipeline) |
 | [unit/test_snippet_bounds.py](../backend/tests/unit/test_snippet_bounds.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#snippets) |
@@ -91,6 +91,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [README.md](../crawler/tests/README.md) | write-up |  |  |
 | [benchmarks/bench_claim.py](../crawler/tests/benchmarks/bench_claim.py) | helper |  | [test_case.md](../crawler/tests/test_case.md#claim-benchmark) |
 | [benchmarks/bench_indexer.py](../crawler/tests/benchmarks/bench_indexer.py) | helper |  |  |
+| [benchmarks/bench_search.py](../crawler/tests/benchmarks/bench_search.py) | helper |  |  |
 | [benchmarks/fake_web_load.py](../crawler/tests/benchmarks/fake_web_load.py) | helper |  |  |
 | [crawler/fetcher/conftest.py](../crawler/tests/crawler/fetcher/conftest.py) | fixtures |  | [test_case.md](../crawler/tests/test_case.md#conftestpy) |
 | [crawler/fetcher/test_fetcher.py](../crawler/tests/crawler/fetcher/test_fetcher.py) | tests | 33 | [test_case.md](../crawler/tests/test_case.md#test_fetcherpy) |

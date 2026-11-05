@@ -37,6 +37,10 @@ def calls(monkeypatch):
         seen.append({"query": query, **kwargs})
         return []
 
+    async def no_deadline(session):
+        return None
+
+    monkeypatch.setattr(search_api, "apply_query_deadline", no_deadline)
     monkeypatch.setattr(search_api, "SessionFactory", fake_session)
     monkeypatch.setattr(search_api, "search_documents", fake_search)
     return seen

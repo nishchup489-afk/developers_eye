@@ -1,11 +1,14 @@
-"""FastAPI application and startup-time BM25 corpus snapshot initialization."""
+"""FastAPI application and the periodically refreshed BM25 corpus snapshot."""
 
+import asyncio
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
 from backend.api.crawler_report import router as crawler_report_router
 from backend.api.indexer_report import router as indexer_report_router
@@ -16,17 +19,39 @@ from backend.db.session import SessionFactory, engine
 from backend.search.ranking.statistics import get_corpus_statistics
 from backend.search.service import clear_corpus_statistics, set_corpus_statistics
 
+logger = logging.getLogger(__name__)
+
+CORPUS_REFRESH_SECONDS = 600.0
+
+
+async def load_corpus_statistics() -> None:
+    async with SessionFactory() as session:
+        text_corpus = await get_corpus_statistics(session, "TEXT")
+        code_corpus = await get_corpus_statistics(session, "CODE")
+    set_corpus_statistics(text_corpus, code_corpus)
+
+
+async def refresh_corpus_statistics(interval: float = CORPUS_REFRESH_SECONDS) -> None:
+    """Search keeps its last good snapshot if a refresh fails."""
+    while True:
+        await asyncio.sleep(interval)
+        try:
+            await load_corpus_statistics()
+        except (SQLAlchemyError, OSError):
+            logger.warning("Corpus statistics refresh failed", exc_info=True)
+
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    """Full corpus scans happen at startup, never on individual search calls."""
+    refresher = None
     try:
-        async with SessionFactory() as session:
-            text_corpus = await get_corpus_statistics(session, "TEXT")
-            code_corpus = await get_corpus_statistics(session, "CODE")
-        set_corpus_statistics(text_corpus, code_corpus)
+        await load_corpus_statistics()
+        refresher = asyncio.create_task(refresh_corpus_statistics())
         yield
     finally:
+        if refresher is not None:
+            refresher.cancel()
+            await asyncio.gather(refresher, return_exceptions=True)
         clear_corpus_statistics()
         await engine.dispose()
 

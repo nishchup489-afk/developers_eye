@@ -75,7 +75,8 @@ async def search_session():
                     CREATE TEMP TABLE search_index (
                         document_id BIGINT PRIMARY KEY,
                         search_vector TSVECTOR NOT NULL,
-                        code_vector TSVECTOR NOT NULL
+                        code_vector TSVECTOR NOT NULL,
+                        category TEXT NOT NULL DEFAULT 'articles'
                     ) ON COMMIT DROP
                     """
                 ))
@@ -92,9 +93,9 @@ async def search_session():
                     await connection.execute(
                         text(
                             "INSERT INTO search_index VALUES (:id,"
-                            " to_tsvector('english', :title || ' ' || :body), to_tsvector('simple', ''))"
+                            " to_tsvector('english', :title || ' ' || :body), to_tsvector('simple', ''), :category)"
                         ),
-                        {"id": doc_id, "title": title, "body": body},
+                        {"id": doc_id, "title": title, "body": body, "category": categorize(url, kind)},
                     )
                 async with AsyncSession(bind=connection, expire_on_commit=False) as session:
                     yield session
@@ -129,6 +130,9 @@ async def test_unavailable_documents_are_hidden(search_session: AsyncSession):
 async def test_category_filter_and_limit(search_session: AsyncSession):
     github = await search_documents(search_session, "async", category="github")
     assert [r.url for r in github] == ["https://github.com/fastapi/fastapi/issues/42"]
+
+    discussions = await search_documents(search_session, "async", category="discussions")
+    assert [r.url for r in discussions] == ["https://stackoverflow.com/questions/1/async"]
 
     assert len(await search_documents(search_session, "async", limit=2)) == 2
 

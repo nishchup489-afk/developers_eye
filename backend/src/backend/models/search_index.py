@@ -41,3 +41,8 @@ class SearchIndex(Base):
     indexed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
+
+    # Result category, stored so filters apply inside retrieval.
+    category: Mapped[str] = mapped_column(
+        Text, nullable=False, server_default="articles", index=True
+    )

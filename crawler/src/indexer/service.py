@@ -13,6 +13,8 @@ Expected caller: indexer.worker.runner, using backend.db.session.SessionFactory.
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 from time import perf_counter
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -23,6 +25,7 @@ from indexer.config import IndexerConfig
 from indexer.errors import IndexDocumentError, StaleIndexSourceError
 from indexer.schemas import IndexCandidate, IndexResult, IndexStatus
 from indexer.vector import build_search_vectors
+from backend.search.categories import categorize
 from indexer.writer import persist_search_vectors, remove_search_index
 
 
@@ -71,7 +74,10 @@ async def index_candidate(
 
         indexed_hash = calculate_index_hash(document, config=config)
         analyzed = analyze_index_document(document, config=config)
-        vectors = build_search_vectors(analyzed, config=config)
+        vectors = replace(
+            build_search_vectors(analyzed, config=config),
+            category=categorize(document.canonical_url, document.document_type),
+        )
 
     except StaleIndexSourceError as exc:
         return _result(candidate.document_id, IndexStatus.STALE, start, details=str(exc))

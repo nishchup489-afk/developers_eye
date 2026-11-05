@@ -45,6 +45,7 @@ class SearchVectors:
     source_updated_at: datetime
     text_vector: ColumnElement[Any]
     code_vector: ColumnElement[Any]
+    category: str = "articles"
 
 
 def _empty_vector() -> ColumnElement[Any]:

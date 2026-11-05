@@ -17,6 +17,7 @@ Production usage:
 from __future__ import annotations
 
 from collections.abc import Iterable
+from time import monotonic
 from typing import Literal, cast as type_cast
 
 from sqlalchemy import cast, func, literal, select, true, union_all
@@ -33,7 +34,39 @@ from backend.search.ranking.types import (
 RankMode = Literal["TEXT", "CODE"]
 MAX_CANDIDATES = 200
 MAX_QUERY_TERMS = 32
+CORPUS_SAMPLE_DOCUMENTS = 20_000
 MAX_TERM_LENGTH = 256
+
+
+class DocumentFrequencyCache:
+    """Small in-process TTL cache of (channel, term) -> document frequency."""
+
+    def __init__(self, ttl_seconds: float = 600.0, max_entries: int = 50_000) -> None:
+        self.ttl_seconds = ttl_seconds
+        self.max_entries = max_entries
+        self._entries: dict[tuple[str, str], tuple[float, int]] = {}
+
+    def __bool__(self) -> bool:
+        return True
+
+    def get_many(self, mode: str, terms: Iterable[str]) -> dict[str, int]:
+        now = monotonic()
+        found = {}
+        for term in terms:
+            entry = self._entries.get((mode, term))
+            if entry is not None and entry[0] > now:
+                found[term] = entry[1]
+        return found
+
+    def put_many(self, mode: str, frequencies: dict[str, int]) -> None:
+        if len(self._entries) + len(frequencies) > self.max_entries:
+            self._entries.clear()
+        expires = monotonic() + self.ttl_seconds
+        for term, frequency in frequencies.items():
+            self._entries[(mode, term)] = (expires, frequency)
+
+    def clear(self) -> None:
+        self._entries.clear()
 
 
 def _normalize_mode(mode: str) -> RankMode:
@@ -243,31 +276,60 @@ async def _get_document_length(
 async def get_corpus_statistics(
     session: AsyncSession,
     mode: str,
+    *,
+    sample_size: int = CORPUS_SAMPLE_DOCUMENTS,
 ) -> CorpusStatistics:
-    """FULL-CORPUS SCAN. Compute periodically, not for every user query."""
+    """N is exact; avgdl comes from a page sample once the index is large.
+
+    Unnesting every TSVECTOR takes minutes at millions of documents. avgdl only
+    needs to be close, and a sample of about 20,000 documents gets there in a
+    fraction of a second. Run this on a schedule, not for each query.
+    """
     vector = _get_vector(mode)
+    total = int(await session.scalar(select(func.count()).select_from(SearchIndex)) or 0)
+    if total == 0:
+        return CorpusStatistics(document_count=0, average_document_length=0.0)
+
+    table = SearchIndex.__table__
+    sampled = (
+        table if total <= sample_size
+        else table.tablesample(func.system(100.0 * sample_size / total))
+    )
     t = _lexemes(vector)
     lengths = (
         select(
-            SearchIndex.document_id,
-            func.coalesce(
-                func.sum(func.cardinality(t.c.positions)), 0
-            ).label("document_length"),
+            sampled.c.document_id,
+            func.coalesce(func.sum(func.cardinality(t.c.positions)), 0).label("document_length"),
         )
-        .select_from(SearchIndex)
+        .select_from(sampled)
         .outerjoin(t, true())
-        .group_by(SearchIndex.document_id)
+        .group_by(sampled.c.document_id)
         .subquery()
     )
-    stmt = select(
-        func.count(lengths.c.document_id),
-        func.coalesce(func.avg(lengths.c.document_length), 0.0),
-    ).select_from(lengths)
-    total, average = (await session.execute(stmt)).one()
+    average = await session.scalar(select(func.coalesce(func.avg(lengths.c.document_length), 0.0)))
     return CorpusStatistics(
-        document_count=int(total),
+        document_count=total,
         average_document_length=float(average),
     )
+
+
+def _consistent_corpus(
+    corpus: CorpusStatistics,
+    frequencies: dict[str, int],
+    documents: dict[int, DocumentStatistics],
+) -> CorpusStatistics:
+    """Keep a periodic snapshot valid while the index grows between refreshes.
+
+    Live DF can exceed a slightly old N. That is normal, not a user error, so N
+    is raised just enough for BM25's inputs to stay consistent.
+    """
+    count = max(corpus.document_count, len(documents), *frequencies.values(), 0)
+    average = corpus.average_document_length
+    if average == 0 and documents:
+        average = sum(d.document_length for d in documents.values()) / len(documents)
+    if count == corpus.document_count and average == corpus.average_document_length:
+        return corpus
+    return CorpusStatistics(document_count=count, average_document_length=average)
 
 
 async def _get_average_document_length(
@@ -285,12 +347,14 @@ async def load_channel_statistics(
     mode: str,
     *,
     corpus: CorpusStatistics,
+    df_cache: DocumentFrequencyCache | None = None,
 ) -> ChannelStatistics:
     """Batch-load DF and candidate TF/DL from a supplied corpus snapshot.
 
     The caller must supply corpus statistics calculated/cached outside the
-    latency-sensitive search path. DF uses indexed lookups; TF and DL are
-    fetched together for all candidates.
+    latency-sensitive search path. DF uses indexed lookups; a common term can
+    match much of the index, so df_cache keeps recent counts between queries.
+    TF and DL are fetched together for all candidates.
     """
     if not isinstance(corpus, CorpusStatistics):
         raise TypeError("corpus must be CorpusStatistics")
@@ -305,10 +369,16 @@ async def load_channel_statistics(
             documents={},
         )
 
-    frequencies = await _get_document_frequencies(session, lexemes, mode)
+    frequencies = dict(df_cache.get_many(mode, lexemes)) if df_cache else {}
+    missing = tuple(term for term in lexemes if term not in frequencies)
+    if missing:
+        fetched = await _get_document_frequencies(session, missing, mode)
+        frequencies.update(fetched)
+        if df_cache:
+            df_cache.put_many(mode, fetched)
     documents = await _get_candidate_documents(session, ids, lexemes, mode)
     return ChannelStatistics(
-        corpus=corpus,
+        corpus=_consistent_corpus(corpus, frequencies, documents),
         document_frequencies=frequencies,
         documents=documents,
     )

@@ -137,7 +137,7 @@ async def test_removal_guards_active_sources(monkeypatch, existing, removed, exp
 async def test_service_full_index(monkeypatch):
     cfg = IndexerConfig()
     candidate = IndexCandidate(document_id=1, source_updated_at=NOW)
-    doc = SimpleNamespace(document_id=1)
+    doc = SimpleNamespace(document_id=1, canonical_url="https://docs.python.org/3/", document_type="documentation")
     analyzed = object()
     vec = vectors()
     load = AsyncMock(return_value=doc)

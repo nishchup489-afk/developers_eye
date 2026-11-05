@@ -18,6 +18,9 @@ MAX_RESULTS = 100
 MAX_OFFSET = 10_000
 
 
+CANDIDATE_POOL = 20_000  # See search_text: bounds ranking work on common terms.
+
+
 @dataclass(frozen=True, slots=True)
 class CodeRetrievalHit:
     document_id: int
@@ -32,9 +35,14 @@ _CODE_SEARCH_SQL = text(
     SELECT
         si.document_id,
         ts_rank_cd(si.code_vector, input_query.tsq, 32)::float8 AS score
-    FROM search_index AS si
+    FROM (
+        SELECT candidate.document_id, candidate.code_vector
+        FROM search_index AS candidate, input_query
+        WHERE candidate.code_vector @@ input_query.tsq
+          AND (CAST(:categories AS text[]) IS NULL OR candidate.category = ANY(CAST(:categories AS text[])))
+        LIMIT :pool
+    ) AS si
     CROSS JOIN input_query
-    WHERE si.code_vector @@ input_query.tsq
     ORDER BY score DESC, si.document_id ASC
     LIMIT :limit OFFSET :offset
     """
@@ -65,6 +73,7 @@ async def search_code(
     *,
     limit: int = 50,
     offset: int = 0,
+    categories: tuple[str, ...] | None = None,
 ) -> list[CodeRetrievalHit]:
     """Return code-vector candidates; never fetch documents or rank with BM25."""
     _validate_pagination(limit, offset)
@@ -73,6 +82,7 @@ async def search_code(
         return []
     result = await session.execute(_CODE_SEARCH_SQL, {
         "query_text": normalized, "limit": limit, "offset": offset,
+        "pool": CANDIDATE_POOL, "categories": list(categories) if categories is not None else None,
     })
     return [
         CodeRetrievalHit(document_id=int(row["document_id"]), score=float(row["score"]))

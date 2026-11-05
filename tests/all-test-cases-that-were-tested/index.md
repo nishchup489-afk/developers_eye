@@ -195,7 +195,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/unit/test_ranking.py](../../backend/tests/unit/test_ranking.py)
 
-22 cases · write-up: [test_case.md](../../backend/tests/test_case.md#bm25-formula-and-ranking-types)
+26 cases · write-up: [test_case.md](../../backend/tests/test_case.md#bm25-formula-and-ranking-types)
 
 - `test_formula_matches_reference`
 - `test_rarer_terms_score_higher`
@@ -219,6 +219,10 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_statistics_mode_picks_vector_and_config`
 - `test_statistics_reject_non_lexeme_terms`
 - `test_statistics_term_and_id_limits`
+- `test_live_counts_above_an_old_snapshot_raise_n_instead_of_failing`
+- `test_consistent_snapshot_is_left_alone`
+- `test_empty_snapshot_with_live_documents_gets_a_usable_average`
+- `test_df_cache_expires_and_never_mixes_channels`
 
 ### [backend/tests/unit/test_ranking_orchestrator.py](../../backend/tests/unit/test_ranking_orchestrator.py)
 

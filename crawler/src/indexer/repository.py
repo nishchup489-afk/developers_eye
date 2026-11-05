@@ -155,6 +155,7 @@ async def upsert_search_index(
         document_id=vectors.document_id,
         search_vector=vectors.text_vector,
         code_vector=vectors.code_vector,
+        category=vectors.category,
         indexed_hash=indexed_hash,
         indexed_at=func.now(),
     )
@@ -164,6 +165,7 @@ async def upsert_search_index(
         set_={
             "search_vector": statement.excluded.search_vector,
             "code_vector": statement.excluded.code_vector,
+            "category": statement.excluded.category,
             "indexed_hash": statement.excluded.indexed_hash,
             "indexed_at": func.now(),
         },
