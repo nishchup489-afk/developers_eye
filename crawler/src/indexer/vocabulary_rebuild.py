@@ -20,7 +20,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from backend.models.search_index import SearchIndex
-from backend.models.search_terms import SearchTerm
+from backend.models.search_terms import SearchTerm, VocabularyChange
 from indexer.vocabulary import lock_vocabulary, vocabulary_terms
 from indexer.worker.runner import setup_logging
 
@@ -79,6 +79,7 @@ async def rebuild_vocabulary(
             # Replace counts in the same transaction. Until COMMIT, other
             # transactions cannot observe this intermediate table state.
             await session.execute(delete(SearchTerm))
+            await session.execute(delete(VocabularyChange))
             sorted_terms = sorted(counts.items())
             total_batches = (
                 len(sorted_terms) + write_batch_size - 1

@@ -388,7 +388,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [crawler/tests/indexer/test_selector.py](../../crawler/tests/indexer/test_selector.py)
 
-7 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_selectorpy)
+10 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_selectorpy)
 
 - `test_new_document_needs_indexing`
 - `test_current_document_is_skipped`
@@ -397,6 +397,9 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_unavailable_document_is_not_indexed_and_is_removed`
 - `test_missing_source_document_triggers_cleanup`
 - `test_cursor_and_batch_size`
+- `test_removal_cursor_is_part_of_the_query`
+- `test_each_shard_selects_only_its_own_documents`
+- `test_shard_index_must_fit_shard_count`
 
 ### [crawler/tests/indexer/test_service_writer.py](../../crawler/tests/indexer/test_service_writer.py)
 
@@ -448,15 +451,12 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [crawler/tests/indexer/test_vocabulary.py](../../crawler/tests/indexer/test_vocabulary.py)
 
-7 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_vocabularypy)
+4 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_vocabularypy)
 
 - `test_vocabulary_filters_artifacts_and_keeps_developer_terms`
 - `test_vocabulary_rejects_non_string_lexemes`
-- `test_unchanged_document_does_not_write_counts`
-- `test_addition_issues_conflict_safe_upsert`
-- `test_removal_decrements_and_deletes_zero_count`
-- `test_missing_frequency_is_logged_not_fatal`
-- `test_multiple_additions_do_not_repeat_upserts`
+- `test_unchanged_document_queues_nothing`
+- `test_change_queues_sorted_added_and_removed_terms`
 
 ### [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
 

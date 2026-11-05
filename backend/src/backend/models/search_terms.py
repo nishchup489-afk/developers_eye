@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from sqlalchemy import CheckConstraint, Index, Integer, Text, text
+from sqlalchemy import BigInteger, CheckConstraint, Identity, Index, Integer, Text, text
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.db.base import Base
@@ -32,3 +33,13 @@ class SearchTerm(Base):
             postgresql_ops={"term": "gin_trgm_ops"},
         ),
     )
+
+
+class VocabularyChange(Base):
+    """One document's added and removed terms, waiting to reach search_terms."""
+
+    __tablename__ = "vocabulary_change"
+
+    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True)
+    added: Mapped[list[str]] = mapped_column(ARRAY(Text), nullable=False)
+    removed: Mapped[list[str]] = mapped_column(ARRAY(Text), nullable=False)

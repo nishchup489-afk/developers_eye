@@ -96,6 +96,7 @@ async def select_index_candidates(
         .where(
             Document.id > after_document_id,
             Document.is_available.is_(True),
+            Document.id % config.shard_count == config.shard_index,
             _outdated_index_condition(config),
         )
         .order_by(Document.id.asc())
@@ -130,10 +131,12 @@ async def select_removal_candidates(
             Document.id == SearchIndex.document_id,
         )
         .where(
+            SearchIndex.document_id > after_document_id,
+            SearchIndex.document_id % config.shard_count == config.shard_index,
             or_(
                 Document.id.is_(None),
                 Document.is_available.is_(False),
-            )
+            ),
         )
         .order_by(SearchIndex.document_id)
         .limit(config.batch_size)

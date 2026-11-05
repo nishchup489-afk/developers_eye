@@ -18,7 +18,7 @@ from indexer.repository import (
     get_index_lexemes,
     upsert_search_index,
 )
-from indexer.vocabulary import synchronize_vocabulary, lock_vocabulary, remove_indexed_documents
+from indexer.vocabulary import synchronize_vocabulary, remove_indexed_documents
 from indexer.schemas import IndexStatus
 from indexer.vector import SearchVectors
 
@@ -43,7 +43,6 @@ async def persist_search_vectors(
 
     async with session_factory() as session:
         async with session.begin():
-            await lock_vocabulary(session)
             source = await get_document_for_update(session, vectors.document_id)
             if (
                 source is None

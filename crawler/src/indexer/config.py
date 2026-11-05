@@ -28,6 +28,10 @@ class IndexerConfig:
     text_search_config: str = "english"
     code_search_config: str = "simple"
     log_level: str = "INFO"
+    # Run several indexer processes: each takes the documents where
+    # id % shard_count == shard_index, so they never duplicate work.
+    shard_count: int = 1
+    shard_index: int = 0
 
     def __post_init__(self) -> None:
         for name, value, low, high in (
@@ -40,6 +44,14 @@ class IndexerConfig:
                 raise IndexerConfigError(
                     f"{name} must be an integer between {low} and {high}"
                 )
+
+        if (
+            type(self.shard_count) is not int
+            or type(self.shard_index) is not int
+            or self.shard_count < 1
+            or not 0 <= self.shard_index < self.shard_count
+        ):
+            raise IndexerConfigError("shard_index must be in [0, shard_count)")
 
         if (
             isinstance(self.poll_seconds, bool)
@@ -95,6 +107,8 @@ class IndexerConfig:
             concurrency=read("CONCURRENCY", int, defaults.concurrency),
             poll_seconds=read("POLL_SECONDS", float, defaults.poll_seconds),
             index_version=read("INDEX_VERSION", int, defaults.index_version),
+            shard_count=read("SHARD_COUNT", int, defaults.shard_count),
+            shard_index=read("SHARD_INDEX", int, defaults.shard_index),
             max_document_chars=read(
                 "MAX_DOCUMENT_CHARS", int, defaults.max_document_chars
             ),

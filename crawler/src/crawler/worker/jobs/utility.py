@@ -15,7 +15,7 @@ from backend.db.session import SessionFactory
 from backend.models.crawler_frontier import CrawlTarget
 from backend.models.documents import Document
 from backend.models.search_index import SearchIndex
-from indexer.vocabulary import lock_vocabulary, remove_indexed_documents
+from indexer.vocabulary import remove_indexed_documents
 from backend.models.source import Source
 from backend.schema.crawler_frontier import CrawlTargetCreate
 from crawler.fetcher.fetch import HTTPXHopFetcher
@@ -311,23 +311,6 @@ async def _finalize(
                     message="Lease expired before completion",
                     duration_seconds=elapsed,
                 )
-
-            # Acquire the shared mutex before locking/changing documents, so
-            # indexer and crawler cannot race vocabulary frequency changes.
-            requires_vocabulary_lock = (
-                action == "complete"
-                and (
-                    http_status in (404, 410)
-                    or (
-                        parsed is not None
-                        and processed is not None
-                        and bool(_noindex_urls(parsed, processed))
-                    )
-                )
-            )
-
-            if requires_vocabulary_lock:
-                await lock_vocabulary(session)
 
             if action == "complete" and http_status in (404, 410):
                 unavailable_ids = (await session.scalars(update(Document).where(

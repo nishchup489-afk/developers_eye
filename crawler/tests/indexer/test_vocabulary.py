@@ -25,74 +25,21 @@ def test_vocabulary_rejects_non_string_lexemes():
 
 
 @pytest.mark.asyncio
-async def test_unchanged_document_does_not_write_counts():
-    session = AsyncMock()
+async def test_unchanged_document_queues_nothing():
+    session = MagicMock(flush=AsyncMock())
     await synchronize_vocabulary(
         session, old_lexemes=["python", "fastapi", "python"],
         new_lexemes=["fastapi", "python"],
     )
-    session.execute.assert_not_awaited()
+    session.add.assert_not_called()
 
 
 @pytest.mark.asyncio
-async def test_addition_issues_conflict_safe_upsert():
-    session = AsyncMock()
+async def test_change_queues_sorted_added_and_removed_terms():
+    session = MagicMock(flush=AsyncMock())
     await synchronize_vocabulary(
-        session, old_lexemes=[], new_lexemes=["python", "python"],
+        session, old_lexemes=["django", "python", "flask"], new_lexemes=["rust", "python", "async"],
     )
-    assert session.execute.await_count == 1
-    assert "ON CONFLICT" in str(session.execute.await_args.args[0])
-
-
-@pytest.mark.asyncio
-async def test_removal_decrements_and_deletes_zero_count():
-    session = AsyncMock()
-
-    result = MagicMock()
-
-    # Simulate PostgreSQL UPDATE ... RETURNING
-    result.all.return_value = [
-        ("django", 0)
-    ]
-
-    session.execute.return_value = result
-
-    await synchronize_vocabulary(
-        session,
-        old_lexemes=["django"],
-        new_lexemes=[],
-    )
-
-    # One UPDATE + one DELETE
-    assert session.execute.await_count == 2
-
-    statements = [
-        str(call.args[0])
-        for call in session.execute.await_args_list
-    ]
-
-    assert "UPDATE search_terms" in statements[0]
-    assert "DELETE FROM search_terms" in statements[1]
-
-@pytest.mark.asyncio
-async def test_missing_frequency_is_logged_not_fatal(caplog):
-    session = AsyncMock()
-    result = MagicMock()
-    result.scalar_one_or_none.return_value = None
-    session.execute.return_value = result
-    await synchronize_vocabulary(session, old_lexemes=["django"], new_lexemes=[])
-    assert "drift" in caplog.text
-
-
-@pytest.mark.asyncio
-async def test_multiple_additions_do_not_repeat_upserts():
-    session = AsyncMock()
-
-    await synchronize_vocabulary(
-        session,
-        old_lexemes=[],
-        new_lexemes=["python", "django", "fastapi"],
-    )
-
-    # Three terms, one batched database statement.
-    assert session.execute.await_count == 1
+    change = session.add.call_args.args[0]
+    assert change.added == ["async", "rust"]
+    assert change.removed == ["django", "flask"]

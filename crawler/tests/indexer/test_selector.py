@@ -13,11 +13,16 @@ import os
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
 import pytest_asyncio
 from sqlalchemy import text
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.sql.sqltypes import Enum as SAEnum
+
+from indexer.config import IndexerConfig
+from indexer.errors import IndexerConfigError
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from backend.models.documents import Document
@@ -197,3 +202,29 @@ async def test_cursor_and_batch_size(selector_db, config):
         selector_db, config=config, after_document_id=10
     )
     assert [c.document_id for c in candidates] == [20, 30]
+
+
+def compiled(statement) -> str:
+    return str(statement.compile(dialect=postgresql.dialect(), compile_kwargs={"literal_binds": True}))
+
+
+@pytest.mark.asyncio
+async def test_removal_cursor_is_part_of_the_query(config):
+    session = AsyncMock()
+    session.scalars.return_value = MagicMock(all=lambda: [])
+    await select_removal_candidates(session, config=config, after_document_id=999)
+    assert "search_index.document_id > 999" in compiled(session.scalars.await_args.args[0])
+
+
+@pytest.mark.asyncio
+async def test_each_shard_selects_only_its_own_documents():
+    sharded = IndexerConfig(shard_count=4, shard_index=1)
+    session = AsyncMock()
+    session.execute.return_value = MagicMock(all=lambda: [])
+    await select_index_candidates(session, config=sharded)
+    assert "document.id %% 4 = 1" in compiled(session.execute.await_args.args[0])
+
+
+def test_shard_index_must_fit_shard_count():
+    with pytest.raises(IndexerConfigError):
+        IndexerConfig(shard_count=2, shard_index=2)

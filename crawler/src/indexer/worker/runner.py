@@ -20,9 +20,11 @@ from dataclasses import dataclass, field, replace
 from time import perf_counter
 
 from rich.logging import RichHandler
+from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from indexer.config import IndexerConfig
+from indexer.vocabulary import drain_vocabulary_changes
 from indexer.schemas import IndexCandidate, IndexResult, IndexStatus
 from indexer.selector import select_index_candidates, select_removal_candidates
 from indexer.service import index_candidate, remove_candidate
@@ -141,8 +143,6 @@ async def run_batch(
 ) -> BatchReport:
     """Select one page of each work type, then process using separate sessions.
 
-    IMPORTANT: selector.select_removal_candidates must honor after_document_id.
-    See the bundled selector cursor patch if your version omits the predicate.
     """
     if not isinstance(config, IndexerConfig):
         raise TypeError("config must be an IndexerConfig")
@@ -233,6 +233,11 @@ async def run_worker(
                 monitor.record(indexed=report.outcomes[IndexStatus.INDEXED.value], failed=report.failed)
             index_cursor = report.next_index_cursor
             removal_cursor = report.next_removal_cursor
+            try:
+                await drain_vocabulary_changes(session_factory)
+            except (DBAPIError, OSError):
+                # Queued changes wait safely; indexing should not stop for this.
+                logger.exception("[bold red]VOCABULARY DRAIN FAILED[/]")
             if not forever:
                 break
 
@@ -258,6 +263,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     mode.add_argument("--forever", action="store_true", help="Continuously poll")
     parser.add_argument("--batch-size", type=int, default=None)
     parser.add_argument("--concurrency", type=int, default=None)
+    parser.add_argument("--shard-count", type=int, default=None)
+    parser.add_argument("--shard-index", type=int, default=None)
     parser.add_argument("--poll-seconds", type=float, default=None)
     parser.add_argument(
         "--log-level",
@@ -286,6 +293,8 @@ def main() -> None:
         for name, value in (
             ("batch_size", args.batch_size),
             ("concurrency", args.concurrency),
+            ("shard_count", args.shard_count),
+            ("shard_index", args.shard_index),
             ("poll_seconds", args.poll_seconds),
             ("log_level", args.log_level),
         )

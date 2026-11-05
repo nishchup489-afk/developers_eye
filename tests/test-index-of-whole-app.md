@@ -77,10 +77,10 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [test_indexer.py](../crawler/tests/indexer/test_indexer.py) | tests | 2 | [test_case.md](../crawler/tests/test_case.md#test_indexerpy) |
 | [test_pipeline.py](../crawler/tests/indexer/test_pipeline.py) | tests | 1 | [test_case.md](../crawler/tests/test_case.md#test_pipelinepy) |
 | [test_repository.py](../crawler/tests/indexer/test_repository.py) | tests | 8 | [test_case.md](../crawler/tests/test_case.md#test_repositorypy) |
-| [test_selector.py](../crawler/tests/indexer/test_selector.py) | tests | 7 | [test_case.md](../crawler/tests/test_case.md#test_selectorpy) |
+| [test_selector.py](../crawler/tests/indexer/test_selector.py) | tests | 10 | [test_case.md](../crawler/tests/test_case.md#test_selectorpy) |
 | [test_service_writer.py](../crawler/tests/indexer/test_service_writer.py) | tests | 9 | [test_case.md](../crawler/tests/test_case.md#test_service_writerpy) |
 | [test_vector.py](../crawler/tests/indexer/test_vector.py) | tests | 29 | [test_case.md](../crawler/tests/test_case.md#test_vectorpy) |
-| [test_vocabulary.py](../crawler/tests/indexer/test_vocabulary.py) | tests | 7 | [test_case.md](../crawler/tests/test_case.md#test_vocabularypy) |
+| [test_vocabulary.py](../crawler/tests/indexer/test_vocabulary.py) | tests | 4 | [test_case.md](../crawler/tests/test_case.md#test_vocabularypy) |
 | [test_vocabulary_outbox.py](../crawler/tests/indexer/test_vocabulary_outbox.py) | tests | 6 |  |
 | [test_vocabulary_rebuild_cli.py](../crawler/tests/indexer/test_vocabulary_rebuild_cli.py) | tests | 6 | [test_case.md](../crawler/tests/test_case.md#test_vocabulary_rebuild_clipy) |
 

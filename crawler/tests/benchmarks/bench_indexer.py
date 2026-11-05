@@ -58,22 +58,49 @@ async def prepare(session_factory, count: int, words: list[str]) -> None:
             await session.execute(insert(Document), rows)
 
 
-async def run_level(session_factory, concurrency: int, batch_size: int, *, drain) -> dict:
-    from sqlalchemy import text
-
-    from indexer.config import IndexerConfig
+async def index_shard(session_factory, config) -> int:
     from indexer.worker.runner import run_batch
 
-    async with session_factory() as session, session.begin():
-        await session.execute(text("TRUNCATE search_index, search_terms"))
-    config = IndexerConfig(batch_size=batch_size, concurrency=concurrency)
-    started, cursor, indexed = time.perf_counter(), 0, 0
+    cursor, indexed = 0, 0
     while True:
         report = await run_batch(session_factory, config=config, index_cursor=cursor)
         indexed += report.outcomes.get("indexed", 0)
         cursor = report.next_index_cursor
         if report.selected == 0:
-            break
+            return indexed
+
+
+async def shard_main(args) -> None:
+    from backend.db.session import SessionFactory, engine
+    from indexer.config import IndexerConfig
+
+    logging.disable(logging.WARNING)
+    await index_shard(SessionFactory, IndexerConfig(
+        batch_size=args.batch_size, concurrency=args.levels[0],
+        shard_count=args.processes, shard_index=args.shard_index,
+    ))
+    await engine.dispose()
+
+
+async def run_level(session_factory, concurrency: int, args, *, drain) -> dict:
+    from sqlalchemy import text
+
+    from indexer.config import IndexerConfig
+
+    async with session_factory() as session, session.begin():
+        await session.execute(text("TRUNCATE search_index, search_terms"))
+    started = time.perf_counter()
+    if args.processes == 1:
+        config = IndexerConfig(batch_size=args.batch_size, concurrency=concurrency)
+        await index_shard(session_factory, config)
+    else:
+        children = [await asyncio.create_subprocess_exec(
+            sys.executable, __file__, "--shard-index", str(number), "--processes", str(args.processes),
+            "--levels", str(concurrency), "--batch-size", str(args.batch_size),
+        ) for number in range(args.processes)]
+        await asyncio.gather(*(child.wait() for child in children))
+    async with session_factory() as session:
+        indexed = await session.scalar(text("SELECT count(*) FROM search_index"))
     index_seconds = time.perf_counter() - started
     if drain is not None:
         await drain(session_factory)
@@ -89,7 +116,7 @@ async def run_level(session_factory, concurrency: int, batch_size: int, *, drain
             JOIN recount r USING (term)
             WHERE t.document_frequency <> r.frequency
         """))
-    return {"concurrency": concurrency, "indexed": indexed,
+    return {"processes": args.processes, "concurrency": concurrency, "indexed": indexed,
             "documents_per_second": round(indexed / total_seconds, 1),
             "index_seconds": round(index_seconds, 2), "total_seconds": round(total_seconds, 2),
             "terms_with_wrong_count": drift}
@@ -105,7 +132,7 @@ async def main(args) -> None:
     logging.disable(logging.WARNING)
     await prepare(SessionFactory, args.documents, vocabulary(args.vocabulary))
     for level in args.levels:
-        print(json.dumps(await run_level(SessionFactory, level, args.batch_size, drain=drain)))
+        print(json.dumps(await run_level(SessionFactory, level, args, drain=drain)))
     await engine.dispose()
 
 
@@ -114,6 +141,8 @@ if __name__ == "__main__":
     parser.add_argument("--documents", type=int, default=3000)
     parser.add_argument("--vocabulary", type=int, default=20_000)
     parser.add_argument("--batch-size", type=int, default=200)
+    parser.add_argument("--processes", type=int, default=1)
+    parser.add_argument("--shard-index", type=int, default=None)
     parser.add_argument("--levels", type=lambda value: [int(item) for item in value.split(",")], default=[1, 2, 4, 8])
     arguments = parser.parse_args()
     url = os.environ.get("BENCH_DATABASE_URL", "")
@@ -122,7 +151,9 @@ if __name__ == "__main__":
     os.environ["DATABASE_URL"] = url
     os.environ.setdefault("DB_POOL_SIZE", "20")
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
-    if sys.platform == "win32":
-        asyncio.run(main(arguments), loop_factory=lambda: asyncio.SelectorEventLoop(selectors.SelectSelector()))
+    entry = main if arguments.shard_index is None else shard_main
+    # Subprocesses need the default Windows loop; shards need asyncpg's selector.
+    if sys.platform == "win32" and arguments.shard_index is not None:
+        asyncio.run(entry(arguments), loop_factory=lambda: asyncio.SelectorEventLoop(selectors.SelectSelector()))
     else:
-        asyncio.run(main(arguments))
+        asyncio.run(entry(arguments))
