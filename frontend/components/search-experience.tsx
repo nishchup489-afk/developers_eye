@@ -257,7 +257,7 @@ export default function SearchExperience({
       setResponse(null);
       try {
         const res = await api.get("/search", {
-          params: { q: value },
+          params: { q: value, ...(source !== "all" ? { source } : {}) },
           signal: active.signal,
         });
         const data = res.data;
@@ -406,6 +406,12 @@ export default function SearchExperience({
   }
   const fullQuery = [query.trim(), code].filter(Boolean).join("\n");
   const resultItems = showSaved ? saved : (response?.results ?? []);
+  // Saved results live in the browser. Live results are filtered by the server,
+  // so a filter finds every match in the index, not just the current page.
+  const applyFilter = (next: SearchFilter) => {
+    if (showSaved || !response) setFilter(next);
+    else void search(response.query, true, next);
+  };
   const visible = resultItems.filter((item) =>
     matchesSource(item.source, filter),
   );
@@ -630,20 +636,22 @@ export default function SearchExperience({
                 <button
                   className={filter === "all" ? "active" : ""}
                   aria-pressed={filter === "all"}
-                  onClick={() => setFilter("all")}
+                  onClick={() => applyFilter("all")}
                 >
                   All sources <span>{resultItems.length}</span>
                 </button>
                 {verticals
-                  .filter((s) =>
-                    resultItems.some((item) => matchesSource(item.source, s)),
+                  .filter(
+                    (s) =>
+                      !showSaved ||
+                      resultItems.some((item) => matchesSource(item.source, s)),
                   )
                   .map((s) => (
                     <button
                       key={s}
                       className={filter === s ? "active" : ""}
                       aria-pressed={filter === s}
-                      onClick={() => setFilter(s)}
+                      onClick={() => applyFilter(s)}
                     >
                       {s === "discussions" ? "Discussions" : sourceNames[s]}
                     </button>

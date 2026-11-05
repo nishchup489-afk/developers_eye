@@ -123,7 +123,11 @@ export function searchDemo(query: string, source?: string): SearchResult[] {
     })
     .filter(
       ({ result, matches }) =>
-        matches > 0 && (!source || result.source === source),
+        matches > 0 &&
+        (!source ||
+          result.source === source ||
+          (source === "discussions" &&
+            ["stackoverflow", "reddit"].includes(result.source))),
     )
     .sort((a, b) => b.matches - a.matches || b.result.score - a.result.score)
     .map(({ result }) => result);
