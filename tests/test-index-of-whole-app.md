@@ -26,14 +26,14 @@ indexes refresh on every commit. `--check` exits 1 when they are stale.
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**69 test files, 602 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**69 test files, 603 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
 | [Backend (FastAPI, search)](#backend-fastapi-search) | 20 | 209 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 10 | 93 | `cd crawler && poetry run pytest tests/indexer` |
-| [Crawler](#crawler) | 32 | 300 | `cd crawler && poetry run pytest tests/crawler` |
+| [Crawler](#crawler) | 32 | 301 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 7 | 0 | npm scripts in `frontend/package.json` (see below) |
 
 ### End-to-end (full app)
@@ -119,7 +119,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [crawler/worker/test_deadlock_retry.py](../crawler/tests/crawler/worker/test_deadlock_retry.py) | tests | 3 | [test_case.md](../crawler/tests/test_case.md#test_deadlock_retrypy) |
 | [crawler/worker/test_live_pipeline.py](../crawler/tests/crawler/worker/test_live_pipeline.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_live_pipelinepy) |
 | [crawler/worker/test_monitoring.py](../crawler/tests/crawler/worker/test_monitoring.py) | tests | 4 | [test_case.md](../crawler/tests/test_case.md#test_monitoringpy) |
-| [crawler/worker/test_postgres_pipeline.py](../crawler/tests/crawler/worker/test_postgres_pipeline.py) | tests | 4 | [test_case.md](../crawler/tests/test_case.md#test_postgres_pipelinepy) |
+| [crawler/worker/test_postgres_pipeline.py](../crawler/tests/crawler/worker/test_postgres_pipeline.py) | tests | 5 | [test_case.md](../crawler/tests/test_case.md#test_postgres_pipelinepy) |
 | [crawler/worker/test_recovery.py](../crawler/tests/crawler/worker/test_recovery.py) | tests | 5 | [test_case.md](../crawler/tests/test_case.md#test_recoverypy) |
 | [crawler/writer/test_database_writer.py](../crawler/tests/crawler/writer/test_database_writer.py) | tests | 7 | [test_case.md](../crawler/tests/test_case.md#test_database_writerpy) |
 | [test_case.md](../crawler/tests/test_case.md) | write-up |  |  |

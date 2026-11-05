@@ -893,11 +893,12 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/worker/test_postgres_pipeline.py](../../crawler/tests/crawler/worker/test_postgres_pipeline.py)
 
-4 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
+5 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
 
 - `test_structured_resources_commit_documents_targets_and_attempts`
 - `test_concurrent_claims_atomic_writes_and_shared_source_budget`
 - `test_removed_page_invalidates_index_and_recovers_when_restored`
+- `test_sitemap_past_link_limit_queues_every_url_and_rerun_adds_nothing`
 - `test_expiration_and_old_worker_recovery_do_not_touch_new_claims`
 
 ### [crawler/tests/crawler/worker/test_recovery.py](../../crawler/tests/crawler/worker/test_recovery.py)

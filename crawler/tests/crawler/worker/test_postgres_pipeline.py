@@ -173,6 +173,43 @@ def test_removed_page_invalidates_index_and_recovers_when_restored(monkeypatch):
     asyncio.run(run())
 
 
+def test_sitemap_past_link_limit_queues_every_url_and_rerun_adds_nothing(monkeypatch):
+    total = 2_345
+    entries = b"".join(b"<url><loc>https://example.com/docs/p%d</loc></url>" % i for i in range(total))
+    body = b"<urlset>" + entries + b"</urlset>"
+
+    async def fetch(self, session, url):
+        return FetchResult(RobotsDecision.ALLOW, 'Fetched', url, url, status_code=200,
+            headers={'content-type': 'application/xml'}, body=body)
+    monkeypatch.setattr(PolicyCoordinator, 'fetch', fetch)
+
+    async def count(factory, source_id):
+        async with factory() as session:
+            return await session.scalar(select(func.count(CrawlTarget.id)).where(
+                CrawlTarget.source_id == source_id, CrawlTarget.kind == 'page'))
+
+    async def run():
+        async with database() as (factory, source_id):
+            async with factory() as session, session.begin():
+                await session.execute(update(Source).where(Source.id == source_id).values(
+                    config={'max_depth': 3, 'max_pages': 10_000}))
+                session.add(CrawlTarget(source_id=source_id, fetch_url='https://example.com/sitemap.xml',
+                    normalized_url='https://example.com/sitemap.xml', kind='sitemap', priority=1_000_000))
+            manager = PolitenessManager(min_interval_seconds=0)
+            for _ in range(2):
+                async with factory() as session, session.begin():
+                    await session.execute(update(CrawlTarget).where(CrawlTarget.kind == 'sitemap',
+                        CrawlTarget.source_id == source_id).values(next_fetch_at=func.now()))
+                    await session.execute(update(CrawlTarget).where(CrawlTarget.kind == 'page',
+                        CrawlTarget.source_id == source_id).values(next_fetch_at=func.now() + timedelta(days=1)))
+                sitemap = (await claim(factory, source_id))[0]
+                assert sitemap.kind == 'sitemap'
+                result = await process_job(sitemap, session_factory=factory, politeness_manager=manager, max_links=500)
+                assert result.outcome == 'success'
+                assert await count(factory, source_id) == total
+    asyncio.run(run())
+
+
 def test_expiration_and_old_worker_recovery_do_not_touch_new_claims():
     async def run():
         async with database() as (factory, source_id):

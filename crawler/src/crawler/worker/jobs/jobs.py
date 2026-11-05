@@ -41,7 +41,7 @@ from crawler.frontier.scope import CrawlScope
 from crawler.parser.parser import parse
 from crawler.parser.schemas import ParseResult
 from crawler.parser.schemas import DiscoveredLink
-from crawler.parser.sitemap import parse_sitemap_resource
+from crawler.parser.sitemap import MAX_ENTRIES as MAX_SITEMAP_ENTRIES, parse_sitemap_resource
 from crawler.parser.feeds import parse_feed
 from crawler.parser.api import parse_json_api
 from crawler.policy_and_politeness.host_policy import is_allowed_host
@@ -116,6 +116,28 @@ async def retry_deadlocked_finalization(
 
 
 
+
+
+async def _enqueue_overflow(
+    session_factory: async_sessionmaker[AsyncSession],
+    targets: list[CrawlTargetCreate],
+    *,
+    max_pages: int,
+    batch_size: int,
+) -> int:
+    """Queue a large sitemap's extra URLs in short transactions of their own.
+
+    Inserts are idempotent, so a crash here is safe: the target stays leased,
+    expires, is fetched again, and the retry only adds what is still missing.
+    """
+    inserted = 0
+    for start in range(0, len(targets), batch_size):
+        async with session_factory() as session:
+            async with session.begin():
+                inserted += await enqueue_targets(
+                    session, targets[start:start + batch_size], max_pages=max_pages
+                )
+    return inserted
 
 
 async def process_job(
@@ -303,11 +325,18 @@ async def process_job(
                         target_id=target_id,
                         source_id=source_id,
                         allowed_hosts=allowed_hosts,
-                        max_links=max_links,
+                        # A sitemap is the source's URL list, so keep all of it.
+                        max_links=MAX_SITEMAP_ENTRIES if kind == "sitemap" else max_links,
                         parent_depth=depth,
                         scope=scope,
                         target_kind=kind,
                     )
+                    if len(new_targets) > max_links:
+                        new_targets, overflow = new_targets[:max_links], new_targets[max_links:]
+                        measurements["links_overflow_enqueued"] = await _enqueue_overflow(
+                            session_factory, overflow,
+                            max_pages=scope.max_pages, batch_size=max_links,
+                        )
                     action, outcome = "complete", "success"
                     message = (
                         f"Parsed {len(processed.documents)} accepted, "
