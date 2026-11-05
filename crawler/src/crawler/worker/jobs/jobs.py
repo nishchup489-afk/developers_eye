@@ -62,6 +62,21 @@ from crawler.worker.recovery import recover_failed_claim
 logger = logging.getLogger(__name__)
 
 
+class ShortTransactions:
+    """Session-shaped object that runs each statement in its own transaction."""
+
+    def __init__(self, session_factory: async_sessionmaker[AsyncSession]) -> None:
+        self._session_factory = session_factory
+
+    async def scalar(self, statement, *args, **kwargs):
+        async with self._session_factory() as session, session.begin():
+            return await session.scalar(statement, *args, **kwargs)
+
+    async def execute(self, statement, *args, **kwargs) -> None:
+        async with self._session_factory() as session, session.begin():
+            await session.execute(statement, *args, **kwargs)
+
+
 def _resource_fetcher(kind: str) -> HTTPXHopFetcher:
     # Gzip file bodies are permitted only for sitemap jobs, still under byte limits.
     media = ALLOWED_MEDIA_TYPES
@@ -229,14 +244,10 @@ async def process_job(
                 politeness_manager=politeness_manager,
             )
 
-            # Policy code uses PostgreSQL robots_cache. Commit cache entries
-            # independently; no attempt/frontier/document transaction is open.
-            # Current coordinator interface holds a DB transaction across fetch;
-            # refactor policy-cache access separately when optimizing throughput.
+            # Each robots_cache read or write commits on its own, so no database
+            # connection is ever held while waiting on a remote server.
             fetch_started = time.perf_counter()
-            async with session_factory() as session:
-                async with session.begin():
-                    fetched: FetchResult = await coordinator.fetch(session, url)
+            fetched: FetchResult = await coordinator.fetch(ShortTransactions(session_factory), url)
 
             measurements.update(
                 fetch_ms=round((time.perf_counter() - fetch_started) * 1000, 2),
@@ -291,7 +302,10 @@ async def process_job(
                 else:
                     stage = "parse"
                     parser = {"page": parse, "sitemap": parse_sitemap_resource, "rss": parse_feed, "api": parse_json_api}[kind]
-                    parsed = parser(
+                    # Parsing and processing are CPU work. Threads keep the event
+                    # loop free for other slots and the worker heartbeat.
+                    parsed = await asyncio.to_thread(
+                        parser,
                         url=fetched.final_url,
                         content=fetched.body,
                         content_type=content_type,
@@ -314,7 +328,7 @@ async def process_job(
                                      {"documents": len(parsed.documents),
                                       "words": sum(len((d.body or "").split()) for d in parsed.documents)}, measurements)
                     stage = "process"
-                    processed = process(parsed)
+                    processed = await asyncio.to_thread(process, parsed)
                     measurements["accepted"] = len(processed.documents)
                     measurements["skipped"] = [{"url": s.url, "reason": str(s.reason), "details": s.details} for s in processed.skipped]
                     await checkpoint(session_factory, attempt_id, "PROCESS",

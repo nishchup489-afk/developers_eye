@@ -918,6 +918,15 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_expired_leases_increment_failures_delay_retries_and_reconcile_orphans`
 - `test_timeout_records_exact_claim_and_is_counted_as_failed`
 
+### [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
+
+4 cases
+
+- `test_slow_job_does_not_hold_up_a_free_slot`
+- `test_never_claims_more_than_free_slots`
+- `test_claim_database_failure_retries_instead_of_stopping`
+- `test_shutdown_cancels_running_jobs_and_leaves_them_to_lease_expiry`
+
 ### [crawler/tests/crawler/writer/test_database_writer.py](../../crawler/tests/crawler/writer/test_database_writer.py)
 
 7 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_database_writerpy)
@@ -966,4 +975,5 @@ These test files have no matching heading in a `test_case.md`.
 
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
+- [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
 <!-- test-index:end -->

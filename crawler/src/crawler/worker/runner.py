@@ -1,11 +1,11 @@
 """Developer's Eye - database-backed crawler worker runner.
 
 Runner responsibilities:
-  1. Recover expired target leases.
-  2. Claim a bounded batch from the PostgreSQL frontier.
-  3. COMMIT the claims before any network I/O.
-  4. Dispatch each claimed target to crawler.worker.jobs.process_job().
-  5. Log job outcomes and optionally poll for more jobs.
+  1. Claim targets from the PostgreSQL frontier and COMMIT before network I/O.
+  2. Dispatch each claimed target to crawler.worker.jobs.process_job().
+  3. --forever: keep every slot busy, refilling one as soon as it frees up.
+     One periodic reaper across all processes recovers expired leases.
+  4. --once: run one recovery, one claim and one batch, then exit.
 
 The job handler owns fetch/parse/process, attempt records, and finalization.
 It must validate lease ownership before committing results.
@@ -40,23 +40,31 @@ from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from typing import Any
 
-from functools import partial
-
 from crawler.worker.logging_config import setup_logging
-from crawler.policy_and_politeness.politeness_policy import (PolitenessManager,)
+from crawler.policy_and_politeness.politeness_policy import DEFAULT_MIN_INTERVAL_SECONDS
+from crawler.policy_and_politeness.shared_politeness import SharedPolitenessManager
 from backend.db.session import SessionFactory, engine
 from backend.schema.crawler_frontier import CrawlTargetRead
 from crawler.scheduler.repository import claim_targets, recover_expired_leases
 from crawler.worker.telemetry import WorkerMonitor, active_targets, checkpoint
 from crawler.worker.recovery import recover_failed_claim
 from backend.models.crawl_attempt import CrawlAttempt
-from sqlalchemy import select
+from sqlalchemy import func, select
+from sqlalchemy.exc import DBAPIError, OperationalError
 
 logger = logging.getLogger("crawler.worker.runner")
 
 # A job handler is responsible for making the crawl outcome durable.
 # JobResult can be used as the return type once jobs.py is implemented.
 JobHandler = Callable[[CrawlTargetRead], Awaitable[Any]]
+
+# Application-owned advisory lock keys.
+_REAPER_LOCK_KEY = 7331090043
+_SEED_LOCK_KEY = 7331090044
+REAP_INTERVAL_SECONDS = 30.0
+# Spaces out claims under load, so finishing 100 jobs is not 100 claim queries.
+MIN_CLAIM_GAP_SECONDS = 0.05
+DATABASE_RETRY_SECONDS = 5.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -65,7 +73,7 @@ class RunnerConfig:
     concurrency: int = 2
     lease_seconds: int = 300
     job_timeout_seconds: int = 240
-    poll_seconds: float = 10.0
+    poll_seconds: float = 1.0
     source_id: int | None = None
     forever: bool = False
 
@@ -100,29 +108,54 @@ class BatchReport:
     elapsed_seconds: float = 0.0
 
 
-async def claim_batch(config: RunnerConfig) -> tuple[int, list[CrawlTargetRead]]:
-    """Recover old leases and commit new claims in a short transaction.
+async def claim_slots(config: RunnerConfig, limit: int) -> list[CrawlTargetRead]:
+    """Commit new claims in a short transaction; all slow work comes after.
 
     Never return live SQLAlchemy ORM objects beyond the session. Copy them to
     immutable-ish Pydantic read schemas while the session is still open.
     """
     async with SessionFactory() as session:
         async with session.begin():
-            recovered = await recover_expired_leases(session)
-            # Do not lease more than can start immediately. Pending tasks
-            # behind a semaphore would burn their lease while waiting.
-            claim_limit = min(config.batch_size, config.concurrency)
             rows = await claim_targets(
                 session=session,
-                limit=claim_limit,
+                limit=limit,
                 lease_seconds=config.lease_seconds,
                 source_id=config.source_id,
             )
-            targets = [CrawlTargetRead.model_validate(row) for row in rows]
+            return [CrawlTargetRead.model_validate(row) for row in rows]
 
-    # Leaving session.begin() normally commits these claims.
-    # All expensive work happens AFTER this point.
-    return recovered, targets
+
+async def reap_expired_leases() -> int:
+    """Recover expired leases; only one process does this at a time."""
+    recovered = 0
+    while True:
+        async with SessionFactory() as session:
+            async with session.begin():
+                if not await session.scalar(select(func.pg_try_advisory_xact_lock(_REAPER_LOCK_KEY))):
+                    return recovered
+                count = await recover_expired_leases(session)
+        recovered += count
+        if count < 500:
+            return recovered
+
+
+async def reap_forever(interval: float = REAP_INTERVAL_SECONDS) -> None:
+    while True:
+        await asyncio.sleep(interval)
+        try:
+            recovered = await reap_expired_leases()
+            if recovered:
+                logger.info("REAPER recovered=%s", recovered)
+        except (DBAPIError, OperationalError, OSError):
+            logger.warning("Lease reaper skipped a cycle", exc_info=True)
+
+
+async def claim_batch(config: RunnerConfig) -> tuple[int, list[CrawlTargetRead]]:
+    """One-shot mode: recover once, then claim what can start immediately."""
+    recovered = await reap_expired_leases()
+    # Do not lease more than can start immediately. Pending tasks behind a
+    # semaphore would burn their lease while waiting.
+    return recovered, await claim_slots(config, min(config.batch_size, config.concurrency))
 
 
 async def execute_target(
@@ -261,45 +294,55 @@ async def run_worker(*, config: RunnerConfig, job_handler: JobHandler) -> int:
         await engine.dispose()
 
 
+async def run_continuous(*, config: RunnerConfig, job_handler: JobHandler) -> int:
+    """Keep every slot busy until cancelled; one slow job never holds up others."""
+    report = BatchReport()
+    semaphore = asyncio.Semaphore(config.concurrency)
+    running: set[asyncio.Task] = set()
+    reaper = asyncio.create_task(reap_forever())
+    logger.info("WORKER START mode=forever concurrency=%s lease=%ss", config.concurrency, config.lease_seconds)
+
+    try:
+        while True:
+            free = config.concurrency - len(running)
+            targets: list[CrawlTargetRead] = []
+            if free > 0:
+                try:
+                    targets = await claim_slots(config, min(free, config.batch_size))
+                except (DBAPIError, OperationalError, OSError):
+                    logger.exception("Claim failed; retrying in %.0fs", DATABASE_RETRY_SECONDS)
+                    await asyncio.sleep(DATABASE_RETRY_SECONDS)
+                    continue
+            report.claimed += len(targets)
+            for target in targets:
+                task = asyncio.create_task(execute_target(
+                    target, job_handler=job_handler, semaphore=semaphore, config=config, report=report,
+                ))
+                running.add(task)
+                task.add_done_callback(running.discard)
+
+            if running:
+                await asyncio.wait(running, timeout=config.poll_seconds, return_when=asyncio.FIRST_COMPLETED)
+                await asyncio.sleep(MIN_CLAIM_GAP_SECONDS)
+            elif not targets:
+                await asyncio.sleep(config.poll_seconds)
+    finally:
+        reaper.cancel()
+        for task in running:
+            task.cancel()
+        await asyncio.gather(reaper, *running, return_exceptions=True)
+        logger.info("WORKER STOP claimed=%s job_failures=%s", report.claimed, report.failed)
+
+
 async def _run_worker(
     *,
     config: RunnerConfig,
     job_handler: JobHandler,
 ) -> int:
-    """Run one batch or poll continuously until interrupted."""
-    cycles = 0
-    total_claimed = 0
-    total_failed = 0
-
-    logger.info(
-        "WORKER START mode=%s batch_size=%s concurrency=%s lease=%ss",
-        "forever" if config.forever else "once",
-        config.batch_size, config.concurrency, config.lease_seconds,
-    )
-
-    try:
-        while True:
-            report = await run_batch(config=config, job_handler=job_handler)
-            cycles += 1
-            total_claimed += report.claimed
-            total_failed += report.failed
-
-            if not config.forever:
-                break
-
-            # Poll even after processing a batch, but avoid a sleep when work
-            # is available: newly discovered targets can be claimed immediately.
-            if report.claimed == 0:
-                logger.info("IDLE no eligible targets; sleeping %.1fs", config.poll_seconds)
-                await asyncio.sleep(config.poll_seconds)
-
-    finally:
-        logger.info(
-            "WORKER STOP cycles=%s claimed=%s job_failures=%s",
-            cycles, total_claimed, total_failed,
-        )
-
-    return 1 if total_failed else 0
+    if config.forever:
+        return await run_continuous(config=config, job_handler=job_handler)
+    report = await run_batch(config=config, job_handler=job_handler)
+    return 1 if report.failed else 0
 
 
 def parse_args() -> argparse.Namespace:
@@ -311,7 +354,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--concurrency", type=int, default=2)
     parser.add_argument("--lease-seconds", type=int, default=300)
     parser.add_argument("--job-timeout-seconds", type=int, default=240)
-    parser.add_argument("--poll-seconds", type=float, default=10.0)
+    parser.add_argument("--poll-seconds", type=float, default=1.0)
+    parser.add_argument("--min-interval-seconds", type=float, default=DEFAULT_MIN_INTERVAL_SECONDS)
     parser.add_argument("--source-id", type=int, default=None)
     parser.add_argument("--log-level", default="INFO", choices=("DEBUG", "INFO", "WARNING", "ERROR"))
     return parser.parse_args()
@@ -333,38 +377,57 @@ def load_job_handler() -> JobHandler:
     return process_job
 
 
-async def main(config: RunnerConfig) -> int:
+def build_job_handler(
+    *,
+    min_interval_seconds: float = DEFAULT_MIN_INTERVAL_SECONDS,
+    **job_options: Any,
+) -> JobHandler:
+    """Bind process_job to the politeness limiter all processes share."""
+    process_job = load_job_handler()
+    politeness = SharedPolitenessManager(
+        SessionFactory,
+        max_concurrent_per_host=1,
+        min_interval_seconds=min_interval_seconds,
+    )
 
-    # Automatically register new JSON sources and queue eligible website seeds.
-    # Existing source slugs and crawl targets are not duplicated.
+    async def handle(target: CrawlTargetRead) -> Any:
+        politeness.prepay(target.host)
+        try:
+            return await process_job(target, politeness_manager=politeness, **job_options)
+        finally:
+            await politeness.settle()
+
+    return handle
+
+
+async def sync_sources_once() -> None:
+    """Register sources and queue start URLs; other starting workers skip this."""
+    from crawler.seed.discovery import discover_initial_targets
+    from crawler.seed.seed import seed_sources
+
+    async with engine.connect() as connection:
+        if not await connection.scalar(select(func.pg_try_advisory_lock(_SEED_LOCK_KEY))):
+            logger.info("SOURCE SYNC skipped; another worker owns it")
+            return
+        try:
+            await seed_sources()
+            queued = await discover_initial_targets()
+            logger.info("SOURCE SYNC complete queued_start_urls=%s", queued)
+        finally:
+            await connection.scalar(select(func.pg_advisory_unlock(_SEED_LOCK_KEY)))
+
+
+async def main(config: RunnerConfig, *, min_interval_seconds: float = DEFAULT_MIN_INTERVAL_SECONDS) -> int:
     try:
-        from crawler.seed.seed import seed_sources
-        from crawler.seed.discovery import discover_initial_targets
-
-        await seed_sources()
-        queued = await discover_initial_targets()
-        logger.info("SOURCE SYNC complete queued_start_urls=%s", queued)
+        await sync_sources_once()
     except Exception:
         logger.exception("SOURCE SYNC failed; worker startup aborted")
         await engine.dispose()
         return 1
 
-    # STEP 1: Create one shared politeness manager.
-    politeness_manager = PolitenessManager(
-        max_concurrent_per_host=1,
-        min_interval_seconds=2.0,
-    )
-
-    # STEP 2: Bind the required dependency to process_job.
-    job_handler = partial(
-        load_job_handler(),
-        politeness_manager=politeness_manager,
-    )
-
-    # STEP 3: Start the worker.
     return await run_worker(
         config=config,
-        job_handler=job_handler,
+        job_handler=build_job_handler(min_interval_seconds=min_interval_seconds),
     )
 
 
@@ -383,9 +446,9 @@ if __name__ == "__main__":
     )
     if sys.platform == "win32":
         exit_code = asyncio.run(
-            main(config),
+            main(config, min_interval_seconds=args.min_interval_seconds),
             loop_factory=lambda: asyncio.SelectorEventLoop(selectors.SelectSelector()),
         )
     else:
-        exit_code = asyncio.run(main(config))
+        exit_code = asyncio.run(main(config, min_interval_seconds=args.min_interval_seconds))
     raise SystemExit(exit_code)
