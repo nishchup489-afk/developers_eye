@@ -21,7 +21,7 @@ from crawler.scheduler.repository import claim_targets
 
 
 @asynccontextmanager
-async def database(source_count, targets_per_source):
+async def database(source_count, targets_per_source, one_host_per_source=False):
     raw = os.environ.get("TEST_DATABASE_URL")
     if not raw:
         pytest.skip("Set TEST_DATABASE_URL to a migrated, dedicated PostgreSQL test database")
@@ -46,9 +46,9 @@ async def database(source_count, targets_per_source):
                     crawl_interval_seconds=3600, is_enabled=True, config={},
                 ).returning(Source.id)))
             await session.execute(insert(CrawlTarget), [
-                dict(source_id=sid, fetch_url=f"https://example.com/{tag}/{sid}/{j}",
-                     normalized_url=f"https://example.com/{tag}/{sid}/{j}", next_fetch_at=past)
-                for sid in source_ids for j in range(targets_per_source)])
+                dict(source_id=sid, fetch_url=url, normalized_url=url, next_fetch_at=past)
+                for sid in source_ids for j in range(targets_per_source)
+                for url in [f"https://h{sid}{'' if one_host_per_source else f'-{j}'}.{tag}.example.com/{j}"]])
         yield factory, source_ids
     finally:
         async with factory() as session, session.begin():
@@ -119,20 +119,18 @@ def test_single_source_overlapping_claims_get_different_targets():
                 leased = await session.scalar(select(func.count()).select_from(CrawlTarget).where(
                     CrawlTarget.source_id == source_id, CrawlTarget.state == "leased"))
                 assert leased == 6
-                assert await session.scalar(select(Source.last_claimed_at).where(Source.id == source_id)) is not None
     asyncio.run(run())
 
 
-def test_multi_source_overlapping_claims_stay_fair():
+def test_overlapping_claims_never_take_the_same_host_twice():
     async def run():
-        async with database(2, 4) as (factory, (a, b)):
+        async with database(2, 4, one_host_per_source=True) as (factory, (a, b)):
             first, second = await overlapping_claims(factory, limit=2)
-            # Each worker takes one target from each source, none twice.
-            assert sorted(s for _, s in first) == sorted(s for _, s in second) == [a, b]
-            assert {i for i, _ in first}.isdisjoint(i for i, _ in second)
+            # The first claim holds both hosts, so the second gets nothing.
+            assert sorted(s for _, s in first) == [a, b]
+            assert second == []
             async with factory() as session, session.begin():
-                after = await claim_targets(session, limit=2)
-                assert sorted(t.source_id for t in after) == [a, b]
+                assert await claim_targets(session, limit=2) == []
     asyncio.run(run())
 
 
@@ -143,8 +141,4 @@ def test_parallel_workers_drain_without_duplicates_or_idle_claims(sources, per_s
             claimed, empty_with_work_left = await drain(factory, workers=4, limit=5)
             assert len(claimed) == len(set(claimed)) == sources * per_source
             assert empty_with_work_left == 0
-            async with factory() as session:
-                stamps = (await session.scalars(select(Source.last_claimed_at).where(
-                    Source.id.in_(source_ids)))).all()
-                assert None not in stamps
     asyncio.run(run())

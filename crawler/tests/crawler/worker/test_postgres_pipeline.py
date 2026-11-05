@@ -12,6 +12,7 @@ from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from backend.models.crawl_attempt import CrawlAttempt
+from backend.models.crawl_host import CrawlHost
 from backend.models.crawler_frontier import CrawlTarget
 from backend.models.documents import Document
 from backend.models.search_index import SearchIndex
@@ -66,8 +67,12 @@ async def seed(factory, source_id, count):
 
 
 async def claim(factory, source_id, count=1):
+    """Claim several targets of one host; production takes one per host per gap."""
     async with factory() as session, session.begin():
-        targets = await claim_targets(session, limit=count, source_id=source_id)
+        await session.execute(update(CrawlHost).values(next_allowed_at=func.now(), backoff_until=None))
+        targets = []
+        for _ in range(count):
+            targets += await claim_targets(session, limit=1, source_id=source_id, host_hold_seconds=0)
         await asyncio.sleep(.01)
         return [CrawlTargetRead.model_validate(target) for target in targets]
 

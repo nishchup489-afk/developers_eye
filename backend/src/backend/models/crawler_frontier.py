@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy import (
     BigInteger,
     CheckConstraint,
+    Computed,
     DateTime,
     ForeignKey,
     Identity,
@@ -61,6 +62,16 @@ class CrawlTarget(Base):
         ForeignKey("source.id"),
         nullable=False,
         index=True,
+    )
+
+    # Hostname of normalized_url, maintained by PostgreSQL.
+    host: Mapped[str] = mapped_column(
+        Text,
+        Computed(
+            "coalesce(lower(substring(normalized_url from '^[a-z]+://([^/:?#]+)')), '')",
+            persisted=True,
+        ),
+        nullable=False,
     )
 
     # Actual URL to request

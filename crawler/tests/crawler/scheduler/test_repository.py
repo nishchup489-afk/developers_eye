@@ -56,8 +56,8 @@ async def main():
 
             high = CrawlTarget(
                 source_id=source.id,
-                fetch_url=f"https://example.com/{unique_id}/high",
-                normalized_url=f"https://example.com/{unique_id}/high",
+                fetch_url=f"https://{unique_id}.example.com/high",
+                normalized_url=f"https://{unique_id}.example.com/high",
                 kind="page",
                 state="queued",
                 priority=10,
@@ -66,8 +66,8 @@ async def main():
 
             low = CrawlTarget(
                 source_id=source.id,
-                fetch_url=f"https://example.com/{unique_id}/low",
-                normalized_url=f"https://example.com/{unique_id}/low",
+                fetch_url=f"https://{unique_id}.example.com/low",
+                normalized_url=f"https://{unique_id}.example.com/low",
                 kind="page",
                 state="queued",
                 priority=5,
@@ -86,6 +86,7 @@ async def main():
             # Claim highest-priority target
             first = await claim_targets(
                 session,
+                host_hold_seconds=0,
                 limit=1,
                 source_id=source.id,
             )
@@ -99,6 +100,7 @@ async def main():
             # Claim second target
             second = await claim_targets(
                 session,
+                host_hold_seconds=0,
                 limit=1,
                 source_id=source.id,
             )
@@ -112,6 +114,7 @@ async def main():
             # No more eligible targets for this source
             third = await claim_targets(
                 session,
+                host_hold_seconds=0,
                 limit=10,
                 source_id=source.id,
             )
@@ -175,6 +178,7 @@ async def main():
             # Round-robin picks across all sources, so pin this source.
             reclaimed = await claim_targets(
                 session,
+                host_hold_seconds=0,
                 limit=1,
                 lease_seconds=300,
                 source_id=source.id,

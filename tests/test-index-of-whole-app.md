@@ -26,14 +26,14 @@ indexes refresh on every commit. `--check` exits 1 when they are stale.
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**69 test files, 603 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**69 test files, 609 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
 | [Backend (FastAPI, search)](#backend-fastapi-search) | 20 | 209 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 10 | 93 | `cd crawler && poetry run pytest tests/indexer` |
-| [Crawler](#crawler) | 32 | 301 | `cd crawler && poetry run pytest tests/crawler` |
+| [Crawler](#crawler) | 32 | 307 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 7 | 0 | npm scripts in `frontend/package.json` (see below) |
 
 ### End-to-end (full app)
@@ -109,13 +109,13 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [crawler/policy_and_politeness/test_redirect_policy.py](../crawler/tests/crawler/policy_and_politeness/test_redirect_policy.py) | tests | 23 | [test_case.md](../crawler/tests/test_case.md#test_redirect_policypy) |
 | [crawler/policy_and_politeness/test_robots_policy.py](../crawler/tests/crawler/policy_and_politeness/test_robots_policy.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_robots_policypy) |
 | [crawler/policy_and_politeness/test_robots_rules.py](../crawler/tests/crawler/policy_and_politeness/test_robots_rules.py) | tests | 6 | [test_case.md](../crawler/tests/test_case.md#test_robots_rulespy) |
+| [crawler/policy_and_politeness/test_shared_politeness.py](../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py) | tests | 6 |  |
 | [crawler/processing/test_fingerprint.py](../crawler/tests/crawler/processing/test_fingerprint.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_fingerprintpy) |
 | [crawler/processing/test_processing.py](../crawler/tests/crawler/processing/test_processing.py) | tests | 58 | [test_case.md](../crawler/tests/test_case.md#test_processingpy) |
 | [crawler/scheduler/test_complete_target.py](../crawler/tests/crawler/scheduler/test_complete_target.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_complete_targetpy) |
 | [crawler/scheduler/test_concurrent_claims.py](../crawler/tests/crawler/scheduler/test_concurrent_claims.py) | tests | 3 | [test_case.md](../crawler/tests/test_case.md#test_concurrent_claimspy) |
 | [crawler/scheduler/test_fail_target.py](../crawler/tests/crawler/scheduler/test_fail_target.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_fail_targetpy) |
 | [crawler/scheduler/test_repository.py](../crawler/tests/crawler/scheduler/test_repository.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_repositorypy) |
-| [crawler/scheduler/test_round_robin.py](../crawler/tests/crawler/scheduler/test_round_robin.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_round_robinpy) |
 | [crawler/worker/test_availability.py](../crawler/tests/crawler/worker/test_availability.py) | tests | 2 | [test_case.md](../crawler/tests/test_case.md#test_availabilitypy) |
 | [crawler/worker/test_deadlock_retry.py](../crawler/tests/crawler/worker/test_deadlock_retry.py) | tests | 3 | [test_case.md](../crawler/tests/test_case.md#test_deadlock_retrypy) |
 | [crawler/worker/test_live_pipeline.py](../crawler/tests/crawler/worker/test_live_pipeline.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_live_pipelinepy) |

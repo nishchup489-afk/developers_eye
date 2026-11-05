@@ -772,6 +772,17 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_empty_specific_group_allows_without_wildcard_fallback`
 - `test_nontext_rejected`
 
+### [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
+
+6 cases
+
+- `test_two_managers_share_one_gap_and_never_overlap`
+- `test_backoff_from_one_manager_stops_the_other`
+- `test_shorter_backoff_never_replaces_a_longer_one`
+- `test_crashed_holder_blocks_only_until_its_hold_expires`
+- `test_prepaid_first_request_skips_the_gate_once`
+- `test_settle_frees_an_unused_prepaid_hold`
+
 ### [crawler/tests/crawler/processing/test_fingerprint.py](../../crawler/tests/crawler/processing/test_fingerprint.py)
 
 Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_fingerprintpy)
@@ -848,7 +859,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 3 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_concurrent_claimspy)
 
 - `test_single_source_overlapping_claims_get_different_targets`
-- `test_multi_source_overlapping_claims_stay_fair`
+- `test_overlapping_claims_never_take_the_same_host_twice`
 - `test_parallel_workers_drain_without_duplicates_or_idle_claims`
 
 ### [crawler/tests/crawler/scheduler/test_fail_target.py](../../crawler/tests/crawler/scheduler/test_fail_target.py)
@@ -858,10 +869,6 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 ### [crawler/tests/crawler/scheduler/test_repository.py](../../crawler/tests/crawler/scheduler/test_repository.py)
 
 Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_repositorypy)
-
-### [crawler/tests/crawler/scheduler/test_round_robin.py](../../crawler/tests/crawler/scheduler/test_round_robin.py)
-
-Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_round_robinpy)
 
 ### [crawler/tests/crawler/worker/test_availability.py](../../crawler/tests/crawler/worker/test_availability.py)
 
@@ -958,4 +965,5 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 These test files have no matching heading in a `test_case.md`.
 
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
+- [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
 <!-- test-index:end -->

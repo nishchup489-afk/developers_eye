@@ -1,47 +1,71 @@
+"""PostgreSQL frontier: claim, complete, fail and recover crawl targets.
 
+claim_targets() is one atomic statement. It picks hosts that may be requested
+now, longest waiting first, takes one due target from each, leases that target
+and holds the host. Two workers can never claim the same host at once, and a
+waiting host costs nothing, so slots go to hosts that can actually be fetched.
 """
-4. Logic we're going to implement
-Step 1 - Filter eligible targets
-state == "queued" and next_fetch_at <= NOW()
-
-
-Step 2 - Prioritize
-ORDER BY priority DESC, next_fetch_at ASC, id ASC
-
-
-Step 3 - Acquire locks
-FOR UPDATE SKIP LOCKED and apply LIMIT
-
-
-Step 4 - Update claimed rows
-Set state = "leased" and lease_until = NOW() + lease_seconds
-
-
-Step 5 - Return claimed targets
-Use UPDATE ... RETURNING. Caller commits the transaction before dispatching work.
-
-"""
-
-
 
 from datetime import datetime, timedelta
 
-from sqlalchemy import select, update, func, or_
+from sqlalchemy import func, or_, select, text, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.models.crawler_frontier import CrawlTarget
 from backend.models.crawl_attempt import CrawlAttempt
+from backend.models.crawler_frontier import CrawlTarget
 from crawler.writer.attempts import close_abandoned_attempts
 
+# A claim holds its host for this long unless the request finishes sooner. It
+# must outlast one HTTP request, and it is what recovers a crashed worker's host.
+HOST_HOLD_SECONDS = 60.0
 
-from collections import deque
-from datetime import timedelta
+_DUE = """
+    ct.host = {host}
+    AND ct.state = 'queued'
+    AND ct.next_fetch_at <= now()
+    AND (CAST(:source_id AS bigint) IS NULL OR ct.source_id = :source_id)
+"""
 
-from sqlalchemy import func, select, update
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from backend.models.source import Source
-from backend.models.crawler_frontier import CrawlTarget
+# Hosts are chosen before any target is locked. Locking inside the sorted query
+# would lock one target of every ready host, not just the hosts in the LIMIT.
+_CLAIM = f"""
+WITH hosts AS (
+    SELECT h.host
+    FROM crawl_host h
+    WHERE h.next_allowed_at <= clock_timestamp()
+      AND (h.backoff_until IS NULL OR h.backoff_until <= clock_timestamp())
+      AND EXISTS (
+          SELECT 1 FROM crawl_target ct
+          JOIN source s ON s.id = ct.source_id AND s.is_enabled
+          WHERE {_DUE.format(host="h.host")}
+      )
+    ORDER BY h.next_allowed_at, h.host
+    LIMIT :limit
+    FOR UPDATE OF h SKIP LOCKED
+), picked AS (
+    SELECT hosts.host, t.id AS target_id
+    FROM hosts
+    CROSS JOIN LATERAL (
+        SELECT ct.id
+        FROM crawl_target ct
+        JOIN source s ON s.id = ct.source_id AND s.is_enabled
+        WHERE {_DUE.format(host="hosts.host")}
+        ORDER BY ct.priority DESC, ct.depth, ct.next_fetch_at, ct.id
+        LIMIT 1
+        FOR UPDATE OF ct SKIP LOCKED
+    ) t
+), held AS (
+    UPDATE crawl_host h
+    SET next_allowed_at = clock_timestamp() + make_interval(secs => :hold)
+    FROM picked p
+    WHERE h.host = p.host
+)
+UPDATE crawl_target t
+SET state = 'leased', lease_until = clock_timestamp() + make_interval(secs => :lease)
+FROM picked p
+WHERE t.id = p.target_id
+RETURNING t.*
+"""
 
 
 async def claim_targets(
@@ -49,132 +73,21 @@ async def claim_targets(
     limit: int = 10,
     lease_seconds: int = 300,
     source_id: int | None = None,
+    host_hold_seconds: float = HOST_HOLD_SECONDS,
 ) -> list[CrawlTarget]:
-
+    """Lease at most one due target per available host. The caller commits."""
     if limit < 1 or lease_seconds < 1:
         raise ValueError("Invalid claim limit or lease duration")
 
     if source_id is not None and source_id < 1:
         raise ValueError("source_id must be positive")
 
-    eligible = (
-        select(CrawlTarget.id)
-        .where(
-            CrawlTarget.source_id == Source.id,
-            CrawlTarget.state == "queued",
-            CrawlTarget.next_fetch_at <= func.now(),
-        )
-        .correlate(Source)
-        .exists()
+    result = await session.scalars(
+        select(CrawlTarget).from_statement(text(_CLAIM)).execution_options(populate_existing=True),
+        {"limit": limit, "lease": lease_seconds, "hold": host_hold_seconds, "source_id": source_id},
     )
+    return list(result.all())
 
-    # Round-robin order: never-claimed sources first, then the one that
-    # waited longest. Source rows are NOT locked here, so several workers
-    # can claim different targets of the same source at the same time.
-    source_query = (  # round robin
-        select(Source.id)
-        .where(
-            Source.is_enabled.is_(True),
-            eligible,
-        )
-        .order_by(
-            Source.last_claimed_at.asc().nulls_first(),
-            Source.id.asc(),
-        )
-        .limit(limit)
-    )
-
-    if source_id is not None:
-        source_query = source_query.where(Source.id == source_id)
-
-    claimed: list[CrawlTarget] = []
-    turns: dict[int, datetime] = {}
-    seen: set[int] = set()
-    queue: deque[int] = deque()
-    more_sources = True
-
-    while len(claimed) < limit:
-
-        if not queue:
-            if not more_sources:
-                break
-
-            page = list(await session.scalars(
-                source_query.where(Source.id.not_in(seen)) if seen else source_query
-            ))
-            seen.update(page)
-            queue.extend(page)
-            more_sources = len(page) == limit
-
-            if not queue:
-                break
-
-        selected_source = queue.popleft()
-
-        target_query = (  # priority scheduling
-            select(CrawlTarget)
-            .where(
-                CrawlTarget.source_id == selected_source,
-                CrawlTarget.state == "queued",
-                CrawlTarget.next_fetch_at <= func.now(),
-            )
-            .order_by(
-                CrawlTarget.priority.desc(),
-                CrawlTarget.depth.asc(),
-                CrawlTarget.next_fetch_at.asc(),
-                CrawlTarget.id.asc(),
-            )
-            .limit(1)
-            .with_for_update(
-                of=CrawlTarget,
-                skip_locked=True,
-            )
-        )
-
-        target = await session.scalar(target_query)
-
-        # Nothing due, or every due target is leased by another worker:
-        # drop the source for the rest of this call.
-        if target is None:
-            continue
-
-        now = await session.scalar(
-            select(func.clock_timestamp())
-        )
-
-        target.state = "leased"
-        target.lease_until = now + timedelta(
-            seconds=lease_seconds
-        )
-
-        # Flush now: SKIP LOCKED does not skip rows this transaction
-        # already locked, so the next query must see this one as leased.
-        await session.flush()
-        claimed.append(target)
-
-        turns[selected_source] = now
-        queue.append(selected_source)
-
-    # Record each source's last turn. Updating in source-id order gives every
-    # worker the same lock order, so two claims can wait on each other's
-    # source rows but never deadlock. GREATEST keeps the clock moving forward.
-    for claimed_source in sorted(turns):
-        await session.execute(
-            update(Source)
-            .where(Source.id == claimed_source)
-            .values(
-                last_claimed_at=func.greatest(
-                    Source.last_claimed_at,
-                    turns[claimed_source],
-                )
-            )
-        )
-
-    return claimed
-
-
-
-    
 
 async def recover_expired_leases(
     session: AsyncSession,

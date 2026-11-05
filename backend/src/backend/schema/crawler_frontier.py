@@ -24,6 +24,7 @@ class CrawlTargetRead(CrawlTargetCreate):
     model_config = ConfigDict(from_attributes=True)
 
     id: int = Field(gt=0)
+    host: str = ""
     state: TargetState
     next_fetch_at: AwareDatetime
     lease_until: AwareDatetime | None
