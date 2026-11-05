@@ -126,3 +126,5 @@ bs.py
 crawler/logs/
 
 fix_checklist.md
+# Deployment
+deploy/backups/

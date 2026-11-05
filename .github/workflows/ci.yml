@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: developers_eye_ci_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/developers_eye_ci_test
+      TEST_DATABASE_URL: postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/developers_eye_ci_test
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - name: Install
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install ./backend ./crawler pytest pytest-asyncio httpx pip-audit
+      - name: Migrate an empty database, down one and up again
+        working-directory: backend
+        run: |
+          ../.venv/bin/alembic upgrade head
+          ../.venv/bin/alembic downgrade -1
+          ../.venv/bin/alembic upgrade head
+      - name: Backend tests
+        working-directory: backend
+        run: ../.venv/bin/python -m pytest -q
+      - name: Crawler and indexer tests
+        working-directory: crawler
+        run: ../.venv/bin/python -m pytest -q --ignore=tests/crawler/worker/test_live_pipeline.py --ignore=tests/benchmarks
+      - name: Dependency audit
+        run: .venv/bin/pip-audit
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm run build
+      - run: npm run test:admin:unit
+      - run: npm run test:integration
+      - run: npm run test:admin:routes

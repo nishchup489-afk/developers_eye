@@ -1,0 +1,115 @@
+# Developer's Eye on one server. Sized for Oracle Cloud Always Free ARM
+# (4 OCPU, 24 GB RAM, 200 GB block volume). See deploy/README.md.
+name: developers-eye
+
+x-python: &python
+  build:
+    context: ..
+    dockerfile: deploy/Dockerfile.python
+  restart: unless-stopped
+  env_file: .env
+  environment: &python-env
+    DATABASE_URL: postgresql+asyncpg://developers_eye:${POSTGRES_PASSWORD:?set in deploy/.env}@db/developers_eye
+    DB_POOL_SIZE: "4"
+    DB_MAX_OVERFLOW: "2"
+  depends_on:
+    migrate:
+      condition: service_completed_successfully
+
+x-indexer: &indexer
+  <<: *python
+  command: ["python", "-m", "indexer.worker.runner", "--forever", "--batch-size", "200", "--concurrency", "4"]
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+    environment:
+      POSTGRES_USER: developers_eye
+      POSTGRES_DB: developers_eye
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in deploy/.env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    shm_size: 6gb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U developers_eye -d developers_eye"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    <<: *python
+    restart: "no"
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    <<: *python
+    command: ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+    environment:
+      <<: *python-env
+      DB_POOL_SIZE: "8"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # Scale with: docker compose up -d --scale crawler=3
+  # Politeness is shared through PostgreSQL, so more processes never mean more
+  # load on any one host. Raise this only after checking the admin dashboard.
+  crawler:
+    <<: *python
+    command: ["python", "-m", "crawler.worker.runner", "--forever", "--concurrency", "40", "--batch-size", "40"]
+    deploy:
+      replicas: 2
+
+  indexer-0:
+    <<: *indexer
+    environment:
+      <<: *python-env
+      INDEXER_SHARD_COUNT: "2"
+      INDEXER_SHARD_INDEX: "0"
+
+  indexer-1:
+    <<: *indexer
+    environment:
+      <<: *python-env
+      INDEXER_SHARD_COUNT: "2"
+      INDEXER_SHARD_INDEX: "1"
+
+  maintenance:
+    <<: *python
+    command: ["sh", "-c", "while true; do python -m backend.admin_services.maintenance --purge-events; sleep 86400; done"]
+
+  web:
+    build: ../frontend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      BACKEND_URL: http://api:8000
+      CRAWLER_REPORT_API_URL: http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?set in deploy/.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [web]
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:
