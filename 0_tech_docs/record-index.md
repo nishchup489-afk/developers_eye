@@ -46,12 +46,14 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0033 | frontend/landing-eye | [Keep visual effects optional and code presentation separate from search semantics](frontend/landing-eye/ADR-0033-progressive-eye-and-code-presentation.md) | accepted |
 | ADR-0034 | infra/docs-navigation | [Keep mechanics separate from decision history and generate shared navigation](infra/docs-navigation/ADR-0034-two-documentation-layers-and-navigation.md) | accepted |
 | ADR-0035 | infra/local-dev-and-testing | [Keep configuration explicit and distinguish test tiers from deployment evidence](infra/local-dev-and-testing/ADR-0035-configuration-and-validation-boundaries.md) | accepted |
-| ADR-0036 | indexer/vocubulary | [Keep vocabulary maintenance transactional and rebuild it with a one-shot CLI](indexer/vocubulary/ADR-0036-vocabulary-maintenance-and-lock-boundary.md) | accepted |
+| ADR-0036 | indexer/vocubulary | [Keep vocabulary maintenance transactional and rebuild it with a one-shot CLI](indexer/vocubulary/ADR-0036-vocabulary-maintenance-and-lock-boundary.md) | superseded |
 | ADR-0037 | indexer/coverage-reporting | [Treat coverage and vocabulary reports as operational observations](indexer/coverage-reporting/ADR-0037-operational-coverage-snapshot-semantics.md) | accepted |
 | ADR-0038 | infra/performance-and-scaling | [Optimize measured bottlenecks before adding caches, brokers or distributed workers](infra/performance-and-scaling/ADR-0038-measure-before-adding-search-infrastructure.md) | proposed |
 | ADR-0039 | infra/ci-and-containers | [Add disposable PostgreSQL verification before automating deployment](infra/ci-and-containers/ADR-0039-reproducible-ci-and-containers-plan.md) | proposed |
 | ADR-0040 | crawler/scheduler-and-leases | [Bounded Vocabulary Updates and Reduced Advisory-Lock Contention](crawler/scheduler-and-leases/ADR-0040-vocubulary-lock-resolving.md) | proposed |
 | ADR-0041 | infra/configuration-and-secrets | [Rotate Exposed Credentials and Enforce Automated Secret Scanning](infra/configuration-and-secrets/ADR-0041-credential-rotation-and-secret-scanning.md) | accepted |
+| ADR-0042 | crawler/robots-and-politeness | [Enforce host politeness across processes with a crawl_host row and one atomic claim](crawler/robots-and-politeness/ADR-0042-shared-host-politeness-in-postgres.md) | accepted |
+| ADR-0043 | indexer/vocubulary | [Update vocabulary counts through a transactional outbox, not a global lock](indexer/vocubulary/ADR-0043-vocabulary-outbox.md) | accepted |
 
 ## Incidents
 

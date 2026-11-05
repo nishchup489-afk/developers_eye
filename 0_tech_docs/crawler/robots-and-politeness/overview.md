@@ -22,6 +22,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
+| [ADR-0042](ADR-0042-shared-host-politeness-in-postgres.md) | decision | Enforce host politeness across processes with a crawl_host row and one atomic claim | accepted |
 | [ADR-0017](ADR-0017-robots-cache-and-host-politeness.md) | decision | Cache robots per origin and coordinate conservative host pacing | accepted |
 | [INC-0004](INC-0004-stdlib-robots-parser-ignored-wildcards.md) | incident | Python's urllib.robotparser ignored wildcard Disallow rules and longest-match Allow | resolved |
 
@@ -34,5 +35,5 @@ The identified decisions for this feature are indexed above. Record new decision
 - Do not go back to `urllib.robotparser` or any parser without RFC 9309 longest-match and wildcards (INC-0004).
 - Every change to `robots_rules.py` comes with a test holding the exact robots.txt text and URL (INC-0004).
 - Keep passing: `tests/test_robots_rules.py`, `tests/test_robots_policy.py`.
-- Do not advertise local semaphores as distributed politeness.
+- Politeness state lives only in `crawl_host`. Do not add a second limiter (ADR-0042).
 - Keep wildcard/longest-match fixtures and robots-cache expiry tests.

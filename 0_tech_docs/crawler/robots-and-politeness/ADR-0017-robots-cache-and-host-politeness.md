@@ -11,7 +11,7 @@ code:
 - crawler/src/crawler/policy_and_politeness/politeness_policy.py
 - backend/src/backend/models/robot_cache.py
 supersedes: null
-superseded_by: null
+superseded_by: ADR-0042
 related:
 - INC-0004
 - ADR-0006
