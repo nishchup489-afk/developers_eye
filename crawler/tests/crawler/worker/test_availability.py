@@ -28,7 +28,9 @@ def test_missing_pages_are_retained_as_unavailable_and_removed_from_search(monke
         async def scalars(self, query):
             self.statements.append(query)
             return SimpleNamespace(all=lambda: [42])
-        async def execute(self, query): self.statements.append(query)
+        async def execute(self, query):
+            self.statements.append(query)
+            return SimpleNamespace(all=lambda: [(42, ())])
         def add(self, item): pass
     session = Session()
     complete = AsyncMock(return_value=True)

@@ -17,7 +17,8 @@ import pytest_asyncio
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-from backend.search.service import categorize, search_documents
+from backend.search.ranking.types import CorpusStatistics
+from backend.search.service import clear_corpus_statistics, set_corpus_statistics, categorize, search_documents
 
 DOCUMENTS = [
     # id, url, type, title, description, body, tags, available
@@ -33,6 +34,15 @@ DOCUMENTS = [
     (5, "https://realpython.com/async-io-python/", "tutorial", "Async IO in Python",
      None, "A walkthrough of async IO.", "not-a-list", True),
 ]
+
+
+@pytest.fixture(autouse=True)
+def corpus_snapshot():
+    """The API lifespan installs this in production; tests install it directly."""
+    corpus = CorpusStatistics(document_count=1_000, average_document_length=50.0)
+    set_corpus_statistics(corpus, corpus)
+    yield
+    clear_corpus_statistics()
 
 
 @pytest_asyncio.fixture

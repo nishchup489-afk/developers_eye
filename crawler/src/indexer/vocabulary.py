@@ -7,6 +7,7 @@ transaction. Counts represent documents containing each term, not occurrences.
 
 from __future__ import annotations
 
+import logging
 import re
 from collections.abc import Iterable
 
@@ -16,6 +17,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.models.search_terms import SearchTerm
 from backend.models.search_index import SearchIndex
+
+logger = logging.getLogger(__name__)
 
 _TERM = re.compile(r"[a-z][a-z0-9_+.#-]*\Z", re.ASCII)
 _SPECIAL = {"c++", "c#", "f#", ".net"}
@@ -120,8 +123,11 @@ async def synchronize_vocabulary(
         missing = set(batch) - updated.keys()
 
         if missing:
-            raise RuntimeError(
-                f"Vocabulary frequency drift: {sorted(missing)}"
+            # The vocabulary is derived data and vocabulary_rebuild repairs it.
+            # Drift must never stop a real index or availability change.
+            logger.warning(
+                "Vocabulary frequency drift on %d terms, sample=%s",
+                len(missing), sorted(missing)[:5],
             )
 
         zero_terms = [

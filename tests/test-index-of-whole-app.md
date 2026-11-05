@@ -26,14 +26,14 @@ indexes refresh on every commit. `--check` exits 1 when they are stale.
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**70 test files, 618 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**69 test files, 602 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 21 | 224 | `cd backend && poetry run pytest` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 20 | 209 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 10 | 93 | `cd crawler && poetry run pytest tests/indexer` |
-| [Crawler](#crawler) | 32 | 301 | `cd crawler && poetry run pytest tests/crawler` |
+| [Crawler](#crawler) | 32 | 300 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 7 | 0 | npm scripts in `frontend/package.json` (see below) |
 
 ### End-to-end (full app)
@@ -49,7 +49,6 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [api/test_search_route.py](../backend/tests/api/test_search_route.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#search-http-api) |
 | [integration/test_code.py](../backend/tests/integration/test_code.py) | tests | 17 | [test_case.md](../backend/tests/test_case.md#code-retrieval) |
 | [integration/test_fts.py](../backend/tests/integration/test_fts.py) | tests | 14 | [test_case.md](../backend/tests/test_case.md#full-text-search-fts) |
-| [integration/test_fuzzy.py](../backend/tests/integration/test_fuzzy.py) | tests | 15 | [test_case.md](../backend/tests/test_case.md#fuzzy-retrieval) |
 | [integration/test_ranking_developer_queries.py](../backend/tests/integration/test_ranking_developer_queries.py) | tests | 4 |  |
 | [integration/test_ranking_statistics.py](../backend/tests/integration/test_ranking_statistics.py) | tests | 7 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
 | [integration/test_retrieval.py](../backend/tests/integration/test_retrieval.py) | tests | 6 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
@@ -102,7 +101,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [crawler/ingestion/test_sitemap_discovery.py](../crawler/tests/crawler/ingestion/test_sitemap_discovery.py) | tests | 5 | [test_case.md](../crawler/tests/test_case.md#test_sitemap_discoverypy) |
 | [crawler/parser/test_html_parser.py](../crawler/tests/crawler/parser/test_html_parser.py) | tests | 28 | [test_case.md](../crawler/tests/test_case.md#test_html_parserpy) |
 | [crawler/parser/test_robots_metadata.py](../crawler/tests/crawler/parser/test_robots_metadata.py) | tests | 1 | [test_case.md](../crawler/tests/test_case.md#test_robots_metadatapy) |
-| [crawler/policy_and_politeness/test_dns_policy.py](../crawler/tests/crawler/policy_and_politeness/test_dns_policy.py) | tests | 20 | [test_case.md](../crawler/tests/test_case.md#test_dns_policypy) |
+| [crawler/policy_and_politeness/test_dns_policy.py](../crawler/tests/crawler/policy_and_politeness/test_dns_policy.py) | tests | 19 | [test_case.md](../crawler/tests/test_case.md#test_dns_policypy) |
 | [crawler/policy_and_politeness/test_host_policy.py](../crawler/tests/crawler/policy_and_politeness/test_host_policy.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_host_policypy) |
 | [crawler/policy_and_politeness/test_policy_coordinator.py](../crawler/tests/crawler/policy_and_politeness/test_policy_coordinator.py) | tests | 23 | [test_case.md](../crawler/tests/test_case.md#test_policy_coordinatorpy) |
 | [crawler/policy_and_politeness/test_politeness_policy.py](../crawler/tests/crawler/policy_and_politeness/test_politeness_policy.py) | tests | 37 | [test_case.md](../crawler/tests/test_case.md#test_politeness_policypy) |

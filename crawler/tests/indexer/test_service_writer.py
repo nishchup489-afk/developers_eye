@@ -20,6 +20,7 @@ class FakeSession:
     def __init__(self):
         self.began = False
         self.ended = False
+        self.execute = AsyncMock()
 
     async def __aenter__(self):
         return self

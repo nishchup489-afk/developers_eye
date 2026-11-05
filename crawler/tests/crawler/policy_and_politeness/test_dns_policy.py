@@ -184,7 +184,7 @@ async def test_valid_request() -> None:
     )
 
 
-async def test_blocked_request(new_url: str, headers: dict[str, str] | None = None) -> None:
+async def check_blocked_request(new_url: str, headers: dict[str, str] | None = None) -> None:
     transport = dns.safe_http_transport("https://docs.python.org/3/", ["8.8.8.8"])
     core = AsyncMock(side_effect=AssertionError("Network must not be called"))
     with patch.object(transport.pool, "handle_async_request", core):
@@ -414,7 +414,7 @@ async def main() -> int:
         ("block same-host different scheme", "http://docs.python.org/3/", None),
         ("block custom Host header", "https://docs.python.org/3/", {"Host": "evil.example"}),
     ]:
-        await runner.check(name, lambda url=url, headers=headers: test_blocked_request(url, headers))
+        await runner.check(name, lambda url=url, headers=headers: check_blocked_request(url, headers))
     await runner.check("block custom TLS SNI override", test_blocked_sni)
     await runner.check("redirect cannot escape approved origin", test_redirect_is_revalidated)
 

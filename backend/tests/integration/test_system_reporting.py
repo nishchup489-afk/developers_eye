@@ -45,7 +45,7 @@ async def session():
             transaction = await connection.begin()
             await connection.execute(text(f'CREATE SCHEMA "{schema}"'))
             await connection.execute(text(f'SET LOCAL search_path TO "{schema}", public'))
-            await connection.run_sync(Base.metadata.create_all)
+            await connection.run_sync(Base.metadata.create_all, checkfirst=False)
             yield AsyncSession(bind=connection, expire_on_commit=False, join_transaction_mode="create_savepoint")
             await transaction.rollback()
     finally:

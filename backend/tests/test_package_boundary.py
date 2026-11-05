@@ -13,7 +13,7 @@ class NoCrawler(importlib.abc.MetaPathFinder):
             raise AssertionError('Backend imported crawler: ' + fullname)
 sys.meta_path.insert(0, NoCrawler())
 from backend.main import app
-from backend.services.crawler_monitoring import build_monitor
+from backend.admin_services.crawler_monitoring import build_monitor
 assert '/admin/crawler/monitor' in app.openapi()['paths']
 assert '/admin/indexer/report' in app.openapi()['paths']
 '''

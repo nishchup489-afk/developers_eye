@@ -58,7 +58,7 @@ async def test_normalizes_query_and_binds_pagination():
     assert params == {"query_text": "FastAPI APIRouter", "limit": 12, "offset": 8}
     assert "FROM search_index" in str(sql)
     assert "code_vector @@" in str(sql)
-    assert "plainto_tsquery('simple'" in str(sql)
+    assert "websearch_to_tsquery('simple'" in str(sql)
     assert "ts_rank_cd(" in str(sql)
     assert "ORDER BY score DESC, si.document_id ASC" in str(sql)
 

@@ -75,15 +75,13 @@ async def test_removal_decrements_and_deletes_zero_count():
     assert "DELETE FROM search_terms" in statements[1]
 
 @pytest.mark.asyncio
-async def test_missing_frequency_raises_and_caller_rolls_back():
+async def test_missing_frequency_is_logged_not_fatal(caplog):
     session = AsyncMock()
     result = MagicMock()
     result.scalar_one_or_none.return_value = None
     session.execute.return_value = result
-    with pytest.raises(RuntimeError, match="drift"):
-        await synchronize_vocabulary(
-            session, old_lexemes=["django"], new_lexemes=[],
-        )
+    await synchronize_vocabulary(session, old_lexemes=["django"], new_lexemes=[])
+    assert "drift" in caplog.text
 
 
 @pytest.mark.asyncio

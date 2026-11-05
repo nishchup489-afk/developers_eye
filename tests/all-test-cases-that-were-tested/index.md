@@ -77,26 +77,6 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_invalid_limit_rejected_before_database_access`
 - `test_sql_injection_like_text_is_not_executed`
 
-### [backend/tests/integration/test_fuzzy.py](../../backend/tests/integration/test_fuzzy.py)
-
-15 cases · write-up: [test_case.md](../../backend/tests/test_case.md#fuzzy-retrieval)
-
-- `test_exact_title_match_has_highest_score`
-- `test_prefix_typo_finds_fastapi_titles`
-- `test_extra_character_typo_finds_python`
-- `test_relevant_title_outscores_less_relevant_title`
-- `test_unrelated_query_returns_no_results`
-- `test_case_insensitive_matching`
-- `test_trims_outer_whitespace`
-- `test_limit_one_and_stable_tie_break`
-- `test_limit_is_respected`
-- `test_search_never_returns_duplicate_documents`
-- `test_no_table_mutation_from_user_input`
-- `test_blank_query_skips_database`
-- `test_non_string_query_rejected_before_database`
-- `test_invalid_limit_rejected_before_database`
-- `test_database_error_propagates_to_caller`
-
 ### [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 
 4 cases
@@ -475,7 +455,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_unchanged_document_does_not_write_counts`
 - `test_addition_issues_conflict_safe_upsert`
 - `test_removal_decrements_and_deletes_zero_count`
-- `test_missing_frequency_raises_and_caller_rolls_back`
+- `test_missing_frequency_is_logged_not_fatal`
 - `test_multiple_additions_do_not_repeat_upserts`
 
 ### [crawler/tests/indexer/test_vocabulary_rebuild_cli.py](../../crawler/tests/indexer/test_vocabulary_rebuild_cli.py)
@@ -653,7 +633,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/policy_and_politeness/test_dns_policy.py](../../crawler/tests/crawler/policy_and_politeness/test_dns_policy.py)
 
-20 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_dns_policypy)
+19 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_dns_policypy)
 
 - `test_resolve_records`
 - `test_resolve_ip_literal`
@@ -667,7 +647,6 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_safe_destination_empty`
 - `test_safe_destination_propagates_dns_failure`
 - `test_valid_request`
-- `test_blocked_request`
 - `test_blocked_sni`
 - `test_redirect_is_revalidated`
 - `test_pinned_connect_first_ip`

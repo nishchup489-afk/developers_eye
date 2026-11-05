@@ -24,6 +24,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
+asyncio_mode = "auto"
 testpaths = ["tests"]
 # Test files share basenames across folders (test_analyzer.py, test_repository.py).
 addopts = "--import-mode=importlib"
