@@ -24,6 +24,7 @@ The linked source contracts and tests are the current mechanics reference; no se
 | --- | --- | --- | --- |
 | [ADR-0038](ADR-0038-measure-before-adding-search-infrastructure.md) | decision | Optimize measured bottlenecks before adding caches, brokers or distributed workers | proposed |
 | [EXP-0005](EXP-0005-search-and-ingestion-capacity-baseline.md) | experiment | Measure search latency and ingestion interference before scaling | planned |
+| [EXP-0008](EXP-0008-crawl-index-search-at-2m.md) | experiment | Measure crawl, index and search capacity for a 2M document target | done |
 
 ## Decisions to record
 

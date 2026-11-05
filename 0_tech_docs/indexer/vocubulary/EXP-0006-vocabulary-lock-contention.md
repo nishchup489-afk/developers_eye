@@ -1,8 +1,8 @@
 ---
 id: EXP-0006
 title: Measure global vocabulary mutex cost after correctness repair
-status: planned
-outcome: inconclusive
+status: done
+outcome: reject
 date: '2026-11-02'
 area: indexer
 feature: vocubulary
@@ -50,7 +50,7 @@ Set TEST_DATABASE_URL to a disposable PostgreSQL database. No contention benchma
 
 ## Results
 
-Not run. No measured throughput gain from finer locks is claimed.
+Measured in [EXP-0008](../../infra/performance-and-scaling/EXP-0008-crawl-index-search-at-2m.md): 56 to 66 documents/s at 1, 2, 4 and 8 writers, with exact counts. The lock capped throughput regardless of concurrency.
 
 ## Analysis
 
@@ -58,4 +58,4 @@ A performance variant fails if counts diverge even when its throughput rises. A 
 
 ## Outcome
 
-Inconclusive. Retain the existing coordination design until correctness and a reproducible bottleneck justify a replacement.
+Rejected the global lock. ADR-0043 replaces it with an outbox.
