@@ -17,7 +17,7 @@
 
 ## The mission
 
-**Developer's Eye** is an independent search engine for developers and coding agents. It crawls developer resources, extracts useful content, and is being built to return **fast, relevant, source-first results** without AI-generated clutter.
+**Developer's Eye** is an independent open source search engine for developers and coding agents. It crawls developer resources, extracts useful content, and is being built to return **fast, relevant, source-first results** without AI-generated clutter.
 
 `Discover → Crawl → Parse → Persist → Index → Rank → Search`
 
