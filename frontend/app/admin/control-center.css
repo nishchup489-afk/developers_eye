@@ -421,3 +421,11 @@
 .admin-content:has(> .sys-problems) { display: flex; flex-direction: column; }
 .admin-content:has(> .sys-problems) > .admin-topbar { order: -1; }
 .admin-content:has(> .sys-problems) > .admin-main { width: 100%; box-sizing: border-box; }
+
+/* Availability page: lime bars are searches that worked, red is what failed. */
+.sys-failure-bars i { background: var(--a-red); }
+.sys-health { list-style: none; margin: 0; padding: 0 26px 22px; display: flex; flex-direction: column; }
+.sys-health li { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px 0; border-top: 1px solid var(--a-border); font-size: 14px; }
+.sys-health li:first-child { border-top: 0; }
+.sys-health .cc-badge { flex-shrink: 0; white-space: nowrap; }
+.sys-health small { display: block; color: var(--a-muted); font-size: 12px; margin-top: 2px; overflow-wrap: anywhere; }

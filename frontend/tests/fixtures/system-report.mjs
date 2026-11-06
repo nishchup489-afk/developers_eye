@@ -30,3 +30,37 @@ export function problemsFixture() {
   return { version: 1, generated_at: now, counts: { critical: 0, warning: 1, info: 0 },
     problems: [{ id: "disk_projection_over", severity: "warning", title: "The document goal will not fit the disk budget", detail: "At 31.8 KB per document..." }] };
 }
+export function corpusFixture() {
+  return {
+    version: 1, generated_at: now,
+    estimates: { exact: false, sampled_documents: 50000, sampled_index_rows: 50000 },
+    summary: { total_documents: 2000000, available_documents: 1900000, unavailable_documents: 100000, indexed_documents: 1890000, indexed_percent: 99.47,
+      total_body_bytes: 24000000000, average_body_bytes: 12000, sources: 3, enabled_sources: 2, hosts: 40, hosts_exact: false },
+    vocabulary: { terms: 3100000, exact: false, pending_changes: 12 },
+    freshness: { last_crawled_at: now, last_indexed_at: null,
+      seen: [{ id: "day", label: "Last 24 hours", documents: 1000, share_percent: 0.05 }],
+      indexed: [{ id: "day", label: "Last 24 hours", documents: 900, share_percent: 0.05 }] },
+    bm25: { loaded: true, documents: 1890000, average_text_length: 410.2, average_code_length: 88.1, loaded_at: now },
+    storage: [{ table: "document", total_bytes: 50000000000, heap_bytes: 2000000000, index_bytes: 1000000000, toast_bytes: 47000000000, bytes_per_document: 25000 }],
+    sources: [{ id: 1, slug: "python-docs", name: "Python docs", enabled: true, documents: 12000, available: 11900, share_percent: 0.6, average_body_bytes: 8400 }],
+    hosts: [{ name: "docs.python.org", documents: 12000, share_percent: 0.6 }],
+    document_types: [{ name: "documentation", documents: 12000, share_percent: 0.6 }],
+    categories: [{ name: "docs", documents: 12000, share_percent: 0.6 }],
+  };
+}
+const searchTotals = { successful: 950, invalid: 4, busy: 10, timed_out: 40, database_errors: 0, engine_errors: 0, server_errors: 0, requests: 1004, answered: 1000,
+  failed: 50, availability_percent: 95, timeout_percent: 4, busy_percent: 1, mean_ms: 120.5, p50_ms: 75, p95_ms: 900, p99_ms: 2400 };
+export function searchFixture() {
+  return {
+    version: 1, generated_at: now, window_hours: 24, status: "degraded", reasons: ["95% of searches succeeded in the last 15 minutes."], recording: true, partial: false,
+    limits: { deadline_ms: 3000, max_concurrent_per_process: 16, availability_target_percent: 99 },
+    database: { reachable: true, ping_ms: 1.2, connections_used: 6, connections_max: 100 },
+    schema: { current: "d4f1a7c2e9b3", expected: "d4f1a7c2e9b3", up_to_date: true },
+    snapshot: { loaded: true, documents: 42000, loaded_at: now, age_seconds: 120 },
+    planner: [{ table: "search_index", estimated_rows: 42000, modified_since_analyze: 10, dead_rows: 5, dead_percent: 0.01, last_analyze_at: now, last_vacuum_at: null, status: "ok" }],
+    totals: { ...searchTotals }, recent: { ...searchTotals },
+    timeline: [{ at: now, requests: 1000, failed: 50, timed_out: 40, busy: 10, p95_ms: 900 }],
+    latency: [{ le_ms: 100, count: 950 }, { le_ms: null, count: 0 }],
+    processes: [{ process: "api-host:12:abc123", requests: 1000, last_seen_at: now }],
+  };
+}

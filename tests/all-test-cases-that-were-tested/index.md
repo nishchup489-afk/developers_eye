@@ -58,6 +58,15 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_identical_document_ids_remain_unmodified`
 - `test_postgresql_temp_index_end_to_end`: Real DB check, skipped unless TEST_DATABASE_URL is configured.
 
+### [backend/tests/integration/test_corpus_mutation_search.py](../../backend/tests/integration/test_corpus_mutation_search.py)
+
+4 cases
+
+- `test_search_after_index_growth_exceeds_cached_n`
+- `test_search_after_index_shrink_drops_removed_documents`
+- `test_search_after_growth_from_cached_empty_corpus`
+- `test_http_search_does_not_return_422_for_stale_corpus`
+
 ### [backend/tests/integration/test_fts.py](../../backend/tests/integration/test_fts.py)
 
 14 cases · write-up: [test_case.md](../../backend/tests/test_case.md#full-text-search-fts)
@@ -120,6 +129,20 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_no_match_returns_empty`
 - `test_categorize`
 
+### [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
+
+9 cases
+
+- `test_corpus_report_counts_a_small_corpus_exactly`
+- `test_corpus_report_is_empty_safe`
+- `test_corpus_report_scales_a_sample_of_a_large_table`
+- `test_search_report_merges_processes_and_excludes_invalid`
+- `test_search_report_with_no_traffic_has_no_rates`
+- `test_search_report_flags_pending_migration_and_missing_table`
+- `test_problems_report_search_failures`
+- `test_telemetry_flush_replaces_rather_than_adds`
+- `test_statement_timeout_is_classified_as_a_timeout`
+
 ### [backend/tests/integration/test_system_reporting.py](../../backend/tests/integration/test_system_reporting.py)
 
 7 cases · write-up: [test_case.md](../../backend/tests/test_case.md#admin-system-reporting-postgresql)
@@ -155,6 +178,14 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_config_rejects_invalid_raw_limits`
 - `test_config_read_from_env`
 - `test_invalid_env`
+
+### [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)
+
+3 cases
+
+- `test_failed_refresh_does_not_replace_either_snapshot`
+- `test_successful_refresh_replaces_both_snapshots`
+- `test_background_refresh_retries_after_failure`
 
 ### [backend/tests/unit/test_fuzzy_suggestions.py](../../backend/tests/unit/test_fuzzy_suggestions.py)
 
@@ -258,6 +289,19 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_uninitialized_stats_rejected_with_nonempty_retrieval`
 - `test_source_category_host_must_match_domain_boundary`
 - `test_no_eligible_metadata_skips_body_and_snippet`
+
+### [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
+
+8 cases
+
+- `test_bucket_boundaries`
+- `test_percentile_interpolates_and_handles_edges`
+- `test_memory_is_bounded`
+- `test_failed_flush_keeps_minutes_for_the_retry`
+- `test_offline_report_uses_memory_and_says_it_is_partial`
+- `test_expected_revision_finds_the_newest_migration`
+- `test_route_records_each_failure`
+- `test_route_records_success_with_latency`
 
 ### [backend/tests/unit/test_snippet_bounds.py](../../backend/tests/unit/test_snippet_bounds.py)
 
@@ -989,7 +1033,11 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 
 These test files have no matching heading in a `test_case.md`.
 
+- [backend/tests/integration/test_corpus_mutation_search.py](../../backend/tests/integration/test_corpus_mutation_search.py)
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
+- [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
+- [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)
+- [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
 - [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
 - [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)

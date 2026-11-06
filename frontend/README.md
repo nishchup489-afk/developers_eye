@@ -75,7 +75,7 @@ Roles are checked against the current environment on every request, so removing 
 
 ### System, Hosts and problem checks
 
-Apply the indexer heartbeat migration (`alembic upgrade head`, revision `f3b8c1d2e4a5`) and restart the backend and indexer. The backend then serves `GET /admin/system/report`, `/admin/system/hosts` and `/admin/system/problems` with the same reporting key. Settings live in `backend/.env` (`ADMIN_DB_BUDGET_GB`, `ADMIN_TARGET_DOCUMENTS`, `ADMIN_HOST_MIN_INTERVAL_SECONDS`, `ADMIN_EVENT_RETENTION_DAYS`).
+Apply the indexer heartbeat migration (`alembic upgrade head`, revision `f3b8c1d2e4a5`) and restart the backend and indexer. The backend then serves `GET /admin/system/report`, `/admin/system/hosts`, `/admin/system/corpus`, `/admin/system/search` and `/admin/system/problems` with the same reporting key. The search report needs migration `d4f1a7c2e9b3`, and says so until it runs. Settings live in `backend/.env` (`ADMIN_DB_BUDGET_GB`, `ADMIN_TARGET_DOCUMENTS`, `ADMIN_HOST_MIN_INTERVAL_SECONDS`, `ADMIN_EVENT_RETENTION_DAYS`).
 
 - **System**: database size against the disk budget, a projection to the document goal, bytes per document by table, progress and ETA, per-source yield and duplicates, table sizes, connections, event retention, and slowest queries when `pg_stat_statements` is enabled.
 - **Hosts**: requests per minute per host across all workers, share, 429/503, 4xx/5xx, blocks and timeouts, with "over polite rate", "throttled" and "hot host" flags.
