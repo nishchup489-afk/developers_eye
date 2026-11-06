@@ -32,14 +32,23 @@ async def load_corpus_statistics() -> None:
     set_corpus_statistics(text_corpus, code_corpus)
 
 
-async def refresh_corpus_statistics(interval: float = CORPUS_REFRESH_SECONDS) -> None:
-    """Search keeps its last good snapshot if a refresh fails."""
+
+async def refresh_corpus_statistics() -> None:
+    """Refresh BM25 statistics every 10 minutes; retry after failures."""
     while True:
-        await asyncio.sleep(interval)
+        await asyncio.sleep(600)
+
         try:
             await load_corpus_statistics()
-        except (SQLAlchemyError, OSError):
-            logger.warning("Corpus statistics refresh failed", exc_info=True)
+
+        except asyncio.CancelledError:
+            raise
+
+        except Exception:
+            logger.exception(
+                "Corpus statistics refresh failed; "
+                "preserving last good snapshot"
+            )
 
 
 @asynccontextmanager
