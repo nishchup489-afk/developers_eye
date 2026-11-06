@@ -72,6 +72,8 @@ Admin features require additional environment configuration; see `frontend/.env.
 Created by **Sadnan Nishthup** · [X / Twitter](https://x.com/Nishchup489) · [LinkedIn](https://www.linkedin.com/in/sadnan-nishthup-7405273a5)  
 **Repository:** [nishchup489-afk/developers_eye](https://github.com/nishchup489-afk/developers_eye)
 
+git apply --check developers_eye_p1_corpus_mutation.patch
+git apply developers_eye_p1_corpus_mutation.patch
 <!-- docs-nav:start -->
 ## Documentation map
 
