@@ -4,7 +4,7 @@ Area: frontend · Status: active
 
 ## Purpose
 
-The crawler, indexer and vocabulary views consume backend-owned read-only reports. Server routes validate session, configuration and response shape; browser code never receives the shared service key.
+The crawler, indexer, vocabulary, corpus and availability views consume backend-owned read-only reports. Server routes validate session, configuration and response shape; browser code never receives the shared service key.
 
 Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
 
@@ -26,6 +26,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | [ADR-0030](../../backend/admin-api/ADR-0030-read-only-observability-plane.md) | decision | Expose read-only operational reports from backend-owned query services | accepted |
 | [ADR-0032](../admin-auth/ADR-0032-github-admin-auth-and-service-key-boundary.md) | decision | Authenticate admins with GitHub and keep the backend key behind server routes | accepted |
 | [ADR-0037](../../indexer/coverage-reporting/ADR-0037-operational-coverage-snapshot-semantics.md) | decision | Treat coverage and vocabulary reports as operational observations | accepted |
+| [ADR-0044](../../backend/admin-api/ADR-0044-search-availability-telemetry.md) | decision | Record search outcomes per minute in PostgreSQL, and sample the corpus for statistics | accepted |
 
 ## Decisions to record
 
