@@ -14,6 +14,8 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -158,26 +160,99 @@ async def compare_one(
     }
 
 
-def print_report(report: dict[str, object], *, k: int) -> None:
-    print(f"\nQuery: {report['query']} | Mode: {report['mode']}")
-    print(f"Candidates: {report['candidate_count']}")
+def _enable_terminal_color() -> bool:
+    """Use ANSI colors only for an interactive terminal that supports them."""
+    if os.environ.get("NO_COLOR") is not None or not sys.stdout.isatty():
+        return False
+    if os.name != "nt":
+        return os.environ.get("TERM", "") != "dumb"
+
+    # Windows PowerShell and older console hosts may need VT explicitly enabled.
+    try:
+        import ctypes
+
+        kernel32 = ctypes.windll.kernel32
+        kernel32.GetStdHandle.argtypes = [ctypes.c_uint32]
+        kernel32.GetStdHandle.restype = ctypes.c_void_p
+        kernel32.GetConsoleMode.argtypes = [
+            ctypes.c_void_p, ctypes.POINTER(ctypes.c_uint32)
+        ]
+        kernel32.GetConsoleMode.restype = ctypes.c_int
+        kernel32.SetConsoleMode.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
+        kernel32.SetConsoleMode.restype = ctypes.c_int
+        handle = kernel32.GetStdHandle(0xFFFFFFF5)  # STD_OUTPUT_HANDLE (-11)
+        mode = ctypes.c_uint32()
+        if not handle or not kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
+            return False
+        return bool(kernel32.SetConsoleMode(handle, mode.value | 0x0004))
+    except (AttributeError, OSError, ValueError):
+        return False
+
+
+def _paint(value: object, code: str, *, enabled: bool) -> str:
+    message = str(value)
+    return f"\x1b[{code}m{message}\x1b[0m" if enabled else message
+
+
+def print_report(report: dict[str, object], *, k: int, color: bool = True) -> None:
+    enabled = color and _enable_terminal_color()
+
+    def fmt(value: object, code: str = "1;37") -> str:
+        return _paint(value, code, enabled=enabled)
+
+    def separator() -> None:
+        print(fmt("─" * 86, "2;37"))
+
+    print()
+    separator()
+    print(f"  {fmt('DEVELOPER’S EYE', '1;36')}  {fmt('BM25 vs PostgreSQL', '1;37')}")
+    separator()
+    print(f"  {fmt('QUERY', '1;36')}  {report['query']}")
+    print(f"  {fmt('MODE', '1;36')}   {str(report['mode']).upper()}"
+          f"     {fmt('CANDIDATES', '1;36')}  {report['candidate_count']}")
     if report["candidate_count"] == 0:
-        print("No retrieval candidates. Try a different query.")
+        print(fmt("  No retrieval candidates. Try a different query.", "1;33"))
+        separator()
         return
 
-    print(f"Top-{report['top_k']} overlap: {report['top_k_overlap']:.3f}")
-    print(f"Mean absolute rank shift: {report['mean_absolute_rank_shift']:.3f}")
-    print(f"PostgreSQL top-{k}: {report['postgresql_order'][:k]}")
-    print(f"BM25 top-{k}:       {report['bm25_order'][:k]}")
-    print("\nBM25#  PG#  Doc ID       BM25 score       PG score   Title")
+    overlap = report["top_k_overlap"]
+    shift = report["mean_absolute_rank_shift"]
+    print(f"  {fmt(f'TOP-{report["top_k"]} OVERLAP', '1;36')}  {fmt(f'{overlap:.1%}', '1;33')}"
+          f"     {fmt('AVG RANK SHIFT', '1;36')}  {fmt(f'{shift:.2f}', '1;33')}")
+    print()
+    print(f"  {fmt('POSTGRESQL', '1;34')} top-{k}: {report['postgresql_order'][:k]}")
+    print(f"  {fmt('BM25', '1;32')}       top-{k}: {report['bm25_order'][:k]}")
+    print()
+    separator()
+    print(f"{fmt('BM25#', '1;32')}  {fmt(' PG#', '1;34')}  "
+          f"{'DOC ID':>7}   {fmt('BM25 SCORE'.rjust(12), '1;32')}   "
+          f"{fmt('PG SCORE'.rjust(12), '1;34')}   "
+          f"{fmt('CHANGE'.rjust(7), '1;36')}  TITLE")
+    separator()
+
     for row in report["documents"][:k]:
-        title = row["title"].replace("\n", " ")[:68]
+        difference = row["postgres_rank"] - row["bm25_rank"]
+        if difference > 0:
+            movement = fmt(f"+{difference:>3}", "1;36")  # BM25 promotes
+        elif difference < 0:
+            movement = fmt(f"{difference:>4}", "1;35")  # BM25 demotes
+        else:
+            movement = fmt("   =", "2;37")
+        title = " ".join(str(row["title"]).split())[:65]
         print(
-            f"{row['bm25_rank']:5d} {row['postgres_rank']:4d} "
-            f"{row['document_id']:7d} "
-            f"{row['bm25_score']:15.6f} "
-            f"{row['postgres_score']:14.6f}   {title}"
+            f"{fmt(f'{row["bm25_rank"]:5d}', '1;32')}  "
+            f"{fmt(f'{row["postgres_rank"]:4d}', '1;34')}  "
+            f"{row['document_id']:7d}   "
+            f"{fmt(f'{row["bm25_score"]:12.6f}', '32')}   "
+            f"{fmt(f'{row["postgres_score"]:12.6f}', '34')}   "
+            f"{movement}  {title}"
         )
+    separator()
+    print(f"  {fmt('+N', '1;36')} = promoted by BM25   "
+          f"{fmt('-N', '1;35')} = demoted by BM25   "
+          f"{fmt('=', '2;37')} = same rank")
+    print(fmt("  Overlap measures agreement, not which ranking is more relevant.", "2;37"))
+    print()
 
 
 async def main() -> None:
@@ -186,6 +261,7 @@ async def main() -> None:
     parser.add_argument("--mode", choices=["text", "code", "all"], default="text")
     parser.add_argument("--k", type=int, default=10, help="Number of top results to inspect")
     parser.add_argument("--output", type=Path, help="Save complete JSON report")
+    parser.add_argument("--no-color", action="store_true", help="Disable ANSI terminal colors")
     args = parser.parse_args()
     if not 1 <= args.k <= 100:
         parser.error("--k must be between 1 and 100")
@@ -199,7 +275,7 @@ async def main() -> None:
                 report = await compare_one(
                     session, args.query, SearchMode(args.mode), k=args.k
                 )
-        print_report(report, k=args.k)
+        print_report(report, k=args.k, color=not args.no_color)
         if args.output:
             args.output.parent.mkdir(parents=True, exist_ok=True)
             args.output.write_text(
