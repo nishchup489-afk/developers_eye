@@ -75,16 +75,24 @@ def judgment_template(snapshot: dict[str, Any]) -> dict[str, Any]:
     for report in snapshot["reports"]:
         ranked = sorted(report["documents"], key=lambda row: row["bm25_rank"])
         baseline = sorted(report["documents"], key=lambda row: row["postgres_rank"])
-        urls = dict.fromkeys(
-            str(row["url"]) for row in (ranked[:10] + baseline[:10])
-        )
+        # Blind the judgment form: never reveal BM25/PG order to the grader.
+        titles = {
+            str(row["url"]): str(row["title"])
+            for row in (ranked[:10] + baseline[:10])
+        }
+        urls = sorted(titles)
         queries[report["query_id"]] = {
+            "query": report["query"],
+            "mode": report["mode"],
+            "stratum": report["stratum"],
+            "titles": {url: titles[url] for url in urls},
             "judgments": {url: None for url in urls},
             "no_relevant_documents": False,
         }
     return {
         "instructions": (
-            "Grade all top-10 pooled URLs: 0=irrelevant, 1=marginal, "
+            "Judge URLs in alphabetic order without seeing either ranking: "
+            "0=irrelevant, 1=marginal, "
             "2=useful, 3=ideal. Add known relevant URLs from outside the "
             "candidate pool; otherwise recall is biased upwards. "
             "Set no_relevant_documents=true only after confirming no relevant "
