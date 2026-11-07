@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "description": "Versioned fixed query manifest. Judgment files must be independently labeled from frozen corpus results, not automatically inferred.",
+  "queries": [
+    {
+      "query_id": "Q001",
+      "query": "python async await tutorial",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q002",
+      "query": "python list comprehension",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q003",
+      "query": "python dataclasses slots",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q004",
+      "query": "python asyncio gather",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q005",
+      "query": "python context managers",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q006",
+      "query": "python json loads",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q007",
+      "query": "FastAPI dependency injection",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q008",
+      "query": "FastAPI request body validation",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q009",
+      "query": "FastAPI APIRouter",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q010",
+      "query": "FastAPI lifespan events",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q011",
+      "query": "javascript promise all",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q012",
+      "query": "javascript fetch API",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q013",
+      "query": "javascript event loop",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q014",
+      "query": "CSS grid layout",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q015",
+      "query": "javascript AbortController",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q016",
+      "query": "MDN web workers",
+      "mode": "text",
+      "stratum": "documentation"
+    },
+    {
+      "query_id": "Q017",
+      "query": "asyncio.create_task",
+      "mode": "code",
+      "stratum": "identifier"
+    },
+    {
+      "query_id": "Q018",
+      "query": "__init__",
+      "mode": "code",
+      "stratum": "identifier"
+    },
+    {
+      "query_id": "Q019",
+      "query": "get_user_by_id",
+      "mode": "code",
+      "stratum": "identifier"
+    },
+    {
+      "query_id": "Q020",
+      "query": "useEffect",
+      "mode": "code",
+      "stratum": "identifier"
+    },
+    {
+      "query_id": "Q021",
+      "query": "HTTP 404",
+      "mode": "code",
+      "stratum": "identifier"
+    },
+    {
+      "query_id": "Q022",
+      "query": "Promise.all",
+      "mode": "code",
+      "stratum": "identifier"
+    },
+    {
+      "query_id": "Q023",
+      "query": "async def",
+      "mode": "code",
+      "stratum": "code-syntax"
+    },
+    {
+      "query_id": "Q024",
+      "query": "raise HTTPException",
+      "mode": "code",
+      "stratum": "code-syntax"
+    },
+    {
+      "query_id": "Q025",
+      "query": "await fetch",
+      "mode": "code",
+      "stratum": "code-syntax"
+    },
+    {
+      "query_id": "Q026",
+      "query": "async def main",
+      "mode": "code",
+      "stratum": "code-syntax"
+    },
+    {
+      "query_id": "Q027",
+      "query": "python async database",
+      "mode": "all",
+      "stratum": "mixed"
+    },
+    {
+      "query_id": "Q028",
+      "query": "FastAPI Depends",
+      "mode": "all",
+      "stratum": "mixed"
+    },
+    {
+      "query_id": "Q029",
+      "query": "javascript fetch examples",
+      "mode": "all",
+      "stratum": "mixed"
+    },
+    {
+      "query_id": "Q030",
+      "query": "python OR javascript",
+      "mode": "text",
+      "stratum": "operator"
+    },
+    {
+      "query_id": "Q031",
+      "query": "python -django",
+      "mode": "text",
+      "stratum": "operator"
+    },
+    {
+      "query_id": "Q032",
+      "query": "\"async context manager\"",
+      "mode": "text",
+      "stratum": "phrase"
+    },
+    {
+      "query_id": "Q033",
+      "query": "\"dependency injection\"",
+      "mode": "all",
+      "stratum": "phrase"
+    },
+    {
+      "query_id": "Q034",
+      "query": "asynci create task",
+      "mode": "text",
+      "stratum": "typo"
+    },
+    {
+      "query_id": "Q035",
+      "query": "zznonexistentdevelopertermzz",
+      "mode": "all",
+      "stratum": "no-result"
+    }
+  ]
+}
