@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HardDrive, Network, Radar, ScanSearch } from "lucide-react";
+import { Activity, HardDrive, Library, Network, Radar, ScanSearch } from "lucide-react";
 
-const links = [["/admin/crawler", "Crawler", Radar], ["/admin/indexer", "Indexer", ScanSearch], ["/admin/hosts", "Hosts", Network], ["/admin/system", "System", HardDrive]] as const;
+const links = [["/admin/crawler", "Crawler", Radar], ["/admin/indexer", "Indexer", ScanSearch], ["/admin/corpus", "Corpus", Library], ["/admin/availability", "Availability", Activity], ["/admin/hosts", "Hosts", Network], ["/admin/system", "System", HardDrive]] as const;
 
 export default function AdminNav() {
   const pathname = usePathname();

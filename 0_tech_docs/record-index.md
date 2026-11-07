@@ -54,6 +54,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0041 | infra/configuration-and-secrets | [Rotate Exposed Credentials and Enforce Automated Secret Scanning](infra/configuration-and-secrets/ADR-0041-credential-rotation-and-secret-scanning.md) | accepted |
 | ADR-0042 | crawler/robots-and-politeness | [Enforce host politeness across processes with a crawl_host row and one atomic claim](crawler/robots-and-politeness/ADR-0042-shared-host-politeness-in-postgres.md) | accepted |
 | ADR-0043 | indexer/vocubulary | [Update vocabulary counts through a transactional outbox, not a global lock](indexer/vocubulary/ADR-0043-vocabulary-outbox.md) | accepted |
+| ADR-0044 | backend/admin-api | [Record search outcomes per minute in PostgreSQL, and sample the corpus for statistics](backend/admin-api/ADR-0044-search-availability-telemetry.md) | accepted |
 
 ## Incidents
 

@@ -1,0 +1,322 @@
+{
+  "query": "FastAPI async tests",
+  "mode": "text",
+  "candidate_count": 25,
+  "evaluation_time_utc": "2026-11-07T00:53:06.493498+00:00",
+  "top_k": 20,
+  "top_k_overlap": 0.9,
+  "mean_absolute_rank_shift": 7.36,
+  "postgresql_order": [
+    27557,
+    30613,
+    28286,
+    28002,
+    28776,
+    29535,
+    30293,
+    31049,
+    31723,
+    32330,
+    32935,
+    33541,
+    34123,
+    34711,
+    35286,
+    35871,
+    27667,
+    27820,
+    27672,
+    27662,
+    28144,
+    28188,
+    27637,
+    28074,
+    27577
+  ],
+  "bm25_order": [
+    27557,
+    27667,
+    27820,
+    27672,
+    28286,
+    27662,
+    28074,
+    28188,
+    28002,
+    28776,
+    29535,
+    30293,
+    31049,
+    31723,
+    32330,
+    32935,
+    33541,
+    34123,
+    34711,
+    35286,
+    35871,
+    30613,
+    27577,
+    27637,
+    28144
+  ],
+  "corpus": {
+    "text": {
+      "N": 42114,
+      "avgDL": 686.5200769659223
+    },
+    "code": null
+  },
+  "documents": [
+    {
+      "document_id": 27557,
+      "bm25_rank": 1,
+      "postgres_rank": 1,
+      "rank_shift": 0,
+      "bm25_score": 18.244523393343073,
+      "postgres_score": 2.4325828552246094,
+      "title": "Async Tests - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/async-tests/"
+    },
+    {
+      "document_id": 27667,
+      "bm25_rank": 2,
+      "postgres_rank": 17,
+      "rank_shift": -15,
+      "bm25_score": 17.517359402089976,
+      "postgres_score": 0.03329356387257576,
+      "title": "Testing Events: lifespan and startup - shutdown - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/testing-events/"
+    },
+    {
+      "document_id": 27820,
+      "bm25_rank": 3,
+      "postgres_rank": 18,
+      "rank_shift": -15,
+      "bm25_score": 17.227407718636563,
+      "postgres_score": 0.027168361470103264,
+      "title": "Custom Docs UI Static Assets (Self-Hosting) - FastAPI",
+      "url": "https://fastapi.tiangolo.com/how-to/custom-docs-ui-assets/"
+    },
+    {
+      "document_id": 27672,
+      "bm25_rank": 4,
+      "postgres_rank": 19,
+      "rank_shift": -15,
+      "bm25_score": 17.18295794893415,
+      "postgres_score": 0.014358974993228912,
+      "title": "Testing WebSockets - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/testing-websockets/"
+    },
+    {
+      "document_id": 28286,
+      "bm25_rank": 5,
+      "postgres_rank": 3,
+      "rank_shift": 2,
+      "bm25_score": 16.547879151090555,
+      "postgres_score": 0.12063692510128021,
+      "title": "Testing - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/testing/"
+    },
+    {
+      "document_id": 27662,
+      "bm25_rank": 6,
+      "postgres_rank": 20,
+      "rank_shift": -14,
+      "bm25_score": 16.49322987317356,
+      "postgres_score": 0.006976089905947447,
+      "title": "Testing Dependencies with Overrides - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/testing-dependencies/"
+    },
+    {
+      "document_id": 28074,
+      "bm25_rank": 7,
+      "postgres_rank": 24,
+      "rank_shift": -17,
+      "bm25_score": 14.428641918905381,
+      "postgres_score": 0.0023802630603313446,
+      "title": "Request Body - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/body/"
+    },
+    {
+      "document_id": 28188,
+      "bm25_rank": 8,
+      "postgres_rank": 22,
+      "rank_shift": -14,
+      "bm25_score": 14.402354909089523,
+      "postgres_score": 0.0048947823233902454,
+      "title": "Path Parameters - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/path-params/"
+    },
+    {
+      "document_id": 28002,
+      "bm25_rank": 9,
+      "postgres_rank": 4,
+      "rank_shift": 5,
+      "bm25_score": 13.558732854997428,
+      "postgres_score": 0.0375874787569046,
+      "title": "Test Client - TestClient - FastAPI",
+      "url": "https://fastapi.tiangolo.com/reference/testclient/"
+    },
+    {
+      "document_id": 28776,
+      "bm25_rank": 10,
+      "postgres_rank": 5,
+      "rank_shift": 5,
+      "bm25_score": 13.558732854997428,
+      "postgres_score": 0.0375874787569046,
+      "title": "Test Client - TestClient - FastAPI",
+      "url": "https://fastapi.tiangolo.com/de/reference/testclient/"
+    },
+    {
+      "document_id": 29535,
+      "bm25_rank": 11,
+      "postgres_rank": 6,
+      "rank_shift": 5,
+      "bm25_score": 13.558732854997428,
+      "postgres_score": 0.0375874787569046,
+      "title": "Test Client - TestClient - FastAPI",
+      "url": "https://fastapi.tiangolo.com/es/reference/testclient/"
+    },
+    {
+      "document_id": 30293,
+      "bm25_rank": 12,
+      "postgres_rank": 7,
+      "rank_shift": 5,
+      "bm25_score": 13.558732854997428,
+      "postgres_score": 0.0375874787569046,
+      "title": "Test Client - TestClient - FastAPI",
+      "url": "https://fastapi.tiangolo.com/fr/reference/testclient/"
+    },
+    {
+      "document_id": 31049,
+      "bm25_rank": 13,
+      "postgres_rank": 8,
+      "rank_shift": 5,
+      "bm25_score": 13.558732854997428,
+      "postgres_score": 0.0375874787569046,
+      "title": "Test Client - TestClient - FastAPI",
+      "url": "https://fastapi.tiangolo.com/hi/reference/testclient/"
+    },
+    {
+      "document_id": 31723,
+      "bm25_rank": 14,
+      "postgres_rank": 9,
+      "rank_shift": 5,
+      "bm25_score": 13.558732854997428,
+      "postgres_score": 0.0375874787569046,
+      "title": "Test Client - TestClient - FastAPI",
+      "url": "https://fastapi.tiangolo.com/ja/reference/testclient/"
+    },
+    {
+      "document_id": 32330,
+      "bm25_rank": 15,
+      "postgres_rank": 10,
+      "rank_shift": 5,
+      "bm25_score": 13.558732854997428,
+      "postgres_score": 0.0375874787569046,
+      "title": "Test Client - TestClient - FastAPI",
+      "url": "https://fastapi.tiangolo.com/ko/reference/testclient/"
+    },
+    {
+      "document_id": 32935,
+      "bm25_rank": 16,
+      "postgres_rank": 11,
+      "rank_shift": 5,
+      "bm25_score": 13.558732854997428,
+      "postgres_score": 0.0375874787569046,
+      "title": "Test Client - TestClient - FastAPI",
+      "url": "https://fastapi.tiangolo.com/pt/reference/testclient/"
+    },
+    {
+      "document_id": 33541,
+      "bm25_rank": 17,
+      "postgres_rank": 12,
+      "rank_shift": 5,
+      "bm25_score": 13.558732854997428,
+      "postgres_score": 0.0375874787569046,
+      "title": "Test Client - TestClient - FastAPI",
+      "url": "https://fastapi.tiangolo.com/ru/reference/testclient/"
+    },
+    {
+      "document_id": 34123,
+      "bm25_rank": 18,
+      "postgres_rank": 13,
+      "rank_shift": 5,
+      "bm25_score": 13.558732854997428,
+      "postgres_score": 0.0375874787569046,
+      "title": "Test Client - TestClient - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tr/reference/testclient/"
+    },
+    {
+      "document_id": 34711,
+      "bm25_rank": 19,
+      "postgres_rank": 14,
+      "rank_shift": 5,
+      "bm25_score": 13.558732854997428,
+      "postgres_score": 0.0375874787569046,
+      "title": "Test Client - TestClient - FastAPI",
+      "url": "https://fastapi.tiangolo.com/uk/reference/testclient/"
+    },
+    {
+      "document_id": 35286,
+      "bm25_rank": 20,
+      "postgres_rank": 15,
+      "rank_shift": 5,
+      "bm25_score": 13.558732854997428,
+      "postgres_score": 0.0375874787569046,
+      "title": "Test Client - TestClient - FastAPI",
+      "url": "https://fastapi.tiangolo.com/zh-hant/reference/testclient/"
+    },
+    {
+      "document_id": 35871,
+      "bm25_rank": 21,
+      "postgres_rank": 16,
+      "rank_shift": 5,
+      "bm25_score": 13.558732854997428,
+      "postgres_score": 0.0375874787569046,
+      "title": "Test Client - TestClient - FastAPI",
+      "url": "https://fastapi.tiangolo.com/zh/reference/testclient/"
+    },
+    {
+      "document_id": 30613,
+      "bm25_rank": 22,
+      "postgres_rank": 2,
+      "rank_shift": 20,
+      "bm25_score": 13.13054123944798,
+      "postgres_score": 2.29156756401062,
+      "title": "Async Tests - FastAPI",
+      "url": "https://fastapi.tiangolo.com/hi/advanced/async-tests/"
+    },
+    {
+      "document_id": 27577,
+      "bm25_rank": 23,
+      "postgres_rank": 25,
+      "rank_shift": -2,
+      "bm25_score": 12.65629753451616,
+      "postgres_score": 0.001550387591123581,
+      "title": "Generating SDKs - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/generate-clients/"
+    },
+    {
+      "document_id": 27637,
+      "bm25_rank": 24,
+      "postgres_rank": 23,
+      "rank_shift": 1,
+      "bm25_score": 11.123690899049617,
+      "postgres_score": 0.003334964159876108,
+      "title": "Settings and Environment Variables - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/settings/"
+    },
+    {
+      "document_id": 28144,
+      "bm25_rank": 25,
+      "postgres_rank": 21,
+      "rank_shift": 4,
+      "bm25_score": 9.882655809601706,
+      "postgres_score": 0.004999999888241291,
+      "title": "First Steps - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/first-steps/"
+    }
+  ]
+}

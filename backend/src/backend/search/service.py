@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from urllib.parse import urlsplit
 
 from sqlalchemy import func, select
@@ -49,6 +50,7 @@ class _CorpusSnapshots:
 
 
 _corpus_snapshots: _CorpusSnapshots | None = None
+_corpus_loaded_at: datetime | None = None
 _df_cache = DocumentFrequencyCache()
 
 
@@ -56,8 +58,9 @@ def set_corpus_statistics(text: CorpusStatistics, code: CorpusStatistics) -> Non
     """Install a precomputed per-channel corpus snapshot."""
     if not isinstance(text, CorpusStatistics) or not isinstance(code, CorpusStatistics):
         raise TypeError("text and code must be CorpusStatistics")
-    global _corpus_snapshots
+    global _corpus_snapshots, _corpus_loaded_at
     _corpus_snapshots = _CorpusSnapshots(text=text, code=code)
+    _corpus_loaded_at = datetime.now(timezone.utc)
 
 
 def clear_corpus_statistics() -> None:
@@ -65,6 +68,16 @@ def clear_corpus_statistics() -> None:
     global _corpus_snapshots
     _corpus_snapshots = None
     _df_cache.clear()
+
+
+def corpus_snapshot_info() -> dict | None:
+    """This process's BM25 snapshot, for the admin dashboard."""
+    snapshot = _corpus_snapshots
+    if snapshot is None:
+        return None
+    return dict(documents=snapshot.text.document_count, loaded_at=_corpus_loaded_at,
+                average_text_length=round(snapshot.text.average_document_length, 1),
+                average_code_length=round(snapshot.code.average_document_length, 1))
 
 
 def _valid_url(url: str) -> bool:

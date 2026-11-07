@@ -17,6 +17,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 
 ## How-it-works docs
 
+- [`api-map.md`](api-map.md): generated map of every API, who can reach it, and which frontend call hits which backend endpoint (`python scripts/update_api_map.py`)
 - [`technical_handoff.md`](../../../technical_handoff.md)
 
 ## Records

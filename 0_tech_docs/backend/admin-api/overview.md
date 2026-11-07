@@ -13,6 +13,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 - [`backend/src/backend/api/crawler_report.py`](../../../backend/src/backend/api/crawler_report.py)
 - [`backend/src/backend/api/indexer_report.py`](../../../backend/src/backend/api/indexer_report.py)
 - [`backend/src/backend/admin_services`](../../../backend/src/backend/admin_services)
+- [`backend/src/backend/search/telemetry.py`](../../../backend/src/backend/search/telemetry.py)
 
 ## How-it-works docs
 
@@ -23,6 +24,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
 | [ADR-0030](ADR-0030-read-only-observability-plane.md) | decision | Expose read-only operational reports from backend-owned query services | accepted |
+| [ADR-0044](ADR-0044-search-availability-telemetry.md) | decision | Record search outcomes per minute in PostgreSQL, and sample the corpus for statistics | accepted |
 
 ## Decisions to record
 

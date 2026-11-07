@@ -23,6 +23,7 @@ from backend.models.crawl_monitor import CrawlEvent as Event, CrawlWorker, Index
 from backend.models.crawler_frontier import CrawlTarget as Target
 from backend.models.documents import Document
 from backend.models.search_index import SearchIndex
+from backend.models.search_minute import SearchMinute
 from backend.models.search_terms import SearchTerm
 from backend.models.source import Source
 
@@ -304,6 +305,18 @@ async def build_problems(session):
     if overcounted:
         problems.append(_problem("vocabulary_overcount", "warning", f"{overcounted:,} vocabulary terms are overcounted",
                                  "A term cannot appear in more documents than are indexed. Rebuild the vocabulary."))
+
+    # The table is missing until its migration runs, and a failed query would end this transaction.
+    if await session.scalar(text("SELECT to_regclass('search_minute') IS NOT NULL")):
+        failure_columns = (SearchMinute.busy, SearchMinute.timed_out, SearchMinute.database_errors,
+                           SearchMinute.engine_errors, SearchMinute.server_errors)
+        successful, failed = (await session.execute(select(
+            func.coalesce(func.sum(SearchMinute.successful), 0),
+            func.coalesce(func.sum(sum(failure_columns)), 0)).where(SearchMinute.minute >= now - timedelta(minutes=15)))).one()
+        if failed and successful + failed >= 5 and failed / (successful + failed) > 0.01:
+            problems.append(_problem("search_failures", "critical" if failed > successful else "warning",
+                                     f"{failed:,} of {successful + failed:,} searches failed in the last 15 minutes",
+                                     "See the Availability page for timeouts, busy rejections and database errors."))
 
     retention = settings.admin_event_retention_days
     old_events = await session.scalar(select(func.min(Event.created_at)))

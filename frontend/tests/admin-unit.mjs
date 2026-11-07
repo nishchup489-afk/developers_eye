@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
 import { adminConfig, cookieOptions, roleFor, seal, unseal, userFromSession, viewerFromSession } from "../lib/admin-session.ts";
-import { bytes, eta, isHostReport, isProblemsReport, isSystemReport, redactSystemReport } from "../lib/system-report.ts";
-import { hostsFixture, problemsFixture, systemFixture } from "./fixtures/system-report.mjs";
+import { bytes, eta, isCorpusReport, isHostReport, isProblemsReport, isSearchReport, isSystemReport, redactSearchReport, redactSystemReport } from "../lib/system-report.ts";
+import { corpusFixture, hostsFixture, problemsFixture, searchFixture, systemFixture } from "./fixtures/system-report.mjs";
 import { isCrawlerReport, safeHttpUrl } from "../lib/crawler-report.ts";
 import { fixture } from "./fixtures/crawler-report.mjs";
 
@@ -80,6 +80,17 @@ try {
   assert.equal(redactSystemReport(systemFixture(), "guest").slow_queries, null);
   assert.equal(redactSystemReport(systemFixture(), "admin").slow_queries.length, 1);
   assert.equal(bytes(1372585984), "1.3 GB"); assert.equal(bytes(166.3 * 1024 ** 3), "166 GB"); assert.equal(eta(688.6), "1.9 years"); assert.equal(eta(12.4), "12 days"); assert.equal(eta(0), "Reached"); assert.equal(eta(null), "N/A"); assert.equal(bytes(512), "512 B"); assert.equal(bytes(null), "N/A");
+  assert.equal(isCorpusReport(corpusFixture()), true);
+  const corpusMutations = [(r) => { delete r.estimates; }, (r) => { r.summary.total_documents = -1; }, (r) => { r.hosts = Array(51).fill(r.hosts[0]); }, (r) => { r.freshness.seen[0].share_percent = 101; }, (r) => { r.vocabulary.exact = "no"; }];
+  for (const mutate of corpusMutations) { const r = corpusFixture(); mutate(r); assert.equal(isCorpusReport(r), false); }
+  assert.equal(isSearchReport(searchFixture()), true);
+  const searchMutations = [(r) => { r.status = "fine"; }, (r) => { r.totals.availability_percent = 101; }, (r) => { delete r.recent; }, (r) => { r.timeline[0].requests = -1; }, (r) => { r.schema.up_to_date = "yes"; }];
+  for (const mutate of searchMutations) { const r = searchFixture(); mutate(r); assert.equal(isSearchReport(r), false); }
+  // A database outage still produces a report, full of nulls.
+  const offline = searchFixture(); Object.assign(offline.database, { reachable: false, ping_ms: null, connections_used: null, connections_max: null }); Object.assign(offline.schema, { current: null, expected: null, up_to_date: null }); Object.assign(offline.snapshot, { loaded: false, documents: null, loaded_at: null, age_seconds: null }); offline.planner = []; offline.totals.availability_percent = null; offline.totals.p95_ms = null;
+  assert.equal(isSearchReport(offline), true);
+  assert.equal(redactSearchReport(searchFixture(), "admin").processes[0].process, "api-host:12:abc123");
+  assert.equal(redactSearchReport(searchFixture(), "guest").processes[0].process, "API process 1");
   console.log("PASS system, host and problem report contracts, nullable projections, viewer redaction, byte formatting");
 
   for (const days of [7, 30, 90]) assert.equal(isCrawlerReport(fixture(days)), true);

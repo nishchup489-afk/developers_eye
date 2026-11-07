@@ -18,6 +18,7 @@ from backend.core.config import settings
 from backend.db.session import SessionFactory, engine
 from backend.search.ranking.statistics import get_corpus_statistics
 from backend.search.service import clear_corpus_statistics, set_corpus_statistics
+from backend.search.telemetry import telemetry
 
 logger = logging.getLogger(__name__)
 
@@ -31,27 +32,38 @@ async def load_corpus_statistics() -> None:
     set_corpus_statistics(text_corpus, code_corpus)
 
 
-async def refresh_corpus_statistics(interval: float = CORPUS_REFRESH_SECONDS) -> None:
-    """Search keeps its last good snapshot if a refresh fails."""
+
+async def refresh_corpus_statistics() -> None:
+    """Refresh BM25 statistics every 10 minutes; retry after failures."""
     while True:
-        await asyncio.sleep(interval)
+        await asyncio.sleep(600)
+
         try:
             await load_corpus_statistics()
-        except (SQLAlchemyError, OSError):
-            logger.warning("Corpus statistics refresh failed", exc_info=True)
+
+        except asyncio.CancelledError:
+            raise
+
+        except Exception:
+            logger.exception(
+                "Corpus statistics refresh failed; "
+                "preserving last good snapshot"
+            )
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    refresher = None
+    tasks = []
     try:
         await load_corpus_statistics()
-        refresher = asyncio.create_task(refresh_corpus_statistics())
+        tasks = [asyncio.create_task(refresh_corpus_statistics()), asyncio.create_task(telemetry.run())]
         yield
     finally:
-        if refresher is not None:
-            refresher.cancel()
-            await asyncio.gather(refresher, return_exceptions=True)
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        if tasks:
+            await telemetry.flush_quietly()
         clear_corpus_statistics()
         await engine.dispose()
 

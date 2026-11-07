@@ -53,7 +53,7 @@ REPORT_DIRS = ("0_tech_docs/journal/test-reports/",)
 
 HOOK = """#!/bin/sh
 # Installed by scripts/update_test_index.py --install-hook.
-# Keeps tests/ indexes and 0_tech_docs/record-index.md current.
+# Keeps tests/ indexes, 0_tech_docs/record-index.md and the API map current.
 for candidate in python python3 py; do
     if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c "import sys" >/dev/null 2>&1; then
         PY="$candidate"
@@ -69,6 +69,10 @@ git add tests/test-index-of-whole-app.md tests/all-test-cases-that-were-tested/i
 if [ -f scripts/update_record_index.py ]; then
     "$PY" scripts/update_record_index.py --quiet || exit 1
     git add 0_tech_docs/record-index.md
+fi
+if [ -f scripts/update_api_map.py ]; then
+    "$PY" scripts/update_api_map.py --quiet || exit 1
+    git add 0_tech_docs/infra/system-architecture/api-map.md
 fi
 """
 

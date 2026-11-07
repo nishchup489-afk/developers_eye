@@ -1,0 +1,46 @@
+{
+  "query": "useEffect",
+  "mode": "code",
+  "candidate_count": 2,
+  "evaluation_time_utc": "2026-11-07T00:54:10.628006+00:00",
+  "top_k": 2,
+  "top_k_overlap": 1.0,
+  "mean_absolute_rank_shift": 0.0,
+  "postgresql_order": [
+    6425,
+    11865
+  ],
+  "bm25_order": [
+    6425,
+    11865
+  ],
+  "corpus": {
+    "text": null,
+    "code": {
+      "N": 42114,
+      "avgDL": 241.35947843530593
+    }
+  },
+  "documents": [
+    {
+      "document_id": 6425,
+      "bm25_rank": 1,
+      "postgres_rank": 1,
+      "rank_shift": 0,
+      "bm25_score": 19.306319453688847,
+      "postgres_score": 4.400000095367432,
+      "title": "Accessibility in React - Learn web development | MDN",
+      "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Frameworks_libraries/React_accessibility"
+    },
+    {
+      "document_id": 11865,
+      "bm25_rank": 2,
+      "postgres_rank": 2,
+      "rank_shift": 0,
+      "bm25_score": 19.253085329098223,
+      "postgres_score": 4.0,
+      "title": "Accessibility in React - Web 개발 학습하기 | MDN",
+      "url": "https://developer.mozilla.org/ko/docs/Learn_web_development/Core/Frameworks_libraries/React_accessibility"
+    }
+  ]
+}
