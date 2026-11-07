@@ -60,7 +60,9 @@ agreement is not evidence that either scorer is better.
 1. Collect the 35 snapshots, saving all candidate IDs, URLs, both orderings,
    raw rank scores, mode, query stratum and corpus statistics.
 2. Create a pooled judgment file for the **union of the two top-10 lists**
-   on each query. Label URL relevance independently:
+   on each query. The judgment file alphabetizes URLs and shows titles,
+   not either scorer's ordering, to reduce ranking-induced label bias.
+   Label URL relevance independently:
    `0=irrelevant`, `1=marginal`, `2=useful`, `3=ideal`.
 3. Add relevant URLs discovered **independently of the candidate pool** to
    the judgment file. Without them, retrieval recall is optimistically biased.
