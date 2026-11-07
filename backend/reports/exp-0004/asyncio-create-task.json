@@ -1,0 +1,94 @@
+{
+  "query": "asyncio.create_task",
+  "mode": "code",
+  "candidate_count": 6,
+  "evaluation_time_utc": "2026-11-07T00:54:05.933847+00:00",
+  "top_k": 6,
+  "top_k_overlap": 1.0,
+  "mean_absolute_rank_shift": 0.6666666666666666,
+  "postgresql_order": [
+    8082,
+    7965,
+    8144,
+    8132,
+    8183,
+    8186
+  ],
+  "bm25_order": [
+    8144,
+    8082,
+    7965,
+    8132,
+    8183,
+    8186
+  ],
+  "corpus": {
+    "text": null,
+    "code": {
+      "N": 42114,
+      "avgDL": 251.16143209876543
+    }
+  },
+  "documents": [
+    {
+      "document_id": 8144,
+      "bm25_rank": 1,
+      "postgres_rank": 3,
+      "rank_shift": -2,
+      "bm25_score": 23.900748740997244,
+      "postgres_score": 1.2000000476837158,
+      "title": "Synchronization Primitives",
+      "url": "https://docs.python.org/3/library/asyncio-sync.html"
+    },
+    {
+      "document_id": 8082,
+      "bm25_rank": 2,
+      "postgres_rank": 1,
+      "rank_shift": 1,
+      "bm25_score": 23.828804035602296,
+      "postgres_score": 3.6000001430511475,
+      "title": "A Conceptual Overview of asyncio",
+      "url": "https://docs.python.org/3/howto/a-conceptual-overview-of-asyncio.html"
+    },
+    {
+      "document_id": 7965,
+      "bm25_rank": 3,
+      "postgres_rank": 2,
+      "rank_shift": 1,
+      "bm25_score": 22.092706603989235,
+      "postgres_score": 2.799999952316284,
+      "title": "Coroutines and Tasks",
+      "url": "https://docs.python.org/3/library/asyncio-task.html"
+    },
+    {
+      "document_id": 8132,
+      "bm25_rank": 4,
+      "postgres_rank": 4,
+      "rank_shift": 0,
+      "bm25_score": 20.119127214503965,
+      "postgres_score": 0.4000000059604645,
+      "title": "Futures",
+      "url": "https://docs.python.org/3/library/asyncio-future.html"
+    },
+    {
+      "document_id": 8183,
+      "bm25_rank": 5,
+      "postgres_rank": 5,
+      "rank_shift": 0,
+      "bm25_score": 18.347078141295793,
+      "postgres_score": 0.4000000059604645,
+      "title": "Queues",
+      "url": "https://docs.python.org/3/library/asyncio-queue.html"
+    },
+    {
+      "document_id": 8186,
+      "bm25_rank": 6,
+      "postgres_rank": 6,
+      "rank_shift": 0,
+      "bm25_score": 17.990349979140422,
+      "postgres_score": 0.4000000059604645,
+      "title": "Developing with asyncio",
+      "url": "https://docs.python.org/3/library/asyncio-dev.html"
+    }
+  ]
+}

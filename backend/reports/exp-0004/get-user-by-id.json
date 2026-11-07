@@ -1,0 +1,10 @@
+{
+  "query": "get_user_by_id",
+  "mode": "code",
+  "candidate_count": 0,
+  "top_k_overlap": null,
+  "mean_absolute_rank_shift": null,
+  "postgresql_order": [],
+  "bm25_order": [],
+  "documents": []
+}
