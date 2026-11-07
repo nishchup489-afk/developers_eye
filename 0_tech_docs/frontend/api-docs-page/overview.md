@@ -16,6 +16,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 
 ## How-it-works docs
 
+- [`api-map.md`](../../infra/system-architecture/api-map.md): generated route map (Next.js and FastAPI) that the public reference should agree with
 - [`frontend/public/api-reference.md`](../../../frontend/public/api-reference.md)
 
 ## Records
