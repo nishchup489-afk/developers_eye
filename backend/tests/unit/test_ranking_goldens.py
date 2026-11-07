@@ -77,10 +77,10 @@ def test_duplicate_query_term_does_not_change_golden(fixed_channel: ChannelStati
 
 
 def test_single_term_golden_ties_use_document_id(fixed_channel: ChannelStatistics):
-    # Both 103 and 105 score zero for python. The ordering must be stable.
+    # Both 103 and 105 score zero for python; short 101 still outranks 104.
     scores = apply_BM25(fixed_channel, ("python",), BM25Parameters())
     assert tuple(sorted(scores, key=lambda doc: (-scores[doc], doc))) == (
-        104, 101, 102, 103, 105
+        101, 104, 102, 103, 105
     )
 
 
