@@ -35,11 +35,11 @@ from backend.search.service import _retrieve_candidates
 
 
 def _native_score(query: str, mode: SearchMode):
-    """Native baseline with consistent normalization=0 across channels."""
+    """Match the live retrieval normalization for each PostgreSQL channel."""
     text_tsquery = func.websearch_to_tsquery("english", query)
     code_tsquery = func.websearch_to_tsquery("simple", query)
     text_score = func.ts_rank_cd(SearchIndex.search_vector, text_tsquery, 0)
-    code_score = func.ts_rank_cd(SearchIndex.code_vector, code_tsquery, 0)
+    code_score = func.ts_rank_cd(SearchIndex.code_vector, code_tsquery, 32)
 
     if mode is SearchMode.TEXT:
         return text_score
@@ -54,6 +54,8 @@ async def compare_one(
     mode: SearchMode,
     *,
     k: int,
+    text_corpus: CorpusStatistics | None = None,
+    code_corpus: CorpusStatistics | None = None,
 ) -> dict[str, object]:
     settings = SearchConfig()
     normalized = analyze_query(query, config=settings)
@@ -74,11 +76,9 @@ async def compare_one(
         }
 
     # One full scan per requested channel, used only by this diagnostic.
-    text_corpus: CorpusStatistics | None = None
-    code_corpus: CorpusStatistics | None = None
-    if mode in (SearchMode.TEXT, SearchMode.ALL):
+    if mode in (SearchMode.TEXT, SearchMode.ALL) and text_corpus is None:
         text_corpus = await get_corpus_statistics(session, "TEXT")
-    if mode in (SearchMode.CODE, SearchMode.ALL):
+    if mode in (SearchMode.CODE, SearchMode.ALL) and code_corpus is None:
         code_corpus = await get_corpus_statistics(session, "CODE")
 
     bm25 = await rank_candidates(
