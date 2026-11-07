@@ -6,9 +6,9 @@ Requires PostgreSQL pg_trgm extension and the existing GIN trigram index.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 
-from sqlalchemy import delete, func, select
+from sqlalchemy import ARRAY, Text, bindparam, delete, func, select, text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,6 +16,8 @@ from backend.models.search_terms import SearchTerm
 from backend.schema.search_term import FuzzyCandidate, SearchTermRead
 
 MAX_TERM_CHARS = 128
+# Transaction-local pg_trgm similarity threshold for candidate lookup.
+TRIGRAM_THRESHOLD = 0.2
 
 
 def normalize_term(term: str) -> str:
@@ -44,6 +46,11 @@ async def find_fuzzy_candidates(
         raise ValueError("limit must be an integer between 1 and 50")
     if len(normalized) < 3 or len(normalized) > MAX_TERM_CHARS:
         return []
+    # pg_trgm's default 0.3 drops short transpositions ("pyhton" vs "python"
+    # is 0.27); edit distance in correction.py keeps the precision.
+    await session.execute(select(func.set_config(
+        "pg_trgm.similarity_threshold", str(TRIGRAM_THRESHOLD), True
+    )))
     similarity = func.similarity(SearchTerm.term, normalized).label("similarity")
     statement = (
         select(SearchTerm.term, SearchTerm.document_frequency, similarity)
@@ -60,6 +67,22 @@ async def find_fuzzy_candidates(
         )
         for row in rows
     ]
+
+
+async def english_stems(words: Iterable[str], session: AsyncSession) -> dict[str, str | None]:
+    """Map each word to its english_stem lexeme (None for a stop word).
+
+    The English index stores stems ("configur", "librari"), so suggestions use
+    this to check that a readable word reduces to an indexed stem.
+    """
+    unique = sorted({normalize_term(word) for word in words} - {""})
+    if not unique:
+        return {}
+    statement = text(
+        "SELECT word, ts_lexize('english_stem', word) FROM unnest(:words) AS word"
+    ).bindparams(bindparam("words", type_=ARRAY(Text())))
+    rows = (await session.execute(statement, {"words": unique})).all()
+    return {row[0]: (row[1][0] if row[1] else None) for row in rows}
 
 
 async def upsert_term_frequencies(
@@ -96,4 +119,10 @@ async def upsert_term_frequencies(
     return len(normalized)
 
 
-__all__ = ["normalize_term", "get_exact_term", "find_fuzzy_candidates", "upsert_term_frequencies"]
+__all__ = [
+    "normalize_term",
+    "get_exact_term",
+    "find_fuzzy_candidates",
+    "english_stems",
+    "upsert_term_frequencies",
+]

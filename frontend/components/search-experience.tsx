@@ -29,9 +29,11 @@ import {
 } from "lucide-react";
 import {
   isSearchResult,
+  shouldSuggest,
   sourceNames,
   type SearchResponse,
   type SearchResult,
+  type SearchSuggestion,
   type Source,
 } from "@/lib/search";
 
@@ -149,6 +151,17 @@ function Snippet({ text, query }: { text: string; query: string }) {
   );
 }
 
+/** The suggested query, with the corrected words emphasised. */
+function SuggestedQuery({ suggestion }: { suggestion: SearchSuggestion }) {
+  const corrected = new Set(
+    suggestion.corrections.map((c) => c.replacement.toLowerCase()),
+  );
+  const parts = (suggestion.suggestion ?? "").split(/(\s+)/);
+  return parts.map((part, i) =>
+    corrected.has(part.toLowerCase()) ? <b key={i}>{part}</b> : part,
+  );
+}
+
 /** The site's own favicon, falling back to the source icon if it fails to load. */
 function Favicon({ url, source }: { url: URL; source: Source }) {
   const [failed, setFailed] = useState(false);
@@ -202,6 +215,7 @@ export default function SearchExperience({
   const [query, setQuery] = useState(() => splitQuery(initialQuery)[0]);
   const [code, setCode] = useState(() => splitQuery(initialQuery)[1]);
   const [response, setResponse] = useState<SearchResponse | null>(null);
+  const [suggestion, setSuggestion] = useState<SearchSuggestion | null>(null);
   const [filter, setFilter] = useState<SearchFilter>(initialFilter);
   const [loading, setLoading] = useState(resultsPage && !savedPage && !!initialQuery);
   const [error, setError] = useState("");
@@ -255,6 +269,7 @@ export default function SearchExperience({
       setError("");
       setFilter(source);
       setResponse(null);
+      setSuggestion(null);
       try {
         const res = await api.get("/search", {
           params: { q: value, ...(source !== "all" ? { source } : {}) },
@@ -265,7 +280,23 @@ export default function SearchExperience({
           throw new Error(
             data?.error || "Search is unavailable. Please try again.",
           );
-        if (!active.signal.aborted) setResponse(data);
+        if (active.signal.aborted) return;
+        setResponse(data);
+        // Few or no results: ask for a spelling suggestion in the background.
+        // It is only offered; the search the user typed is never rewritten.
+        if (shouldSuggest(value, data.results.length))
+          void api.get("/search/suggest", { params: { q: value }, signal: active.signal })
+            .then((res) => {
+              if (
+                !active.signal.aborted &&
+                res.status === 200 &&
+                typeof res.data?.suggestion === "string"
+              )
+                setSuggestion(res.data);
+            })
+            .catch(() => {
+              /* Suggestions are optional. */
+            });
       } catch (err) {
         if (!active.signal.aborted)
           setError(
@@ -664,6 +695,24 @@ export default function SearchExperience({
                 : error ||
                   `${visible.length} results${showSaved ? " saved" : " found"}`}
             </div>
+            {!loading &&
+              !error &&
+              !showSaved &&
+              response &&
+              suggestion?.suggestion &&
+              suggestion.query === response.query && (
+                <p className="did-you-mean" role="status">
+                  Did you mean{" "}
+                  <button
+                    type="button"
+                    className="did-you-mean-link"
+                    onClick={() => void search(suggestion.suggestion!, true, filter)}
+                  >
+                    <SuggestedQuery suggestion={suggestion} />
+                  </button>
+                  ?
+                </p>
+              )}
             {loading ? (
               <div className="loading-state">
                 <p>

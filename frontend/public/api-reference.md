@@ -4,8 +4,8 @@
 
 This document describes the repository as inspected on October 5, 2026.
 
-- `backend/` is a FastAPI app. `GET /search` is implemented (October 30, 2026) over the PostgreSQL full-text index; the other public routes below are still proposals.
-- **Implemented:** Next.js `GET /api/search`, frontend runtime validation, curated demo search, browser-local saved results, and `/docs`.
+- `backend/` is a FastAPI app. `GET /search` is implemented (October 30, 2026) over the PostgreSQL full-text index, and `GET /search/suggest` (spelling suggestions, wired to the UI on November 7, 2026) and `GET /health` exist too; the other public routes below are still proposals.
+- **Implemented:** Next.js `GET /api/search` and `GET /api/search/suggest`, frontend runtime validation, curated demo search, browser-local saved results, and `/docs`.
 - **Not implemented:** every FastAPI route and external connector below. Their contracts are proposals based on README.md and system_design.md. They are a backend implementation handoff, not claims that those services exist.
 - No backend files were changed to implement the frontend.
 
@@ -81,6 +81,33 @@ Errors:
 
 Upstream requests have a 10-second deadline, `Accept: application/json`, no cache, and no automatic retries. Provider errors or credentials are not forwarded to clients. A configured but broken backend never falls back to fixtures.
 
+### GET /api/search/suggest
+
+"Did you mean" for the results page. Forwards `q` to FastAPI `GET /search/suggest` and returns the corrected query, or `suggestion: null` when there is nothing to suggest. It never changes what `/api/search` returns.
+
+| Query parameter | Type   | Required | Validation                |
+| --------------- | ------ | -------- | ------------------------- |
+| q               | string | yes      | Trimmed; 1–300 characters |
+
+```sh
+curl --get 'http://localhost:3000/api/search/suggest' --data-urlencode 'q=fastapi configuraton'
+```
+
+Response, HTTP 200:
+
+```json
+{
+  "query": "fastapi configuraton",
+  "suggestion": "fastapi configuration",
+  "corrections": [{ "original": "configuraton", "replacement": "configuration" }],
+  "mode": "live"
+}
+```
+
+- Demo mode (no `BACKEND_URL`), pasted code (multi-line), queries over 256 characters and queries the backend rejects (422) return 200 with `suggestion: null`.
+- A suggestion equal to the query (ignoring case and spacing), or one with no corrections, becomes `suggestion: null`.
+- 400 for a missing, blank or over 300 character `q`; 502 for an upstream non-2xx status, a malformed payload or an unreachable backend; 504 after the 5-second deadline. All responses use `Cache-Control: no-store`.
+
 ### Result schema
 
 | Field   | Type              | Required | Contract                                                     |
@@ -102,7 +129,7 @@ Additional result fields are accepted but not used. The bridge rejects the entir
 - Queries are shareable as `/?q=fastapi%20async#results`. Loading that URL runs the search; browser back/forward restores query state. Filters and saved view are local UI state, not encoded in the URL.
 - New searches abort obsolete browser fetches. Server upstream requests remain bounded by their own deadline.
 - Saved results live in localStorage under `developers-eye-saved`. They are validated on load and can be removed with the same bookmark button. They are local to the browser, not synced to an account. Storage failure falls back to the session with a visible notice.
-- Suggested queries are static examples, not calls to a suggestions API.
+- The "Try" chips on the home page are static examples. On the results page, when a plain single-line query returns fewer than 3 results, the page calls `/api/search/suggest` in the background and, if there is a suggestion, shows "Did you mean …" with the corrected words in bold. Clicking it runs that search; the original search is never rewritten.
 - Keyboard shortcuts: `/`, Ctrl+K, and Cmd+K focus search. GSAP motion respects `prefers-reduced-motion`.
 
 ## 3. Proposed public FastAPI contracts — not implemented
@@ -125,18 +152,26 @@ Original proposal: accept `q` and optional `source` using the same validation as
 
 Proposed backend status codes: 200 for success (including partial results), 400/422 for invalid input, 429 for rate limits, 503 if no retrieval path is available. The current bridge maps all upstream non-2xx statuses to 502, so exposing a distinct 429 or partial-source UI requires a coordinated frontend change.
 
-### GET /search/suggestions
+### GET /search/suggest — implemented
 
-Input: `q` string (1–300 chars), optional `limit` integer (default 5, 1–10).
+Implemented in `backend/src/backend/api/search.py` (`suggest_query_correction` in `backend/search/retrieval/fuzzy/correction.py`). Input: `q` (normalized by the query analyzer; 422 if invalid). Response, the `QueryCorrection` schema:
 
 ```json
 {
-  "query": "fastapi as",
-  "suggestions": ["fastapi async", "fastapi async sqlalchemy"]
+  "original_query": "fastapi configuraton",
+  "suggested_query": "fastapi configuration",
+  "corrections": [
+    { "original": "configuraton", "replacement": "configuration", "similarity": 0.53, "edit_distance": 1 }
+  ]
 }
 ```
 
-200 with an empty array when there are no suggestions; 422 for invalid input. Prefer popular indexed terms or stored queries. The frontend does not yet call this route.
+- Candidates come from the indexer-maintained `search_terms` vocabulary with `pg_trgm` (similarity threshold 0.2), then must be within edit distance 1 (words up to 6 letters) or 2 (longer).
+- Only plain 4–32 letter words are corrected. Quoted words, identifiers such as `AsyncSession` or `fastapi.utils`, `and`/`or`/`not`, and words already in the vocabulary (or whose English stem is) are kept.
+- The vocabulary holds English stems (`configur`, `librari`). Each candidate is expanded into readable forms (stem plus common suffixes, `i` back to `y`), and a form is kept only if PostgreSQL's `english_stem` reduces it to that candidate. The closest form wins, so `configuraton` suggests `configuration`, not `configur`. A bare stem ending in `i` is never suggested.
+- 503 if the vocabulary query fails. `/search` never applies the suggestion by itself.
+
+Autocomplete (query completions while typing) is a separate idea and is not implemented.
 
 ### GET /sources
 
@@ -191,9 +226,11 @@ Input: required `document_id`, optional `limit` integer (default 5, 1–20).
 
 `results` uses SearchResult[]. 200 / 404 / 422. Exclude the original document and duplicates.
 
-### GET /health
+### GET /health — implemented as liveness
 
-No input. Minimal readiness response:
+Implemented in `backend/src/backend/main.py`: `GET /health` returns `{ "status": "ok", "service": ... }` and `GET /health/db` also runs a query against the database. The richer readiness response below is still a proposal.
+
+No input. Proposed readiness response:
 
 ```json
 {
@@ -329,7 +366,8 @@ The integration test uses an isolated mock upstream to exercise bridge contracts
 ## 7. Relevant frontend files
 
 - `app/api/search/route.ts`: demo/live bridge, validation, timeout and errors.
-- `lib/search.ts`: public types, source enum, runtime result validation.
+- `app/api/search/suggest/route.ts`: "Did you mean" bridge to FastAPI `/search/suggest`.
+- `lib/search.ts`: public types, source enum, runtime result and suggestion validation.
 - `lib/demo.ts`: curated fixtures and local demo matching.
 - `components/search-experience.tsx`: search state, abort handling, bookmarks, GSAP.
 - `app/globals.css`: responsive design and reduced-motion rules.

@@ -82,9 +82,10 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | EXP-0001 | crawler/scheduler-and-leases | [Claim path latency and multi-worker drain, source-locked vs unlocked round robin](crawler/scheduler-and-leases/EXP-0001-claim-path-concurrency-benchmark.md) | done |
 | EXP-0002 | indexer/vocubulary | [Vocabulary worker prototype versus indexer-owned projection](indexer/vocubulary/EXP-0002-abandoned-vocabulary-worker.md) | done |
 | EXP-0003 | backend/bm25-statistics | [Static round-trip audit of batched ranking statistics](backend/bm25-statistics/EXP-0003-ranking-statistics-round-trip-audit.md) | done |
-| EXP-0004 | backend/ranking | [Evaluate candidate recall and BM25 relevance against the FTS baseline](backend/ranking/EXP-0004-lexical-relevance-evaluation.md) | planned |
+| EXP-0004 | backend/ranking | [Lexical retrieval, BM25 diagnostics, and golden ranking verification](backend/ranking/EXP-0004-lexical-relevance-evaluation.md) | done                 # planned \| running \| done |
 | EXP-0005 | infra/performance-and-scaling | [Measure search latency and ingestion interference before scaling](infra/performance-and-scaling/EXP-0005-search-and-ingestion-capacity-baseline.md) | planned |
 | EXP-0006 | indexer/vocubulary | [Measure global vocabulary mutex cost after correctness repair](indexer/vocubulary/EXP-0006-vocabulary-lock-contention.md) | done |
 | EXP-0007 | backend/bm25-statistics | [Validate BM25 statistics, exact-lexeme document frequency, and developer-query scoring](backend/bm25-statistics/EXP-0007-bm25-statistics-and-developer-query-regression.md) | done |
 | EXP-0008 | infra/performance-and-scaling | [Measure crawl, index and search capacity for a 2M document target](infra/performance-and-scaling/EXP-0008-crawl-index-search-at-2m.md) | done |
+| EXP-0009 | backend/ranking | [Human-Judged Search Relevance Evaluation](backend/ranking/EXP-0009-search-relevance-metrics.md) | running |
 <!-- record-index:end -->

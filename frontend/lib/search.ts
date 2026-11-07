@@ -54,3 +54,66 @@ export function isSearchResult(value: unknown): value is SearchResult {
       (Array.isArray(r.tags) && r.tags.every((t) => typeof t === "string")))
   );
 }
+
+// Spelling suggestions ("Did you mean …"). The backend never rewrites a search;
+// the UI offers the suggestion and the user decides whether to run it.
+
+/** Fewer results than this make the results page ask for a spelling suggestion. */
+export const suggestBelowResults = 3;
+/** The backend corrects at most this many characters. */
+export const maxSuggestQueryLength = 256;
+
+export type SearchCorrection = { original: string; replacement: string };
+export type SearchSuggestion = {
+  query: string;
+  /** The corrected query, or null when there is nothing to suggest. */
+  suggestion: string | null;
+  corrections: SearchCorrection[];
+  mode: "demo" | "live";
+};
+
+/** Only plain, short, single-line queries with few results get a suggestion. */
+export function shouldSuggest(query: string, resultCount: number) {
+  const value = query.trim();
+  return (
+    resultCount < suggestBelowResults &&
+    value.length > 0 &&
+    value.length <= maxSuggestQueryLength &&
+    !value.includes("\n") &&
+    /[a-z]{4}/i.test(value)
+  );
+}
+
+/**
+ * Validates FastAPI's QueryCorrection (`GET /search/suggest`). Returns null for
+ * a malformed payload; a suggestion equal to the query becomes `suggestion: null`.
+ */
+export function parseCorrection(
+  data: unknown,
+  query: string,
+): Pick<SearchSuggestion, "suggestion" | "corrections"> | null {
+  if (!data || typeof data !== "object") return null;
+  const body = data as Record<string, unknown>;
+  if (
+    typeof body.suggested_query !== "string" ||
+    !Array.isArray(body.corrections)
+  )
+    return null;
+  const corrections: SearchCorrection[] = [];
+  for (const item of body.corrections) {
+    if (!item || typeof item !== "object") return null;
+    const { original, replacement } = item as Record<string, unknown>;
+    if (typeof original !== "string" || typeof replacement !== "string")
+      return null;
+    corrections.push({ original, replacement });
+  }
+  const suggestion = body.suggested_query.trim().replace(/\s+/g, " ");
+  const unchanged =
+    !suggestion ||
+    suggestion.length > maxSuggestQueryLength ||
+    suggestion.toLowerCase() === query.trim().replace(/\s+/g, " ").toLowerCase() ||
+    corrections.length === 0;
+  return unchanged
+    ? { suggestion: null, corrections: [] }
+    : { suggestion, corrections };
+}

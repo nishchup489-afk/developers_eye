@@ -8,6 +8,7 @@ Node test scripts for the Next.js frontend, using `node:assert/strict` (no test 
 | `admin-integration.mjs` | `npm run test:admin` |
 | `admin-unit.mjs`, `crawler-monitor-unit.mjs`, `indexer-report-unit.mjs` | `npm run test:admin:unit` |
 | `admin-routes.mjs` | `npm run test:admin:routes` |
+| `search-unit.mjs` | `npm run test:search:unit` |
 | `preview-crawler.mjs` | Run manually; it is a preview server, not a test. |
 
 ## fixtures/
@@ -26,6 +27,8 @@ Starts the built app twice with `next start`: once with no `BACKEND_URL` (demo m
 | Pages and routing | The home page has the eye art and sources section but no results; `/search?q=react` shows results with the query filled in and no home sections; `/search` loads; `/search?saved=1` shows the personal index page; the legacy `/?q=...&source=...` URL redirects (307) to `/search`. |
 | Demo search API | `/api/search` trims the query, returns `mode: demo` with results, filters by `source`, returns an empty list for nonsense, and always sends `Cache-Control: no-store`. Missing, blank, over 300 character queries and unknown sources return 400; `POST` returns 405. `/docs` loads and `/api-reference.md` contains the provider connectors section. |
 | Live proxy | Returns `mode: live` with the upstream result. Upstream 503, malformed JSON, a `javascript:` URL, an empty-host URL, an unknown source, and non-string tags all return 502 with an `error` and no `results`. A hung upstream returns 504, and a closed upstream returns 502. There is no fallback to demo data. |
+| Demo suggestions | `/api/search/suggest` returns `suggestion: null` with `mode: demo` (no vocabulary in demo mode); missing and over 300 character queries return 400. |
+| Live suggestions | `/api/search/suggest` forwards to FastAPI `/search/suggest`: `pyhton   async` returns `python async` with only `original`/`replacement` in `corrections`. An unchanged suggestion, an upstream 422 and pasted multi-line code return `suggestion: null`. Upstream 503, malformed JSON and a schema-invalid body return 502, a hung upstream 504 (5 s deadline, also on the server's first request), and a closed upstream 502. |
 
 ## admin-integration.mjs
 
@@ -88,6 +91,17 @@ Unit test for the validator in `lib/indexer-report.ts`, behind the `/admin/index
 | Valid report | `isIndexerReport` accepts a full report: coverage, activity, a 60-point throughput series, recent, pending and per-source rows. |
 | Malformed reports | A wrong `version`, a negative pending count, coverage over 100%, an unknown activity status, a 59-point throughput series, an unknown pending reason, a non-boolean `current` and an invalid timestamp are each rejected. |
 | Empty index | Null coverage and timestamps, status `empty`, and empty recent, pending and source lists are accepted. |
+
+## search-unit.mjs
+
+Unit test for the spelling-suggestion helpers in `lib/search.ts`, behind the "Did you mean" line on the results page.
+
+| Area | What it checks |
+| --- | --- |
+| When to ask | `shouldSuggest` is true only below 3 results, for non-blank single-line queries of at most 256 characters with a plain word of 4+ letters. |
+| Valid payload | `parseCorrection` returns the collapsed suggested query and `{original, replacement}` corrections. |
+| Nothing to suggest | A suggestion equal to the query (ignoring case and spacing), an empty one, or one without corrections becomes `suggestion: null`. |
+| Malformed payloads | Non-objects, a non-string `suggested_query`, non-array `corrections` and incomplete correction items return null. |
 
 ## preview-crawler.mjs
 

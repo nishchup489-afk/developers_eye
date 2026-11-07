@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+.r1 {color: #008080; text-decoration-color: #008080}
+.r2 {color: #008000; text-decoration-color: #008000}
+.r3 {color: #000080; text-decoration-color: #000080; font-weight: bold}
+.r4 {color: #3a3a3a; text-decoration-color: #3a3a3a}
+.r5 {color: #808000; text-decoration-color: #808000}
+.r6 {color: #729c1f; text-decoration-color: #729c1f}
+.r7 {color: #008080; text-decoration-color: #008080; font-weight: bold}
+.r8 {font-weight: bold}
+.r9 {color: #808000; text-decoration-color: #808000; font-weight: bold}
+.r10 {font-style: italic}
+.r11 {color: #7f7f7f; text-decoration-color: #7f7f7f}
+.r12 {color: #800000; text-decoration-color: #800000}
+.r13 {color: #000080; text-decoration-color: #000080}
+.r14 {color: #800000; text-decoration-color: #800000; font-weight: bold}
+body {
+    color: #000000;
+    background-color: #ffffff;
+}
+</style>
+</head>
+<body>
+    <pre style="font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><code style="font-family:inherit"><span class="r1">Loading corpus statistics once per active channel...</span>
+<span class="r2">⠋</span> <span class="r3">Running diagnostics</span> <span class="r4">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">0/1</span> <span class="r5">0:00:00</span>[2K  <span class="r3">[Q051] javascript fetch examples</span> <span class="r6">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">1/1</span> <span class="r5">0:00:00</span>
+<span class="r1">╭───────────── EXP-0004 ──────────────╮</span>
+<span class="r1">│</span> <span class="r7">DEVELOPER&#x27;S EYE</span>  Executed 1 queries <span class="r1">│</span>
+<span class="r1">╰─────────────────────────────────────╯</span>
+<span class="r8">Flag counts</span>  ERROR: <span class="r9">1</span>
+<span class="r10">                                           Per-query diagnostics                                           </span>
+                                                                                                           
+ <span class="r8"> ID    </span> <span class="r8"> Group       </span> <span class="r8"> Query                       </span> <span class="r8"> Mode  </span> <span class="r8">  N </span> <span class="r8">  Top-10 overlap </span> <span class="r8"> BM25 #1 </span> <span class="r8"> ms </span> <span class="r8"> Flags </span> 
+ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+ <span class="r11"> Q051  </span>  JavaScript    javascript fetch examples     all      0                 -   -         12   <span class="r12">ERROR</span>  
+                                                                                                           
+<span class="r10">                         Category summary                          </span>
+╭────────────┬─────────┬─────────┬─────────────────┬──────────────╮
+│<span class="r8"> Category   </span>│<span class="r8"> Queries </span>│<span class="r8"> Flagged </span>│<span class="r8"> Zero candidates </span>│<span class="r8"> Mean overlap </span>│
+├────────────┼─────────┼─────────┼─────────────────┼──────────────┤
+│ JavaScript │       1 │       1 │               1 │            - │
+╰────────────┴─────────┴─────────┴─────────────────┴──────────────╯
+<span class="r11">Flags are heuristics. Do not interpret overlap as relevance quality.</span>
+<span class="r13">╭──────────────────────────────────────────────────────╮</span>
+<span class="r13">│</span> <span class="r8">Q051</span>  javascript fetch examples  <span class="r11">(all; 0 candidates)</span> <span class="r13">│</span>
+<span class="r13">╰──────────────────────────────────────────────────────╯</span>
+<span class="r12">ProgrammingError: </span><span class="r14">(</span><span class="r12">sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError</span><span class="r14">)</span><span class="r12"> function </span><span class="r14">ts_rank(</span><span class="r12">double </span>
+<span class="r12">precision</span><span class="r14">[]</span><span class="r12">, tsvector, tsquery, integer</span><span class="r14">)</span><span class="r12"> does not exist</span>
+<span class="r14">[</span><span class="r12">SQL: SELECT anon_1.document_id, </span><span class="r14">ts_rank(</span><span class="r12">ARRAY</span><span class="r14">[</span><span class="r12">$</span><span class="r14">1::F</span><span class="r12">LOAT, $</span><span class="r14">2::F</span><span class="r12">LOAT, $</span><span class="r14">3::F</span><span class="r12">LOAT, $</span><span class="r14">4::F</span><span class="r12">LOAT</span><span class="r14">]</span><span class="r12">, </span>
+<span class="r12">anon_1.search_vector</span>
+</code></pre>
+</body>
+</html>

@@ -41,7 +41,7 @@ One document for every backend test case: the tests written in `backend/tests/`,
 | Search service against PostgreSQL | `backend/tests/integration/test_search.py` | 5 | 14 | 3 failing (see section) |
 | Pagination | `backend/tests/unit/test_pagination.py` | 3 | 8 | Passed (local run 2026-11-04) |
 | Snippets | `backend/tests/unit/test_snippets.py`, `unit/test_snippet_bounds.py` | 60 | 88 | Passed (local run 2026-11-04) |
-| Fuzzy suggestions | `backend/tests/unit/test_fuzzy_suggestions.py` | 3 | 3 | Passed (local run 2026-11-04) |
+| Fuzzy suggestions | `backend/tests/unit/test_fuzzy_suggestions.py`, `backend/tests/integration/test_fuzzy_suggestions.py` | 18 | 18 | Passed (container run 2026-11-07) |
 | App startup | `backend/tests/unit/test_main_lifespan_search.py` | 1 | 1 | Passed (local run 2026-11-04) |
 | Search HTTP API | `backend/tests/api/test_search_route.py`, `api/test_search.py` | 3 + 8 | 8 + 16 | Passed (local run 2026-11-04) |
 
@@ -471,6 +471,21 @@ Temporary `search_index` shadowing the real one (same approach as FTS). Words ar
 | FS-01 | `test_corrects_spelling_using_vocabulary` | `pythonn`, candidate `python` (similarity 0.9) | Suggests `python`, edit distance 1 | Passed (local run 2026-11-04) |
 | FS-02 | `test_does_not_modify_exact_terms` | `python` exists in vocabulary | Unchanged; fuzzy lookup never awaited | Passed (local run 2026-11-04) |
 | FS-03 | `test_does_not_correct_technical_identifier` | `AsyncSession fastapi.utils` | Unchanged; fuzzy lookup never awaited | Passed (local run 2026-11-04) |
+| FS-04 | `test_stem_candidate_is_shown_as_a_real_word` | `fastapi configuraton`, candidate stem `configur` | Suggests `fastapi configuration` (edit distance 1), not the stem | Passed (container run 2026-11-07) |
+| FS-05 | `test_y_stem_is_shown_as_a_real_word` | `libary`, candidate stem `librari` | Suggests `library` | Passed (container run 2026-11-07) |
+| FS-06 | `test_unverified_forms_never_surface_a_bare_stem` | `configuraton`, no form reduces to `configur` | Unchanged | Passed (container run 2026-11-07) |
+| FS-07 | `test_bare_stem_ending_in_i_is_skipped` | `querie`, candidate `queri` | Unchanged | Passed (container run 2026-11-07) |
+| FS-08 | `test_word_whose_stem_is_indexed_is_not_a_typo` | `configuration`, vocabulary has `configur` | Unchanged; fuzzy lookup never awaited | Passed (container run 2026-11-07) |
+| FS-09 | `test_surface_forms_start_with_the_stem_and_rebuild_y_words` | `surface_forms("librari")` | Stem first, includes `library`/`libraries`, no duplicates | Passed (container run 2026-11-07) |
+
+**Integration file:** `backend/tests/integration/test_fuzzy_suggestions.py` (real PostgreSQL `english_stem` and `pg_trgm`; temp `search_terms` built from `to_tsvector('english', ...)`; needs `TEST_DATABASE_URL`)
+
+| ID | Test function | Input / scenario | Expected result | Status |
+|---|---|---|---|---|
+| FSI-01 | `test_vocabulary_holds_stems` | Vocabulary from the corpus sentence | Contains `configur`, `librari`, `python`, `cach`; not `configuration` | Passed (container run 2026-11-07) |
+| FSI-02 | `test_english_stems_matches_the_index` | `Configuration`, `libraries`, `python`, `the` | `configur`, `librari`, `python`, `None` | Passed (container run 2026-11-07) |
+| FSI-03 | `test_typo_suggests_a_real_word` | `configuraton`, `libary`, `pyhton`, `databse`, `fastapi configuraton` | Real words (`configuration`, `library`, `python`, `database`); never a stem | Passed (container run 2026-11-07) |
+| FSI-04 | `test_correct_words_are_left_alone` | `configuration`, `libraries`, `caching`, `python` | Unchanged | Passed (container run 2026-11-07) |
 
 ---
 

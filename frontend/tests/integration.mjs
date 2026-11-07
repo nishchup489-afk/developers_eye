@@ -14,6 +14,24 @@ const mock = createServer((req, res) => {
     return res.end("{}");
   }
   if (q === "malformed") return res.end("{no");
+  if (url.pathname === "/search/suggest") {
+    if (q === "rejected") {
+      res.writeHead(422);
+      return res.end("{}");
+    }
+    if (q === "bad-suggest") return res.end(JSON.stringify({ suggested_query: 5 }));
+    // Like the backend analyzer, collapse whitespace before correcting.
+    const fixed = q.trim().replace(/\s+/g, " ") === "pyhton async";
+    return res.end(
+      JSON.stringify({
+        original_query: q,
+        suggested_query: fixed ? "python async" : q,
+        corrections: fixed
+          ? [{ original: "pyhton", replacement: "python", similarity: 0.27, edit_distance: 1 }]
+          : [],
+      }),
+    );
+  }
   const result = {
     title: "Upstream result",
     source: "docs",
@@ -65,9 +83,9 @@ async function start(port, backend) {
   }
   throw new Error(`Server failed to start: ${logs}`);
 }
-async function get(base, params, status = 200) {
+async function get(base, params, status = 200, path = "/api/search") {
   const response = await fetch(
-    `${base}/api/search?${new URLSearchParams(params)}`,
+    `${base}${path}?${new URLSearchParams(params)}`,
   );
   assert.equal(response.status, status);
   assert.equal(response.headers.get("cache-control"), "no-store");
@@ -114,6 +132,13 @@ try {
   console.log(
     "PASS demo search, source filtering, empty state, validation, method handling, docs",
   );
+  const suggest = (base, params, status = 200) =>
+    get(base, params, status, "/api/search/suggest");
+  data = await suggest(demo, { q: "pyhton" });
+  assert.deepEqual(data, { query: "pyhton", suggestion: null, corrections: [], mode: "demo" });
+  await suggest(demo, {}, 400);
+  await suggest(demo, { q: "x".repeat(301) }, 400);
+  console.log("PASS demo suggestions return none, suggestion validation");
   const live = await start(3182, upstream);
   data = await get(live, { q: "python" });
   assert.equal(data.mode, "live");
@@ -131,14 +156,31 @@ try {
     assert.equal(data.results, undefined);
   }
   await get(live, { q: "timeout" }, 504);
+  console.log(
+    "PASS live proxy, schema/URL validation, upstream failures, timeout",
+  );
+  data = await suggest(live, { q: " pyhton   async " });
+  assert.equal(data.query, "pyhton   async");
+  assert.equal(data.suggestion, "python async");
+  assert.deepEqual(data.corrections, [{ original: "pyhton", replacement: "python" }]);
+  assert.equal(data.mode, "live");
+  assert.equal((await suggest(live, { q: "python" })).suggestion, null);
+  assert.equal((await suggest(live, { q: "rejected" })).suggestion, null);
+  assert.equal((await suggest(live, { q: "def f():\n  pass" })).suggestion, null);
+  for (const q of ["failure", "malformed", "bad-suggest"]) {
+    data = await suggest(live, { q }, 502);
+    assert.equal(typeof data.error, "string");
+    assert.equal(data.suggestion, undefined);
+  }
+  await suggest(live, { q: "timeout" }, 504);
+  console.log("PASS live suggestions, no-change, 422, code, upstream failures, timeout");
   await new Promise((resolve) => {
     mock.closeAllConnections();
     mock.close(resolve);
   });
   await get(live, { q: "disconnected" }, 502);
-  console.log(
-    "PASS live proxy, schema/URL validation, upstream failures, timeout, no demo fallback",
-  );
+  await suggest(live, { q: "disconnected" }, 502);
+  console.log("PASS no demo fallback when the backend is down");
 } finally {
   for (const child of processes) child.kill();
   mock.closeAllConnections();

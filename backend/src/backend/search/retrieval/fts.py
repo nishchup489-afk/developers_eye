@@ -6,8 +6,10 @@ The dedicated search_text() function matches only search_vector.
 
 from __future__ import annotations
 
-from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import REAL, cast, func, or_, select
+from sqlalchemy.dialects.postgresql import ARRAY, array
+
 
 from backend.models import SearchIndex
 from backend.search.types import RetrievalHit
@@ -89,7 +91,15 @@ async def search_text(
     if categories is not None:
         matches = matches.where(SearchIndex.category.in_(categories))
     pool = matches.limit(CANDIDATE_POOL).subquery()
-    score = func.ts_rank_cd(pool.c.search_vector, tsquery).label("score")
+    score = func.ts_rank(
+        cast(
+            array([0.05, 0.10, 0.35, 1.0]),
+            ARRAY(REAL()),
+        ),
+        pool.c.search_vector,
+        tsquery,
+        1,
+    ).label("score")
     statement = (
         select(pool.c.document_id, score)
         .order_by(score.desc(), pool.c.document_id.asc())

@@ -1,0 +1,39 @@
+{
+  "run_id": "20261107T015903Z-1q",
+  "created_utc": "2026-11-07T01:59:09.121038+00:00",
+  "suite": "C:\\Users\\nishc\\Documents\\developers-eye\\backend\\scripts\\search_relevance_diagnostics\\diagnostic_queries.json",
+  "settings": {
+    "k": 10,
+    "slow_ms": 5000,
+    "candidate_limit_per_channel": 100
+  },
+  "corpus": {
+    "text": {
+      "N": 42114,
+      "avgDL": 672.1790395197598
+    },
+    "code": {
+      "N": 42114,
+      "avgDL": 235.9502607095389
+    }
+  },
+  "corpus_scan_ms": 5242.7,
+  "warning": "Diagnostic heuristics and rank agreement, NOT judged retrieval or ranking relevance metrics.",
+  "queries": [
+    {
+      "id": "Q051",
+      "category": "JavaScript",
+      "query": "javascript fetch examples",
+      "mode": "all",
+      "candidate_count": 0,
+      "expected_title_contains": "Fetch API",
+      "expect_zero": false,
+      "top_k_overlap": null,
+      "elapsed_ms": 12.4,
+      "error": "ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) function ts_rank(double precision[], tsvector, tsquery, integer) does not exist\n[SQL: SELECT anon_1.document_id, ts_rank(ARRAY[$1::FLOAT, $2::FLOAT, $3::FLOAT, $4::FLOAT], anon_1.search_vector",
+      "flags": [
+        "ERROR"
+      ]
+    }
+  ]
+}

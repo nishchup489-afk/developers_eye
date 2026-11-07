@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+.r1 {color: #008080; text-decoration-color: #008080}
+.r2 {color: #008000; text-decoration-color: #008000}
+.r3 {color: #000080; text-decoration-color: #000080; font-weight: bold}
+.r4 {color: #3a3a3a; text-decoration-color: #3a3a3a}
+.r5 {color: #808000; text-decoration-color: #808000}
+.r6 {color: #729c1f; text-decoration-color: #729c1f}
+.r7 {color: #008080; text-decoration-color: #008080; font-weight: bold}
+.r8 {font-weight: bold}
+.r9 {color: #800000; text-decoration-color: #800000}
+.r10 {color: #808000; text-decoration-color: #808000; font-weight: bold}
+.r11 {font-style: italic}
+.r12 {color: #7f7f7f; text-decoration-color: #7f7f7f}
+.r13 {color: #000080; text-decoration-color: #000080}
+body {
+    color: #000000;
+    background-color: #ffffff;
+}
+</style>
+</head>
+<body>
+    <pre style="font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><code style="font-family:inherit"><span class="r1">Loading corpus statistics once per active channel...</span>
+<span class="r2">⠋</span> <span class="r3">Running diagnostics</span> <span class="r4">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">0/1</span> <span class="r5">0:00:00</span><span class="r2">⠙</span> <span class="r3">[Q051] javascript fetch examples</span> <span class="r4">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">0/1</span> <span class="r5">0:00:00</span><span class="r2">⠹</span> <span class="r3">[Q051] javascript fetch examples</span> <span class="r4">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">0/1</span> <span class="r5">0:00:00</span><span class="r2">⠸</span> <span class="r3">[Q051] javascript fetch examples</span> <span class="r4">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">0/1</span> <span class="r5">0:00:00</span><span class="r2">⠴</span> <span class="r3">[Q051] javascript fetch examples</span> <span class="r4">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">0/1</span> <span class="r5">0:00:00</span><span class="r2">⠦</span> <span class="r3">[Q051] javascript fetch examples</span> <span class="r4">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">0/1</span> <span class="r5">0:00:00</span><span class="r2">⠇</span> <span class="r3">[Q051] javascript fetch examples</span> <span class="r4">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">0/1</span> <span class="r5">0:00:00</span>[2K  <span class="r3">[Q051] javascript fetch examples</span> <span class="r6">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">1/1</span> <span class="r5">0:00:00</span>
+<span class="r1">╭──────────────────── EXP-0004 ─────────────────────╮</span>
+<span class="r1">│</span> <span class="r7">DEVELOPER&#x27;S EYE</span>  <span class="r8">Batch search diagnostics</span>         <span class="r1">│</span>
+<span class="r1">│</span> Executed: <span class="r8">1</span>   No-candidate: <span class="r5">0</span>   Errors: <span class="r9">0</span>         <span class="r1">│</span>
+<span class="r1">│</span> Mean top-10 overlap: <span class="r8">50%</span>  Median elapsed: <span class="r8">709 ms</span>  <span class="r1">│</span>
+<span class="r1">╰───────────────────────────────────────────────────╯</span>
+<span class="r8">Flag counts</span>  TARGET_BELOW_K: <span class="r10">1</span>
+<span class="r11">                                           Per-query diagnostics                                           </span>
+                                                                                                           
+ <span class="r8"> ID   </span> <span class="r8"> Group      </span> <span class="r8"> Query          </span> <span class="r8"> Mode </span> <span class="r8">   N </span> <span class="r8"> Top-10 overlap </span> <span class="r8"> BM25 #1        </span> <span class="r8">  ms </span> <span class="r8"> Flags         </span> 
+ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+ <span class="r12"> Q051 </span>  JavaScript   javascript       all    141              50%   AggregateErro…   709   <span class="r5">TARGET_BELOW…</span>  
+ <span class="r12">      </span>               fetch examples                                 No Promise in                         
+ <span class="r12">      </span>                                                              Promise.any                           
+ <span class="r12">      </span>                                                              was resolved -                        
+ <span class="r12">      </span>                                                              JavaScript |                          
+ <span class="r12">      </span>                                                              MDN                                   
+                                                                                                           
+<span class="r11">                         Category summary                          </span>
+╭────────────┬─────────┬─────────┬─────────────────┬──────────────╮
+│<span class="r8"> Category   </span>│<span class="r8"> Queries </span>│<span class="r8"> Flagged </span>│<span class="r8"> Zero candidates </span>│<span class="r8"> Mean overlap </span>│
+├────────────┼─────────┼─────────┼─────────────────┼──────────────┤
+│ JavaScript │       1 │       1 │               0 │          50% │
+╰────────────┴─────────┴─────────┴─────────────────┴──────────────╯
+<span class="r12">Flags are heuristics. Do not interpret overlap as relevance quality.</span>
+<span class="r13">╭────────────────────────────────────────────────────────╮</span>
+<span class="r13">│</span> <span class="r8">Q051</span>  javascript fetch examples  <span class="r12">(all; 141 candidates)</span> <span class="r13">│</span>
+<span class="r13">╰────────────────────────────────────────────────────────╯</span>
+<span class="r11">                                        Top 10: BM25 vs PostgreSQL                                         </span>
+╭────┬─────────────────────────────────────┬────────────┬──────────────────────────────────────┬──────────╮
+│<span class="r8">  # </span>│<span class="r8"> BM25 title                          </span>│<span class="r8"> BM25 score </span>│<span class="r8"> PG title                             </span>│<span class="r8"> PG score </span>│
+├────┼─────────────────────────────────────┼────────────┼──────────────────────────────────────┼──────────┤
+│  1 │ AggregateError: No Promise in       │    20.3079 │ Resource timing - Web APIs | MDN     │  0.15358 │
+│    │ Promise.any was resolved -          │            │                                      │          │
+│    │ JavaScript | MDN                    │            │                                      │          │
+│  2 │ WebAssembly.instantiate() -         │    20.2230 │ XMLHttpRequest API - Web APIs | MDN  │  0.13405 │
+│    │ WebAssembly | MDN                   │            │                                      │          │
+│  3 │ WebAssembly.validate() -            │    20.1596 │ WebAssembly.Instance.prototype.expo… │  0.09603 │
+│    │ WebAssembly | MDN                   │            │ - WebAssembly | MDN                  │          │
+│  4 │ WebAssembly.compileStreaming() -    │    19.9636 │ Using readable streams - Web APIs |  │  0.07845 │
+│    │ WebAssembly | MDN                   │            │ MDN                                  │          │
+│  5 │ WebAssembly.instantiateStreaming()  │    19.9396 │ Response: bodyUsed property - Web    │  0.06240 │
+│    │ - WebAssembly | MDN                 │            │ APIs | MDN                           │          │
+│  6 │ WebAssembly.Instance.prototype.exp… │    19.9158 │ WebAssembly.instantiate() -          │  0.05317 │
+│    │ - WebAssembly | MDN                 │            │ WebAssembly | MDN                    │          │
+│  7 │ WebAssembly.Instance - WebAssembly  │    19.6636 │ WebAssembly.instantiateStreaming() - │  0.05049 │
+│    │ | MDN                               │            │ WebAssembly | MDN                    │          │
+│  8 │ WebAssembly.compile() - WebAssembly │    19.6019 │ WebAssembly.compileStreaming() -     │  0.04590 │
+│    │ | MDN                               │            │ WebAssembly | MDN                    │          │
+│  9 │ WebAssembly.Suspending -            │    19.3714 │ Response: bytes() method - Web APIs  │  0.04574 │
+│    │ WebAssembly | MDN                   │            │ | MDN                                │          │
+│ 10 │ Making network requests with        │    19.3707 │ Making network requests with         │  0.04478 │
+│    │ JavaScript - Learn web development  │            │ JavaScript - Learn web development | │          │
+│    │ | MDN                               │            │ MDN                                  │          │
+╰────┴─────────────────────────────────────┴────────────┴──────────────────────────────────────┴──────────╯
+<span class="r12">BM25 and PostgreSQL scores are on different scales; compare order, not magnitudes.</span>
+</code></pre>
+</body>
+</html>

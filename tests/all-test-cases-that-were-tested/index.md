@@ -36,6 +36,19 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_rejects_invalid_input`
 - `test_database_error_is_503`
 
+### [backend/tests/golden/test_bm25_golden.py](../../backend/tests/golden/test_bm25_golden.py)
+
+8 cases
+
+- `test_golden_postgres_corpus_statistics`
+- `test_golden_exact_text_bm25_and_order`
+- `test_golden_current_bm25_does_not_apply_field_weights`: Freeze the known limitation; replace with separate BM25F golden tests later.
+- `test_golden_code_identifier_and_empty_results`
+- `test_golden_boolean_or_exclusion_and_phrase`
+- `test_golden_all_mode_fusion_is_exact`
+- `test_golden_weighted_ts_rank_candidate_cutoff`: Golden contract for the new weighted ts_rank, normalization=1 retriever.
+- `test_golden_mutations_recalculate_tf_df_dl_and_order`: Independent transaction-local insert/update/delete coverage.
+
 ### [backend/tests/integration/test_code.py](../../backend/tests/integration/test_code.py)
 
 17 cases · write-up: [test_case.md](../../backend/tests/test_case.md#code-retrieval)
@@ -85,6 +98,15 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_non_string_query_rejected_before_database_access`
 - `test_invalid_limit_rejected_before_database_access`
 - `test_sql_injection_like_text_is_not_executed`
+
+### [backend/tests/integration/test_fuzzy_suggestions.py](../../backend/tests/integration/test_fuzzy_suggestions.py)
+
+4 cases · write-up: [test_case.md](../../backend/tests/test_case.md#fuzzy-suggestions)
+
+- `test_vocabulary_holds_stems`
+- `test_english_stems_matches_the_index`
+- `test_typo_suggests_a_real_word`
+- `test_correct_words_are_left_alone`
 
 ### [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 
@@ -189,11 +211,17 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/unit/test_fuzzy_suggestions.py](../../backend/tests/unit/test_fuzzy_suggestions.py)
 
-3 cases · write-up: [test_case.md](../../backend/tests/test_case.md#fuzzy-suggestions)
+9 cases · write-up: [test_case.md](../../backend/tests/test_case.md#fuzzy-suggestions)
 
 - `test_corrects_spelling_using_vocabulary`
 - `test_does_not_modify_exact_terms`
 - `test_does_not_correct_technical_identifier`
+- `test_stem_candidate_is_shown_as_a_real_word`
+- `test_y_stem_is_shown_as_a_real_word`
+- `test_unverified_forms_never_surface_a_bare_stem`
+- `test_bare_stem_ending_in_i_is_skipped`
+- `test_word_whose_stem_is_indexed_is_not_a_typo`
+- `test_surface_forms_start_with_the_stem_and_rebuild_y_words`
 
 ### [backend/tests/unit/test_main_lifespan_search.py](../../backend/tests/unit/test_main_lifespan_search.py)
 
@@ -274,6 +302,18 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_excess_candidates_fail_before_database_work`
 - `test_loader_error_propagates`
 - `test_nonfinite_combined_score_is_rejected`
+
+### [backend/tests/unit/test_relevance_metrics.py](../../backend/tests/unit/test_relevance_metrics.py)
+
+7 cases
+
+- `test_precision_denominator_is_k_not_result_count`
+- `test_mrr_uses_first_relevant_rank`
+- `test_dcg_and_ndcg_are_graded_and_discount_rank`
+- `test_pooled_recall_is_explicitly_known_relevant_only`
+- `test_prepare_is_union_of_both_rankings`
+- `test_incomplete_labels_are_rejected`
+- `test_complete_queries_produce_comparable_metrics`
 
 ### [backend/tests/unit/test_search_pipeline.py](../../backend/tests/unit/test_search_pipeline.py)
 
@@ -1029,14 +1069,20 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#preview-crawlermjs)
 
+### [frontend/tests/search-unit.mjs](../../frontend/tests/search-unit.mjs)
+
+Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#search-unitmjs)
+
 ## Not in any write-up yet
 
 These test files have no matching heading in a `test_case.md`.
 
+- [backend/tests/golden/test_bm25_golden.py](../../backend/tests/golden/test_bm25_golden.py)
 - [backend/tests/integration/test_corpus_mutation_search.py](../../backend/tests/integration/test_corpus_mutation_search.py)
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 - [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 - [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)
+- [backend/tests/unit/test_relevance_metrics.py](../../backend/tests/unit/test_relevance_metrics.py)
 - [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
 - [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)

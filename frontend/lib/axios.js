@@ -12,6 +12,24 @@ export const api = axios.create({
   validateStatus: () => true,
 });
 
+/**
+ * fetch that always settles when its signal aborts. Next's patched fetch can ignore the
+ * signal on a server process's first hanging request, so a stalled upstream would never
+ * time out; racing the signal makes the axios timeout reject either way.
+ * @type {(input: URL | Request | string, init?: RequestInit) => Promise<Response>}
+ */
+function abortableFetch(input, init) {
+  const signal = input instanceof Request ? input.signal : init?.signal;
+  const pending = fetch(input, { ...init, signal });
+  if (!signal) return pending;
+  return new Promise((resolve, reject) => {
+    const abort = () => reject(signal.reason);
+    if (signal.aborted) return abort();
+    signal.addEventListener("abort", abort, { once: true });
+    pending.then(resolve, reject).finally(() => signal.removeEventListener("abort", abort));
+  });
+}
+
 // Server client for Next.js -> FastAPI and GitHub. The fetch adapter keeps Next's `no-store`
 // semantics, and `redirect: "error"` refuses to follow redirects so a bearer key is never
 // replayed to another host. Holds no secrets: keys are passed per request by server routes.
@@ -21,10 +39,7 @@ export const backend = axios.create({
   // axios hands fetch a Request whose signal carries the timeout; Next's patched fetch only
   // honours `init.signal`, so pass it through. Resolving `fetch` per call also picks up
   // Next's patch (and test doubles) installed after this module loads.
-  env: {
-    /** @type {(input: URL | Request | string, init?: RequestInit) => Promise<Response>} */
-    fetch: (input, init) => fetch(input, { ...init, signal: input instanceof Request ? input.signal : init?.signal }),
-  },
+  env: { fetch: abortableFetch },
   fetchOptions: { cache: "no-store", redirect: "error" },
   headers: { Accept: "application/json" },
   validateStatus: () => true,

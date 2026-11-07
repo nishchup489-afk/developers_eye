@@ -929,6 +929,27 @@ h1 .accent {
   color: var(--faint);
   margin-top: 19px;
 }
+.did-you-mean {
+  margin-top: 22px;
+  font-size: 15px;
+  color: var(--muted);
+}
+.did-you-mean-link {
+  padding: 0;
+  color: var(--lime);
+  font-style: italic;
+  text-decoration: underline;
+  text-decoration-color: #d6fc8155;
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+}
+.did-you-mean-link b {
+  font-weight: 600;
+}
+.did-you-mean-link:hover,
+.did-you-mean-link:focus-visible {
+  text-decoration-color: currentColor;
+}
 .empty-state {
   display: flex;
   align-items: center;

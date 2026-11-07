@@ -27,6 +27,7 @@ FastAPI CORS allows browser calls only from `http://127.0.0.1:3000`, `http://loc
 | Next.js (internet) | GET | `/api/auth/github/callback` | `code`, `state` | [`frontend/app/api/auth/github/callback/route.ts`](../../../frontend/app/api/auth/github/callback/route.ts) |
 | Next.js (internet) | POST | `/api/auth/logout` | — | [`frontend/app/api/auth/logout/route.ts`](../../../frontend/app/api/auth/logout/route.ts) |
 | Next.js (internet) | GET | `/api/search` | `mode`, `page`, `q`, `source` | [`frontend/app/api/search/route.ts`](../../../frontend/app/api/search/route.ts) |
+| Next.js (internet) | GET | `/api/search/suggest` | `q` | [`frontend/app/api/search/suggest/route.ts`](../../../frontend/app/api/search/suggest/route.ts) |
 | FastAPI (internal in prod) | GET | `/` | — | [`backend/src/backend/main.py:91`](../../../backend/src/backend/main.py#L91) |
 | FastAPI (internal in prod) | GET | `/health` | — | [`backend/src/backend/main.py:96`](../../../backend/src/backend/main.py#L96) |
 | FastAPI (internal in prod) | GET | `/health/db` | — | [`backend/src/backend/main.py:101`](../../../backend/src/backend/main.py#L101) |
@@ -83,7 +84,8 @@ One row per browser call site. The browser only talks to Next.js; the Next.js ro
 | GET `/api/admin/system/search` via `usePolling` → axios `api` client<br>[`frontend/components/admin/availability-control-center.tsx:19`](../../../frontend/components/admin/availability-control-center.tsx#L19) | `/api/admin/system/search`<br>[`frontend/app/api/admin/system/search/route.ts`](../../../frontend/app/api/admin/system/search/route.ts) | FastAPI GET `/admin/system/search`<br>`adminProxy` → `adminGet` (Bearer key), [`line 14`](../../../frontend/app/api/admin/system/search/route.ts#L14) | `search_report` [`backend/src/backend/api/system_report.py:38`](../../../backend/src/backend/api/system_report.py#L38) |
 | GET `/api/auth/github` via link<br>[`frontend/app/admin/login/page.tsx:32`](../../../frontend/app/admin/login/page.tsx#L32) | `/api/auth/github`<br>[`frontend/app/api/auth/github/route.ts`](../../../frontend/app/api/auth/github/route.ts) | redirect GET `https://github.com/login/oauth/authorize`<br>browser redirect, [`line 12`](../../../frontend/app/api/auth/github/route.ts#L12) | external |
 | POST `/api/auth/logout` via form<br>[`frontend/app/admin/(protected)/layout.tsx:22`](../../../frontend/app/admin/%28protected%29/layout.tsx#L22) | `/api/auth/logout`<br>[`frontend/app/api/auth/logout/route.ts`](../../../frontend/app/api/auth/logout/route.ts) | none (handled in Next.js) | — |
-| GET `/api/search` via axios `api` client<br>[`frontend/components/search-experience.tsx:259`](../../../frontend/components/search-experience.tsx#L259) | `/api/search`<br>[`frontend/app/api/search/route.ts`](../../../frontend/app/api/search/route.ts) | FastAPI GET `/search`<br>`backend.get` on `$BACKEND_URL`, [`line 33`](../../../frontend/app/api/search/route.ts#L33) | `search` [`backend/src/backend/api/search.py:43`](../../../backend/src/backend/api/search.py#L43) |
+| GET `/api/search` via axios `api` client<br>[`frontend/components/search-experience.tsx:274`](../../../frontend/components/search-experience.tsx#L274) | `/api/search`<br>[`frontend/app/api/search/route.ts`](../../../frontend/app/api/search/route.ts) | FastAPI GET `/search`<br>`backend.get` on `$BACKEND_URL`, [`line 33`](../../../frontend/app/api/search/route.ts#L33) | `search` [`backend/src/backend/api/search.py:43`](../../../backend/src/backend/api/search.py#L43) |
+| GET `/api/search/suggest` via axios `api` client<br>[`frontend/components/search-experience.tsx:288`](../../../frontend/components/search-experience.tsx#L288) | `/api/search/suggest`<br>[`frontend/app/api/search/suggest/route.ts`](../../../frontend/app/api/search/suggest/route.ts) | FastAPI GET `/search/suggest`<br>`backend.get` on `$BACKEND_URL`, [`line 22`](../../../frontend/app/api/search/suggest/route.ts#L22) | `suggest_search_query` [`backend/src/backend/api/search.py:94`](../../../backend/src/backend/api/search.py#L94) |
 
 ## 3. Next.js routes (`frontend/app/**/route.ts`)
 
@@ -103,6 +105,7 @@ One row per browser call site. The browser only talks to Next.js; the Next.js ro
 | GET | `/api/auth/github/callback` | public | `code`, `state` | external `https://github.com/login/oauth/access_token`<br>external `https://api.github.com/user` | [`frontend/app/api/auth/github/callback/route.ts`](../../../frontend/app/api/auth/github/callback/route.ts) |
 | POST | `/api/auth/logout` | public | — | — | [`frontend/app/api/auth/logout/route.ts`](../../../frontend/app/api/auth/logout/route.ts) |
 | GET | `/api/search` | public | `mode`, `page`, `q`, `source` | FastAPI `GET /search` | [`frontend/app/api/search/route.ts`](../../../frontend/app/api/search/route.ts) |
+| GET | `/api/search/suggest` | public | `q` | FastAPI `GET /search/suggest` | [`frontend/app/api/search/suggest/route.ts`](../../../frontend/app/api/search/suggest/route.ts) |
 
 ## 4. FastAPI endpoints (`backend/src/backend`)
 
@@ -123,7 +126,7 @@ One row per browser call site. The browser only talks to Next.js; the Next.js ro
 | GET | `/health` | none | — | `dict[str, str]` | `health` [`backend/src/backend/main.py:96`](../../../backend/src/backend/main.py#L96) | — |
 | GET | `/health/db` | none | — | `dict[str, str]` | `database_health` [`backend/src/backend/main.py:101`](../../../backend/src/backend/main.py#L101) | — |
 | GET | `/search` | none | `q` (query: str, max_length=1024, required)<br>`source` (query: SearchFilter \| None, default None)<br>`limit` (query: int, ge=1, le=50, default 20)<br>`page` (query: int, ge=1, default 1)<br>`mode` (query: SearchMode, default SearchMode.ALL) | `SearchResponseOut` | `search` [`backend/src/backend/api/search.py:43`](../../../backend/src/backend/api/search.py#L43) | [`/api/search`](../../../frontend/app/api/search/route.ts) |
-| GET | `/search/suggest` | none | `q` (query: str, max_length=1024, required) | `QueryCorrection` | `suggest_search_query` [`backend/src/backend/api/search.py:94`](../../../backend/src/backend/api/search.py#L94)<br>Explicit spelling suggestion from the indexer-maintained vocabulary. | — |
+| GET | `/search/suggest` | none | `q` (query: str, max_length=1024, required) | `QueryCorrection` | `suggest_search_query` [`backend/src/backend/api/search.py:94`](../../../backend/src/backend/api/search.py#L94)<br>Explicit spelling suggestion from the indexer-maintained vocabulary. | [`/api/search/suggest`](../../../frontend/app/api/search/suggest/route.ts) |
 
 ## 5. Gaps found by the generator
 
@@ -132,7 +135,6 @@ FastAPI endpoints no Next.js route calls (reachable only inside the server, or b
 - GET `/` ([`backend/src/backend/main.py:91`](../../../backend/src/backend/main.py#L91))
 - GET `/health` ([`backend/src/backend/main.py:96`](../../../backend/src/backend/main.py#L96))
 - GET `/health/db` ([`backend/src/backend/main.py:101`](../../../backend/src/backend/main.py#L101))
-- GET `/search/suggest` ([`backend/src/backend/api/search.py:94`](../../../backend/src/backend/api/search.py#L94))
 
 Next.js routes no browser code calls (used by other clients, redirects or OAuth):
 
