@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "description": "Versioned fixed query manifest. Judgment files must be independently labeled from frozen corpus results, not automatically inferred.",
+  "description": "Versioned fixed query manifest. Judgment files must be independently labeled from frozen corpus results, not automatically inferred. Q001 preserves the query from reports/bm25-text.json for continuity, but scored metrics require fresh frozen-corpus judgments.",
   "queries": [
     {
       "query_id": "Q001",
-      "query": "python async await tutorial",
+      "query": "python async api",
       "mode": "text",
       "stratum": "documentation"
     },
