@@ -68,7 +68,12 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [unit/test_planner.py](../backend/tests/unit/test_planner.py) | tests | 11 | [test_case.md](../backend/tests/test_case.md#query-planner) |
 | [unit/test_ranking.py](../backend/tests/unit/test_ranking.py) | tests | 26 | [test_case.md](../backend/tests/test_case.md#bm25-formula-and-ranking-types) |
 | [unit/test_ranking_orchestrator.py](../backend/tests/unit/test_ranking_orchestrator.py) | tests | 14 | [test_case.md](../backend/tests/test_case.md#ranking-orchestrator) |
-| [unit/test_relevance_metrics.py](../backend/tests/unit/test_relevance_metrics.py) | tests | 7 |  |
+| [unit/test_relavance_matrics/mrr@10.py](../backend/tests/unit/test_relavance_matrics/mrr@10.py) | helper |  |  |
+| [unit/test_relavance_matrics/nDCG@10.py](../backend/tests/unit/test_relavance_matrics/nDCG@10.py) | helper |  |  |
+| [unit/test_relavance_matrics/precision@10.py](../backend/tests/unit/test_relavance_matrics/precision@10.py) | helper |  |  |
+| [unit/test_relavance_matrics/recall@100.py](../backend/tests/unit/test_relavance_matrics/recall@100.py) | helper |  |  |
+| [unit/test_relavance_matrics/relavance_runner.py](../backend/tests/unit/test_relavance_matrics/relavance_runner.py) | helper |  |  |
+| [unit/test_relevance_metrics_base.py](../backend/tests/unit/test_relevance_metrics_base.py) | tests | 7 |  |
 | [unit/test_search_pipeline.py](../backend/tests/unit/test_search_pipeline.py) | tests | 10 | [test_case.md](../backend/tests/test_case.md#search-service-pipeline) |
 | [unit/test_search_telemetry.py](../backend/tests/unit/test_search_telemetry.py) | tests | 8 |  |
 | [unit/test_snippet_bounds.py](../backend/tests/unit/test_snippet_bounds.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#snippets) |

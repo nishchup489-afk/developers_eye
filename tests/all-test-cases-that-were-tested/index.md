@@ -303,7 +303,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_loader_error_propagates`
 - `test_nonfinite_combined_score_is_rejected`
 
-### [backend/tests/unit/test_relevance_metrics.py](../../backend/tests/unit/test_relevance_metrics.py)
+### [backend/tests/unit/test_relevance_metrics_base.py](../../backend/tests/unit/test_relevance_metrics_base.py)
 
 7 cases
 
@@ -1082,7 +1082,7 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 - [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 - [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)
-- [backend/tests/unit/test_relevance_metrics.py](../../backend/tests/unit/test_relevance_metrics.py)
+- [backend/tests/unit/test_relevance_metrics_base.py](../../backend/tests/unit/test_relevance_metrics_base.py)
 - [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
 - [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
