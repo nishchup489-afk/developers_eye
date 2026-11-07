@@ -26,7 +26,7 @@ indexes refresh on every commit. `--check` exits 1 when they are stale.
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**79 test files, 673 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**80 test files, 673 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
@@ -34,7 +34,7 @@ Everything between the markers is generated. Write notes above them.
 | [Backend (FastAPI, search)](#backend-fastapi-search) | 27 | 263 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 11 | 99 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 33 | 311 | `cd crawler && poetry run pytest tests/crawler` |
-| [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 8 | 0 | npm scripts in `frontend/package.json` (see below) |
+| [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 9 | 0 | npm scripts in `frontend/package.json` (see below) |
 
 ### End-to-end (full app)
 
@@ -147,7 +147,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 - `npm run test:admin` runs `node tests/admin-integration.mjs`
 - `npm run test:admin:unit` runs `node --experimental-strip-types tests/admin-unit.mjs && node --experimental-strip-types tests/crawler-monitor-unit.mjs && node --experimental-strip-types tests/indexer-report-unit.mjs`
 - `npm run test:admin:routes` runs `node --experimental-strip-types tests/admin-routes.mjs`
-- `npm run test:search:unit` runs `node --experimental-strip-types tests/search-unit.mjs`
+- `npm run test:search:unit` runs `node --experimental-strip-types tests/search-unit.mjs && node --experimental-strip-types tests/knowledge-unit.mjs`
 
 | File | Kind | Cases | Write-up |
 |---|---|---:|---|
@@ -161,6 +161,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [fixtures/system-report.mjs](../frontend/tests/fixtures/system-report.mjs) | fixture data |  |  |
 | [indexer-report-unit.mjs](../frontend/tests/indexer-report-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#indexer-report-unitmjs) |
 | [integration.mjs](../frontend/tests/integration.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#integrationmjs) |
+| [knowledge-unit.mjs](../frontend/tests/knowledge-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#knowledge-unitmjs) |
 | [preview-crawler.mjs](../frontend/tests/preview-crawler.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#preview-crawlermjs) |
 | [search-unit.mjs](../frontend/tests/search-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#search-unitmjs) |
 | [test_case.md](../frontend/tests/test_case.md) | write-up |  |  |

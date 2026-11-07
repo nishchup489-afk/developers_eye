@@ -1,112 +1,259 @@
 ---
 id: EXP-0009
-title: Human-Judged Search Relevance Evaluation
-status: running
-outcome: inconclusive
+title: Human-judged lexical search relevance — BM25 versus PostgreSQL
+status: running         # planned | running | done
+outcome: inconclusive  # adopt | reject | inconclusive
 date: 2026-11-06
 area: backend
 feature: ranking
 informs:
   - ADR-0045
+  - ADR-0046
 related:
   - EXP-0004
-  - ADR-0028
+  - EXP-0007
   - ADR-0010
+  - ADR-0024
+  - ADR-0028
 code:
-  - backend/scripts/search_relevance_metrics/evaluate_relevance.py
-  - backend/tests/unit/test_relevance_metrics.py
+  - backend/tests/unit/test_relavance_matrics/precision@10.py
+  - backend/tests/unit/test_relavance_matrics/mrr@10.py
+  - backend/tests/unit/test_relavance_matrics/nDCG@10.py
+  - backend/tests/unit/test_relavance_matrics/recall@100.py
+  - backend/tests/unit/test_relavance_matrics/relavance_runner.py
   - backend/scripts/search_relevance_diagnostics/diagnose_relevance.py
 ---
 
-# EXP-0009: Human-Judged Search Relevance Evaluation
+# EXP-0009: Human-Judged Search Relevance Metrics
 
 ## Question
 
-On the *same fixed indexed corpus and same retrieved candidate set*, how do custom BM25 and PostgreSQL's native `ts_rank_cd` comparator differ in human-judged search result quality?
+**Within the same retrieved candidate pool for a query, does Developer's Eye's custom BM25 order results more usefully than the PostgreSQL native ranking comparator?** What retrieval, ranking, or result-presentation failures do direct human judgments expose that mathematical golden tests cannot?
 
-Can we establish a defensible baseline for future ranking/candidate-retrieval decisions in ADR-0045?
+This experiment does **not** compare two independently retrieved web corpora, and it cannot establish general search quality from only two judged queries.
 
 ## Why it matters
 
-EXP-0004 established scoring correctness on golden fixtures, **not** human usefulness. It identified a document excluded by initial retrieval and still ranked #80 by BM25 after candidate recovery (Q051: *Using the Fetch API*). There are also multilingual duplication and title-weighting hypotheses.
+EXP-0004 established reproducible BM25 mathematics and isolated a real failure for `Q051` (`javascript fetch examples`): the relevant, already indexed MDN *Using the Fetch API* document (`document_id=51`) entered the candidate set after a preliminary retrieval change but was still ranked around position 80 by custom BM25. An engine can compute BM25 correctly and still produce poor search results.
 
-The experiment must measure user-defined relevance rather than agreement between two algorithms or title-substring heuristics.
+Separate these dimensions:
+
+1. **Corpus coverage:** Is a useful document indexed at all?
+2. **Candidate retrieval:** Does retrieval admit the indexed useful document to the pool?
+3. **Ranking:** Does the final ranker place it near the top?
+4. **Presentation:** Are language variants and near-duplicates wasting top-K positions?
+
+Judgment labels measure *topical utility for a specified query*. Language suitability and duplicate diversity require **additional annotations or metrics**; do not quietly modify topical labels after seeing scores.
 
 ## Setup
 
-- Corpus: pause crawler/indexer and run `diagnose_relevance.py` to freeze one diagnostic snapshot. Preserve the `diagnostics.json` and its `run_id`.
-- Evaluation queries: start with Q024, Q051, Q071, Q083 and Q099, then expand across the existing 100-query suite.
-- Systems: custom BM25 versus PostgreSQL `ts_rank_cd` **reranking the same candidate IDs**. This is not a comparison of independent retrieval pipelines.
-- Judgment pool: union of top-20 documents from both systems per query; add independently known relevant anchors (where they exist in the diagnostic candidate set).
-- Judge document content and query intent, not score/rank/title substring. The exported labeling CSV omits ranking positions and shuffles documents deterministically.
+| Item | Observed / configured |
+| --- | --- |
+| Developer environment | Windows PowerShell; Python 3.14.4; Poetry |
+| Corpus | Developer documentation in PostgreSQL; 42,114 indexed documents reported by the earlier 100-query diagnostic in EXP-0004 |
+| Primary ranker | Custom TEXT/CODE BM25 |
+| Comparator | PostgreSQL native ranking as recorded in `postgresql_order`, described in EXP-0004 as `ts_rank_cd` reranking |
+| Comparison control | `bm25_order` and `postgresql_order` from **one** `diagnostics.json` case must contain the same candidate IDs |
+| Judging interface | Rich interactive terminal; `o` opens a document; `0`–`3` grades; `s` skips; `q` quits |
+| Persistence | `backend/evaluation/exp-0009/exp0009_human_labels.csv` keyed by run ID, query ID, document ID |
+| Initial judgment depth | Union of the two rankers' top 10, with optional independently known document anchors |
+| Query coverage so far | Q051 and Q024 only |
+| Snapshot limitation | Q051 and Q024 used **different diagnostic run IDs**; corpus immutability across runs was not established |
 
-## Judgment rubric (qrels)
+### Diagnostic runs and raw evidence
 
-| Grade | Meaning | Relevant for binary metrics? |
-|---|---|---|
-| 0 | Irrelevant, incorrect technology or unrelated content | No |
-| 1 | Tangential, mentions a term but does not answer intent | No |
-| 2 | Useful, substantially addresses the developer's intent | Yes |
-| 3 | Excellent, directly answers intent with actionable information/examples | Yes |
+| Query | Query text | Run ID | Labeled documents | Evidence |
+| --- | --- | --- | ---: | --- |
+| Q051 | `javascript fetch examples` | `20261107T020058Z-1q` | 16 | `backend/reports/exp-0004/20261107T020058Z-1q/diagnostics.json` |
+| Q024 | `FastAPI Depends` | `20261107T012318Z-100q` | 13 | `backend/reports/exp-0004/20261107T012318Z-100q/diagnostics.json` |
 
-Leave unreviewed documents blank. **Never auto-grade from title matching, BM25/PG scores, or an LLM without separately documenting its role and validation.** Read pages before assigning a final grade. Record ambiguous reasoning in `notes`. Ideally have a second judge review a subset, then adjudicate disagreements.
+The timestamps above are UTC-style diagnostic identifiers; the experiment date is the developer's local date (November 6, 2026). Raw human-labeling evidence is stored in `exp0009_human_labels.csv`; result summaries are stored under `backend/reports/exp-0009/`.
+
+## Judgment rubric
+
+| Grade | Definition | Counts as relevant for P@10 / RR@10 / known R@100? | nDCG gain (`2^grade − 1`) |
+| --- | --- | --- | ---: |
+| 0 | Irrelevant to the developer's query | No | 0 |
+| 1 | Tangential / related without adequately answering intent | No | 1 |
+| 2 | Useful / substantially answers intent | Yes | 3 |
+| 3 | Excellent / directly answers intent, ideally with actionable examples | Yes | 7 |
+
+Judge the document itself, not its search position, ranking score, or title alone. Browser auto-translation may enable a judge to understand a foreign-language page; that does **not** mean the original page matches every user's language preference. Keep topical relevance and language suitability as separate attributes.
+
+The runner shuffles the required judgment list deterministically and saves each answer. Existing judgments are reused for a matching diagnostic `run_id`. The current CSV and Rich runner are a **single-judge exploratory protocol**, not an inter-annotator reliability study.
 
 ## Metrics
 
-- **Precision@10**: count documents with grade >= 2 in the top ten, divided by 10. Missing results count as nonrelevant.
-- **MRR@10**: reciprocal rank of the first document with grade >= 2 in top ten, or zero if none.
-- **nDCG@10 (pooled)**: graded gains `2^grade - 1`, discounted by `log2(rank + 1)` and normalized by ideal ordering of all *judged* documents. Undefined if no judged positive relevance.
-- **Known-relevant recall@100 (pooled)**: proportion of judged documents with grade >= 2 that appear in the system's top 100. This is **not exhaustive Recall@100**, because not all relevant documents in the corpus have been found and judged. With top-20 judging it is especially optimistic and must not be presented as real Recall@100.
-- **Expected zero results**: evaluated separately, not averaged into ranked-list metrics.
+### Precision@10
 
-For defensible true Recall@100, use an independently assembled and sufficiently comprehensive set of relevant documents, including documents the current retrievers missed. Current experiment code cannot claim this yet.
+\[
+P@10 = \frac{\sum_{i=1}^{10}\mathbb{1}(rel_i \ge 2)}{10}
+\]
+
+An unfilled result slot counts in the denominator; a returned but unjudged document causes an evaluation error/incomplete status rather than silently becoming grade 0.
+
+### Reciprocal Rank@10 and Mean Reciprocal Rank@10
+
+\[
+RR@10 = \begin{cases}1/r,& r\le 10\text{ is the first rank with }rel_r\ge2\\0,&\text{otherwise}\end{cases}
+\]
+
+For one query the result is **RR@10**. **MRR@10** is the arithmetic mean across scored queries; one-query output cannot establish an overall MRR benchmark.
+
+### Graded nDCG@10, judged-pool normalization
+
+\[
+DCG@10 = \sum_{i=1}^{10}\frac{2^{rel_i}-1}{\log_2(i+1)},\qquad nDCG@10 = \frac{DCG@10}{IDCG@10}
+\]
+
+`IDCG@10` is calculated from all *currently judged* documents for that query. Grade 1 contributes a positive gain even though it is not binary-relevant. If no judged document has a positive grade, the metric is undefined (`N/A`). Pool completeness affects nDCG; label depth and independent anchors must be recorded.
+
+### Known-relevant Recall@100 (NOT exhaustive recall)
+
+\[
+KnownR@100 = \frac{|Top100\cap\{d:\,judged\_grade(d)\ge2\}|}{|\{d:\,judged\_grade(d)\ge2\}|}
+\]
+
+The denominator includes **only known judged relevant documents**, largely pooled from the rankers being assessed. It is biased and must **not** be presented as corpus-wide Recall@100. To measure candidate-retrieval recall, build an independent, more comprehensive per-query relevance set that can contain documents neither ranker retrieved.
+
+### What is not yet measured
+
+Language preference satisfaction, duplicate-group diversity, diversity-adjusted P@10, coverage of all relevant documents, robustness across query categories, test-set variance, or a controlled latency comparison.
 
 ## Method
 
-1. Freeze ranking settings and corpus. Run the selected diagnostic cases again after all EXP-0004 candidate-selection changes.
-2. Generate a blind CSV from the union of top-20 of both rankings. Add Q051's known document #51 if it appears among candidates.
-3. Human-review and grade every document appearing in **either** algorithm's top-10. Review the remaining pooled items to strengthen nDCG. Do not substitute missing labels with zero.
-4. Run the metric test suite and compute report JSON. Treat the first run as an observed baseline, not a tuning objective.
-5. Broaden the judged set, split development/held-out queries before tuning, then rerun the **same judgments** against a new search configuration in a separately versioned experiment.
-6. Record systematic issues (field-weight loss, candidate truncation, locale duplicates, identifier behavior) as hypotheses for ADR-0045, not proven causes until controlled comparisons.
+1. Capture `diagnostics.json`, exact source/corpus configuration, query IDs, ranking parameters, and candidate budgets. Within each query, the two rankers must evaluate identical candidate ID sets.
+2. Form an assessment pool from the union of both algorithms' top-K results. In Q051 include the independently tracked document `51` so a relevant page below top 10 can be labeled.
+3. Human-grade the result pages 0–3; save graded labels with `run_id`, query ID and document ID. Do not auto-label from BM25 or PostgreSQL scores.
+4. Run standalone metric self-tests, then score. Compare both rankers **within the same diagnostic**, never treat different runs as a controlled corpus snapshot.
+5. Inspect bad cases individually. Register hypotheses, not causes, until a controlled ablation isolates a ranking feature or retrieval change.
+6. Expand to a representative, versioned set of queries, ideally split into development and held-out queries. Re-run both systems on the **same frozen index snapshot** before making architecture or shipping decisions.
 
-## Reproduce (PowerShell, from `backend/`)
+### Baseline versus variable
+
+- **Controlled within a diagnostic:** query, candidate IDs, document metadata, judgment rubric.
+- **Compared:** ordering of those candidate IDs by custom BM25 versus the PostgreSQL comparator.
+- **Not controlled across the first two human-labeled cases:** exact index/corpus snapshot; run IDs differ.
+- **Runs:** one recorded human-judgment exercise each for Q051 and Q024. This is a case study, not repeated statistical measurement.
+
+## Reproduce
+
+From `backend/` in PowerShell; keep your actual on-disk filename, **`relavance_runner.py`**, which differs from the corrected English spelling. The nDCG module on disk is capitalized `nDCG@10.py` in the supplied file tree; the earlier generated runner imports lowercase `ndcg@10.py`. On Windows this often resolves due to case-insensitive paths; standardize the casing before moving to Linux/CI.
 
 ```powershell
-poetry run pytest tests/unit/test_relevance_metrics.py -v
+# Verify the runner + metric modules installed on your machine.
+Get-ChildItem tests/unit/test_relavance_matrics/
 
-# Pause crawler/indexer before the run. Produces a new time-stamped report.
-poetry run python scripts/search_relevance_diagnostics/diagnose_relevance.py --id Q024 --id Q051 --id Q071 --id Q083 --id Q099
+# Run the metric self-tests (requires the runner's imports to match filenames).
+poetry run python "tests/unit/test_relavance_matrics/relavance_runner.py" --self-test
 
-$diag = (Get-ChildItem reports/exp-0004/*/diagnostics.json |
-    Sort-Object LastWriteTime -Descending |
-    Select-Object -First 1).FullName
+# Reproduce Q051 report against its exact existing diagnostic; no prompt when already labeled.
+poetry run python "tests/unit/test_relavance_matrics/relavance_runner.py" `
+  --report "reports/exp-0004/20261107T020058Z-1q/diagnostics.json" `
+  --query-id Q051 --include 51 --score --details
 
-poetry run python scripts/search_relevance_metrics/evaluate_relevance.py prepare `
-    --diagnostics "$diag" `
-    --qrels evaluation/exp-0009/qrels.csv `
-    --depth 20 `
-    --include Q051:51
+# Reproduce Q024 against its original 100-query diagnostic.
+poetry run python "tests/unit/test_relavance_matrics/relavance_runner.py" `
+  --report "reports/exp-0004/20261107T012318Z-100q/diagnostics.json" `
+  --query-id Q024 --score --details
 
-# Open qrels.csv and fill the relevance_grade column manually (0..3).
-code evaluation/exp-0009/qrels.csv
+# Grade a NEW query only if it appears in the selected diagnostic.
+poetry run python "tests/unit/test_relavance_matrics/relavance_runner.py" `
+  --report "reports/exp-0004/20261107T012318Z-100q/diagnostics.json" `
+  --query-id Q083 --details
 
-poetry run python scripts/search_relevance_metrics/evaluate_relevance.py score `
-    --diagnostics "$diag" `
-    --qrels evaluation/exp-0009/qrels.csv `
-    --output reports/exp-0009/baseline.json
+# Reopen existing grades for review, if necessary.
+poetry run python "tests/unit/test_relavance_matrics/relavance_runner.py" `
+  --query-id Q024 --regrade --details
 ```
 
-The scorer rejects missing labels for either system's top-10. It also refuses to mix different `run_id`s or overwrite existing qrels/results. If new diagnostic runs are needed, preserve each qrels file and score JSON using a run-specific name.
+If the local runner uses lowercase `ndcg@10.py`, rename `nDCG@10.py` to `ndcg@10.py` before running Linux CI. The file tree also showed `precision@10.py`, `mrr@10.py`, `recall@100.py` and `relavance_runner.py`.
 
 ## Results
 
-**Not yet measured.** The evaluator's own unit tests passed (7 tests in a local Python environment), but no human-labeled qrels or production search quality metrics exist yet. No improvement of BM25 over PostgreSQL is claimed.
+### Human relevance comparison (two query-specific snapshots)
+
+| Query | Ranker | P@10 | RR@10 | nDCG@10 (judged pool) | Known R@100 | Judged |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Q051 · `javascript fetch examples` | BM25 | **0.000** | **0.000** | 0.034 | **1.000** | 16 |
+| Q051 · `javascript fetch examples` | PostgreSQL | **0.000** | **0.000** | 0.224 | **0.000** | 16 |
+| Q024 · `FastAPI Depends` | BM25 | **1.000** | **1.000** | **1.000** | **1.000** | 13 |
+| Q024 · `FastAPI Depends` | PostgreSQL | **1.000** | **1.000** | **1.000** | **1.000** | 13 |
+
+**Do not report a combined two-query macro-average as a controlled benchmark:** the underlying diagnostic/corpus snapshots differ. The values above are outputs of the developer-supplied Rich evaluation runs, not reproduced against a mounted production database here.
+
+#### Case Q051: highly relevant result ranked too low
+
+- MDN *Using the Fetch API*, document `51`: **human grade 3**, included in candidates; approximately **BM25 rank 80** and **PostgreSQL comparator rank 133** in the local diagnostic (see EXP-0004).
+- Both rankers: **zero** grade-2/3 documents in their top ten, hence P@10 and RR@10 are zero.
+- BM25 top 10: largely unrelated `Promise.any` and WebAssembly references. Of the top ten, the last page (*Making network requests with JavaScript*) was graded 1.
+- PostgreSQL top 10: several grade-1 pages (*Resource timing*, *XMLHttpRequest API*, *Making network requests with JavaScript*), but no grade-2/3 page.
+- Positive but low nDCG values are **not a calculation bug**: grade 1 has a positive graded gain; PostgreSQL places more grade-1 pages higher.
+- Both systems' top 10 were poor on this query **despite** an already indexed relevant document. This isolates at least one final-ranking quality problem; it does **not** prove that omitted A/B/C/D weights caused the failure.
+
+**Judgment review candidate:** *Making network requests with JavaScript* was graded 1; if page content actually contains actionable `fetch()` examples, reassess consistently using the rubric. Do not change a grade to make one ranker look better.
+
+#### Case Q024: perfect topical scores with duplicate-language saturation
+
+- Both systems scored 1.000 across all four reported metrics. All 13 judged documents in the Q024 pool received grade 3.
+- PostgreSQL top ten included repeated translations of *Dependencies — Depends() and Security()* from FastAPI: locale-prefixed URLs such as `/tr/`, `/ru/`, `/ja/`, `/ko/` in addition to English.
+- BM25 ranked distinct FastAPI dependency topics (sub-dependencies, tutorial, global dependencies) near the beginning, then several translated variants of the same reference page.
+- The browser auto-translated non-English pages during human assessment. Therefore grade 3 reflects **translated topical usefulness**, not direct English-language suitability or result-list diversity.
+- A top ten packed with translations can score P@10 = nDCG@10 = 1 while still having poor diversity. This is a **presentation/reranking deduplication hypothesis**, not proof of a particular canonicalization strategy.
+
+### Report artifact paths
+
+```text
+backend/reports/exp-0009/20261107T020058Z-1q-Q051.json
+backend/reports/exp-0009/20261107T020058Z-1q-Q051.md
+backend/reports/exp-0009/20261107T020058Z-1q-Q051.html
+backend/reports/exp-0009/20261107T012318Z-100q-Q024.json
+backend/reports/exp-0009/20261107T012318Z-100q-Q024.md
+backend/reports/exp-0009/20261107T012318Z-100q-Q024.html
+backend/evaluation/exp-0009/exp0009_human_labels.csv
+```
+
+The paths above are from the supplied terminal logs. The documents are on the developer's local machine and have not been copied into this documentation artifact.
 
 ## Analysis
 
-The fixed retrieved pool controls which documents each scorer can reorder, but prevents this comparison from measuring independent candidate-retrieval recall. Both rankers share the same candidate selection bottleneck. The judged pool is incomplete, and the initial hand-selected queries are not representative of all developer traffic. Expand judgments and query coverage before interpreting mean metrics as general search quality.
+### Confirmed by the judged samples
+
+1. **Mathematically valid ranking is not sufficient for relevance.** Q051 has no useful top-ten result under either scorer, despite a known useful candidate.
+2. **Native PostgreSQL ranking is not universally better or worse on this evidence.** It assigns tangential results better positions in Q051, while Q024 is tied by all scored metrics.
+3. **Topical relevance metrics alone do not measure language fit or diversity.** Q024's translations received grade 3 and inflated apparent satisfaction of a single content need.
+4. **The two evaluated rankers share candidate selection.** No independent crawler-coverage or retrieval-recall comparison was performed.
+
+### Limitations and threats to validity
+
+- **Sample size and selection:** two handpicked queries, not representative of search traffic. No useful inference of aggregate performance or statistical significance.
+- **Cross-run confounding:** Q051 and Q024 were graded from separate diagnostics; no frozen common corpus was established.
+- **Incomplete relevance pool:** nDCG@10 uses judged-pool IDCG; known-relevant recall is not exhaustive recall.
+- **Language assistance:** browser translation changes actual human access to locale-specific content and should be tracked explicitly.
+- **Duplicate documents:** distinct doc IDs can correspond to largely equivalent translations, raising P@10 without raising result diversity.
+- **Subjective judgments:** one judge, no adjudication or inter-rater agreement study. Query Q051's grade-1 documents may warrant review.
+- **Internal comparator scope:** a *same-candidate-set reranking* comparison is not a comparison against a native PostgreSQL retrieval pipeline of its own.
+- **Diagnostics provenance:** local logs are evidence of completed runs; no database-backed re-execution was performed for these docs.
 
 ## Outcome
 
-**Inconclusive / running.** Complete human judgments and record baseline P@10, MRR@10, and pooled nDCG@10. Defer any field-aware BM25/BM25F design or tuning decision to ADR-0045 after controlled before/after evaluation.
+**Inconclusive for an overall ranking choice; confirmed actionable failure modes. Keep EXP-0009 running.**
+
+- Preserve custom BM25 as an evaluated baseline; **do not declare it better than PostgreSQL**.
+- Track field-aware ranking and title relevance experiments under **ADR-0045 (proposed)**; test ablations against held-out judgments before adopting changes.
+- Track locale-aware result grouping and language preference under **ADR-0046 (proposed)**; preserve all indexed language variants and measure diversity independently.
+- Expand judgments to 10–20 representative queries **from one frozen diagnostic/corpus snapshot**, then to a larger held-out set. Include exact identifiers, tutorials, APIs, error messages, code-heavy queries, zero-result tests and locale-heavy cases.
+- Record new metrics alongside existing ones: unique content groups@10, duplicate saturation@10, primary-language@10, and query-specific candidate coverage when independent anchors exist.
+- Document candidate-selection changes and reranking changes separately; preserve the known target document `51` as a regression case.
+- When reporting completion, distinguish **the implemented metric comparison tool** from **a statistically defensible search relevance evaluation**. The first exists; the second is not finished.
+
+## References
+
+- `0_tech_docs/backend/ranking/EXP-0004-lexical-relevance-evaluation.md`
+- `0_tech_docs/backend/ranking/ADR-0028-candidate-bm25-ranking-plan.md`
+- `0_tech_docs/backend/ranking/ADR-0045-evidence-gated-field-aware-ranking.md` (proposed)
+- `0_tech_docs/backend/ranking/ADR-0046-locale-aware-result-grouping.md` (proposed)
+- `backend/reports/exp-0004/20261107T020058Z-1q/diagnostics.json`
+- `backend/reports/exp-0004/20261107T012318Z-100q/diagnostics.json`
+- `backend/reports/exp-0009/20261107T020058Z-1q-Q051.md`
+- `backend/reports/exp-0009/20261107T012318Z-100q-Q024.md`

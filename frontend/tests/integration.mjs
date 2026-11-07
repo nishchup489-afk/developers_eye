@@ -4,10 +4,58 @@ import { spawn } from "node:child_process";
 import { setTimeout as delay } from "node:timers/promises";
 
 const processes = [];
+// A tiny MediaWiki action API (formatversion=2) for the knowledge panel.
+const wikiCalls = {};
+const article = (title, description, extra = {}) => ({
+  ns: 0,
+  title,
+  description,
+  extract: `${title} is a topic described by a fixture lead that is long enough to show. It has a second sentence.`,
+  fullurl: `https://en.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g, "_"))}`,
+  ...extra,
+});
+const wikiPages = {
+  direct: {
+    postgres: [
+      article("PostgreSQL", "Free and open-source relational database management system", {
+        thumbnail: { source: "https://upload.wikimedia.org/pg.png", width: 320, height: 330 },
+      }),
+    ],
+    rust: [article("Rust", "Iron oxide, a usually reddish-brown oxide")],
+    python: [{ ...article("Python", ""), pageprops: { disambiguation: "" } }],
+    apple: [article("Apple", "Fruit of the apple tree")],
+    "wiki-unsafe": [{ ...article("Unsafe", "Programming"), fullurl: "javascript:alert(1)" }],
+  },
+  search: {
+    rust: [
+      { ...article("Rust (programming language)", "General-purpose programming language"), index: 2 },
+      { ...article("Rust", "Iron oxide"), index: 1 },
+    ],
+    python: [
+      { ...article("Monty Python", "British comedy troupe"), index: 1 },
+      { ...article("Python (programming language)", "General-purpose programming language"), index: 3 },
+    ],
+    "react hooks tutorial": [{ ...article("React (software)", "JavaScript library"), index: 1 }],
+  },
+};
+function wiki(url, res) {
+  const term = url.searchParams.get("titles") ?? url.searchParams.get("gsrsearch");
+  const kind = url.searchParams.has("titles") ? "direct" : "search";
+  wikiCalls[term] = (wikiCalls[term] ?? 0) + 1;
+  if (term === "wiki-timeout") return;
+  if (term === "wiki-failure") {
+    res.writeHead(503);
+    return res.end("{}");
+  }
+  if (term === "wiki-malformed") return res.end("{no");
+  const pages = wikiPages[kind][term] ?? (kind === "direct" ? [{ ns: 0, title: term, missing: true }] : []);
+  res.end(JSON.stringify({ batchcomplete: true, query: { pages } }));
+}
 const mock = createServer((req, res) => {
   const url = new URL(req.url, "http://localhost");
   const q = url.searchParams.get("q");
   res.setHeader("Content-Type", "application/json");
+  if (url.pathname === "/w/api.php") return wiki(url, res);
   if (q === "timeout") return;
   if (q === "failure") {
     res.writeHead(503);
@@ -61,7 +109,11 @@ async function start(port, backend) {
       String(port),
     ],
     {
-      env: { ...globalThis.process.env, BACKEND_URL: backend },
+      env: {
+        ...globalThis.process.env,
+        BACKEND_URL: backend,
+        WIKIPEDIA_API_URL: `${upstream}/w/api.php`,
+      },
       stdio: ["ignore", "pipe", "pipe"],
       windowsHide: true,
     },
@@ -139,6 +191,35 @@ try {
   await suggest(demo, {}, 400);
   await suggest(demo, { q: "x".repeat(301) }, 400);
   console.log("PASS demo suggestions return none, suggestion validation");
+  const knowledge = async (params, status = 200) => {
+    const response = await fetch(`${demo}/api/search/knowledge?${new URLSearchParams(params)}`);
+    assert.equal(response.status, status);
+    assert.equal(
+      response.headers.get("cache-control"),
+      status === 200 ? "public, max-age=3600" : "no-store",
+    );
+    return response.json();
+  };
+  data = await knowledge({ q: " postgres " });
+  assert.equal(data.query, "postgres");
+  assert.equal(data.panel.title, "PostgreSQL");
+  assert.equal(data.panel.url, "https://en.wikipedia.org/wiki/PostgreSQL");
+  assert.deepEqual(data.panel.thumbnail, { url: "https://upload.wikimedia.org/pg.png", width: 320, height: 330 });
+  await knowledge({ q: "Postgres" });
+  assert.equal(wikiCalls.postgres, 2, "cached: one direct and one search request");
+  assert.equal((await knowledge({ q: "rust" })).panel.title, "Rust (programming language)");
+  assert.equal((await knowledge({ q: "python" })).panel.title, "Python (programming language)");
+  assert.equal((await knowledge({ q: "apple" })).panel.title, "Apple");
+  assert.equal((await knowledge({ q: "react hooks tutorial" })).panel, null, "fuzzy hit");
+  assert.equal((await knowledge({ q: "wiki-unsafe" })).panel, null, "unsafe article URL");
+  assert.equal((await knowledge({ q: "wiki-malformed" })).panel, null);
+  assert.equal((await knowledge({ q: "def f():\n  pass" })).panel, null);
+  assert.equal(wikiCalls["def f():\n  pass"], undefined, "code never reaches Wikipedia");
+  assert.equal(typeof (await knowledge({ q: "wiki-failure" }, 502)).error, "string");
+  await knowledge({ q: "wiki-timeout" }, 504);
+  await knowledge({}, 400);
+  await knowledge({ q: "x".repeat(301) }, 400);
+  console.log("PASS knowledge panel: redirects, computing preference, confidence, cache, failures");
   const live = await start(3182, upstream);
   data = await get(live, { q: "python" });
   assert.equal(data.mode, "live");

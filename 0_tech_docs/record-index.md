@@ -87,5 +87,5 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | EXP-0006 | indexer/vocubulary | [Measure global vocabulary mutex cost after correctness repair](indexer/vocubulary/EXP-0006-vocabulary-lock-contention.md) | done |
 | EXP-0007 | backend/bm25-statistics | [Validate BM25 statistics, exact-lexeme document frequency, and developer-query scoring](backend/bm25-statistics/EXP-0007-bm25-statistics-and-developer-query-regression.md) | done |
 | EXP-0008 | infra/performance-and-scaling | [Measure crawl, index and search capacity for a 2M document target](infra/performance-and-scaling/EXP-0008-crawl-index-search-at-2m.md) | done |
-| EXP-0009 | backend/ranking | [Human-Judged Search Relevance Evaluation](backend/ranking/EXP-0009-search-relevance-metrics.md) | running |
+| EXP-0009 | backend/ranking | [Human-judged lexical search relevance — BM25 versus PostgreSQL](backend/ranking/EXP-0009-search-relevance-metrics.md) | running         # planned \| running \| done |
 <!-- record-index:end -->

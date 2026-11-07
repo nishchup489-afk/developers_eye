@@ -1696,6 +1696,118 @@ h1 .accent {
 .search-results-page .section-heading > div {
   min-width: 0;
 }
+/* ---------- Knowledge panel (Wikipedia) ---------- */
+.search-results-page .hero,
+.search-results-page .results-section {
+  max-width: 1180px;
+}
+.results-body.has-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 720px) minmax(280px, 360px);
+  justify-content: space-between;
+  gap: 48px;
+  align-items: start;
+}
+.results-main {
+  min-width: 0;
+}
+.knowledge-panel {
+  margin-top: 26px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--panel);
+  overflow: hidden;
+  position: sticky;
+  top: 24px;
+  animation: knowledge-in 0.4s var(--ease-out) both;
+}
+.knowledge-image {
+  display: grid;
+  place-items: center;
+  background: #eef0e6;
+  max-height: 220px;
+  overflow: hidden;
+}
+.knowledge-image[hidden] {
+  display: none;
+}
+.knowledge-image img {
+  width: 100%;
+  height: auto;
+  max-height: 220px;
+  object-fit: contain;
+}
+.knowledge-body {
+  padding: 20px 22px 18px;
+}
+.knowledge-panel h2 {
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
+}
+.knowledge-description {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--faint);
+}
+.knowledge-extract {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+.knowledge-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--lime);
+}
+.knowledge-link:hover,
+.knowledge-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.knowledge-credit {
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--faint);
+}
+.knowledge-credit a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@keyframes knowledge-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+/* Narrow screens: the panel follows the results instead of sitting beside them. */
+@media (max-width: 900px) {
+  .results-body.has-panel {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .knowledge-panel {
+    position: static;
+    margin-top: 34px;
+  }
+  .knowledge-image,
+  .knowledge-image img {
+    max-height: 170px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .knowledge-panel {
+    animation: none;
+  }
+}
 /* ---------- Ambient pointer effects ---------- */
 .cursor-glow {
   position: fixed;

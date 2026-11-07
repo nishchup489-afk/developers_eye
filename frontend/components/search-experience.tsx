@@ -36,6 +36,7 @@ import {
   type SearchSuggestion,
   type Source,
 } from "@/lib/search";
+import { isKnowledgeResponse, knowledgeQuery, type KnowledgeResponse } from "@/lib/knowledge";
 
 const suggestions = [
   "fastapi async",
@@ -151,6 +152,62 @@ function Snippet({ text, query }: { text: string; query: string }) {
   );
 }
 
+/** Google-style "about this topic" card from Wikipedia, beside the results. */
+function KnowledgePanel({ panel }: { panel: NonNullable<KnowledgeResponse["panel"]> }) {
+  return (
+    <aside className="knowledge-panel" aria-labelledby="knowledge-panel-title">
+      {panel.thumbnail && (
+        <a
+          className="knowledge-image"
+          href={panel.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          tabIndex={-1}
+        >
+          {/* Wikimedia thumbnails are already sized; next/image would proxy them for nothing. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={panel.thumbnail.url}
+            width={panel.thumbnail.width}
+            height={panel.thumbnail.height}
+            alt=""
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            // A thumbnail that fails to load hides its box instead of showing a broken image.
+            onError={(event) => {
+              const box = event.currentTarget.parentElement;
+              if (box) box.hidden = true;
+            }}
+          />
+        </a>
+      )}
+      <div className="knowledge-body">
+        <h2 id="knowledge-panel-title">{panel.title}</h2>
+        {panel.description && <p className="knowledge-description">{panel.description}</p>}
+        <p className="knowledge-extract">{panel.extract}</p>
+        <a
+          className="knowledge-link"
+          href={panel.url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Read more on Wikipedia <ArrowUpRight size={14} />
+        </a>
+        <p className="knowledge-credit">
+          Source: Wikipedia, under{" "}
+          <a
+            href="https://creativecommons.org/licenses/by-sa/4.0/"
+            target="_blank"
+            rel="noopener noreferrer license"
+          >
+            CC BY-SA 4.0
+          </a>
+        </p>
+      </div>
+    </aside>
+  );
+}
+
 /** The suggested query, with the corrected words emphasised. */
 function SuggestedQuery({ suggestion }: { suggestion: SearchSuggestion }) {
   const corrected = new Set(
@@ -216,6 +273,7 @@ export default function SearchExperience({
   const [code, setCode] = useState(() => splitQuery(initialQuery)[1]);
   const [response, setResponse] = useState<SearchResponse | null>(null);
   const [suggestion, setSuggestion] = useState<SearchSuggestion | null>(null);
+  const [knowledge, setKnowledge] = useState<KnowledgeResponse | null>(null);
   const [filter, setFilter] = useState<SearchFilter>(initialFilter);
   const [loading, setLoading] = useState(resultsPage && !savedPage && !!initialQuery);
   const [error, setError] = useState("");
@@ -270,6 +328,7 @@ export default function SearchExperience({
       setFilter(source);
       setResponse(null);
       setSuggestion(null);
+      setKnowledge(null);
       try {
         const res = await api.get("/search", {
           params: { q: value, ...(source !== "all" ? { source } : {}) },
@@ -296,6 +355,21 @@ export default function SearchExperience({
             })
             .catch(() => {
               /* Suggestions are optional. */
+            });
+        // Topic queries also get a Wikipedia panel when there is a confident match.
+        if (knowledgeQuery(value))
+          void api.get("/search/knowledge", { params: { q: value }, signal: active.signal })
+            .then((res) => {
+              if (
+                !active.signal.aborted &&
+                res.status === 200 &&
+                isKnowledgeResponse(res.data) &&
+                res.data.panel
+              )
+                setKnowledge(res.data);
+            })
+            .catch(() => {
+              /* The panel is optional. */
             });
       } catch (err) {
         if (!active.signal.aborted)
@@ -446,6 +520,16 @@ export default function SearchExperience({
   const visible = resultItems.filter((item) =>
     matchesSource(item.source, filter),
   );
+  // Only beside the results it was fetched for, never on the saved page or errors.
+  const panel =
+    !loading &&
+    !error &&
+    !showSaved &&
+    response &&
+    knowledge?.panel &&
+    knowledge.query === knowledgeQuery(response.query)
+      ? knowledge.panel
+      : null;
 
   return (
     <div ref={root} className={`search-home${resultsPage ? " search-results-page" : ""}`}>
@@ -713,147 +797,152 @@ export default function SearchExperience({
                   ?
                 </p>
               )}
-            {loading ? (
-              <div className="loading-state">
-                <p>
-                  <LoaderCircle className="spinner" size={14} />A little less
-                  noise. A little more signal.
-                </p>
-                {[0, 1, 2].map((i) => (
-                  <div className="skeleton-row" key={i} aria-hidden="true">
-                    <span className="skeleton short" />
-                    <span className="skeleton title" />
-                    <span className="skeleton line" />
-                    <span className="skeleton line half" />
+            <div className={`results-body${panel ? " has-panel" : ""}`}>
+              <div className="results-main">
+                {loading ? (
+                  <div className="loading-state">
+                    <p>
+                      <LoaderCircle className="spinner" size={14} />A little less
+                      noise. A little more signal.
+                    </p>
+                    {[0, 1, 2].map((i) => (
+                      <div className="skeleton-row" key={i} aria-hidden="true">
+                        <span className="skeleton short" />
+                        <span className="skeleton title" />
+                        <span className="skeleton line" />
+                        <span className="skeleton line half" />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : error ? (
-              <div className="empty-state">
-                <p>{error}</p>
-                <button
-                  className="text-button"
-                  onClick={() => void search(query, false, filter)}
-                >
-                  Try again <ArrowRight size={16} />
-                </button>
-              </div>
-            ) : visible.length === 0 ? (
-              <div className="empty-state">
-                <Search size={30} />
-                <h3>
-                  {showSaved
-                    ? "Your next great find belongs here."
-                    : !initialQuery
-                      ? "Start with a question or a topic."
-                    : "No signal on this frequency."}
-                </h3>
-                <p>
-                  {showSaved
-                    ? "Bookmark a result to keep it in this browser."
-                    : !initialQuery
-                      ? "Search the docs, code, and conversations above."
-                    : mode === "demo"
-                      ? "Try Python, React, or Redis. Demo mode searches a small curated collection."
-                      : "Try a broader query or choose a different source."}
-                </p>
-              </div>
-            ) : (
-              <div className="result-list">
-                {visible.map((result) => {
-                  const isSaved = saved.some((item) => item.url === result.url);
-                  const url = new URL(result.url);
-                  const crumbs = url.pathname
-                    .split("/")
-                    .filter(Boolean)
-                    .map((part) => decodeURIComponent(part));
-                  const menuOpen = menuFor === result.url;
-                  return (
-                    <article className="result-row" key={result.url}>
-                      <div className="result-content">
-                        <a
-                          className="result-site"
-                          href={result.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          tabIndex={-1}
-                        >
-                          <Favicon url={url} source={result.source} />
-                          <span className="result-site-text">
-                            <span className="result-site-name">
-                              {siteName(url, result.source)}
-                            </span>
-                            <cite className="result-breadcrumb">
-                              {url.origin}
-                              {crumbs.length > 0 && ` › ${crumbs.join(" › ")}`}
-                            </cite>
-                          </span>
-                        </a>
-                        <a
-                          className="result-title"
-                          href={result.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {result.title}
-                        </a>
-                        <Snippet
-                          text={result.snippet}
-                          query={showSaved ? "" : (response?.query ?? "")}
-                        />
-                      </div>
-                      <div className="result-menu" data-result-menu>
-                        <button
-                          className={`result-menu-button icon-button ${isSaved ? "is-saved" : ""}`}
-                          aria-label={`More options for ${result.title}`}
-                          aria-haspopup="menu"
-                          aria-expanded={menuOpen}
-                          onClick={() => setMenuFor(menuOpen ? null : result.url)}
-                        >
-                          <MoreHorizontal size={18} />
-                        </button>
-                        {menuOpen && (
-                          <div className="result-menu-list" role="menu">
-                            <button
-                              role="menuitem"
-                              onClick={() => {
-                                toggleSave(result);
-                                setMenuFor(null);
-                              }}
+                ) : error ? (
+                  <div className="empty-state">
+                    <p>{error}</p>
+                    <button
+                      className="text-button"
+                      onClick={() => void search(query, false, filter)}
+                    >
+                      Try again <ArrowRight size={16} />
+                    </button>
+                  </div>
+                ) : visible.length === 0 ? (
+                  <div className="empty-state">
+                    <Search size={30} />
+                    <h3>
+                      {showSaved
+                        ? "Your next great find belongs here."
+                        : !initialQuery
+                          ? "Start with a question or a topic."
+                        : "No signal on this frequency."}
+                    </h3>
+                    <p>
+                      {showSaved
+                        ? "Bookmark a result to keep it in this browser."
+                        : !initialQuery
+                          ? "Search the docs, code, and conversations above."
+                        : mode === "demo"
+                          ? "Try Python, React, or Redis. Demo mode searches a small curated collection."
+                          : "Try a broader query or choose a different source."}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="result-list">
+                    {visible.map((result) => {
+                      const isSaved = saved.some((item) => item.url === result.url);
+                      const url = new URL(result.url);
+                      const crumbs = url.pathname
+                        .split("/")
+                        .filter(Boolean)
+                        .map((part) => decodeURIComponent(part));
+                      const menuOpen = menuFor === result.url;
+                      return (
+                        <article className="result-row" key={result.url}>
+                          <div className="result-content">
+                            <a
+                              className="result-site"
+                              href={result.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              tabIndex={-1}
                             >
-                              <Bookmark
-                                size={15}
-                                fill={isSaved ? "currentColor" : "none"}
-                              />
-                              {isSaved ? "Unsave" : "Save"}
-                            </button>
-                            <button
-                              role="menuitem"
-                              onClick={() => {
-                                void navigator.clipboard
-                                  ?.writeText(result.url)
-                                  .catch(() => {});
-                                setMenuFor(null);
-                              }}
+                              <Favicon url={url} source={result.source} />
+                              <span className="result-site-text">
+                                <span className="result-site-name">
+                                  {siteName(url, result.source)}
+                                </span>
+                                <cite className="result-breadcrumb">
+                                  {url.origin}
+                                  {crumbs.length > 0 && ` › ${crumbs.join(" › ")}`}
+                                </cite>
+                              </span>
+                            </a>
+                            <a
+                              className="result-title"
+                              href={result.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
                             >
-                              <Link2 size={15} />
-                              Copy link
-                            </button>
+                              {result.title}
+                            </a>
+                            <Snippet
+                              text={result.snippet}
+                              query={showSaved ? "" : (response?.query ?? "")}
+                            />
                           </div>
-                        )}
-                      </div>
-                    </article>
-                  );
-                })}
+                          <div className="result-menu" data-result-menu>
+                            <button
+                              className={`result-menu-button icon-button ${isSaved ? "is-saved" : ""}`}
+                              aria-label={`More options for ${result.title}`}
+                              aria-haspopup="menu"
+                              aria-expanded={menuOpen}
+                              onClick={() => setMenuFor(menuOpen ? null : result.url)}
+                            >
+                              <MoreHorizontal size={18} />
+                            </button>
+                            {menuOpen && (
+                              <div className="result-menu-list" role="menu">
+                                <button
+                                  role="menuitem"
+                                  onClick={() => {
+                                    toggleSave(result);
+                                    setMenuFor(null);
+                                  }}
+                                >
+                                  <Bookmark
+                                    size={15}
+                                    fill={isSaved ? "currentColor" : "none"}
+                                  />
+                                  {isSaved ? "Unsave" : "Save"}
+                                </button>
+                                <button
+                                  role="menuitem"
+                                  onClick={() => {
+                                    void navigator.clipboard
+                                      ?.writeText(result.url)
+                                      .catch(() => {});
+                                    setMenuFor(null);
+                                  }}
+                                >
+                                  <Link2 size={15} />
+                                  Copy link
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                )}
+                {response && !showSaved && (
+                  <p className="result-notice">
+                    {response.mode === "demo"
+                      ? "You’re exploring curated sample data. Open a source to explore its current content."
+                      : `Search completed in ${response.took_ms} ms.`}
+                  </p>
+                )}
               </div>
-            )}
-            {response && !showSaved && (
-              <p className="result-notice">
-                {response.mode === "demo"
-                  ? "You’re exploring curated sample data. Open a source to explore its current content."
-                  : `Search completed in ${response.took_ms} ms.`}
-              </p>
-            )}
+              {panel && <KnowledgePanel panel={panel} />}
+            </div>
           </section>
         )}
         {!resultsPage && (

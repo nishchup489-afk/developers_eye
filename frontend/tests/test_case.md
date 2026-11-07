@@ -8,7 +8,7 @@ Node test scripts for the Next.js frontend, using `node:assert/strict` (no test 
 | `admin-integration.mjs` | `npm run test:admin` |
 | `admin-unit.mjs`, `crawler-monitor-unit.mjs`, `indexer-report-unit.mjs` | `npm run test:admin:unit` |
 | `admin-routes.mjs` | `npm run test:admin:routes` |
-| `search-unit.mjs` | `npm run test:search:unit` |
+| `search-unit.mjs`, `knowledge-unit.mjs` | `npm run test:search:unit` |
 | `preview-crawler.mjs` | Run manually; it is a preview server, not a test. |
 
 ## fixtures/
@@ -20,7 +20,7 @@ Synthetic data used only by tests:
 
 ## integration.mjs
 
-Starts the built app twice with `next start`: once with no `BACKEND_URL` (demo mode, port 3181) and once pointed at a local mock search backend (live mode, port 3182).
+Starts the built app twice with `next start`: once with no `BACKEND_URL` (demo mode, port 3181) and once pointed at a local mock search backend (live mode, port 3182). Both point `WIKIPEDIA_API_URL` at a mock MediaWiki action API on the same mock server, so no test reaches Wikipedia.
 
 | Area | What it checks |
 | --- | --- |
@@ -28,6 +28,7 @@ Starts the built app twice with `next start`: once with no `BACKEND_URL` (demo m
 | Demo search API | `/api/search` trims the query, returns `mode: demo` with results, filters by `source`, returns an empty list for nonsense, and always sends `Cache-Control: no-store`. Missing, blank, over 300 character queries and unknown sources return 400; `POST` returns 405. `/docs` loads and `/api-reference.md` contains the provider connectors section. |
 | Live proxy | Returns `mode: live` with the upstream result. Upstream 503, malformed JSON, a `javascript:` URL, an empty-host URL, an unknown source, and non-string tags all return 502 with an `error` and no `results`. A hung upstream returns 504, and a closed upstream returns 502. There is no fallback to demo data. |
 | Demo suggestions | `/api/search/suggest` returns `suggestion: null` with `mode: demo` (no vocabulary in demo mode); missing and over 300 character queries return 400. |
+| Knowledge panel | `/api/search/knowledge` trims the query and returns the redirect target for `postgres` (PostgreSQL, with its Wikimedia thumbnail). A second lookup (`Postgres`) is served from the in-memory cache without calling the mock again. `rust` returns the programming language over the iron-oxide article, `python` skips the disambiguation page for the programming language, and `apple` keeps the exact article. A fuzzy-only hit (`react hooks tutorial`), an unsafe article URL and malformed JSON give `panel: null`; pasted code gives `panel: null` without calling Wikipedia. Answers carry `Cache-Control: public, max-age=3600`. Upstream 503 returns 502 and a hung upstream 504 (4 s deadline), both `no-store`; missing and over 300 character queries return 400. |
 | Live suggestions | `/api/search/suggest` forwards to FastAPI `/search/suggest`: `pyhton   async` returns `python async` with only `original`/`replacement` in `corrections`. An unchanged suggestion, an upstream 422 and pasted multi-line code return `suggestion: null`. Upstream 503, malformed JSON and a schema-invalid body return 502, a hung upstream 504 (5 s deadline, also on the server's first request), and a closed upstream 502. |
 
 ## admin-integration.mjs
@@ -102,6 +103,18 @@ Unit test for the spelling-suggestion helpers in `lib/search.ts`, behind the "Di
 | Valid payload | `parseCorrection` returns the collapsed suggested query and `{original, replacement}` corrections. |
 | Nothing to suggest | A suggestion equal to the query (ignoring case and spacing), an empty one, or one without corrections becomes `suggestion: null`. |
 | Malformed payloads | Non-objects, a non-string `suggested_query`, non-array `corrections` and incomplete correction items return null. |
+
+## knowledge-unit.mjs
+
+Unit test for the Wikipedia knowledge-panel helpers in `lib/knowledge.ts`, behind the panel beside the results.
+
+| Area | What it checks |
+| --- | --- |
+| Which queries | `knowledgeQuery` collapses spacing and accepts short topics like `C++`; pasted code, under 2 or over 60 characters, more than five words, no letters and code punctuation return null. |
+| Confident matches | `pickPanel` returns an exact title or redirect target that is a real article; a computing search hit (`Rust (programming language)`) beats an exact article that is not about computing, but not one that is (`Redis`); a disambiguation page falls through to the best-ranked computing match; a non-computing exact article (`Apple`) still shows when nothing better exists. |
+| No panel | A fuzzy search hit, only a disambiguation page, a "may refer to" stub, a "List of" page, a non-article namespace, a `javascript:` or non-Wikipedia URL and a malformed body return null. |
+| Thumbnails and text | Thumbnails are kept only from `upload.wikimedia.org` with positive dimensions; `trimExtract` cuts at a sentence boundary or adds an ellipsis. |
+| Browser validation | `isKnowledgeResponse` accepts `panel: null` and a valid panel and rejects malformed bodies and unsafe URLs. |
 
 ## preview-crawler.mjs
 

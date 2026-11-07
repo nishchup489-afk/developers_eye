@@ -1,0 +1,51 @@
+{
+  "experiment": "EXP-0009",
+  "run_id": "20261107T012318Z-100q",
+  "created_utc": "2026-11-07T04:09:16.441532+00:00",
+  "source_diagnostics": "C:\\Users\\nishc\\Documents\\developers-eye\\backend\\reports\\exp-0004\\20261107T012318Z-100q\\diagnostics.json",
+  "qrels_file": "C:\\Users\\nishc\\Documents\\developers-eye\\backend\\evaluation\\exp-0009\\exp0009_human_labels.csv",
+  "judgment_depth": 10,
+  "grade_threshold": 2,
+  "recall_warning": "Known-relevant judged-pool recall only; not exhaustive Recall@100",
+  "summary": {
+    "queries_scored": 1,
+    "queries_total": 1,
+    "bm25": {
+      "precision_at_10": 1.0,
+      "reciprocal_rank_at_10": 1.0,
+      "ndcg_at_10_judged_pool": 1.0,
+      "known_relevant_recall_at_100": 1.0
+    },
+    "postgresql": {
+      "precision_at_10": 1.0,
+      "reciprocal_rank_at_10": 1.0,
+      "ndcg_at_10_judged_pool": 1.0,
+      "known_relevant_recall_at_100": 1.0
+    },
+    "expected_zero_passed": 0,
+    "expected_zero_failed": 0
+  },
+  "queries": [
+    {
+      "query_id": "Q024",
+      "query": "FastAPI Depends",
+      "mode": "all",
+      "status": "scored",
+      "judged_documents": 13,
+      "known_relevant_documents": 13,
+      "candidate_count": 156,
+      "bm25": {
+        "precision_at_10": 1.0,
+        "reciprocal_rank_at_10": 1.0,
+        "ndcg_at_10_judged_pool": 1.0,
+        "known_relevant_recall_at_100": 1.0
+      },
+      "postgresql": {
+        "precision_at_10": 1.0,
+        "reciprocal_rank_at_10": 1.0,
+        "ndcg_at_10_judged_pool": 1.0,
+        "known_relevant_recall_at_100": 1.0
+      }
+    }
+  ]
+}

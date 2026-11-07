@@ -1065,6 +1065,10 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#integrationmjs)
 
+### [frontend/tests/knowledge-unit.mjs](../../frontend/tests/knowledge-unit.mjs)
+
+Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#knowledge-unitmjs)
+
 ### [frontend/tests/preview-crawler.mjs](../../frontend/tests/preview-crawler.mjs)
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#preview-crawlermjs)
