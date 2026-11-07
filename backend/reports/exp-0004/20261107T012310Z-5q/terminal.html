@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+.r1 {color: #008080; text-decoration-color: #008080}
+.r2 {color: #008000; text-decoration-color: #008000}
+.r3 {color: #000080; text-decoration-color: #000080; font-weight: bold}
+.r4 {color: #3a3a3a; text-decoration-color: #3a3a3a}
+.r5 {color: #808000; text-decoration-color: #808000}
+.r6 {color: #f92672; text-decoration-color: #f92672}
+.r7 {color: #729c1f; text-decoration-color: #729c1f}
+.r8 {color: #008080; text-decoration-color: #008080; font-weight: bold}
+.r9 {font-weight: bold}
+.r10 {color: #800000; text-decoration-color: #800000}
+.r11 {color: #808000; text-decoration-color: #808000; font-weight: bold}
+.r12 {font-style: italic}
+.r13 {color: #7f7f7f; text-decoration-color: #7f7f7f}
+.r14 {color: #000080; text-decoration-color: #000080}
+body {
+    color: #000000;
+    background-color: #ffffff;
+}
+</style>
+</head>
+<body>
+    <pre style="font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><code style="font-family:inherit"><span class="r1">Loading corpus statistics once per active channel...</span>
+<span class="r2">⠋</span> <span class="r3">Running diagnostics</span> <span class="r4">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">0/5</span> <span class="r5">0:00:00</span><span class="r2">⠙</span> <span class="r3">[Q002] python dict get default</span> <span class="r6">━━━━━━━━</span><span class="r4">╺━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">1/5</span> <span class="r5">0:00:00</span><span class="r2">⠹</span> <span class="r3">[Q003] python generator yield from</span> <span class="r6">━━━━━━━━━━━━━━━━</span><span class="r4">╺━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">2/5</span> <span class="r5">0:00:00</span><span class="r2">⠸</span> <span class="r3">[Q003] python generator yield from</span> <span class="r6">━━━━━━━━━━━━━━━━</span><span class="r4">╺━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">2/5</span> <span class="r5">0:00:00</span><span class="r2">⠴</span> <span class="r3">[Q004] python dataclasses</span> <span class="r6">━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="r4">╺━━━━━━━━━━━━━━━</span> <span class="r2">3/5</span> <span class="r5">0:00:00</span><span class="r2">⠦</span> <span class="r3">[Q005] python type hints</span> <span class="r6">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="r4">╺━━━━━━━</span> <span class="r2">4/5</span> <span class="r5">0:00:00</span><span class="r2">⠇</span> <span class="r3">[Q005] python type hints</span> <span class="r6">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="r4">╺━━━━━━━</span> <span class="r2">4/5</span> <span class="r5">0:00:00</span><span class="r2">⠏</span> <span class="r3">[Q005] python type hints</span> <span class="r6">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="r4">╺━━━━━━━</span> <span class="r2">4/5</span> <span class="r5">0:00:00</span>[2K  <span class="r3">[Q005] python type hints</span> <span class="r7">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="r2">5/5</span> <span class="r5">0:00:00</span>
+<span class="r1">╭──────────────────── EXP-0004 ────────────────────╮</span>
+<span class="r1">│</span> <span class="r8">DEVELOPER&#x27;S EYE</span>  <span class="r9">Batch search diagnostics</span>        <span class="r1">│</span>
+<span class="r1">│</span> Executed: <span class="r9">5</span>   No-candidate: <span class="r5">0</span>   Errors: <span class="r10">0</span>        <span class="r1">│</span>
+<span class="r1">│</span> Mean top-10 overlap: <span class="r9">30%</span>  Median elapsed: <span class="r9">95 ms</span>  <span class="r1">│</span>
+<span class="r1">╰──────────────────────────────────────────────────╯</span>
+<span class="r9">Flag counts</span>  MULTILINGUAL_TOP: <span class="r11">2</span>   TARGET_NOT_IN_CANDIDATES: <span class="r11">1</span>   LOW_AGREEMENT: <span class="r11">1</span>
+<span class="r12">                                           Per-query diagnostics                                            </span>
+                                                                                                            
+ <span class="r9"> ID   </span> <span class="r9"> Group       </span> <span class="r9"> Query          </span> <span class="r9"> Mode </span> <span class="r9">   N </span> <span class="r9"> Top-10 overlap </span> <span class="r9"> BM25 #1        </span> <span class="r9">  ms </span> <span class="r9"> Flags         </span> 
+ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+ <span class="r13"> Q001 </span>  Python Core   python list      text    71              30%   6. Expressions    95   <span class="r5">MULTILINGUAL…</span>  
+ <span class="r13">      </span>                comprehension                                                         <span class="r5">TARGET_NOT_I…</span>  
+ <span class="r13"> Q002 </span>  Python Core   python dict      code   100               0%   django.contri…    75   <span class="r5">LOW_AGREEMEN…</span>  
+ <span class="r13">      </span>                get default                                    | Εγχειρίδιο           <span class="r5">MULTILINGUAL…</span>  
+ <span class="r13">      </span>                                                               Django                                
+ <span class="r13"> Q003 </span>  Python Core   python           all    100              50%   6. Expressions   247   <span class="r2">OK</span>             
+ <span class="r13">      </span>                generator                                                                            
+ <span class="r13">      </span>                yield from                                                                           
+ <span class="r13"> Q004 </span>  Python Core   python           text    43              30%   dataclasses —     20   <span class="r2">OK</span>             
+ <span class="r13">      </span>                dataclasses                                    Data Classes                          
+ <span class="r13"> Q005 </span>  Python Core   python type      text   100              40%   Python Types     390   <span class="r2">OK</span>             
+ <span class="r13">      </span>                hints                                          Intro -                               
+ <span class="r13">      </span>                                                               FastAPI                               
+                                                                                                            
+<span class="r12">                          Category summary                          </span>
+╭─────────────┬─────────┬─────────┬─────────────────┬──────────────╮
+│<span class="r9"> Category    </span>│<span class="r9"> Queries </span>│<span class="r9"> Flagged </span>│<span class="r9"> Zero candidates </span>│<span class="r9"> Mean overlap </span>│
+├─────────────┼─────────┼─────────┼─────────────────┼──────────────┤
+│ Python Core │       5 │       2 │               0 │          30% │
+╰─────────────┴─────────┴─────────┴─────────────────┴──────────────╯
+<span class="r13">Flags are heuristics. Do not interpret overlap as relevance quality.</span>
+<span class="r14">╭────────────────────────────────────────────────────────╮</span>
+<span class="r14">│</span> <span class="r9">Q001</span>  python list comprehension  <span class="r13">(text; 71 candidates)</span> <span class="r14">│</span>
+<span class="r14">╰────────────────────────────────────────────────────────╯</span>
+<span class="r12">                                         Top 10: BM25 vs PostgreSQL                                         </span>
+╭────┬──────────────────────────────────────┬────────────┬──────────────────────────────────────┬──────────╮
+│<span class="r9">  # </span>│<span class="r9"> BM25 title                           </span>│<span class="r9"> BM25 score </span>│<span class="r9"> PG title                             </span>│<span class="r9"> PG score </span>│
+├────┼──────────────────────────────────────┼────────────┼──────────────────────────────────────┼──────────┤
+│  1 │ 6. Expressions                       │    16.5772 │ What’s New in Python 2.0             │  0.26384 │
+│  2 │ The Python Tutorial                  │    16.4035 │ Functional Programming HOWTO         │  0.16138 │
+│  3 │ 5. Data Structures                   │    16.3911 │ What’s New in Python 2.4             │  0.12819 │
+│  4 │ 6. Editors and IDEs                  │    15.5922 │ Index — Python 3.12.16 documentation │  0.10169 │
+│  5 │ Functional Programming HOWTO         │    15.5916 │ Built-in Types                       │  0.10083 │
+│  6 │ ast — Abstract Syntax Trees          │    15.4997 │ Programming FAQ                      │  0.04020 │
+│  7 │ Getting started | Django             │    15.3197 │ Python Documentation contents        │  0.03807 │
+│    │ documentation                        │            │                                      │          │
+│  8 │ さぁ始めましょう | Django            │    15.1680 │ What’s New in Python                 │  0.03667 │
+│    │ ドキュメント                         │            │                                      │          │
+│  9 │ 开始 | Django 文档                   │    15.0790 │ Getting started | Django             │  0.02606 │
+│    │                                      │            │ documentation                        │          │
+│ 10 │ 시작하기 | Django 문서               │    15.0146 │ 시작하기 | Django 문서               │  0.02571 │
+╰────┴──────────────────────────────────────┴────────────┴──────────────────────────────────────┴──────────╯
+<span class="r13">BM25 and PostgreSQL scores are on different scales; compare order, not magnitudes.</span>
+<span class="r14">╭───────────────────────────────────────────────────────╮</span>
+<span class="r14">│</span> <span class="r9">Q002</span>  python dict get default  <span class="r13">(code; 100 candidates)</span> <span class="r14">│</span>
+<span class="r14">╰───────────────────────────────────────────────────────╯</span>
+<span class="r12">                                         Top 10: BM25 vs PostgreSQL                                         </span>
+╭─────┬────────────────────────────────────────────────┬────────────┬───────────────────────────┬──────────╮
+│<span class="r9">   # </span>│<span class="r9"> BM25 title                                     </span>│<span class="r9"> BM25 score </span>│<span class="r9"> PG title                  </span>│<span class="r9"> PG score </span>│
+├─────┼────────────────────────────────────────────────┼────────────┼───────────────────────────┼──────────┤
+│   1 │ django.contrib.postgres.forms.hstore |         │    15.9437 │ APIRouter class - FastAPI │  0.02072 │
+│     │ Εγχειρίδιο Django                              │            │                           │          │
+│   2 │ django.urls.resolvers | Django ドキュメント    │    13.1442 │ APIRouter class - FastAPI │  0.02072 │
+│   3 │ django.urls.resolvers | Django documentation   │    13.1395 │ APIRouter class - FastAPI │  0.02072 │
+│   4 │ django.urls.resolvers | Dokumentasi Django     │    13.1395 │ APIRouter class - FastAPI │  0.02072 │
+│   5 │ django.urls.resolvers | Django 문서            │    13.1395 │ APIRouter class - FastAPI │  0.02072 │
+│   6 │ django.urls.resolvers | Dokumentacja Django    │    13.1395 │ APIRouter class - FastAPI │  0.02072 │
+│   7 │ django.urls.resolvers | Django 文档            │    13.1395 │ APIRouter class - FastAPI │  0.02072 │
+│   8 │ django.urls.resolvers | Documentación de       │    13.1371 │ APIRouter class - FastAPI │  0.02072 │
+│     │ Django                                         │            │                           │          │
+│   9 │ django.urls.resolvers | Documentation de       │    13.1371 │ APIRouter class - FastAPI │  0.02072 │
+│     │ Django                                         │            │                           │          │
+│  10 │ django.urls.resolvers | Documentação do Django │    13.1371 │ APIRouter class - FastAPI │  0.02072 │
+╰─────┴────────────────────────────────────────────────┴────────────┴───────────────────────────┴──────────╯
+<span class="r13">BM25 and PostgreSQL scores are on different scales; compare order, not magnitudes.</span>
+<span class="r14">╭──────────────────────────────────────────────────────────╮</span>
+<span class="r14">│</span> <span class="r9">Q003</span>  python generator yield from  <span class="r13">(all; 100 candidates)</span> <span class="r14">│</span>
+<span class="r14">╰──────────────────────────────────────────────────────────╯</span>
+<span class="r12">                                         Top 10: BM25 vs PostgreSQL                                         </span>
+╭────┬──────────────────────────────────────┬────────────┬──────────────────────────────────────┬──────────╮
+│<span class="r9">  # </span>│<span class="r9"> BM25 title                           </span>│<span class="r9"> BM25 score </span>│<span class="r9"> PG title                             </span>│<span class="r9"> PG score </span>│
+├────┼──────────────────────────────────────┼────────────┼──────────────────────────────────────┼──────────┤
+│  1 │ 6. Expressions                       │    36.1617 │ 6. Expressions                       │  0.16662 │
+│  2 │ Generator Objects                    │    30.2525 │ Built-in Types                       │  0.10484 │
+│  3 │ A Conceptual Overview of asyncio     │    29.9845 │ 3. Data model                        │  0.10250 │
+│  4 │ Functional Programming HOWTO         │    27.0322 │ os — Miscellaneous operating system  │  0.10201 │
+│    │                                      │            │ interfaces                           │          │
+│  5 │ What’s New in Python 2.2             │    26.4010 │ Index — Python 3.12.16 documentation │  0.10054 │
+│  6 │ What’s New in Python 2.5             │    25.7182 │ Functional Programming HOWTO         │  0.07210 │
+│  7 │ 7. Simple statements                 │    24.2865 │ What’s New in Python 2.3             │  0.05962 │
+│  8 │ What’s New In Python 3.3             │    23.7848 │ Generator Objects                    │  0.05633 │
+│  9 │ contextlib — Utilities for           │    23.6130 │ What’s New in Python 2.2             │  0.03333 │
+│    │ with-statement contexts              │            │                                      │          │
+│ 10 │ 10. Full Grammar specification       │    23.5729 │ What’s New in Python 2.5             │  0.03030 │
+╰────┴──────────────────────────────────────┴────────────┴──────────────────────────────────────┴──────────╯
+<span class="r13">BM25 and PostgreSQL scores are on different scales; compare order, not magnitudes.</span>
+<span class="r14">╭─────────────────────────────────────────────────╮</span>
+<span class="r14">│</span> <span class="r9">Q004</span>  python dataclasses  <span class="r13">(text; 43 candidates)</span> <span class="r14">│</span>
+<span class="r14">╰─────────────────────────────────────────────────╯</span>
+<span class="r12">                                         Top 10: BM25 vs PostgreSQL                                         </span>
+╭────┬──────────────────────────────────────┬────────────┬──────────────────────────────────────┬──────────╮
+│<span class="r9">  # </span>│<span class="r9"> BM25 title                           </span>│<span class="r9"> BM25 score </span>│<span class="r9"> PG title                             </span>│<span class="r9"> PG score </span>│
+├────┼──────────────────────────────────────┼────────────┼──────────────────────────────────────┼──────────┤
+│  1 │ dataclasses — Data Classes           │    17.2775 │ dataclasses — Data Classes           │  0.24936 │
+│  2 │ Using Dataclasses - FastAPI          │    15.7385 │ Index — Python 3.12.16 documentation │  0.20286 │
+│  3 │ Python Runtime Services              │    13.3235 │ Using Dataclasses - FastAPI          │  0.11667 │
+│  4 │ What’s New In Python 3.10            │    12.8526 │ What’s New In Python 3.7             │  0.06000 │
+│  5 │ Enum HOWTO                           │    12.4037 │ Python Documentation contents        │  0.03233 │
+│  6 │ Index — Python 3.12.16 documentation │    11.9269 │ What’s New In Python 3.10            │  0.01706 │
+│  7 │ heapq — Heap queue algorithm         │    11.4360 │ What’s New In Python 3.11            │  0.01543 │
+│  8 │ 9. Classes                           │    11.2821 │ The Python standard library          │  0.01528 │
+│  9 │ typing — Support for type hints      │    11.2181 │ What’s new in Python 3.15            │  0.01500 │
+│ 10 │ Index — Python 3.12.16 documentation │    10.8414 │ Sorting Techniques                   │  0.00965 │
+╰────┴──────────────────────────────────────┴────────────┴──────────────────────────────────────┴──────────╯
+<span class="r13">BM25 and PostgreSQL scores are on different scales; compare order, not magnitudes.</span>
+<span class="r14">╭─────────────────────────────────────────────────╮</span>
+<span class="r14">│</span> <span class="r9">Q005</span>  python type hints  <span class="r13">(text; 100 candidates)</span> <span class="r14">│</span>
+<span class="r14">╰─────────────────────────────────────────────────╯</span>
+<span class="r12">                                         Top 10: BM25 vs PostgreSQL                                         </span>
+╭────┬──────────────────────────────────────┬────────────┬──────────────────────────────────────┬──────────╮
+│<span class="r9">  # </span>│<span class="r9"> BM25 title                           </span>│<span class="r9"> BM25 score </span>│<span class="r9"> PG title                             </span>│<span class="r9"> PG score </span>│
+├────┼──────────────────────────────────────┼────────────┼──────────────────────────────────────┼──────────┤
+│  1 │ Python Types Intro - FastAPI         │    14.1923 │ Alternatives, Inspiration and        │  2.40184 │
+│    │                                      │            │ Comparisons - FastAPI                │          │
+│  2 │ Objects for Type Hinting             │    13.7407 │ Python Types Intro - FastAPI         │  0.88612 │
+│  3 │ Alternatives, Inspiration and        │    13.5011 │ History, Design and Future - FastAPI │  0.31180 │
+│    │ Comparisons - FastAPI                │            │                                      │          │
+│  4 │ History, Design and Future - FastAPI │    12.3425 │ typing — Support for type hints      │  0.28821 │
+│  5 │ Concrete Objects Layer               │    11.6665 │ FastAPI - FastAPI                    │  0.20833 │
+│  6 │ django.views.debug | Εγχειρίδιο      │    11.2072 │ Extra Models - FastAPI               │  0.20625 │
+│    │ Django                               │            │                                      │          │
+│  7 │ What’s New in Python                 │    11.1614 │ What’s New In Python 3.5             │  0.15597 │
+│  8 │ Glossary                             │    11.0905 │ 3. Data model                        │  0.15463 │
+│  9 │ typing — Support for type hints      │    10.9390 │ What’s New In Python 3.7             │  0.12809 │
+│ 10 │ django.db.models.fields | Django     │    10.9155 │ What’s New In Python 3.10            │  0.12686 │
+│    │ 文档                                 │            │                                      │          │
+╰────┴──────────────────────────────────────┴────────────┴──────────────────────────────────────┴──────────╯
+<span class="r13">BM25 and PostgreSQL scores are on different scales; compare order, not magnitudes.</span>
+</code></pre>
+</body>
+</html>

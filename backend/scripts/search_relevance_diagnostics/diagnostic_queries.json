@@ -1,0 +1,671 @@
+{
+  "version": 1,
+  "description": "100 fixed developer search queries; title hints are weak diagnostic probes, not human relevance judgments.",
+  "queries": [
+    {
+      "id": "Q001",
+      "category": "Python Core",
+      "query": "python list comprehension",
+      "mode": "text",
+      "expected_title_contains": "List Comprehensions"
+    },
+    {
+      "id": "Q002",
+      "category": "Python Core",
+      "query": "python dict get default",
+      "mode": "code"
+    },
+    {
+      "id": "Q003",
+      "category": "Python Core",
+      "query": "python generator yield from",
+      "mode": "all"
+    },
+    {
+      "id": "Q004",
+      "category": "Python Core",
+      "query": "python dataclasses",
+      "mode": "text",
+      "expected_title_contains": "Data Classes"
+    },
+    {
+      "id": "Q005",
+      "category": "Python Core",
+      "query": "python type hints",
+      "mode": "text",
+      "expected_title_contains": "typing"
+    },
+    {
+      "id": "Q006",
+      "category": "Python Core",
+      "query": "python pathlib Path",
+      "mode": "code",
+      "expected_title_contains": "pathlib"
+    },
+    {
+      "id": "Q007",
+      "category": "Python Core",
+      "query": "python logging configuration",
+      "mode": "text",
+      "expected_title_contains": "Logging"
+    },
+    {
+      "id": "Q008",
+      "category": "Python Core",
+      "query": "python virtual environment venv",
+      "mode": "text",
+      "expected_title_contains": "venv"
+    },
+    {
+      "id": "Q009",
+      "category": "Python Core",
+      "query": "python context manager",
+      "mode": "all"
+    },
+    {
+      "id": "Q010",
+      "category": "Python Core",
+      "query": "python exception traceback",
+      "mode": "all"
+    },
+    {
+      "id": "Q011",
+      "category": "Python Async",
+      "query": "python async api",
+      "mode": "text"
+    },
+    {
+      "id": "Q012",
+      "category": "Python Async",
+      "query": "python asyncio event loop",
+      "mode": "text",
+      "expected_title_contains": "Event Loop"
+    },
+    {
+      "id": "Q013",
+      "category": "Python Async",
+      "query": "asyncio.create_task",
+      "mode": "code",
+      "expected_title_contains": "Coroutines and Tasks"
+    },
+    {
+      "id": "Q014",
+      "category": "Python Async",
+      "query": "asyncio gather",
+      "mode": "all"
+    },
+    {
+      "id": "Q015",
+      "category": "Python Async",
+      "query": "asyncio TaskGroup",
+      "mode": "code",
+      "expected_title_contains": "Coroutines and Tasks"
+    },
+    {
+      "id": "Q016",
+      "category": "Python Async",
+      "query": "async await python",
+      "mode": "all"
+    },
+    {
+      "id": "Q017",
+      "category": "Python Async",
+      "query": "asyncio Semaphore",
+      "mode": "code",
+      "expected_title_contains": "Synchronization Primitives"
+    },
+    {
+      "id": "Q018",
+      "category": "Python Async",
+      "query": "python concurrent.futures",
+      "mode": "text",
+      "expected_title_contains": "concurrent.futures"
+    },
+    {
+      "id": "Q019",
+      "category": "Python Async",
+      "query": "python async generator",
+      "mode": "all"
+    },
+    {
+      "id": "Q020",
+      "category": "Python Async",
+      "query": "python thread pool executor",
+      "mode": "all"
+    },
+    {
+      "id": "Q021",
+      "category": "FastAPI Basics",
+      "query": "FastAPI path parameters",
+      "mode": "text",
+      "expected_title_contains": "Path Parameters"
+    },
+    {
+      "id": "Q022",
+      "category": "FastAPI Basics",
+      "query": "FastAPI request body",
+      "mode": "text",
+      "expected_title_contains": "Request Body"
+    },
+    {
+      "id": "Q023",
+      "category": "FastAPI Basics",
+      "query": "FastAPI query parameters",
+      "mode": "text",
+      "expected_title_contains": "Query Parameters"
+    },
+    {
+      "id": "Q024",
+      "category": "FastAPI Basics",
+      "query": "FastAPI Depends",
+      "mode": "all",
+      "expected_title_contains": "Dependencies"
+    },
+    {
+      "id": "Q025",
+      "category": "FastAPI Basics",
+      "query": "FastAPI async tests",
+      "mode": "text",
+      "expected_title_contains": "Async Tests"
+    },
+    {
+      "id": "Q026",
+      "category": "FastAPI Basics",
+      "query": "FastAPI response model",
+      "mode": "text",
+      "expected_title_contains": "Response Model"
+    },
+    {
+      "id": "Q027",
+      "category": "FastAPI Basics",
+      "query": "FastAPI HTTPException",
+      "mode": "all",
+      "expected_title_contains": "Handling Errors"
+    },
+    {
+      "id": "Q028",
+      "category": "FastAPI Basics",
+      "query": "FastAPI middleware",
+      "mode": "text",
+      "expected_title_contains": "Middleware"
+    },
+    {
+      "id": "Q029",
+      "category": "FastAPI Basics",
+      "query": "FastAPI background tasks",
+      "mode": "all",
+      "expected_title_contains": "Background Tasks"
+    },
+    {
+      "id": "Q030",
+      "category": "FastAPI Basics",
+      "query": "FastAPI WebSockets",
+      "mode": "all",
+      "expected_title_contains": "WebSockets"
+    },
+    {
+      "id": "Q031",
+      "category": "FastAPI Advanced",
+      "query": "FastAPI CORS",
+      "mode": "text",
+      "expected_title_contains": "CORS"
+    },
+    {
+      "id": "Q032",
+      "category": "FastAPI Advanced",
+      "query": "FastAPI OAuth2",
+      "mode": "text",
+      "expected_title_contains": "OAuth2"
+    },
+    {
+      "id": "Q033",
+      "category": "FastAPI Advanced",
+      "query": "FastAPI dependency overrides",
+      "mode": "all",
+      "expected_title_contains": "Testing Dependencies"
+    },
+    {
+      "id": "Q034",
+      "category": "FastAPI Advanced",
+      "query": "FastAPI lifespan events",
+      "mode": "text",
+      "expected_title_contains": "Lifespan Events"
+    },
+    {
+      "id": "Q035",
+      "category": "FastAPI Advanced",
+      "query": "FastAPI upload file",
+      "mode": "text",
+      "expected_title_contains": "Request Files"
+    },
+    {
+      "id": "Q036",
+      "category": "FastAPI Advanced",
+      "query": "FastAPI streaming response",
+      "mode": "code"
+    },
+    {
+      "id": "Q037",
+      "category": "FastAPI Advanced",
+      "query": "FastAPI custom OpenAPI",
+      "mode": "text",
+      "expected_title_contains": "Extending OpenAPI"
+    },
+    {
+      "id": "Q038",
+      "category": "FastAPI Advanced",
+      "query": "FastAPI settings environment variables",
+      "mode": "text",
+      "expected_title_contains": "Settings and Environment Variables"
+    },
+    {
+      "id": "Q039",
+      "category": "FastAPI Advanced",
+      "query": "FastAPI APIRouter",
+      "mode": "code",
+      "expected_title_contains": "APIRouter"
+    },
+    {
+      "id": "Q040",
+      "category": "FastAPI Advanced",
+      "query": "FastAPI status codes",
+      "mode": "text",
+      "expected_title_contains": "Status Codes"
+    },
+    {
+      "id": "Q041",
+      "category": "Django",
+      "query": "django asynchronous support",
+      "mode": "text",
+      "expected_title_contains": "Asynchronous support"
+    },
+    {
+      "id": "Q042",
+      "category": "Django",
+      "query": "django ORM filter",
+      "mode": "all"
+    },
+    {
+      "id": "Q043",
+      "category": "Django",
+      "query": "django migrations",
+      "mode": "text",
+      "expected_title_contains": "Migrations"
+    },
+    {
+      "id": "Q044",
+      "category": "Django",
+      "query": "django class based views",
+      "mode": "text",
+      "expected_title_contains": "Class-based views"
+    },
+    {
+      "id": "Q045",
+      "category": "Django",
+      "query": "django middleware",
+      "mode": "text",
+      "expected_title_contains": "Middleware"
+    },
+    {
+      "id": "Q046",
+      "category": "Django",
+      "query": "django cache framework",
+      "mode": "text",
+      "expected_title_contains": "cache framework"
+    },
+    {
+      "id": "Q047",
+      "category": "Django",
+      "query": "django authentication",
+      "mode": "text",
+      "expected_title_contains": "authentication"
+    },
+    {
+      "id": "Q048",
+      "category": "Django",
+      "query": "django template language",
+      "mode": "text",
+      "expected_title_contains": "template language"
+    },
+    {
+      "id": "Q049",
+      "category": "Django",
+      "query": "django model field",
+      "mode": "all"
+    },
+    {
+      "id": "Q050",
+      "category": "Django",
+      "query": "django QuerySet select_related",
+      "mode": "code"
+    },
+    {
+      "id": "Q051",
+      "category": "JavaScript",
+      "query": "javascript fetch examples",
+      "mode": "all",
+      "expected_title_contains": "Fetch API"
+    },
+    {
+      "id": "Q052",
+      "category": "JavaScript",
+      "query": "javascript Promise.all",
+      "mode": "code"
+    },
+    {
+      "id": "Q053",
+      "category": "JavaScript",
+      "query": "javascript async await",
+      "mode": "text",
+      "expected_title_contains": "async function"
+    },
+    {
+      "id": "Q054",
+      "category": "JavaScript",
+      "query": "javascript array map filter",
+      "mode": "all"
+    },
+    {
+      "id": "Q055",
+      "category": "JavaScript",
+      "query": "javascript event loop",
+      "mode": "text",
+      "expected_title_contains": "event loop"
+    },
+    {
+      "id": "Q056",
+      "category": "JavaScript",
+      "query": "javascript closures",
+      "mode": "text",
+      "expected_title_contains": "Closures"
+    },
+    {
+      "id": "Q057",
+      "category": "JavaScript",
+      "query": "javascript destructuring assignment",
+      "mode": "text",
+      "expected_title_contains": "Destructuring"
+    },
+    {
+      "id": "Q058",
+      "category": "JavaScript",
+      "query": "javascript optional chaining",
+      "mode": "text",
+      "expected_title_contains": "Optional chaining"
+    },
+    {
+      "id": "Q059",
+      "category": "JavaScript",
+      "query": "javascript Object.entries",
+      "mode": "code",
+      "expected_title_contains": "Object.entries"
+    },
+    {
+      "id": "Q060",
+      "category": "JavaScript",
+      "query": "javascript modules import export",
+      "mode": "text",
+      "expected_title_contains": "JavaScript modules"
+    },
+    {
+      "id": "Q061",
+      "category": "Web Platform",
+      "query": "HTTP 404",
+      "mode": "code",
+      "expected_title_contains": "404 Not Found"
+    },
+    {
+      "id": "Q062",
+      "category": "Web Platform",
+      "query": "HTTP 500 internal server error",
+      "mode": "text",
+      "expected_title_contains": "500 Internal Server Error"
+    },
+    {
+      "id": "Q063",
+      "category": "Web Platform",
+      "query": "HTTP caching Cache-Control",
+      "mode": "all",
+      "expected_title_contains": "Cache-Control"
+    },
+    {
+      "id": "Q064",
+      "category": "Web Platform",
+      "query": "HTTP CORS preflight",
+      "mode": "text",
+      "expected_title_contains": "Cross-Origin Resource Sharing"
+    },
+    {
+      "id": "Q065",
+      "category": "Web Platform",
+      "query": "Content Security Policy",
+      "mode": "text",
+      "expected_title_contains": "Content Security Policy"
+    },
+    {
+      "id": "Q066",
+      "category": "Web Platform",
+      "query": "HTML forms validation",
+      "mode": "text",
+      "expected_title_contains": "Client-side form validation"
+    },
+    {
+      "id": "Q067",
+      "category": "Web Platform",
+      "query": "CSS flexbox",
+      "mode": "text",
+      "expected_title_contains": "Basic concepts of flexbox"
+    },
+    {
+      "id": "Q068",
+      "category": "Web Platform",
+      "query": "CSS grid layout",
+      "mode": "text",
+      "expected_title_contains": "CSS grid layout"
+    },
+    {
+      "id": "Q069",
+      "category": "Web Platform",
+      "query": "WebSocket API",
+      "mode": "text",
+      "expected_title_contains": "WebSocket"
+    },
+    {
+      "id": "Q070",
+      "category": "Web Platform",
+      "query": "service worker fetch event",
+      "mode": "all",
+      "expected_title_contains": "Service Worker"
+    },
+    {
+      "id": "Q071",
+      "category": "Rust",
+      "query": "Rust ownership borrowing",
+      "mode": "text",
+      "expected_title_contains": "Ownership"
+    },
+    {
+      "id": "Q072",
+      "category": "Rust",
+      "query": "Rust lifetimes",
+      "mode": "text",
+      "expected_title_contains": "Lifetimes"
+    },
+    {
+      "id": "Q073",
+      "category": "Rust",
+      "query": "Rust Result Option",
+      "mode": "code"
+    },
+    {
+      "id": "Q074",
+      "category": "Rust",
+      "query": "Rust async await",
+      "mode": "all"
+    },
+    {
+      "id": "Q075",
+      "category": "Rust",
+      "query": "Rust Vec push",
+      "mode": "code",
+      "expected_title_contains": "Vec"
+    },
+    {
+      "id": "Q076",
+      "category": "Rust",
+      "query": "Rust HashMap entry",
+      "mode": "code",
+      "expected_title_contains": "HashMap"
+    },
+    {
+      "id": "Q077",
+      "category": "Rust",
+      "query": "Rust traits generics",
+      "mode": "text",
+      "expected_title_contains": "Traits"
+    },
+    {
+      "id": "Q078",
+      "category": "Rust",
+      "query": "Rust iterator map",
+      "mode": "all",
+      "expected_title_contains": "Iterator"
+    },
+    {
+      "id": "Q079",
+      "category": "Rust",
+      "query": "Rust pattern matching",
+      "mode": "text",
+      "expected_title_contains": "Patterns"
+    },
+    {
+      "id": "Q080",
+      "category": "Rust",
+      "query": "Rust cargo workspace",
+      "mode": "text",
+      "expected_title_contains": "Workspaces"
+    },
+    {
+      "id": "Q081",
+      "category": "Identifiers",
+      "query": "__init__",
+      "mode": "code"
+    },
+    {
+      "id": "Q082",
+      "category": "Identifiers",
+      "query": "get_user_by_id",
+      "mode": "code"
+    },
+    {
+      "id": "Q083",
+      "category": "Identifiers",
+      "query": "useEffect",
+      "mode": "code"
+    },
+    {
+      "id": "Q084",
+      "category": "Identifiers",
+      "query": "__enter__",
+      "mode": "code"
+    },
+    {
+      "id": "Q085",
+      "category": "Identifiers",
+      "query": "__aenter__",
+      "mode": "code"
+    },
+    {
+      "id": "Q086",
+      "category": "Identifiers",
+      "query": "HTTPException",
+      "mode": "code"
+    },
+    {
+      "id": "Q087",
+      "category": "Identifiers",
+      "query": "select_related",
+      "mode": "code"
+    },
+    {
+      "id": "Q088",
+      "category": "Identifiers",
+      "query": "requestAnimationFrame",
+      "mode": "code"
+    },
+    {
+      "id": "Q089",
+      "category": "Identifiers",
+      "query": "fetch()",
+      "mode": "code"
+    },
+    {
+      "id": "Q090",
+      "category": "Identifiers",
+      "query": "QuerySet",
+      "mode": "code"
+    },
+    {
+      "id": "Q091",
+      "category": "Edge Cases",
+      "query": "asynci create task",
+      "mode": "text"
+    },
+    {
+      "id": "Q092",
+      "category": "Edge Cases",
+      "query": "fastapi dependecy injection",
+      "mode": "text"
+    },
+    {
+      "id": "Q093",
+      "category": "Edge Cases",
+      "query": "python OR javascript",
+      "mode": "text"
+    },
+    {
+      "id": "Q094",
+      "category": "Edge Cases",
+      "query": "python -django",
+      "mode": "text"
+    },
+    {
+      "id": "Q095",
+      "category": "Edge Cases",
+      "query": "\"event loop\"",
+      "mode": "text"
+    },
+    {
+      "id": "Q096",
+      "category": "Edge Cases",
+      "query": "HTTP/2",
+      "mode": "all"
+    },
+    {
+      "id": "Q097",
+      "category": "Edge Cases",
+      "query": "python C++",
+      "mode": "all"
+    },
+    {
+      "id": "Q098",
+      "category": "Edge Cases",
+      "query": "async def fetch",
+      "mode": "code"
+    },
+    {
+      "id": "Q099",
+      "category": "Edge Cases",
+      "query": "zznonexistentdevelopertermzz",
+      "mode": "all",
+      "expect_zero": true
+    },
+    {
+      "id": "Q100",
+      "category": "Edge Cases",
+      "query": "qwertyuiopasdfghzxcvbnm",
+      "mode": "text",
+      "expect_zero": true
+    }
+  ]
+}
