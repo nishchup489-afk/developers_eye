@@ -655,7 +655,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/ingestion/test_json_api.py](../../crawler/tests/crawler/ingestion/test_json_api.py)
 
-8 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_json_apipy)
+11 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_json_apipy)
 
 - `test_default_array_single_object_and_items_container`
 - `test_custom_nested_fields_html_and_body_pagination`
@@ -665,6 +665,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_invalid_json_and_ambiguous_objects_are_rejected`
 - `test_json_limits_apply_before_filtering`
 - `test_path_lookup_can_select_array_element_and_empty_collection_is_valid`
+- `test_stack_exchange_record_keeps_license_metadata_and_unix_date`
+- `test_invalid_metadata_fields_are_rejected`
+- `test_boolean_is_not_a_unix_date`
 
 ### [crawler/tests/crawler/ingestion/test_sitemap.py](../../crawler/tests/crawler/ingestion/test_sitemap.py)
 
@@ -789,7 +792,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/policy_and_politeness/test_politeness_policy.py](../../crawler/tests/crawler/policy_and_politeness/test_politeness_policy.py)
 
-37 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_politeness_policypy)
+40 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_politeness_policypy)
 
 - `TestHostKey.test_extract_hostname`
 - `TestHostKey.test_same_host_different_paths`
@@ -815,6 +818,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `TestPolitenessManager.test_peak_concurrency_never_exceeds_limit`
 - `TestPolitenessManager.test_different_hosts_run_independently`
 - `TestPolitenessManager.test_minimum_interval`
+- `TestPolitenessManager.test_host_override_lengthens_interval`
+- `TestPolitenessManager.test_aws_docs_default_gap_is_five_seconds`
+- `TestPolitenessManager.test_invalid_host_override_is_rejected`
 - `TestPolitenessManager.test_zero_interval`
 - `TestPolitenessManager.test_apply_backoff`
 - `TestPolitenessManager.test_backoff_does_not_shorten`

@@ -2,15 +2,17 @@
 
 import asyncio
 import logging
+import math
 import os
 from time import perf_counter
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Query, Response
+from fastapi import APIRouter, HTTPException, Query, Request, Response
 from sqlalchemy import func, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from backend.api.request_limits import RateLimiter, client_key
 from backend.db.session import SessionFactory
 from backend.schema.search import SearchFilter, SearchResponseOut
 from backend.schema.search_term import QueryCorrection
@@ -25,7 +27,13 @@ router = APIRouter(tags=["search"])
 
 MAX_CONCURRENT_SEARCHES = int(os.environ.get("SEARCH_MAX_CONCURRENT", "16"))
 QUERY_DEADLINE_MS = int(os.environ.get("SEARCH_QUERY_DEADLINE_MS", "3000"))
+RATE_LIMIT_PER_MINUTE = int(os.environ.get("SEARCH_RATE_LIMIT_PER_MINUTE", "60"))
+RATE_LIMIT_BURST = int(os.environ.get("SEARCH_RATE_LIMIT_BURST", "20"))
+
 _in_flight = asyncio.Semaphore(MAX_CONCURRENT_SEARCHES)
+# Searches and suggestions have separate budgets: one results page makes one of each.
+search_rate_limiter = RateLimiter(RATE_LIMIT_PER_MINUTE, RATE_LIMIT_BURST)
+suggest_rate_limiter = RateLimiter(RATE_LIMIT_PER_MINUTE, RATE_LIMIT_BURST)
 # PostgreSQL query_canceled, which statement_timeout raises.
 QUERY_CANCELED = "57014"
 
@@ -40,8 +48,19 @@ def _failure_outcome(exc: SQLAlchemyError) -> str:
     return "timed_out" if sqlstate == QUERY_CANCELED else "database_errors"
 
 
+def _enforce_rate_limit(limiter: RateLimiter, request: Request, what: str) -> None:
+    wait = limiter.acquire(client_key(request))
+    if wait > 0:
+        raise HTTPException(
+            429,
+            f"Too many {what}; slow down",
+            headers={"Retry-After": str(max(1, math.ceil(wait))), "Cache-Control": "no-store"},
+        )
+
+
 @router.get("/search", response_model=SearchResponseOut)
 async def search(
+    request: Request,
     response: Response,
     q: Annotated[str, Query(max_length=1024)],
     source: SearchFilter | None = None,
@@ -49,6 +68,7 @@ async def search(
     page: Annotated[int, Query(ge=1)] = 1,
     mode: SearchMode = SearchMode.ALL,
 ) -> SearchResponseOut:
+    _enforce_rate_limit(search_rate_limiter, request, "searches")
     try:
         normalized = analyze_query(q)
     except QueryValidationError as exc:
@@ -93,9 +113,11 @@ async def search(
 
 @router.get("/search/suggest", response_model=QueryCorrection)
 async def suggest_search_query(
+    request: Request,
     q: Annotated[str, Query(max_length=1024)],
 ) -> QueryCorrection:
     """Explicit spelling suggestion from the indexer-maintained vocabulary."""
+    _enforce_rate_limit(suggest_rate_limiter, request, "suggestions")
     try:
         normalized = analyze_query(q)
         async with SessionFactory() as session:
