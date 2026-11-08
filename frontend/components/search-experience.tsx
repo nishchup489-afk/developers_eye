@@ -29,9 +29,11 @@ import {
 } from "lucide-react";
 import {
   isSearchResult,
+  searchModes,
   shouldSuggest,
   sourceNames,
   type SearchResponse,
+  type SearchMode,
   type SearchResult,
   type SearchSuggestion,
   type Source,
@@ -257,12 +259,14 @@ export default function SearchExperience({
   resultsPage = false,
   initialQuery = "",
   initialFilter = "all",
+  initialSearchMode = "all",
   savedPage = false,
 }: {
   mode: "demo" | "live";
   resultsPage?: boolean;
   initialQuery?: string;
   initialFilter?: SearchFilter;
+  initialSearchMode?: SearchMode;
   savedPage?: boolean;
 }) {
   const router = useRouter();
@@ -275,6 +279,7 @@ export default function SearchExperience({
   const [suggestion, setSuggestion] = useState<SearchSuggestion | null>(null);
   const [knowledge, setKnowledge] = useState<KnowledgeResponse | null>(null);
   const [filter, setFilter] = useState<SearchFilter>(initialFilter);
+  const [selectedMode, setSelectedMode] = useState<SearchMode>(initialSearchMode);
   const [loading, setLoading] = useState(resultsPage && !savedPage && !!initialQuery);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState<SearchResult[]>([]);
@@ -301,7 +306,12 @@ export default function SearchExperience({
   }, [menuFor]);
 
   const search = useCallback(
-    async (text: string, updateUrl = true, source: SearchFilter = "all") => {
+    async (
+      text: string,
+      updateUrl = true,
+      source: SearchFilter = "all",
+      searchMode: SearchMode = "all",
+    ) => {
       const value = text.trim();
       if (!value) {
         input.current?.focus();
@@ -310,6 +320,7 @@ export default function SearchExperience({
       if (updateUrl) {
         const params = new URLSearchParams({ q: value });
         if (source !== "all") params.set("source", source);
+        if (searchMode !== "all") params.set("mode", searchMode);
         const destination = `/search?${params}`;
         // Re-submitting the current query should refresh its results too.
         if (!resultsPage || window.location.search !== `?${params}`) {
@@ -326,12 +337,13 @@ export default function SearchExperience({
       setLoading(true);
       setError("");
       setFilter(source);
+      setSelectedMode(searchMode);
       setResponse(null);
       setSuggestion(null);
       setKnowledge(null);
       try {
         const res = await api.get("/search", {
-          params: { q: value, ...(source !== "all" ? { source } : {}) },
+          params: { q: value, ...(source !== "all" ? { source } : {}), mode: searchMode },
           signal: active.signal,
         });
         const data = res.data;
@@ -396,7 +408,7 @@ export default function SearchExperience({
         /* Session bookmarks still work. */
       }
       if (resultsPage && initialQuery && !savedPage)
-        void search(initialQuery, false, initialFilter);
+        void search(initialQuery, false, initialFilter, initialSearchMode);
     }, 0);
     const onKey = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
@@ -416,7 +428,7 @@ export default function SearchExperience({
       controller.current?.abort();
       window.removeEventListener("keydown", onKey);
     };
-  }, [search, resultsPage, initialQuery, initialFilter, savedPage]);
+  }, [search, resultsPage, initialQuery, initialFilter, initialSearchMode, savedPage]);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -515,7 +527,7 @@ export default function SearchExperience({
   // so a filter finds every match in the index, not just the current page.
   const applyFilter = (next: SearchFilter) => {
     if (showSaved || !response) setFilter(next);
-    else void search(response.query, true, next);
+    else void search(response.query, true, next, selectedMode);
   };
   const visible = resultItems.filter((item) =>
     matchesSource(item.source, filter),
@@ -608,7 +620,7 @@ export default function SearchExperience({
               className={`search-box${code ? " has-code" : ""}`}
               onSubmit={(e) => {
                 e.preventDefault();
-                void search(fullQuery.slice(0, maxQueryLength));
+                void search(fullQuery.slice(0, maxQueryLength), true, filter, selectedMode);
               }}
             >
               {code && (
@@ -682,11 +694,33 @@ export default function SearchExperience({
                 )}
               </button>
             </form>
+            {!showSaved && (
+              <div className="search-modes" role="group" aria-label="Search mode">
+                <span>SEARCH MODE</span>
+                {searchModes.map((searchMode) => (
+                  <button
+                    type="button"
+                    key={searchMode}
+                    className={selectedMode === searchMode ? "active" : ""}
+                    aria-pressed={selectedMode === searchMode}
+                    onClick={() => {
+                      if (searchMode === selectedMode) return;
+                      setSelectedMode(searchMode);
+                      if (resultsPage && fullQuery.trim())
+                        void search(fullQuery, true, filter, searchMode);
+                    }}
+                  >
+                    {searchMode === "all" ? "All" : searchMode === "text" ? "Text" : "Code"}
+                  </button>
+                ))}
+                {mode === "demo" && <small>Demo data is not mode-specific.</small>}
+              </div>
+            )}
             {!resultsPage && <div className="search-meta">
               <div className="suggestions">
                 <span>Try</span>
                 {suggestions.map((s) => (
-                  <button key={s} onClick={() => void search(s)}>
+                  <button key={s} onClick={() => void search(s, true, filter, selectedMode)}>
                     {s}
                     <ArrowUpRight size={11} />
                   </button>
@@ -790,7 +824,7 @@ export default function SearchExperience({
                   <button
                     type="button"
                     className="did-you-mean-link"
-                    onClick={() => void search(suggestion.suggestion!, true, filter)}
+                    onClick={() => void search(suggestion.suggestion!, true, filter, selectedMode)}
                   >
                     <SuggestedQuery suggestion={suggestion} />
                   </button>
@@ -819,7 +853,7 @@ export default function SearchExperience({
                     <p>{error}</p>
                     <button
                       className="text-button"
-                      onClick={() => void search(query, false, filter)}
+                      onClick={() => void search(query, false, filter, selectedMode)}
                     >
                       Try again <ArrowRight size={16} />
                     </button>
@@ -996,6 +1030,7 @@ export default function SearchExperience({
                         (card.source === "github" ? "react" : "python"),
                       true,
                       card.source,
+                      selectedMode,
                     )
                   }
                 >
