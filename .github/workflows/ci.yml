@@ -67,5 +67,6 @@ jobs:
       - run: npx tsc --noEmit
       - run: npm run build
       - run: npm run test:admin:unit
+      - run: npm run test:search:unit
       - run: npm run test:integration
       - run: npm run test:admin:routes

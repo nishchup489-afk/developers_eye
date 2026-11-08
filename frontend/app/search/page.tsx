@@ -1,5 +1,5 @@
 import SearchExperience, { type SearchFilter } from "@/components/search-experience";
-import { sourceNames } from "@/lib/search";
+import { isSearchMode, sourceNames } from "@/lib/search";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Search — Developer’s Eye" };
@@ -16,15 +16,18 @@ export default async function SearchPage({
     source === "discussions" || Object.hasOwn(sourceNames, source)
       ? (source as SearchFilter)
       : "all";
+  const rawMode = params.mode;
+  const searchMode = isSearchMode(rawMode) ? rawMode : "all";
   const saved = params.saved === "1";
 
   return (
     <SearchExperience
-      key={JSON.stringify([query, filter, saved])}
+      key={JSON.stringify([query, filter, searchMode, saved])}
       mode={process.env.BACKEND_URL ? "live" : "demo"}
       resultsPage
       initialQuery={query}
       initialFilter={filter}
+      initialSearchMode={searchMode}
       savedPage={saved}
     />
   );
