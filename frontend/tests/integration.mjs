@@ -4,6 +4,7 @@ import { spawn } from "node:child_process";
 import { setTimeout as delay } from "node:timers/promises";
 
 const processes = [];
+const seenSearchRequests = [];
 // A tiny MediaWiki action API (formatversion=2) for the knowledge panel.
 const wikiCalls = {};
 const article = (title, description, extra = {}) => ({
@@ -62,6 +63,7 @@ const mock = createServer((req, res) => {
     return res.end("{}");
   }
   if (q === "malformed") return res.end("{no");
+  if (url.pathname === "/search") seenSearchRequests.push(url.searchParams.toString());
   if (url.pathname === "/search/suggest") {
     if (q === "rejected") {
       res.writeHead(422);
@@ -159,7 +161,12 @@ try {
   const legacy = await fetch(`${demo}/?q=react&source=github`, { redirect: "manual" });
   assert.equal(legacy.status, 307);
   assert.equal(legacy.headers.get("location"), "/search?q=react&source=github");
-  console.log("PASS separate home/results routes, saved page, legacy search redirect");
+  const modePage = await (await fetch(`${demo}/search?q=react&mode=code&source=docs`)).text();
+  assert.match(modePage, /aria-label="Search mode"/);
+  assert.match(modePage, /aria-pressed="true"[^>]*>Code</);
+  const legacyMode = await fetch(`${demo}/?q=react&mode=text`, { redirect: "manual" });
+  assert.equal(legacyMode.headers.get("location"), "/search?q=react&mode=text");
+  console.log("PASS separate home/results routes, mode URL, saved page, legacy redirect");
   let data = await get(demo, { q: " fastapi async " });
   assert.equal(data.mode, "demo");
   assert.equal(data.query, "fastapi async");
@@ -172,6 +179,7 @@ try {
   await get(demo, { q: "   " }, 400);
   await get(demo, { q: "x".repeat(301) }, 400);
   await get(demo, { q: "python", source: "unknown" }, 400);
+  await get(demo, { q: "python", mode: "unsupported" }, 400);
   assert.equal(
     (await fetch(`${demo}/api/search?q=python`, { method: "POST" })).status,
     405,
@@ -224,6 +232,17 @@ try {
   data = await get(live, { q: "python" });
   assert.equal(data.mode, "live");
   assert.equal(data.results[0].title, "Upstream result");
+  for (const searchMode of ["all", "text", "code"]) {
+    await get(live, { q: "fastapi", source: "docs", mode: searchMode });
+    const forwarded = new URLSearchParams(seenSearchRequests.at(-1));
+    assert.equal(forwarded.get("q"), "fastapi");
+    assert.equal(forwarded.get("source"), "docs");
+    assert.equal(forwarded.get("mode"), searchMode);
+  }
+  const seenBeforeInvalid = seenSearchRequests.length;
+  await get(live, { q: "fastapi", mode: "invalid" }, 400);
+  assert.equal(seenSearchRequests.length, seenBeforeInvalid, "invalid mode never reaches FastAPI");
+  console.log("PASS all/text/code modes forwarded through live proxy");
   for (const q of [
     "failure",
     "malformed",
