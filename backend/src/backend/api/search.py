@@ -49,6 +49,7 @@ TOTAL_DEADLINE_SECONDS = int(os.environ.get("SEARCH_TOTAL_DEADLINE_MS", "4000"))
 RATE_LIMIT_PER_MINUTE = int(os.environ.get("SEARCH_RATE_LIMIT_PER_MINUTE", "60"))
 RATE_LIMIT_BURST = int(os.environ.get("SEARCH_RATE_LIMIT_BURST", "20"))
 
+# Shared by searches and suggestions, which draw on the same connection pool.
 _in_flight = asyncio.Semaphore(MAX_CONCURRENT_SEARCHES)
 # Searches and suggestions have separate budgets: one results page makes one of each.
 search_rate_limiter = RateLimiter(RATE_LIMIT_PER_MINUTE, RATE_LIMIT_BURST)
@@ -67,6 +68,18 @@ def _is_database_timeout(exc: SQLAlchemyError) -> bool:
     if isinstance(exc, PoolTimeoutError):
         return True
     return getattr(getattr(exc, "orig", None), "sqlstate", None) == QUERY_CANCELED
+
+
+async def _try_take_slot() -> bool:
+    """Take a concurrency slot without queueing, or return False when none is free.
+
+    acquire() does not yield to the event loop when a slot is free, so no other request
+    can run between the check and the acquire and the cap cannot be overshot.
+    """
+    if _in_flight.locked():
+        return False
+    await _in_flight.acquire()
+    return True
 
 
 def _enforce_rate_limit(limiter: RateLimiter, request: Request, what: str) -> None:
@@ -97,11 +110,12 @@ async def search(
         raise HTTPException(422, str(exc)) from exc
 
     response.headers["Cache-Control"] = "no-store"
-    if _in_flight.locked():
+    if not await _try_take_slot():
         telemetry.record("busy")
         raise HTTPException(503, "Search is busy; try again shortly", headers={"Retry-After": "1"})
+
     async def run() -> list:
-        async with _in_flight, SessionFactory() as session:
+        async with SessionFactory() as session:
             await apply_query_deadline(session)
             # Preserve the previous call signature for default requests.
             extra = {}
@@ -140,6 +154,9 @@ async def search(
     except Exception:
         telemetry.record("server_errors")
         raise
+    finally:
+        # run_unless_disconnected has already waited for the search to unwind.
+        _in_flight.release()
 
     telemetry.record("successful", (perf_counter() - started) * 1000)
     return SearchResponseOut(query=normalized, results=results)
@@ -156,6 +173,9 @@ async def suggest_search_query(
         normalized = analyze_query(q)
     except QueryValidationError as exc:
         raise HTTPException(422, str(exc)) from exc
+
+    if not await _try_take_slot():
+        raise HTTPException(503, "Search suggestions are busy; try again shortly", headers={"Retry-After": "1"})
 
     async def run() -> QueryCorrection:
         async with SessionFactory() as session:
@@ -176,3 +196,5 @@ async def suggest_search_query(
             raise HTTPException(504, "Search suggestions timed out") from exc
         logger.exception("Vocabulary suggestion query failed")
         raise HTTPException(503, "Search suggestions are unavailable") from exc
+    finally:
+        _in_flight.release()
