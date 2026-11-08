@@ -2,6 +2,10 @@ import { backend, isOk, isTimeout } from "@/lib/axios";
 import { searchDemo } from "@/lib/demo";
 import { forwardedFor, isSearchResult, sources, upstreamFailure } from "@/lib/search";
 
+// Above FastAPI's total search deadline (SEARCH_TOTAL_DEADLINE_MS, 4 s), so a slow
+// search comes back as FastAPI's 504 rather than as this proxy giving up.
+const backendTimeoutMs = 6000;
+
 export async function GET(request: Request) {
   const started = performance.now();
   const params = new URL(request.url).searchParams;
@@ -36,7 +40,7 @@ export async function GET(request: Request) {
     if (page) url.searchParams.set("page", page);
     if (mode) url.searchParams.set("mode", mode);
     const response = await backend.get(url.toString(), {
-      timeout: 10000,
+      timeout: backendTimeoutMs,
       headers: forwardedFor(request),
     });
     if (!isOk(response.status)) {

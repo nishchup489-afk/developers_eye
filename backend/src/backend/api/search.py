@@ -27,6 +27,9 @@ router = APIRouter(tags=["search"])
 
 MAX_CONCURRENT_SEARCHES = int(os.environ.get("SEARCH_MAX_CONCURRENT", "16"))
 QUERY_DEADLINE_MS = int(os.environ.get("SEARCH_QUERY_DEADLINE_MS", "3000"))
+# Whole request: waiting for a pooled connection, every statement and ranking.
+# Keep it above SEARCH_QUERY_DEADLINE_MS and below the Next.js proxy timeout (6 s).
+TOTAL_DEADLINE_SECONDS = int(os.environ.get("SEARCH_TOTAL_DEADLINE_MS", "4000")) / 1000
 RATE_LIMIT_PER_MINUTE = int(os.environ.get("SEARCH_RATE_LIMIT_PER_MINUTE", "60"))
 RATE_LIMIT_BURST = int(os.environ.get("SEARCH_RATE_LIMIT_BURST", "20"))
 
@@ -79,8 +82,7 @@ async def search(
     if _in_flight.locked():
         telemetry.record("busy")
         raise HTTPException(503, "Search is busy; try again shortly", headers={"Retry-After": "1"})
-    started = perf_counter()
-    try:
+    async def run() -> list:
         async with _in_flight, SessionFactory() as session:
             await apply_query_deadline(session)
             # Preserve the previous call signature for default requests.
@@ -89,9 +91,17 @@ async def search(
                 extra["page"] = page
             if mode is not SearchMode.ALL:
                 extra["mode"] = mode
-            results = await search_documents(
+            return await search_documents(
                 session, normalized, category=source, limit=limit, **extra
             )
+
+    started = perf_counter()
+    try:
+        async with asyncio.timeout(TOTAL_DEADLINE_SECONDS):
+            results = await run()
+    except TimeoutError as exc:
+        telemetry.record("timed_out")
+        raise HTTPException(504, "Search timed out") from exc
     except (ValueError, QueryValidationError) as exc:
         telemetry.record("invalid")
         raise HTTPException(422, str(exc)) from exc
@@ -120,8 +130,18 @@ async def suggest_search_query(
     _enforce_rate_limit(suggest_rate_limiter, request, "suggestions")
     try:
         normalized = analyze_query(q)
+    except QueryValidationError as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+    async def run() -> QueryCorrection:
         async with SessionFactory() as session:
             return await suggest_query_correction(normalized, session)
+
+    try:
+        async with asyncio.timeout(TOTAL_DEADLINE_SECONDS):
+            return await run()
+    except TimeoutError as exc:
+        raise HTTPException(504, "Search suggestions timed out") from exc
     except (ValueError, QueryValidationError) as exc:
         raise HTTPException(422, str(exc)) from exc
     except SQLAlchemyError as exc:

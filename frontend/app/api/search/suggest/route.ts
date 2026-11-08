@@ -26,6 +26,7 @@ export async function GET(request: Request) {
   try {
     const url = new URL(`${base.replace(/\/$/, "")}/search/suggest`);
     url.searchParams.set("q", query);
+    // Above FastAPI's 4 s deadline.
     const response = await backend.get(url.toString(), {
       timeout: 5000,
       headers: forwardedFor(request),
