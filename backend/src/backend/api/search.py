@@ -1,4 +1,13 @@
-"""GET /search, serving the same response shape as the Next.js bridge."""
+"""GET /search, serving the same response shape as the Next.js bridge.
+
+Request limits, in the order a request meets them:
+1. Per-client rate limit (HTTP 429 with Retry-After).
+2. Query validation (HTTP 422).
+3. Concurrency cap per process (HTTP 503 with Retry-After).
+4. Total deadline over the whole search, and a PostgreSQL statement_timeout
+   on every statement (HTTP 504 either way).
+5. A client that disconnects cancels its search; nobody receives the 499.
+"""
 
 import asyncio
 import logging
@@ -13,7 +22,13 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.exc import TimeoutError as PoolTimeoutError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.api.request_limits import RateLimiter, client_key
+from backend.api.request_limits import (
+    CLIENT_CLOSED_REQUEST,
+    ClientDisconnected,
+    RateLimiter,
+    client_key,
+    run_unless_disconnected,
+)
 from backend.db.session import SessionFactory
 from backend.schema.search import SearchFilter, SearchResponseOut
 from backend.schema.search_term import QueryCorrection
@@ -73,7 +88,7 @@ async def search(
     limit: Annotated[int, Query(ge=1, le=50)] = 20,
     page: Annotated[int, Query(ge=1)] = 1,
     mode: SearchMode = SearchMode.ALL,
-) -> SearchResponseOut:
+) -> SearchResponseOut | Response:
     _enforce_rate_limit(search_rate_limiter, request, "searches")
     try:
         normalized = analyze_query(q)
@@ -101,7 +116,10 @@ async def search(
     started = perf_counter()
     try:
         async with asyncio.timeout(TOTAL_DEADLINE_SECONDS):
-            results = await run()
+            results = await run_unless_disconnected(request, run())
+    except ClientDisconnected:
+        # The search was cancelled; this response is never delivered.
+        return Response(status_code=CLIENT_CLOSED_REQUEST)
     except TimeoutError as exc:
         telemetry.record("timed_out")
         raise HTTPException(504, "Search timed out") from exc
@@ -131,7 +149,7 @@ async def search(
 async def suggest_search_query(
     request: Request,
     q: Annotated[str, Query(max_length=1024)],
-) -> QueryCorrection:
+) -> QueryCorrection | Response:
     """Explicit spelling suggestion from the indexer-maintained vocabulary."""
     _enforce_rate_limit(suggest_rate_limiter, request, "suggestions")
     try:
@@ -146,7 +164,9 @@ async def suggest_search_query(
 
     try:
         async with asyncio.timeout(TOTAL_DEADLINE_SECONDS):
-            return await run()
+            return await run_unless_disconnected(request, run())
+    except ClientDisconnected:
+        return Response(status_code=CLIENT_CLOSED_REQUEST)
     except TimeoutError as exc:
         raise HTTPException(504, "Search suggestions timed out") from exc
     except (ValueError, QueryValidationError) as exc:
