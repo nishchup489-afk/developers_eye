@@ -10,6 +10,7 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, Query, Request, Response
 from sqlalchemy import func, select
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import TimeoutError as PoolTimeoutError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.api.request_limits import RateLimiter, client_key
@@ -46,9 +47,11 @@ async def apply_query_deadline(session: AsyncSession) -> None:
     await session.execute(select(func.set_config("statement_timeout", str(QUERY_DEADLINE_MS), True)))
 
 
-def _failure_outcome(exc: SQLAlchemyError) -> str:
-    sqlstate = getattr(getattr(exc, "orig", None), "sqlstate", None)
-    return "timed_out" if sqlstate == QUERY_CANCELED else "database_errors"
+def _is_database_timeout(exc: SQLAlchemyError) -> bool:
+    """A statement cancelled by statement_timeout, or no pooled connection in time."""
+    if isinstance(exc, PoolTimeoutError):
+        return True
+    return getattr(getattr(exc, "orig", None), "sqlstate", None) == QUERY_CANCELED
 
 
 def _enforce_rate_limit(limiter: RateLimiter, request: Request, what: str) -> None:
@@ -106,7 +109,10 @@ async def search(
         telemetry.record("invalid")
         raise HTTPException(422, str(exc)) from exc
     except SQLAlchemyError as exc:
-        telemetry.record(_failure_outcome(exc))
+        if _is_database_timeout(exc):
+            telemetry.record("timed_out")
+            raise HTTPException(504, "Search timed out") from exc
+        telemetry.record("database_errors")
         logger.exception("Search database failure")
         raise HTTPException(503, "Search database is unavailable") from exc
     except RuntimeError as exc:
@@ -135,6 +141,7 @@ async def suggest_search_query(
 
     async def run() -> QueryCorrection:
         async with SessionFactory() as session:
+            await apply_query_deadline(session)
             return await suggest_query_correction(normalized, session)
 
     try:
@@ -145,5 +152,7 @@ async def suggest_search_query(
     except (ValueError, QueryValidationError) as exc:
         raise HTTPException(422, str(exc)) from exc
     except SQLAlchemyError as exc:
+        if _is_database_timeout(exc):
+            raise HTTPException(504, "Search suggestions timed out") from exc
         logger.exception("Vocabulary suggestion query failed")
         raise HTTPException(503, "Search suggestions are unavailable") from exc
