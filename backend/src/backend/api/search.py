@@ -11,7 +11,7 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.db.session import SessionFactory
+from backend.db.session import DATABASE_UNAVAILABLE_ERRORS, SessionFactory
 from backend.schema.search import SearchFilter, SearchResponseOut
 from backend.schema.search_term import QueryCorrection
 from backend.search.query_analyzer.analyzer import QueryValidationError, analyze_query
@@ -35,7 +35,7 @@ async def apply_query_deadline(session: AsyncSession) -> None:
     await session.execute(select(func.set_config("statement_timeout", str(QUERY_DEADLINE_MS), True)))
 
 
-def _failure_outcome(exc: SQLAlchemyError) -> str:
+def _failure_outcome(exc: Exception) -> str:
     sqlstate = getattr(getattr(exc, "orig", None), "sqlstate", None)
     return "timed_out" if sqlstate == QUERY_CANCELED else "database_errors"
 
@@ -75,7 +75,7 @@ async def search(
     except (ValueError, QueryValidationError) as exc:
         telemetry.record("invalid")
         raise HTTPException(422, str(exc)) from exc
-    except SQLAlchemyError as exc:
+    except (SQLAlchemyError, *DATABASE_UNAVAILABLE_ERRORS) as exc:
         telemetry.record(_failure_outcome(exc))
         logger.exception("Search database failure")
         raise HTTPException(503, "Search database is unavailable") from exc
@@ -102,6 +102,6 @@ async def suggest_search_query(
             return await suggest_query_correction(normalized, session)
     except (ValueError, QueryValidationError) as exc:
         raise HTTPException(422, str(exc)) from exc
-    except SQLAlchemyError as exc:
+    except (SQLAlchemyError, *DATABASE_UNAVAILABLE_ERRORS) as exc:
         logger.exception("Vocabulary suggestion query failed")
         raise HTTPException(503, "Search suggestions are unavailable") from exc

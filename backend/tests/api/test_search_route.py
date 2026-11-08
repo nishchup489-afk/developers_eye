@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 
 import pytest
 from fastapi.testclient import TestClient
+import asyncpg
 from sqlalchemy.exc import OperationalError
 
 import backend.api.search as search_api
@@ -57,6 +58,18 @@ def test_returns_results(stub):
 def test_rejects_invalid_input(stub, params):
     assert client.get("/search", params=params).status_code == 422
     assert stub == []
+
+
+def test_failed_database_connection_is_503(monkeypatch, stub):
+    """asyncpg raises these while connecting, and SQLAlchemy does not wrap them."""
+    for error in (ConnectionRefusedError("refused"), asyncpg.CannotConnectNowError("starting up")):
+        async def broken(*args, error=error, **kwargs):
+            raise error
+
+        monkeypatch.setattr(search_api, "search_documents", broken)
+        response = client.get("/search", params={"q": "async"})
+        assert response.status_code == 503
+        assert "refused" not in response.text and "starting up" not in response.text
 
 
 def test_database_error_is_503(monkeypatch, stub):
