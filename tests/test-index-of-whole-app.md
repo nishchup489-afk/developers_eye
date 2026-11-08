@@ -26,12 +26,12 @@ indexes refresh on every commit. `--check` exits 1 when they are stale.
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**80 test files, 679 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**82 test files, 704 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 27 | 263 | `cd backend && poetry run pytest` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 29 | 288 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 11 | 99 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 33 | 317 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 9 | 0 | npm scripts in `frontend/package.json` (see below) |
@@ -47,6 +47,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [__init__.py](../backend/tests/__init__.py) | helper |  |  |
 | [api/conftest.py](../backend/tests/api/conftest.py) | fixtures |  |  |
 | [api/test_search.py](../backend/tests/api/test_search.py) | tests | 8 | [test_case.md](../backend/tests/test_case.md#search-http-api) |
+| [api/test_search_limits.py](../backend/tests/api/test_search_limits.py) | tests | 22 |  |
 | [api/test_search_route.py](../backend/tests/api/test_search_route.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#search-http-api) |
 | [golden/test_bm25_golden.py](../backend/tests/golden/test_bm25_golden.py) | tests | 8 |  |
 | [integration/test_code.py](../backend/tests/integration/test_code.py) | tests | 17 | [test_case.md](../backend/tests/test_case.md#code-retrieval) |
@@ -57,6 +58,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [integration/test_ranking_statistics.py](../backend/tests/integration/test_ranking_statistics.py) | tests | 8 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
 | [integration/test_retrieval.py](../backend/tests/integration/test_retrieval.py) | tests | 6 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
 | [integration/test_search.py](../backend/tests/integration/test_search.py) | tests | 5 | [test_case.md](../backend/tests/test_case.md#search-service-against-postgresql) |
+| [integration/test_search_deadlines.py](../backend/tests/integration/test_search_deadlines.py) | tests | 3 |  |
 | [integration/test_search_reporting.py](../backend/tests/integration/test_search_reporting.py) | tests | 9 |  |
 | [integration/test_system_reporting.py](../backend/tests/integration/test_system_reporting.py) | tests | 7 | [test_case.md](../backend/tests/test_case.md#admin-system-reporting-postgresql) |
 | [test_case.md](../backend/tests/test_case.md) | write-up |  |  |

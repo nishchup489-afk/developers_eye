@@ -28,6 +28,33 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_suggest_rejects_invalid_query`
 - `test_suggest_database_error_is_503`
 
+### [backend/tests/api/test_search_limits.py](../../backend/tests/api/test_search_limits.py)
+
+22 cases
+
+- `test_frontend_query_limits_match_the_backend`: lib/search.ts cannot import SearchConfig, so a change on one side must fail here.
+- `test_bucket_allows_burst_then_reports_wait_and_refills`
+- `test_buckets_are_per_client_and_bounded`
+- `test_zero_rate_disables_the_limit`
+- `test_search_rate_limit_is_429_with_retry_after`
+- `test_suggest_rate_limit_is_separate_from_search`
+- `test_forwarded_clients_get_their_own_buckets`: Behind Next.js, uvicorn's proxy headers make each browser its own client.
+- `test_full_concurrency_cap_is_503_with_retry_after`
+- `test_concurrent_burst_admits_only_the_cap`: Requests arriving in the same event-loop turn cannot overshoot the cap.
+- `test_suggestions_share_the_concurrency_cap`
+- `test_failed_requests_release_their_slot`
+- `test_validation_failure_does_not_take_a_slot`
+- `test_total_deadline_is_504_and_cancels_the_search`
+- `test_statement_timeout_is_504`
+- `test_connection_pool_timeout_is_504`
+- `test_other_database_errors_stay_503`
+- `test_suggest_deadline_and_statement_timeout_are_504`
+- `test_disconnect_cancels_search_and_frees_its_slot`
+- `test_disconnect_cancels_suggestion`
+- `test_finished_work_wins_over_a_later_disconnect`
+- `test_deadline_waits_for_cancelled_work_to_unwind`: A deadline that fires mid-search still lets the search close its session first.
+- `test_disconnect_raises_client_disconnected`
+
 ### [backend/tests/api/test_search_route.py](../../backend/tests/api/test_search_route.py)
 
 3 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-http-api)
@@ -150,6 +177,14 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_category_filter_and_limit`
 - `test_no_match_returns_empty`
 - `test_categorize`
+
+### [backend/tests/integration/test_search_deadlines.py](../../backend/tests/integration/test_search_deadlines.py)
+
+3 cases
+
+- `test_real_statement_timeout_is_504`
+- `test_total_deadline_stops_the_postgres_query`
+- `test_client_disconnect_stops_the_postgres_query`
 
 ### [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 
@@ -1087,9 +1122,11 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 
 These test files have no matching heading in a `test_case.md`.
 
+- [backend/tests/api/test_search_limits.py](../../backend/tests/api/test_search_limits.py)
 - [backend/tests/golden/test_bm25_golden.py](../../backend/tests/golden/test_bm25_golden.py)
 - [backend/tests/integration/test_corpus_mutation_search.py](../../backend/tests/integration/test_corpus_mutation_search.py)
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
+- [backend/tests/integration/test_search_deadlines.py](../../backend/tests/integration/test_search_deadlines.py)
 - [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 - [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)
 - [backend/tests/unit/test_relevance_metrics_base.py](../../backend/tests/unit/test_relevance_metrics_base.py)
