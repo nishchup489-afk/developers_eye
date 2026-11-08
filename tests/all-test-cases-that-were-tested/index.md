@@ -108,6 +108,13 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_typo_suggests_a_real_word`
 - `test_correct_words_are_left_alone`
 
+### [backend/tests/integration/test_migrations.py](../../backend/tests/integration/test_migrations.py)
+
+2 cases
+
+- `test_code_vector_upgrade_keeps_a_populated_index_and_requeues_it`
+- `test_code_vector_upgrade_works_on_an_empty_table`
+
 ### [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 
 4 cases
@@ -655,7 +662,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/ingestion/test_json_api.py](../../crawler/tests/crawler/ingestion/test_json_api.py)
 
-8 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_json_apipy)
+11 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_json_apipy)
 
 - `test_default_array_single_object_and_items_container`
 - `test_custom_nested_fields_html_and_body_pagination`
@@ -665,6 +672,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_invalid_json_and_ambiguous_objects_are_rejected`
 - `test_json_limits_apply_before_filtering`
 - `test_path_lookup_can_select_array_element_and_empty_collection_is_valid`
+- `test_stack_exchange_record_keeps_license_metadata_and_unix_date`
+- `test_invalid_metadata_fields_are_rejected`
+- `test_boolean_is_not_a_unix_date`
 
 ### [crawler/tests/crawler/ingestion/test_sitemap.py](../../crawler/tests/crawler/ingestion/test_sitemap.py)
 
@@ -789,7 +799,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/policy_and_politeness/test_politeness_policy.py](../../crawler/tests/crawler/policy_and_politeness/test_politeness_policy.py)
 
-37 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_politeness_policypy)
+40 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_politeness_policypy)
 
 - `TestHostKey.test_extract_hostname`
 - `TestHostKey.test_same_host_different_paths`
@@ -815,6 +825,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `TestPolitenessManager.test_peak_concurrency_never_exceeds_limit`
 - `TestPolitenessManager.test_different_hosts_run_independently`
 - `TestPolitenessManager.test_minimum_interval`
+- `TestPolitenessManager.test_host_override_lengthens_interval`
+- `TestPolitenessManager.test_aws_docs_default_gap_is_five_seconds`
+- `TestPolitenessManager.test_invalid_host_override_is_rejected`
 - `TestPolitenessManager.test_zero_interval`
 - `TestPolitenessManager.test_apply_backoff`
 - `TestPolitenessManager.test_backoff_does_not_shorten`
@@ -974,7 +987,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 2 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_availabilitypy)
 
-- `test_missing_pages_are_retained_as_unavailable_and_removed_from_search`
+- `test_missing_pages_are_marked_unavailable_without_index_deletion`
 - `test_successful_observation_restores_document_availability`
 
 ### [crawler/tests/crawler/worker/test_deadlock_retry.py](../../crawler/tests/crawler/worker/test_deadlock_retry.py)
@@ -1083,6 +1096,7 @@ These test files have no matching heading in a `test_case.md`.
 
 - [backend/tests/golden/test_bm25_golden.py](../../backend/tests/golden/test_bm25_golden.py)
 - [backend/tests/integration/test_corpus_mutation_search.py](../../backend/tests/integration/test_corpus_mutation_search.py)
+- [backend/tests/integration/test_migrations.py](../../backend/tests/integration/test_migrations.py)
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 - [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 - [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)

@@ -26,14 +26,14 @@ indexes refresh on every commit. `--check` exits 1 when they are stale.
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**80 test files, 673 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**81 test files, 681 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 27 | 263 | `cd backend && poetry run pytest` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 28 | 265 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 11 | 99 | `cd crawler && poetry run pytest tests/indexer` |
-| [Crawler](#crawler) | 33 | 311 | `cd crawler && poetry run pytest tests/crawler` |
+| [Crawler](#crawler) | 33 | 317 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 9 | 0 | npm scripts in `frontend/package.json` (see below) |
 
 ### End-to-end (full app)
@@ -52,6 +52,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [integration/test_corpus_mutation_search.py](../backend/tests/integration/test_corpus_mutation_search.py) | tests | 4 |  |
 | [integration/test_fts.py](../backend/tests/integration/test_fts.py) | tests | 14 | [test_case.md](../backend/tests/test_case.md#full-text-search-fts) |
 | [integration/test_fuzzy_suggestions.py](../backend/tests/integration/test_fuzzy_suggestions.py) | tests | 4 | [test_case.md](../backend/tests/test_case.md#fuzzy-suggestions) |
+| [integration/test_migrations.py](../backend/tests/integration/test_migrations.py) | tests | 2 |  |
 | [integration/test_ranking_developer_queries.py](../backend/tests/integration/test_ranking_developer_queries.py) | tests | 4 |  |
 | [integration/test_ranking_statistics.py](../backend/tests/integration/test_ranking_statistics.py) | tests | 8 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
 | [integration/test_retrieval.py](../backend/tests/integration/test_retrieval.py) | tests | 6 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
@@ -112,7 +113,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [crawler/frontier/test_urls.py](../crawler/tests/crawler/frontier/test_urls.py) | tests | 3 | [test_case.md](../crawler/tests/test_case.md#test_urlspy) |
 | [crawler/ingestion/test_feeds.py](../crawler/tests/crawler/ingestion/test_feeds.py) | tests | 5 | [test_case.md](../crawler/tests/test_case.md#test_feedspy) |
 | [crawler/ingestion/test_ingestion_jobs.py](../crawler/tests/crawler/ingestion/test_ingestion_jobs.py) | tests | 7 | [test_case.md](../crawler/tests/test_case.md#test_ingestion_jobspy) |
-| [crawler/ingestion/test_json_api.py](../crawler/tests/crawler/ingestion/test_json_api.py) | tests | 8 | [test_case.md](../crawler/tests/test_case.md#test_json_apipy) |
+| [crawler/ingestion/test_json_api.py](../crawler/tests/crawler/ingestion/test_json_api.py) | tests | 11 | [test_case.md](../crawler/tests/test_case.md#test_json_apipy) |
 | [crawler/ingestion/test_sitemap.py](../crawler/tests/crawler/ingestion/test_sitemap.py) | tests | 11 | [test_case.md](../crawler/tests/test_case.md#test_sitemappy) |
 | [crawler/ingestion/test_sitemap_discovery.py](../crawler/tests/crawler/ingestion/test_sitemap_discovery.py) | tests | 5 | [test_case.md](../crawler/tests/test_case.md#test_sitemap_discoverypy) |
 | [crawler/parser/test_html_parser.py](../crawler/tests/crawler/parser/test_html_parser.py) | tests | 28 | [test_case.md](../crawler/tests/test_case.md#test_html_parserpy) |
@@ -120,7 +121,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [crawler/policy_and_politeness/test_dns_policy.py](../crawler/tests/crawler/policy_and_politeness/test_dns_policy.py) | tests | 19 | [test_case.md](../crawler/tests/test_case.md#test_dns_policypy) |
 | [crawler/policy_and_politeness/test_host_policy.py](../crawler/tests/crawler/policy_and_politeness/test_host_policy.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_host_policypy) |
 | [crawler/policy_and_politeness/test_policy_coordinator.py](../crawler/tests/crawler/policy_and_politeness/test_policy_coordinator.py) | tests | 23 | [test_case.md](../crawler/tests/test_case.md#test_policy_coordinatorpy) |
-| [crawler/policy_and_politeness/test_politeness_policy.py](../crawler/tests/crawler/policy_and_politeness/test_politeness_policy.py) | tests | 37 | [test_case.md](../crawler/tests/test_case.md#test_politeness_policypy) |
+| [crawler/policy_and_politeness/test_politeness_policy.py](../crawler/tests/crawler/policy_and_politeness/test_politeness_policy.py) | tests | 40 | [test_case.md](../crawler/tests/test_case.md#test_politeness_policypy) |
 | [crawler/policy_and_politeness/test_redirect_policy.py](../crawler/tests/crawler/policy_and_politeness/test_redirect_policy.py) | tests | 23 | [test_case.md](../crawler/tests/test_case.md#test_redirect_policypy) |
 | [crawler/policy_and_politeness/test_robots_policy.py](../crawler/tests/crawler/policy_and_politeness/test_robots_policy.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_robots_policypy) |
 | [crawler/policy_and_politeness/test_robots_rules.py](../crawler/tests/crawler/policy_and_politeness/test_robots_rules.py) | tests | 6 | [test_case.md](../crawler/tests/test_case.md#test_robots_rulespy) |
