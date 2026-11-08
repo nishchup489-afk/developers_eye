@@ -1,6 +1,12 @@
 // Unit tests for the spelling-suggestion helpers in lib/search.ts (no build needed).
 import assert from "node:assert/strict";
-import { parseCorrection, shouldSuggest, suggestBelowResults } from "../lib/search.ts";
+import { isSearchMode, parseCorrection, searchModes, shouldSuggest, suggestBelowResults } from "../lib/search.ts";
+
+assert.deepEqual(searchModes, ["all", "text", "code"]);
+for (const mode of searchModes) assert.equal(isSearchMode(mode), true);
+for (const invalid of ["", "ALL", "javascript", null, 2, [], {}])
+  assert.equal(isSearchMode(invalid), false);
+console.log("PASS search modes: all, text, code and strict validation");
 
 const correction = (suggested_query, corrections) => ({
   original_query: "ignored",
