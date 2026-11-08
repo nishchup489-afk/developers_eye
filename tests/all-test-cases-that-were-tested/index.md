@@ -30,7 +30,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/api/test_search_limits.py](../../backend/tests/api/test_search_limits.py)
 
-22 cases
+22 cases · write-up: [test_case.md](../../backend/tests/test_case.md#public-search-limits-adr-0046)
 
 - `test_frontend_query_limits_match_the_backend`: lib/search.ts cannot import SearchConfig, so a change on one side must fail here.
 - `test_bucket_allows_burst_then_reports_wait_and_refills`
@@ -180,7 +180,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/integration/test_search_deadlines.py](../../backend/tests/integration/test_search_deadlines.py)
 
-3 cases
+3 cases · write-up: [test_case.md](../../backend/tests/test_case.md#public-search-limits-adr-0046)
 
 - `test_real_statement_timeout_is_504`
 - `test_total_deadline_stops_the_postgres_query`
@@ -1122,11 +1122,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 
 These test files have no matching heading in a `test_case.md`.
 
-- [backend/tests/api/test_search_limits.py](../../backend/tests/api/test_search_limits.py)
 - [backend/tests/golden/test_bm25_golden.py](../../backend/tests/golden/test_bm25_golden.py)
 - [backend/tests/integration/test_corpus_mutation_search.py](../../backend/tests/integration/test_corpus_mutation_search.py)
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
-- [backend/tests/integration/test_search_deadlines.py](../../backend/tests/integration/test_search_deadlines.py)
 - [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 - [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)
 - [backend/tests/unit/test_relevance_metrics_base.py](../../backend/tests/unit/test_relevance_metrics_base.py)

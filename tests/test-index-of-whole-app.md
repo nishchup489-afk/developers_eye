@@ -47,7 +47,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [__init__.py](../backend/tests/__init__.py) | helper |  |  |
 | [api/conftest.py](../backend/tests/api/conftest.py) | fixtures |  |  |
 | [api/test_search.py](../backend/tests/api/test_search.py) | tests | 8 | [test_case.md](../backend/tests/test_case.md#search-http-api) |
-| [api/test_search_limits.py](../backend/tests/api/test_search_limits.py) | tests | 22 |  |
+| [api/test_search_limits.py](../backend/tests/api/test_search_limits.py) | tests | 22 | [test_case.md](../backend/tests/test_case.md#public-search-limits-adr-0046) |
 | [api/test_search_route.py](../backend/tests/api/test_search_route.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#search-http-api) |
 | [golden/test_bm25_golden.py](../backend/tests/golden/test_bm25_golden.py) | tests | 8 |  |
 | [integration/test_code.py](../backend/tests/integration/test_code.py) | tests | 17 | [test_case.md](../backend/tests/test_case.md#code-retrieval) |
@@ -58,7 +58,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [integration/test_ranking_statistics.py](../backend/tests/integration/test_ranking_statistics.py) | tests | 8 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
 | [integration/test_retrieval.py](../backend/tests/integration/test_retrieval.py) | tests | 6 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
 | [integration/test_search.py](../backend/tests/integration/test_search.py) | tests | 5 | [test_case.md](../backend/tests/test_case.md#search-service-against-postgresql) |
-| [integration/test_search_deadlines.py](../backend/tests/integration/test_search_deadlines.py) | tests | 3 |  |
+| [integration/test_search_deadlines.py](../backend/tests/integration/test_search_deadlines.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#public-search-limits-adr-0046) |
 | [integration/test_search_reporting.py](../backend/tests/integration/test_search_reporting.py) | tests | 9 |  |
 | [integration/test_system_reporting.py](../backend/tests/integration/test_system_reporting.py) | tests | 7 | [test_case.md](../backend/tests/test_case.md#admin-system-reporting-postgresql) |
 | [test_case.md](../backend/tests/test_case.md) | write-up |  |  |
