@@ -550,6 +550,22 @@ poetry run pytest tests/integration -v --tb=short
 
 
 
+## Public search limits (ADR-0046)
+
+`tests/api/test_search_limits.py` stubs the database. `tests/integration/test_search_deadlines.py` needs `TEST_DATABASE_URL` (database name containing `test`) and writes no rows. `scripts/e2e_search_stack.py` is the full-stack run: real Next.js and FastAPI on a new database it creates and drops; build the frontend first.
+
+| Test | What it checks |
+|---|---|
+| `test_bucket_allows_burst_then_reports_wait_and_refills`, `test_buckets_are_per_client_and_bounded`, `test_zero_rate_disables_the_limit` | Token bucket behaviour and bounded memory. |
+| `test_search_rate_limit_is_429_with_retry_after`, `test_suggest_rate_limit_is_separate_from_search`, `test_forwarded_clients_get_their_own_buckets` | 429 with `Retry-After`, separate search and suggestion budgets, one bucket per forwarded client. |
+| `test_full_concurrency_cap_is_503_with_retry_after`, `test_concurrent_burst_admits_only_the_cap`, `test_suggestions_share_the_concurrency_cap` | 503 at the cap, and a burst in one event-loop turn cannot overshoot it. |
+| `test_failed_requests_release_their_slot`, `test_validation_failure_does_not_take_a_slot` | Slots are released on failures and never taken for invalid input. |
+| `test_total_deadline_is_504_and_cancels_the_search`, `test_statement_timeout_is_504`, `test_connection_pool_timeout_is_504`, `test_suggest_deadline_and_statement_timeout_are_504` | Every kind of timeout is 504 and leaks no database text. |
+| `test_disconnect_cancels_search_and_frees_its_slot`, `test_disconnect_cancels_suggestion`, `test_deadline_waits_for_cancelled_work_to_unwind` | A disconnect cancels the work; a deadline waits for it to unwind. |
+| `test_frontend_query_limits_match_the_backend` | `frontend/lib/search.ts` and `SearchConfig` have the same limits. |
+| `test_real_statement_timeout_is_504` | A real PostgreSQL `statement_timeout` is recognised, on both routes. |
+| `test_total_deadline_stops_the_postgres_query`, `test_client_disconnect_stops_the_postgres_query` | The abandoned query leaves `pg_stat_activity` well before it would have finished. |
+
 ## Admin system reporting (PostgreSQL)
 
 `tests/integration/test_system_reporting.py` builds the full schema in a throwaway schema inside one rolled-back transaction. Requires `TEST_DATABASE_URL` (database name containing `test`, with `pg_trgm`).
