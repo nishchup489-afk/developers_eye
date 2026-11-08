@@ -437,6 +437,42 @@ h1 .accent {
 .search-submit:active {
   transform: translateY(0) scale(0.98);
 }
+.search-modes {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.search-modes > span {
+  margin-right: 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--faint);
+}
+.search-modes button {
+  padding: 6px 13px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 12px;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.search-modes button:hover,
+.search-modes button:focus-visible {
+  border-color: var(--lime);
+  color: var(--text);
+}
+.search-modes button.active {
+  background: var(--lime);
+  border-color: var(--lime);
+  color: #202913;
+}
+.search-modes small {
+  font-size: 11px;
+  color: var(--faint);
+}
 .search-meta {
   display: flex;
   justify-content: space-between;
