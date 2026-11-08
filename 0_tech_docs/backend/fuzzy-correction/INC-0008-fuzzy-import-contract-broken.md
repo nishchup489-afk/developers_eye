@@ -1,7 +1,7 @@
 ---
 id: INC-0008
 title: Fuzzy correction imports missing and self-referenced symbols
-status: open
+status: resolved
 date: '2026-11-02'
 severity: medium
 area: backend
@@ -13,6 +13,7 @@ code:
 fix_commits: []
 related:
 - ADR-0025
+- ADR-0045
 ---
 
 # INC-0008: Fuzzy correction imports missing and self-referenced symbols
@@ -40,7 +41,9 @@ No additional failed repair attempt is established by the cited evidence. Do not
 
 ## Resolution
 
-**Open.** Restore an explicit exact-lookup/candidate-search contract, implement bounded candidate SQL and repair imports before connecting fallback routing. Renaming a module alone will not implement the missing query.
+**Resolved (verified 2026-11-07).** `candidates.py` now defines `find_fuzzy_candidates` (bounded pg_trgm query) and `get_exact_term`, and `correction.py` imports both from it. `backend/tests/unit/test_fuzzy_suggestions.py` and the real-PostgreSQL `backend/tests/integration/test_fuzzy_suggestions.py` pass, and the path is wired to the UI under ADR-0045. The original note follows.
+
+Restore an explicit exact-lookup/candidate-search contract, implement bounded candidate SQL and repair imports before connecting fallback routing. Renaming a module alone will not implement the missing query.
 
 ## Prevention
 

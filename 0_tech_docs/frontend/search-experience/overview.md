@@ -12,6 +12,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 
 - [`frontend/components/search-experience.tsx`](../../../frontend/components/search-experience.tsx)
 - [`frontend/app/api/search/route.ts`](../../../frontend/app/api/search/route.ts)
+- [`frontend/app/api/search/suggest/route.ts`](../../../frontend/app/api/search/suggest/route.ts) ("Did you mean", see [ADR-0045](../../backend/fuzzy-correction/ADR-0045-did-you-mean-with-surface-word-suggestions.md))
 - [`frontend/lib/search.ts`](../../../frontend/lib/search.ts)
 - [`frontend/lib/axios.js`](../../../frontend/lib/axios.js)
 
@@ -24,6 +25,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
 | [ADR-0031](ADR-0031-same-origin-search-and-explicit-demo.md) | decision | Use a validated same-origin search bridge with explicit demo mode | accepted |
+| [INC-0033](INC-0033-upstream-timeout-ignored-on-first-hung-request.md) | incident | Upstream timeout ignored on a Next.js server's first hung request | resolved |
 
 ## Decisions to record
 
@@ -33,3 +35,5 @@ The identified decisions for this feature are indexed above. Record new decision
 
 - Change backend response schemas and frontend validators together.
 - Keep timeout, no-store and redirect behavior when changing the HTTP abstraction.
+- Do not remove `abortableFetch` in `lib/axios.js` or call FastAPI with bare `fetch`; re-run `npm run test:integration` (cold-start timeout case) after Next.js upgrades (INC-0033).
+- Only offer spelling suggestions; never rewrite the user's query (ADR-0045).

@@ -21,3 +21,23 @@ Details: `0_tech_docs/crawler/scheduler-and-leases/ADR-0001-round-robin-claims-w
 **Problem.** `test_removed_page_invalidates_index_and_recovers_when_restored` inserted a `SearchIndex` row with only `search_vector`. `search_index.code_vector` is `NOT NULL` now, so the insert failed with `NotNullViolationError`.
 
 **Fix.** The fixture now sets `code_vector=func.to_tsvector('simple', '')` as well. The indexer builds code vectors with the `simple` config, and this page has no code blocks.
+
+## Search timeout that never fired on a cold server (2026-11-07)
+
+**Problem.** While adding "Did you mean" tests, `npm run test:integration` hung for about 5 minutes at the existing `/api/search` timeout check. On a freshly started `next start` process, the first request to a FastAPI backend that never answered did not time out, while the second one returned 504 after 10 s. Logging showed axios's timeout signal did abort at 10 000 ms, but Next.js 16's patched `fetch` never settled.
+
+**Fix.** `frontend/lib/axios.js` now gives the `backend` client an `abortableFetch` that races the fetch against its signal and rejects with the signal's reason (axios's `ETIMEDOUT`), so routes return 504 either way.
+
+**Lesson.** A signal that aborts is not proof the request stopped: check that the promise actually settles. Test timeouts against a freshly started server, because the first request can behave differently.
+
+Details: `0_tech_docs/frontend/search-experience/INC-0033-upstream-timeout-ignored-on-first-hung-request.md`.
+
+## Spelling suggestions showed word stems (2026-11-07)
+
+**Problem.** The vocabulary behind `/search/suggest` stores English stems (`configur`, `librari`), so a suggestion could look broken. Edit distance was measured against the stem, so `configuraton` got no suggestion at all, and `configuration` itself looked like a typo because only `configur` is stored. pg_trgm's 0.3 threshold also missed `pyhton` (similarity 0.27).
+
+**Fix.** Rebuild readable words from each stem (stem + common suffixes, `i` back to `y`), keep only those PostgreSQL's `english_stem` reduces to the same stem, and measure distance to the typed word. A word whose stem is indexed counts as spelled correctly. The trigram threshold is lowered to 0.2 for this one transaction.
+
+**Lesson.** A search vocabulary built from stems is not a dictionary. Anything shown to users has to go back through the same stemmer the index used.
+
+Details: `0_tech_docs/backend/fuzzy-correction/ADR-0045-did-you-mean-with-surface-word-suggestions.md`.

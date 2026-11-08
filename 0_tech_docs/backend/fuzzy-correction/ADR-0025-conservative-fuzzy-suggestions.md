@@ -1,7 +1,7 @@
 ---
 id: ADR-0025
 title: Suggest bounded spelling corrections without silently rewriting developer queries
-status: proposed
+status: superseded
 date: '2026-11-02'
 area: backend
 feature: fuzzy-correction
@@ -11,7 +11,7 @@ code:
 - backend/src/backend/schema/search_term.py
 - backend/src/backend/models/search_terms.py
 supersedes: null
-superseded_by: null
+superseded_by: ADR-0045
 related:
 - ADR-0002
 - INC-0007
@@ -19,6 +19,8 @@ related:
 ---
 
 # ADR-0025: Suggest bounded spelling corrections without silently rewriting developer queries
+
+> Superseded by [ADR-0045](ADR-0045-did-you-mean-with-surface-word-suggestions.md) (2026-11-07), which keeps these eligibility rules and adds surface-word mapping and the UI.
 
 ## TL;DR
 
