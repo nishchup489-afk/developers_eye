@@ -1,14 +1,14 @@
 import { backend, isOk, isTimeout } from "@/lib/axios";
 import { searchDemo } from "@/lib/demo";
-import { isSearchResult, sources } from "@/lib/search";
+import { forwardedFor, isSearchResult, sources, upstreamFailure } from "@/lib/search";
 
 export async function GET(request: Request) {
   const started = performance.now();
   const params = new URL(request.url).searchParams;
   const query = params.get("q")?.trim() ?? "";
   const source = params.get("source") ?? "";
-  const json = (body: unknown, status = 200) =>
-    Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
+  const json = (body: unknown, status = 200, headers: Record<string, string> = {}) =>
+    Response.json(body, { status, headers: { "Cache-Control": "no-store", ...headers } });
   if (!query || query.length > 300)
     return json({ error: "Enter a query between 1 and 300 characters." }, 400);
   if (source && ![...sources, "discussions"].includes(source))
@@ -35,12 +35,18 @@ export async function GET(request: Request) {
     if (source) url.searchParams.set("source", source);
     if (page) url.searchParams.set("page", page);
     if (mode) url.searchParams.set("mode", mode);
-    const response = await backend.get(url.toString(), { timeout: 10000 });
-    if (!isOk(response.status))
+    const response = await backend.get(url.toString(), {
+      timeout: 10000,
+      headers: forwardedFor(request),
+    });
+    if (!isOk(response.status)) {
+      const failure = upstreamFailure(response.status, response.headers["retry-after"]);
       return json(
-        { error: "The search service is unavailable. Please try again." },
-        502,
+        { error: failure.error },
+        failure.status,
+        failure.retryAfter ? { "Retry-After": failure.retryAfter } : {},
       );
+    }
     const data = response.data;
     if (
       !data ||

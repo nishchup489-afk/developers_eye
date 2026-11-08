@@ -1,3 +1,35 @@
+/** The error this app returns for a failed FastAPI search or suggestion request. */
+export type UpstreamFailure = { status: number; error: string; retryAfter?: string };
+
+/**
+ * Map a FastAPI failure status to this app's response. Overload and timeouts keep their
+ * meaning (and Retry-After) so the browser can tell "slow down" from "broken".
+ */
+export function upstreamFailure(
+  status: number,
+  retryAfter?: unknown,
+  what: "Search" | "Suggestions" = "Search",
+): UpstreamFailure {
+  const wait =
+    typeof retryAfter === "string" && /^[0-9]{1,4}$/.test(retryAfter) ? retryAfter : undefined;
+  if (status === 429)
+    return { status, error: "Too many searches. Wait a moment and try again.", retryAfter: wait ?? "1" };
+  if (status === 503)
+    return { status, error: `${what} is busy right now. Please try again shortly.`, retryAfter: wait };
+  if (status === 504) return { status, error: `${what} timed out. Please try again.` };
+  if (status === 422) return { status: 400, error: "The search service cannot search this query." };
+  return { status: 502, error: "The search service is unavailable. Please try again." };
+}
+
+/**
+ * The browser's address to forward to FastAPI for per-client rate limiting: the last
+ * X-Forwarded-For entry, which the nearest proxy (Caddy in production) wrote.
+ */
+export function forwardedFor(request: Request): Record<string, string> {
+  const last = request.headers.get("x-forwarded-for")?.split(",").at(-1)?.trim() ?? "";
+  return /^[0-9A-Fa-f:.]{2,45}$/.test(last) ? { "X-Forwarded-For": last } : {};
+}
+
 export const sources = [
   "docs",
   "github",
