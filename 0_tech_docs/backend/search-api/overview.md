@@ -29,6 +29,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | [ADR-0026](../merge-and-contracts/ADR-0026-merge-channel-scores-by-document.md) | decision | Merge candidates by document ID while retaining independent channel evidence | accepted |
 | [ADR-0028](../ranking/ADR-0028-candidate-bm25-ranking-plan.md) | decision | Introduce BM25 reranking only after statistics and relevance validation | proposed |
 | [ADR-0029](../snippets/ADR-0029-plain-text-query-aware-snippets.md) | decision | Generate bounded plain-text passages with separate highlight offsets | accepted |
+| [ADR-0046](ADR-0046-bounded-public-search-requests.md) | decision | Bound every public search with a rate limit, a concurrency cap, deadlines and cancellation | accepted |
 
 ## Decisions to record
 
@@ -36,7 +37,7 @@ Pending implementation/evaluation choices are recorded as proposals: ADR-0028. D
 
 ## Open issues
 
-The route uses a 300-character limit while the analyzer defaults to 256 normalized characters; retrieval output types require adapters. Fuzzy correction has the import defect in INC-0008. Category filtering happens after a 100-candidate cap; there is no implemented total-count/pagination pipeline.
+Retrieval output types require adapters. Fuzzy correction has the import defect in INC-0008. Category filtering happens after a 100-candidate cap; there is no implemented total-count/pagination pipeline.
 
 ## Rules for future changes
 
@@ -45,6 +46,8 @@ The route uses a 300-character limit while the analyzer defaults to 256 normaliz
 - Change `SearchResultOut` and `frontend/lib/search.ts` together (ADR-0003).
 - Replacing the summed-rank ordering or adding pagination needs a new ADR (ADR-0003).
 - Reconcile the frontend, route and analyzer contracts in one integration change.
+- Keep the deadline order: statement timeout, then total deadline, then the Next.js proxy timeout (ADR-0046).
+- Do not publish the API port without narrowing `FORWARDED_ALLOW_IPS` (ADR-0046).
 - Do not call the query analyzer a PostgreSQL tokenizer.
 - Document whether a retriever contributes text, code or both.
 - Add adapters and channel-contract tests before calling merge_hits.
