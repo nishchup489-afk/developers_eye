@@ -1,0 +1,3002 @@
+[
+  {
+    "repo": "freeCodeCamp/freeCodeCamp",
+    "stars": 458678,
+    "open_issues": 181,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "morluto/rea",
+    "stars": 438517,
+    "open_issues": 1611,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "openclaw/openclaw",
+    "stars": 394087,
+    "open_issues": 7654,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "affaan-m/ECC",
+    "stars": 298670,
+    "open_issues": 238,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "NousResearch/hermes-agent",
+    "stars": 261255,
+    "open_issues": 53375,
+    "language": "Python"
+  },
+  {
+    "repo": "react/react",
+    "stars": 252293,
+    "open_issues": 1510,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "anomalyco/opencode",
+    "stars": 225098,
+    "open_issues": 4110,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "vuejs/vue",
+    "stars": 212623,
+    "open_issues": 645,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "n8n-io/n8n",
+    "stars": 209725,
+    "open_issues": 1218,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "yt-dlp/yt-dlp",
+    "stars": 205824,
+    "open_issues": 2770,
+    "language": "Python"
+  },
+  {
+    "repo": "tensorflow/tensorflow",
+    "stars": 201367,
+    "open_issues": 3498,
+    "language": "C++"
+  },
+  {
+    "repo": "firecrawl/firecrawl",
+    "stars": 199315,
+    "open_issues": 775,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "microsoft/vscode",
+    "stars": 195063,
+    "open_issues": 21851,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "microsoft/markitdown",
+    "stars": 194222,
+    "open_issues": 811,
+    "language": "Python"
+  },
+  {
+    "repo": "Significant-Gravitas/AutoGPT",
+    "stars": 187932,
+    "open_issues": 688,
+    "language": "Python"
+  },
+  {
+    "repo": "ollama/ollama",
+    "stars": 186163,
+    "open_issues": 4604,
+    "language": "Go"
+  },
+  {
+    "repo": "DietrichGebert/ponytail",
+    "stars": 185941,
+    "open_issues": 183,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "flutter/flutter",
+    "stars": 181081,
+    "open_issues": 13492,
+    "language": "Dart"
+  },
+  {
+    "repo": "huggingface/transformers",
+    "stars": 168613,
+    "open_issues": 1051,
+    "language": "Python"
+  },
+  {
+    "repo": "AUTOMATIC1111/stable-diffusion-webui",
+    "stars": 165244,
+    "open_issues": 2512,
+    "language": "Python"
+  },
+  {
+    "repo": "langgenius/dify",
+    "stars": 160584,
+    "open_issues": 1201,
+    "language": "Python"
+  },
+  {
+    "repo": "open-webui/open-webui",
+    "stars": 157964,
+    "open_issues": 188,
+    "language": "Svelte"
+  },
+  {
+    "repo": "clash-verge-rev/clash-verge-rev",
+    "stars": 156808,
+    "open_issues": 570,
+    "language": "Rust"
+  },
+  {
+    "repo": "langflow-ai/langflow",
+    "stars": 156397,
+    "open_issues": 1326,
+    "language": "Python"
+  },
+  {
+    "repo": "anthropics/claude-code",
+    "stars": 154820,
+    "open_issues": 16785,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "Genymobile/scrcpy",
+    "stars": 154197,
+    "open_issues": 2944,
+    "language": "C"
+  },
+  {
+    "repo": "farion1231/cc-switch",
+    "stars": 152417,
+    "open_issues": 956,
+    "language": "Rust"
+  },
+  {
+    "repo": "langchain-ai/langchain",
+    "stars": 149143,
+    "open_issues": 721,
+    "language": "Python"
+  },
+  {
+    "repo": "github/spec-kit",
+    "stars": 148240,
+    "open_issues": 197,
+    "language": "Python"
+  },
+  {
+    "repo": "airbnb/javascript",
+    "stars": 148026,
+    "open_issues": 169,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
+    "stars": 146232,
+    "open_issues": 87,
+    "language": "Python"
+  },
+  {
+    "repo": "Comfy-Org/ComfyUI",
+    "stars": 145467,
+    "open_issues": 5448,
+    "language": "Python"
+  },
+  {
+    "repo": "Graphify-Labs/graphify",
+    "stars": 143622,
+    "open_issues": 1651,
+    "language": "Python"
+  },
+  {
+    "repo": "vercel/next.js",
+    "stars": 143372,
+    "open_issues": 3847,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "ytdl-org/youtube-dl",
+    "stars": 141473,
+    "open_issues": 4114,
+    "language": "Python"
+  },
+  {
+    "repo": "microsoft/PowerToys",
+    "stars": 140660,
+    "open_issues": 8028,
+    "language": "C"
+  },
+  {
+    "repo": "garrytan/gstack",
+    "stars": 140502,
+    "open_issues": 73,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "golang/go",
+    "stars": 139758,
+    "open_issues": 9915,
+    "language": "Go"
+  },
+  {
+    "repo": "excalidraw/excalidraw",
+    "stars": 135255,
+    "open_issues": 3493,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "ggml-org/llama.cpp",
+    "stars": 133591,
+    "open_issues": 2587,
+    "language": "C++"
+  },
+  {
+    "repo": "openai/codex",
+    "stars": 133504,
+    "open_issues": 26780,
+    "language": "Rust"
+  },
+  {
+    "repo": "kubernetes/kubernetes",
+    "stars": 128880,
+    "open_issues": 3222,
+    "language": "Go"
+  },
+  {
+    "repo": "rustdesk/rustdesk",
+    "stars": 128485,
+    "open_issues": 211,
+    "language": "Rust"
+  },
+  {
+    "repo": "shadcn-ui/ui",
+    "stars": 127535,
+    "open_issues": 1764,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "react/react-native",
+    "stars": 126869,
+    "open_issues": 1379,
+    "language": "C++"
+  },
+  {
+    "repo": "electron/electron",
+    "stars": 123811,
+    "open_issues": 775,
+    "language": "C++"
+  },
+  {
+    "repo": "nodejs/node",
+    "stars": 123390,
+    "open_issues": 1317,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "rust-lang/rust",
+    "stars": 121502,
+    "open_issues": 12615,
+    "language": "Rust"
+  },
+  {
+    "repo": "TauricResearch/TradingAgents",
+    "stars": 121046,
+    "open_issues": 125,
+    "language": "Python"
+  },
+  {
+    "repo": "earendil-works/pi",
+    "stars": 120524,
+    "open_issues": 262,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "browser-use/browser-use",
+    "stars": 120228,
+    "open_issues": 631,
+    "language": "Python"
+  },
+  {
+    "repo": "gchq/CyberChef",
+    "stars": 36336,
+    "open_issues": 591,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "webadderallorg/Recordly",
+    "stars": 36233,
+    "open_issues": 520,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "drizzle-team/drizzle-orm",
+    "stars": 36224,
+    "open_issues": 2058,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "carbon-app/carbon",
+    "stars": 36137,
+    "open_issues": 76,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "esengine/DeepSeek-Reasonix",
+    "stars": 36120,
+    "open_issues": 661,
+    "language": "Go"
+  },
+  {
+    "repo": "jqlang/jq",
+    "stars": 36053,
+    "open_issues": 428,
+    "language": "C"
+  },
+  {
+    "repo": "lerna/lerna",
+    "stars": 36033,
+    "open_issues": 301,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "yuliskov/SmartTube",
+    "stars": 36020,
+    "open_issues": 839,
+    "language": "Java"
+  },
+  {
+    "repo": "refinedev/refine",
+    "stars": 36010,
+    "open_issues": 59,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "zellij-org/zellij",
+    "stars": 35964,
+    "open_issues": 1931,
+    "language": "Rust"
+  },
+  {
+    "repo": "seaweedfs/seaweedfs",
+    "stars": 35949,
+    "open_issues": 700,
+    "language": "Go"
+  },
+  {
+    "repo": "rustfs/rustfs",
+    "stars": 35818,
+    "open_issues": 66,
+    "language": "Rust"
+  },
+  {
+    "repo": "airbnb/lottie-android",
+    "stars": 35768,
+    "open_issues": 84,
+    "language": "Java"
+  },
+  {
+    "repo": "XingangPan/DragGAN",
+    "stars": 35701,
+    "open_issues": 153,
+    "language": "Python"
+  },
+  {
+    "repo": "koajs/koa",
+    "stars": 35683,
+    "open_issues": 55,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "dgtlmoon/changedetection.io",
+    "stars": 35599,
+    "open_issues": 387,
+    "language": "Python"
+  },
+  {
+    "repo": "MetaCubeX/mihomo",
+    "stars": 35564,
+    "open_issues": 631,
+    "language": "Python"
+  },
+  {
+    "repo": "agentscope-ai/agentscope",
+    "stars": 35529,
+    "open_issues": 785,
+    "language": "Python"
+  },
+  {
+    "repo": "geekcomputers/Python",
+    "stars": 35474,
+    "open_issues": 507,
+    "language": "Python"
+  },
+  {
+    "repo": "qdrant/qdrant",
+    "stars": 35456,
+    "open_issues": 778,
+    "language": "Rust"
+  },
+  {
+    "repo": "typicode/husky",
+    "stars": 35382,
+    "open_issues": 109,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "alvarotrigo/fullPage.js",
+    "stars": 35360,
+    "open_issues": 137,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "SillyTavern/SillyTavern",
+    "stars": 35358,
+    "open_issues": 704,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "binwiederhier/ntfy",
+    "stars": 35351,
+    "open_issues": 365,
+    "language": "Go"
+  },
+  {
+    "repo": "google-research/timesfm",
+    "stars": 35279,
+    "open_issues": 276,
+    "language": "Python"
+  },
+  {
+    "repo": "aristocratos/btop",
+    "stars": 35276,
+    "open_issues": 618,
+    "language": "C++"
+  },
+  {
+    "repo": "ocrmypdf/OCRmyPDF",
+    "stars": 35255,
+    "open_issues": 74,
+    "language": "Python"
+  },
+  {
+    "repo": "FreeCAD/FreeCAD",
+    "stars": 35191,
+    "open_issues": 4053,
+    "language": "C++"
+  },
+  {
+    "repo": "NandhaKishorM/laya",
+    "stars": 35134,
+    "open_issues": 98,
+    "language": "Python"
+  },
+  {
+    "repo": "netty/netty",
+    "stars": 35069,
+    "open_issues": 752,
+    "language": "Java"
+  },
+  {
+    "repo": "anthropics/knowledge-work-plugins",
+    "stars": 35028,
+    "open_issues": 160,
+    "language": "Python"
+  },
+  {
+    "repo": "bumptech/glide",
+    "stars": 35009,
+    "open_issues": 680,
+    "language": "Java"
+  },
+  {
+    "repo": "laravel/framework",
+    "stars": 34992,
+    "open_issues": 94,
+    "language": "PHP"
+  },
+  {
+    "repo": "nothings/stb",
+    "stars": 34958,
+    "open_issues": 160,
+    "language": "C"
+  },
+  {
+    "repo": "openai/codex-plugin-cc",
+    "stars": 34947,
+    "open_issues": 544,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "derailed/k9s",
+    "stars": 34935,
+    "open_issues": 102,
+    "language": "Go"
+  },
+  {
+    "repo": "huggingface/diffusers",
+    "stars": 34883,
+    "open_issues": 1547,
+    "language": "Python"
+  },
+  {
+    "repo": "qishibo/AnotherRedisDesktopManager",
+    "stars": 34846,
+    "open_issues": 165,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "backstage/backstage",
+    "stars": 34793,
+    "open_issues": 626,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "OpenBMB/ChatDev",
+    "stars": 34700,
+    "open_issues": 107,
+    "language": "Python"
+  },
+  {
+    "repo": "balena-io/etcher",
+    "stars": 34667,
+    "open_issues": 703,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "NginxProxyManager/nginx-proxy-manager",
+    "stars": 34647,
+    "open_issues": 827,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "SeleniumHQ/selenium",
+    "stars": 34577,
+    "open_issues": 191,
+    "language": "Java"
+  },
+  {
+    "repo": "CMU-Perceptual-Computing-Lab/openpose",
+    "stars": 34563,
+    "open_issues": 360,
+    "language": "C++"
+  },
+  {
+    "repo": "BVLC/caffe",
+    "stars": 34558,
+    "open_issues": 1176,
+    "language": "C++"
+  },
+  {
+    "repo": "python-poetry/poetry",
+    "stars": 34430,
+    "open_issues": 642,
+    "language": "Python"
+  },
+  {
+    "repo": "fish-shell/fish-shell",
+    "stars": 34412,
+    "open_issues": 571,
+    "language": "Rust"
+  },
+  {
+    "repo": "k3s-io/k3s",
+    "stars": 34351,
+    "open_issues": 78,
+    "language": "Go"
+  },
+  {
+    "repo": "microsoft/WSL",
+    "stars": 34311,
+    "open_issues": 1041,
+    "language": "C++"
+  },
+  {
+    "repo": "jaredpalmer/formik",
+    "stars": 34303,
+    "open_issues": 841,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "github/github-mcp-server",
+    "stars": 34294,
+    "open_issues": 415,
+    "language": "Go"
+  },
+  {
+    "repo": "valinet/ExplorerPatcher",
+    "stars": 34244,
+    "open_issues": 377,
+    "language": "C"
+  },
+  {
+    "repo": "swc-project/swc",
+    "stars": 34208,
+    "open_issues": 440,
+    "language": "Rust"
+  },
+  {
+    "repo": "lllyasviel/ControlNet",
+    "stars": 34150,
+    "open_issues": 461,
+    "language": "Python"
+  },
+  {
+    "repo": "xai-org/x-algorithm",
+    "stars": 34121,
+    "open_issues": 164,
+    "language": "Rust"
+  },
+  {
+    "repo": "iOfficeAI/AionUi",
+    "stars": 34081,
+    "open_issues": 886,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "godotengine/godot",
+    "stars": 119702,
+    "open_issues": 18994,
+    "language": "C++"
+  },
+  {
+    "repo": "immich-app/immich",
+    "stars": 118418,
+    "open_issues": 671,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "JuliusBrussee/caveman",
+    "stars": 118042,
+    "open_issues": 65,
+    "language": "Go"
+  },
+  {
+    "repo": "stablyai/orca",
+    "stars": 117961,
+    "open_issues": 8071,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "mrdoob/three.js",
+    "stars": 117743,
+    "open_issues": 400,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "supabase/supabase",
+    "stars": 114617,
+    "open_issues": 1187,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "thedotmack/claude-mem",
+    "stars": 114092,
+    "open_issues": 118,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "tauri-apps/tauri",
+    "stars": 112569,
+    "open_issues": 1501,
+    "language": "Rust"
+  },
+  {
+    "repo": "microsoft/TypeScript",
+    "stars": 111854,
+    "open_issues": 5255,
+    "language": "Go"
+  },
+  {
+    "repo": "paperclipai/paperclip",
+    "stars": 111793,
+    "open_issues": 6471,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "Panniantong/Agent-Reach",
+    "stars": 109741,
+    "open_issues": 283,
+    "language": "Python"
+  },
+  {
+    "repo": "axios/axios",
+    "stars": 109310,
+    "open_issues": 120,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "denoland/deno",
+    "stars": 108906,
+    "open_issues": 1698,
+    "language": "Rust"
+  },
+  {
+    "repo": "google-gemini/gemini-cli",
+    "stars": 108756,
+    "open_issues": 766,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "nexu-io/open-design",
+    "stars": 106350,
+    "open_issues": 1370,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "microsoft/terminal",
+    "stars": 105333,
+    "open_issues": 1774,
+    "language": "C++"
+  },
+  {
+    "repo": "pytorch/pytorch",
+    "stars": 105223,
+    "open_issues": 18095,
+    "language": "Python"
+  },
+  {
+    "repo": "pbakaus/impeccable",
+    "stars": 104925,
+    "open_issues": 71,
+    "language": "Rust"
+  },
+  {
+    "repo": "deepseek-ai/DeepSeek-V3",
+    "stars": 104750,
+    "open_issues": 323,
+    "language": "Python"
+  },
+  {
+    "repo": "fastapi/fastapi",
+    "stars": 104531,
+    "open_issues": 59,
+    "language": "Python"
+  },
+  {
+    "repo": "react/create-react-app",
+    "stars": 103228,
+    "open_issues": 2410,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "debpalash/VoiceStudio",
+    "stars": 103042,
+    "open_issues": 142,
+    "language": "Python"
+  },
+  {
+    "repo": "ruvnet/RuView",
+    "stars": 102747,
+    "open_issues": 553,
+    "language": "Rust"
+  },
+  {
+    "repo": "angular/angular",
+    "stars": 101407,
+    "open_issues": 1034,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "ant-design/ant-design",
+    "stars": 100096,
+    "open_issues": 1149,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "karpathy/autoresearch",
+    "stars": 99415,
+    "open_issues": 196,
+    "language": "Python"
+  },
+  {
+    "repo": "mui/material-ui",
+    "stars": 99297,
+    "open_issues": 1533,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "sherlock-project/sherlock",
+    "stars": 98716,
+    "open_issues": 362,
+    "language": "Python"
+  },
+  {
+    "repo": "NationalSecurityAgency/ghidra",
+    "stars": 98418,
+    "open_issues": 2185,
+    "language": "Java"
+  },
+  {
+    "repo": "tailwindlabs/tailwindcss",
+    "stars": 98170,
+    "open_issues": 115,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "nvbn/thefuck",
+    "stars": 97942,
+    "open_issues": 470,
+    "language": "Python"
+  },
+  {
+    "repo": "hacksider/Deep-Live-Cam",
+    "stars": 97705,
+    "open_issues": 61,
+    "language": "Python"
+  },
+  {
+    "repo": "localsend/localsend",
+    "stars": 97635,
+    "open_issues": 1038,
+    "language": "Dart"
+  },
+  {
+    "repo": "OpenCut-app/OpenCut",
+    "stars": 97526,
+    "open_issues": 385,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "microsoft/Web-Dev-For-Beginners",
+    "stars": 97119,
+    "open_issues": 145,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "oven-sh/bun",
+    "stars": 96669,
+    "open_issues": 9820,
+    "language": "Rust"
+  },
+  {
+    "repo": "vllm-project/vllm",
+    "stars": 96489,
+    "open_issues": 9975,
+    "language": "Python"
+  },
+  {
+    "repo": "3b1b/manim",
+    "stars": 96218,
+    "open_issues": 520,
+    "language": "Python"
+  },
+  {
+    "repo": "Stirling-Tools/Stirling-PDF",
+    "stars": 95897,
+    "open_issues": 509,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "puppeteer/puppeteer",
+    "stars": 95809,
+    "open_issues": 207,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "odysseus-dev/odysseus",
+    "stars": 95329,
+    "open_issues": 1501,
+    "language": "Python"
+  },
+  {
+    "repo": "iluwatar/java-design-patterns",
+    "stars": 94847,
+    "open_issues": 146,
+    "language": "Java"
+  },
+  {
+    "repo": "ryanmcdermott/clean-code-javascript",
+    "stars": 94693,
+    "open_issues": 124,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "tt-a1i/archify",
+    "stars": 94244,
+    "open_issues": 323,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "zed-industries/zed",
+    "stars": 93762,
+    "open_issues": 3034,
+    "language": "Rust"
+  },
+  {
+    "repo": "infiniflow/ragflow",
+    "stars": 93703,
+    "open_issues": 1333,
+    "language": "Go"
+  },
+  {
+    "repo": "louislam/uptime-kuma",
+    "stars": 93332,
+    "open_issues": 864,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "OpenHands/OpenHands",
+    "stars": 92850,
+    "open_issues": 1150,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "PaddlePaddle/PaddleOCR",
+    "stars": 92386,
+    "open_issues": 259,
+    "language": "Python"
+  },
+  {
+    "repo": "home-assistant/core",
+    "stars": 92019,
+    "open_issues": 3617,
+    "language": "Python"
+  },
+  {
+    "repo": "astral-sh/uv",
+    "stars": 91713,
+    "open_issues": 3046,
+    "language": "Rust"
+  },
+  {
+    "repo": "opencv/opencv",
+    "stars": 91476,
+    "open_issues": 2910,
+    "language": "C++"
+  },
+  {
+    "repo": "Egonex-AI/Understand-Anything",
+    "stars": 91137,
+    "open_issues": 353,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "mermaid-js/mermaid",
+    "stars": 91028,
+    "open_issues": 2075,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "bitcoin/bitcoin",
+    "stars": 90617,
+    "open_issues": 763,
+    "language": "C++"
+  },
+  {
+    "repo": "gohugoio/hugo",
+    "stars": 90400,
+    "open_issues": 212,
+    "language": "Go"
+  },
+  {
+    "repo": "koala73/worldmonitor",
+    "stars": 90286,
+    "open_issues": 326,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "syncthing/syncthing",
+    "stars": 90166,
+    "open_issues": 399,
+    "language": "Go"
+  },
+  {
+    "repo": "PanJiaChen/vue-element-admin",
+    "stars": 90114,
+    "open_issues": 1399,
+    "language": "Vue"
+  },
+  {
+    "repo": "gin-gonic/gin",
+    "stars": 89593,
+    "open_issues": 822,
+    "language": "Go"
+  },
+  {
+    "repo": "ChatGPTNextWeb/NextChat",
+    "stars": 88949,
+    "open_issues": 860,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "sveltejs/svelte",
+    "stars": 88658,
+    "open_issues": 1285,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "unclecode/crawl4ai",
+    "stars": 87027,
+    "open_issues": 311,
+    "language": "Python"
+  },
+  {
+    "repo": "bregman-arie/devops-exercises",
+    "stars": 86587,
+    "open_issues": 57,
+    "language": "Python"
+  },
+  {
+    "repo": "rtk-ai/rtk",
+    "stars": 85772,
+    "open_issues": 1698,
+    "language": "Rust"
+  },
+  {
+    "repo": "cheaper-inference/OmniRoute",
+    "stars": 85218,
+    "open_issues": 592,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "bytedance/deer-flow",
+    "stars": 85089,
+    "open_issues": 1057,
+    "language": "Python"
+  },
+  {
+    "repo": "lobehub/lobehub",
+    "stars": 84267,
+    "open_issues": 1369,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "junegunn/fzf",
+    "stars": 84051,
+    "open_issues": 334,
+    "language": "Go"
+  },
+  {
+    "repo": "vitejs/vite",
+    "stars": 83846,
+    "open_issues": 839,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "jesseduffield/lazygit",
+    "stars": 83695,
+    "open_issues": 1066,
+    "language": "Go"
+  },
+  {
+    "repo": "tonsky/FiraCode",
+    "stars": 82177,
+    "open_issues": 430,
+    "language": "Clojure"
+  },
+  {
+    "repo": "spring-projects/spring-boot",
+    "stars": 81785,
+    "open_issues": 478,
+    "language": "Java"
+  },
+  {
+    "repo": "Z4nzu/hackingtool",
+    "stars": 81750,
+    "open_issues": 134,
+    "language": "Python"
+  },
+  {
+    "repo": "netdata/netdata",
+    "stars": 81296,
+    "open_issues": 439,
+    "language": "Go"
+  },
+  {
+    "repo": "ruvnet/ruflo",
+    "stars": 81098,
+    "open_issues": 644,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "abi/screenshot-to-code",
+    "stars": 81071,
+    "open_issues": 150,
+    "language": "Python"
+  },
+  {
+    "repo": "hoppscotch/hoppscotch",
+    "stars": 80762,
+    "open_issues": 891,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "career-ops-hq/career-ops",
+    "stars": 80759,
+    "open_issues": 424,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "ventoy/Ventoy",
+    "stars": 80627,
+    "open_issues": 1015,
+    "language": "C"
+  },
+  {
+    "repo": "heygen-com/hyperframes",
+    "stars": 80181,
+    "open_issues": 220,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "anuraghazra/github-readme-stats",
+    "stars": 79848,
+    "open_issues": 299,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "coder/code-server",
+    "stars": 79776,
+    "open_issues": 151,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "unslothai/unsloth",
+    "stars": 79133,
+    "open_issues": 483,
+    "language": "Python"
+  },
+  {
+    "repo": "obsproject/obs-studio",
+    "stars": 79082,
+    "open_issues": 1211,
+    "language": "C"
+  },
+  {
+    "repo": "headroomlabs-ai/headroom",
+    "stars": 79041,
+    "open_issues": 273,
+    "language": "Python"
+  },
+  {
+    "repo": "caddyserver/caddy",
+    "stars": 78857,
+    "open_issues": 274,
+    "language": "Go"
+  },
+  {
+    "repo": "elastic/elasticsearch",
+    "stars": 78516,
+    "open_issues": 6397,
+    "language": "Java"
+  },
+  {
+    "repo": "AppFlowy-IO/AppFlowy",
+    "stars": 78345,
+    "open_issues": 1024,
+    "language": "Dart"
+  },
+  {
+    "repo": "Asabeneh/30-Days-Of-Python",
+    "stars": 78299,
+    "open_issues": 240,
+    "language": "Python"
+  },
+  {
+    "repo": "python/cpython",
+    "stars": 78064,
+    "open_issues": 9258,
+    "language": "Python"
+  },
+  {
+    "repo": "calesthio/OpenMontage",
+    "stars": 77805,
+    "open_issues": 448,
+    "language": "Python"
+  },
+  {
+    "repo": "grafana/grafana",
+    "stars": 77735,
+    "open_issues": 3323,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "tensorflow/models",
+    "stars": 77635,
+    "open_issues": 1276,
+    "language": "Python"
+  },
+  {
+    "repo": "storytold/photocraft",
+    "stars": 77528,
+    "open_issues": 3746,
+    "language": "Rust"
+  },
+  {
+    "repo": "tesseract-ocr/tesseract",
+    "stars": 77396,
+    "open_issues": 491,
+    "language": "C++"
+  },
+  {
+    "repo": "nomic-ai/gpt4all",
+    "stars": 77341,
+    "open_issues": 775,
+    "language": "C++"
+  },
+  {
+    "repo": "redis/redis",
+    "stars": 77267,
+    "open_issues": 3104,
+    "language": "C"
+  },
+  {
+    "repo": "rohitg00/ai-engineering-from-scratch",
+    "stars": 77194,
+    "open_issues": 92,
+    "language": "Python"
+  },
+  {
+    "repo": "ocornut/imgui",
+    "stars": 77008,
+    "open_issues": 1219,
+    "language": "C++"
+  },
+  {
+    "repo": "colbymchenry/codegraph",
+    "stars": 76947,
+    "open_issues": 262,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "hiyouga/LlamaFactory",
+    "stars": 75920,
+    "open_issues": 1223,
+    "language": "Python"
+  },
+  {
+    "repo": "typicode/json-server",
+    "stars": 75735,
+    "open_issues": 721,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "apache/superset",
+    "stars": 75443,
+    "open_issues": 616,
+    "language": "Python"
+  },
+  {
+    "repo": "Eugeny/tabby",
+    "stars": 75315,
+    "open_issues": 2892,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "openbq-org/OpenBB",
+    "stars": 75176,
+    "open_issues": 102,
+    "language": "Python"
+  },
+  {
+    "repo": "juliangarnier/anime",
+    "stars": 74369,
+    "open_issues": 128,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "toeverything/AFFiNE",
+    "stars": 74284,
+    "open_issues": 802,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "Fission-AI/OpenSpec",
+    "stars": 74186,
+    "open_issues": 198,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "usestrix/strix",
+    "stars": 74159,
+    "open_issues": 551,
+    "language": "Python"
+  },
+  {
+    "repo": "twitter/the-algorithm",
+    "stars": 74015,
+    "open_issues": 524,
+    "language": "Scala"
+  },
+  {
+    "repo": "unionlabs/union",
+    "stars": 73720,
+    "open_issues": 196,
+    "language": "Rust"
+  },
+  {
+    "repo": "strapi/strapi",
+    "stars": 73439,
+    "open_issues": 629,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "nektos/act",
+    "stars": 72573,
+    "open_issues": 380,
+    "language": "Go"
+  },
+  {
+    "repo": "hakimel/reveal.js",
+    "stars": 72521,
+    "open_issues": 932,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "moby/moby",
+    "stars": 72352,
+    "open_issues": 3944,
+    "language": "Go"
+  },
+  {
+    "repo": "protocolbuffers/protobuf",
+    "stars": 72151,
+    "open_issues": 401,
+    "language": "C++"
+  },
+  {
+    "repo": "cline/cline",
+    "stars": 71413,
+    "open_issues": 1753,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "remotion-dev/remotion",
+    "stars": 71336,
+    "open_issues": 208,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "ansible/ansible",
+    "stars": 71259,
+    "open_issues": 876,
+    "language": "Python"
+  },
+  {
+    "repo": "FoundationAgents/MetaGPT",
+    "stars": 71205,
+    "open_issues": 151,
+    "language": "Python"
+  },
+  {
+    "repo": "code-yeongyu/oh-my-openagent",
+    "stars": 70754,
+    "open_issues": 2412,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "swiftlang/swift",
+    "stars": 70544,
+    "open_issues": 9575,
+    "language": "Swift"
+  },
+  {
+    "repo": "dani-garcia/vaultwarden",
+    "stars": 70351,
+    "open_issues": 91,
+    "language": "Rust"
+  },
+  {
+    "repo": "docling-project/docling",
+    "stars": 70235,
+    "open_issues": 950,
+    "language": "Python"
+  },
+  {
+    "repo": "ai-job-search-dev/ai-job-search",
+    "stars": 70113,
+    "open_issues": 84,
+    "language": "Python"
+  },
+  {
+    "repo": "BurntSushi/ripgrep",
+    "stars": 69849,
+    "open_issues": 224,
+    "language": "Rust"
+  },
+  {
+    "repo": "expressjs/express",
+    "stars": 69576,
+    "open_issues": 260,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "mem0ai/mem0",
+    "stars": 68537,
+    "open_issues": 922,
+    "language": "Python"
+  },
+  {
+    "repo": "Mintplex-Labs/anything-llm",
+    "stars": 68018,
+    "open_issues": 352,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "chartjs/Chart.js",
+    "stars": 67778,
+    "open_issues": 634,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "apache/echarts",
+    "stars": 67690,
+    "open_issues": 1487,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "prometheus/prometheus",
+    "stars": 67223,
+    "open_issues": 1079,
+    "language": "Go"
+  },
+  {
+    "repo": "LadybirdBrowser/ladybird",
+    "stars": 66906,
+    "open_issues": 405,
+    "language": "C++"
+  },
+  {
+    "repo": "meta/docusaurus",
+    "stars": 66665,
+    "open_issues": 428,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "alacritty/alacritty",
+    "stars": 66124,
+    "open_issues": 346,
+    "language": "Rust"
+  },
+  {
+    "repo": "webpack/webpack",
+    "stars": 65994,
+    "open_issues": 122,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "warpdotdev/warp",
+    "stars": 65900,
+    "open_issues": 5546,
+    "language": "Rust"
+  },
+  {
+    "repo": "coollabsio/coolify",
+    "stars": 65735,
+    "open_issues": 240,
+    "language": "PHP"
+  },
+  {
+    "repo": "traefik/traefik",
+    "stars": 65483,
+    "open_issues": 973,
+    "language": "Go"
+  },
+  {
+    "repo": "2dust/v2rayNG",
+    "stars": 65454,
+    "open_issues": 72,
+    "language": "Kotlin"
+  },
+  {
+    "repo": "nocodb/nocodb",
+    "stars": 65435,
+    "open_issues": 582,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "scrapy/scrapy",
+    "stars": 65254,
+    "open_issues": 183,
+    "language": "Python"
+  },
+  {
+    "repo": "jingyaogong/minimind",
+    "stars": 64953,
+    "open_issues": 62,
+    "language": "Python"
+  },
+  {
+    "repo": "virattt/ai-hedge-fund",
+    "stars": 64530,
+    "open_issues": 189,
+    "language": "Python"
+  },
+  {
+    "repo": "karpathy/nanoGPT",
+    "stars": 64515,
+    "open_issues": 355,
+    "language": "Python"
+  },
+  {
+    "repo": "RVC-Boss/GPT-SoVITS",
+    "stars": 64427,
+    "open_issues": 911,
+    "language": "Python"
+  },
+  {
+    "repo": "keras-team/keras",
+    "stars": 64417,
+    "open_issues": 283,
+    "language": "Python"
+  },
+  {
+    "repo": "cloudflare/security-audit-skill",
+    "stars": 64325,
+    "open_issues": 115,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "usememos/memos",
+    "stars": 64324,
+    "open_issues": 50,
+    "language": "Go"
+  },
+  {
+    "repo": "upstash/context7",
+    "stars": 64301,
+    "open_issues": 57,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "termux/termux-app",
+    "stars": 64285,
+    "open_issues": 653,
+    "language": "Java"
+  },
+  {
+    "repo": "commaai/openpilot",
+    "stars": 64077,
+    "open_issues": 148,
+    "language": "Python"
+  },
+  {
+    "repo": "withastro/astro",
+    "stars": 63794,
+    "open_issues": 137,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "ghostty-org/ghostty",
+    "stars": 63754,
+    "open_issues": 265,
+    "language": "Zig"
+  },
+  {
+    "repo": "marktext/marktext",
+    "stars": 63677,
+    "open_issues": 234,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "bilawalsidhu/gods-eye-view",
+    "stars": 63250,
+    "open_issues": 422,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "socketio/socket.io",
+    "stars": 63237,
+    "open_issues": 189,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "ultralytics/ultralytics",
+    "stars": 63180,
+    "open_issues": 78,
+    "language": "Python"
+  },
+  {
+    "repo": "resume/resume.github.com",
+    "stars": 62898,
+    "open_issues": 78,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "BerriAI/litellm",
+    "stars": 62852,
+    "open_issues": 5701,
+    "language": "Python"
+  },
+  {
+    "repo": "penpot/penpot",
+    "stars": 62147,
+    "open_issues": 934,
+    "language": "Clojure"
+  },
+  {
+    "repo": "makeplane/plane",
+    "stars": 62097,
+    "open_issues": 1117,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "microsoft/autogen",
+    "stars": 61736,
+    "open_issues": 1155,
+    "language": "Python"
+  },
+  {
+    "repo": "chen08209/FlClash",
+    "stars": 61696,
+    "open_issues": 313,
+    "language": "Dart"
+  },
+  {
+    "repo": "FuelLabs/sway",
+    "stars": 61350,
+    "open_issues": 961,
+    "language": "Rust"
+  },
+  {
+    "repo": "lodash/lodash",
+    "stars": 61263,
+    "open_issues": 124,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "sharkdp/bat",
+    "stars": 61205,
+    "open_issues": 563,
+    "language": "Rust"
+  },
+  {
+    "repo": "nuxt/nuxt",
+    "stars": 61046,
+    "open_issues": 476,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "rclone/rclone",
+    "stars": 60839,
+    "open_issues": 1293,
+    "language": "Go"
+  },
+  {
+    "repo": "starship/starship",
+    "stars": 60622,
+    "open_issues": 1066,
+    "language": "Rust"
+  },
+  {
+    "repo": "crewAIInc/crewAI",
+    "stars": 60593,
+    "open_issues": 1181,
+    "language": "Python"
+  },
+  {
+    "repo": "twentyhq/twenty",
+    "stars": 60571,
+    "open_issues": 140,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "MemPalace/mempalace",
+    "stars": 60447,
+    "open_issues": 836,
+    "language": "Python"
+  },
+  {
+    "repo": "ayghri/i-have-adhd",
+    "stars": 60368,
+    "open_issues": 94,
+    "language": "Python"
+  },
+  {
+    "repo": "karpathy/nanochat",
+    "stars": 60343,
+    "open_issues": 139,
+    "language": "Python"
+  },
+  {
+    "repo": "spring-projects/spring-framework",
+    "stars": 60305,
+    "open_issues": 491,
+    "language": "Java"
+  },
+  {
+    "repo": "adam-p/markdown-here",
+    "stars": 60250,
+    "open_issues": 320,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "CorentinJ/Real-Time-Voice-Cloning",
+    "stars": 60230,
+    "open_issues": 178,
+    "language": "Python"
+  },
+  {
+    "repo": "jquery/jquery",
+    "stars": 59858,
+    "open_issues": 96,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "FiloSottile/mkcert",
+    "stars": 59836,
+    "open_issues": 178,
+    "language": "Go"
+  },
+  {
+    "repo": "meilisearch/meilisearch",
+    "stars": 59805,
+    "open_issues": 315,
+    "language": "Rust"
+  },
+  {
+    "repo": "jamiepine/voicebox",
+    "stars": 59707,
+    "open_issues": 534,
+    "language": "Python"
+  },
+  {
+    "repo": "meta-llama/llama",
+    "stars": 59624,
+    "open_issues": 538,
+    "language": "Python"
+  },
+  {
+    "repo": "shadowsocks/shadowsocks-windows",
+    "stars": 59493,
+    "open_issues": 201,
+    "language": "C#"
+  },
+  {
+    "repo": "vectorize-io/hindsight",
+    "stars": 59475,
+    "open_issues": 190,
+    "language": "Python"
+  },
+  {
+    "repo": "jellyfin/jellyfin",
+    "stars": 59081,
+    "open_issues": 857,
+    "language": "C#"
+  },
+  {
+    "repo": "rails/rails",
+    "stars": 59047,
+    "open_issues": 1762,
+    "language": "Ruby"
+  },
+  {
+    "repo": "go-gitea/gitea",
+    "stars": 58933,
+    "open_issues": 2192,
+    "language": "Go"
+  },
+  {
+    "repo": "FoundationAgents/OpenManus",
+    "stars": 58903,
+    "open_issues": 449,
+    "language": "Python"
+  },
+  {
+    "repo": "HKUDS/CLI-Anything",
+    "stars": 58375,
+    "open_issues": 240,
+    "language": "Python"
+  },
+  {
+    "repo": "agalwood/Motrix",
+    "stars": 57891,
+    "open_issues": 181,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "appwrite/appwrite",
+    "stars": 57882,
+    "open_issues": 754,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "router-for-me/CLIProxyAPI",
+    "stars": 57825,
+    "open_issues": 824,
+    "language": "Go"
+  },
+  {
+    "repo": "Textualize/rich",
+    "stars": 57740,
+    "open_issues": 393,
+    "language": "Python"
+  },
+  {
+    "repo": "laurent22/joplin",
+    "stars": 57066,
+    "open_issues": 658,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "typst/typst",
+    "stars": 57021,
+    "open_issues": 1339,
+    "language": "Rust"
+  },
+  {
+    "repo": "ageitgey/face_recognition",
+    "stars": 56880,
+    "open_issues": 833,
+    "language": "Python"
+  },
+  {
+    "repo": "FuelLabs/fuel-core",
+    "stars": 56768,
+    "open_issues": 213,
+    "language": "Rust"
+  },
+  {
+    "repo": "remix-run/react-router",
+    "stars": 56630,
+    "open_issues": 235,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "microsoft/VibeVoice",
+    "stars": 56515,
+    "open_issues": 205,
+    "language": "Python"
+  },
+  {
+    "repo": "aaif-goose/goose",
+    "stars": 56314,
+    "open_issues": 565,
+    "language": "Rust"
+  },
+  {
+    "repo": "PowerShell/PowerShell",
+    "stars": 56037,
+    "open_issues": 1616,
+    "language": "C#"
+  },
+  {
+    "repo": "HKUDS/DeepTutor",
+    "stars": 56033,
+    "open_issues": 316,
+    "language": "Python"
+  },
+  {
+    "repo": "gatsbyjs/gatsby",
+    "stars": 55917,
+    "open_issues": 461,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "WerWolv/ImHex",
+    "stars": 55762,
+    "open_issues": 423,
+    "language": "C++"
+  },
+  {
+    "repo": "TryGhost/Ghost",
+    "stars": 55702,
+    "open_issues": 220,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "odoo/odoo",
+    "stars": 55612,
+    "open_issues": 11273,
+    "language": "Python"
+  },
+  {
+    "repo": "multica-ai/multica",
+    "stars": 55180,
+    "open_issues": 1908,
+    "language": "Go"
+  },
+  {
+    "repo": "bmad-code-org/BMAD-METHOD",
+    "stars": 55089,
+    "open_issues": 96,
+    "language": "Python"
+  },
+  {
+    "repo": "ggml-org/whisper.cpp",
+    "stars": 54986,
+    "open_issues": 360,
+    "language": "C++"
+  },
+  {
+    "repo": "ChromeDevTools/chrome-devtools-mcp",
+    "stars": 54902,
+    "open_issues": 125,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "vuejs/core",
+    "stars": 54837,
+    "open_issues": 947,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "psf/requests",
+    "stars": 54711,
+    "open_issues": 248,
+    "language": "Python"
+  },
+  {
+    "repo": "wagoodman/dive",
+    "stars": 54705,
+    "open_issues": 204,
+    "language": "Go"
+  },
+  {
+    "repo": "lencx/ChatGPT",
+    "stars": 54664,
+    "open_issues": 957,
+    "language": "Rust"
+  },
+  {
+    "repo": "mozilla/pdf.js",
+    "stars": 54105,
+    "open_issues": 474,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "ElemeFE/element",
+    "stars": 53975,
+    "open_issues": 2966,
+    "language": "Vue"
+  },
+  {
+    "repo": "lllyasviel/Fooocus",
+    "stars": 53833,
+    "open_issues": 316,
+    "language": "Python"
+  },
+  {
+    "repo": "Gathin23/cleanyourtv",
+    "stars": 53397,
+    "open_issues": 269,
+    "language": "Python"
+  },
+  {
+    "repo": "expo/expo",
+    "stars": 53379,
+    "open_issues": 991,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "CherryHQ/cherry-studio",
+    "stars": 53310,
+    "open_issues": 2532,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "jesseduffield/lazydocker",
+    "stars": 53281,
+    "open_issues": 310,
+    "language": "Go"
+  },
+  {
+    "repo": "run-llama/llama_index",
+    "stars": 52836,
+    "open_issues": 1318,
+    "language": "Python"
+  },
+  {
+    "repo": "ionic-team/ionic-framework",
+    "stars": 52747,
+    "open_issues": 524,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "etcd-io/etcd",
+    "stars": 52632,
+    "open_issues": 425,
+    "language": "Go"
+  },
+  {
+    "repo": "prettier/prettier",
+    "stars": 52406,
+    "open_issues": 1479,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "dbeaver/dbeaver",
+    "stars": 52329,
+    "open_issues": 3348,
+    "language": "Java"
+  },
+  {
+    "repo": "google/guava",
+    "stars": 51921,
+    "open_issues": 775,
+    "language": "Java"
+  },
+  {
+    "repo": "upscayl/upscayl",
+    "stars": 51870,
+    "open_issues": 50,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "boykopovar/AnyPS5",
+    "stars": 51841,
+    "open_issues": 2060,
+    "language": "C++"
+  },
+  {
+    "repo": "jekyll/jekyll",
+    "stars": 51747,
+    "open_issues": 264,
+    "language": "Ruby"
+  },
+  {
+    "repo": "skylot/jadx",
+    "stars": 51648,
+    "open_issues": 478,
+    "language": "Java"
+  },
+  {
+    "repo": "roboflow/supervision",
+    "stars": 51533,
+    "open_issues": 84,
+    "language": "Python"
+  },
+  {
+    "repo": "QuantumNous/new-api",
+    "stars": 51513,
+    "open_issues": 1448,
+    "language": "Go"
+  },
+  {
+    "repo": "DefinitelyTyped/DefinitelyTyped",
+    "stars": 51466,
+    "open_issues": 867,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "ethereum/go-ethereum",
+    "stars": 51466,
+    "open_issues": 495,
+    "language": "Go"
+  },
+  {
+    "repo": "tldraw/tldraw",
+    "stars": 51387,
+    "open_issues": 589,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "moeru-ai/airi",
+    "stars": 51176,
+    "open_issues": 281,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "apple/container",
+    "stars": 51090,
+    "open_issues": 591,
+    "language": "Swift"
+  },
+  {
+    "repo": "cypress-io/cypress",
+    "stars": 51021,
+    "open_issues": 1167,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "Semantic-Org/Semantic-UI",
+    "stars": 50999,
+    "open_issues": 1071,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "chenglou/pretext",
+    "stars": 50996,
+    "open_issues": 65,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "ClickHouse/ClickHouse",
+    "stars": 50796,
+    "open_issues": 8815,
+    "language": "C++"
+  },
+  {
+    "repo": "astral-sh/ruff",
+    "stars": 50735,
+    "open_issues": 2263,
+    "language": "Rust"
+  },
+  {
+    "repo": "team-spotube/spotube",
+    "stars": 50635,
+    "open_issues": 402,
+    "language": "Kotlin"
+  },
+  {
+    "repo": "TanStack/query",
+    "stars": 50533,
+    "open_issues": 112,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "pandas-dev/pandas",
+    "stars": 50503,
+    "open_issues": 1984,
+    "language": "Python"
+  },
+  {
+    "repo": "mastodon/mastodon",
+    "stars": 50493,
+    "open_issues": 4622,
+    "language": "Ruby"
+  },
+  {
+    "repo": "huginn/huginn",
+    "stars": 50309,
+    "open_issues": 697,
+    "language": "Ruby"
+  },
+  {
+    "repo": "mudler/LocalAI",
+    "stars": 50236,
+    "open_issues": 180,
+    "language": "Go"
+  },
+  {
+    "repo": "x64dbg/x64dbg",
+    "stars": 50224,
+    "open_issues": 575,
+    "language": "C++"
+  },
+  {
+    "repo": "metabase/metabase",
+    "stars": 50216,
+    "open_issues": 4669,
+    "language": "Clojure"
+  },
+  {
+    "repo": "tmux/tmux",
+    "stars": 50187,
+    "open_issues": 64,
+    "language": "C"
+  },
+  {
+    "repo": "hashicorp/terraform",
+    "stars": 50155,
+    "open_issues": 1935,
+    "language": "Go"
+  },
+  {
+    "repo": "microsoft/qlib",
+    "stars": 50081,
+    "open_issues": 516,
+    "language": "Python"
+  },
+  {
+    "repo": "pingdotgg/t3code",
+    "stars": 50032,
+    "open_issues": 5561,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "Aider-AI/aider",
+    "stars": 49996,
+    "open_issues": 1951,
+    "language": "Python"
+  },
+  {
+    "repo": "HKUDS/nanobot",
+    "stars": 49893,
+    "open_issues": 866,
+    "language": "Python"
+  },
+  {
+    "repo": "NARKOZ/hacker-scripts",
+    "stars": 49861,
+    "open_issues": 72,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "calcom/cal.diy",
+    "stars": 49753,
+    "open_issues": 1602,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "bigskysoftware/htmx",
+    "stars": 49611,
+    "open_issues": 306,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "alibaba/open-code-review",
+    "stars": 49582,
+    "open_issues": 348,
+    "language": "Go"
+  },
+  {
+    "repo": "bevyengine/bevy",
+    "stars": 49580,
+    "open_issues": 3534,
+    "language": "Rust"
+  },
+  {
+    "repo": "MHSanaei/3x-ui",
+    "stars": 49448,
+    "open_issues": 268,
+    "language": "Go"
+  },
+  {
+    "repo": "algorithm-visualizer/algorithm-visualizer",
+    "stars": 49396,
+    "open_issues": 81,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "slidevjs/slidev",
+    "stars": 49389,
+    "open_issues": 201,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "JuliaLang/julia",
+    "stars": 49244,
+    "open_issues": 4364,
+    "language": "Julia"
+  },
+  {
+    "repo": "herdrdev/herdr",
+    "stars": 48775,
+    "open_issues": 441,
+    "language": "Rust"
+  },
+  {
+    "repo": "iamkun/dayjs",
+    "stars": 48653,
+    "open_issues": 1455,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "pixijs/pixijs",
+    "stars": 48642,
+    "open_issues": 419,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "type-challenges/type-challenges",
+    "stars": 48557,
+    "open_issues": 33337,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "JustVugg/colibri",
+    "stars": 48511,
+    "open_issues": 192,
+    "language": "C"
+  },
+  {
+    "repo": "abhigyanpatwari/GitNexus",
+    "stars": 48315,
+    "open_issues": 283,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "usebruno/bruno",
+    "stars": 48256,
+    "open_issues": 1961,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "DeusData/codebase-memory-mcp",
+    "stars": 48251,
+    "open_issues": 555,
+    "language": "C"
+  },
+  {
+    "repo": "exo-explore/exo",
+    "stars": 48227,
+    "open_issues": 457,
+    "language": "Python"
+  },
+  {
+    "repo": "gogs/gogs",
+    "stars": 47919,
+    "open_issues": 1014,
+    "language": "Go"
+  },
+  {
+    "repo": "moment/moment",
+    "stars": 47874,
+    "open_issues": 73,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "oobabooga/textgen",
+    "stars": 47737,
+    "open_issues": 867,
+    "language": "Python"
+  },
+  {
+    "repo": "prisma/orm",
+    "stars": 47659,
+    "open_issues": 2840,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "apache/airflow",
+    "stars": 47403,
+    "open_issues": 1847,
+    "language": "Python"
+  },
+  {
+    "repo": "slab/quill",
+    "stars": 47366,
+    "open_issues": 664,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "9001/copyparty",
+    "stars": 47268,
+    "open_issues": 273,
+    "language": "Python"
+  },
+  {
+    "repo": "lysine-dev/okhttp",
+    "stars": 47109,
+    "open_issues": 163,
+    "language": "Kotlin"
+  },
+  {
+    "repo": "shiyu-coder/Kronos",
+    "stars": 47090,
+    "open_issues": 297,
+    "language": "Python"
+  },
+  {
+    "repo": "iina/iina",
+    "stars": 47031,
+    "open_issues": 1985,
+    "language": "Swift"
+  },
+  {
+    "repo": "Asabeneh/30-Days-Of-JavaScript",
+    "stars": 46993,
+    "open_issues": 366,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "microsoft/monaco-editor",
+    "stars": 46959,
+    "open_issues": 888,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "serverless/serverless",
+    "stars": 46932,
+    "open_issues": 1210,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "helix-editor/helix",
+    "stars": 46901,
+    "open_issues": 1787,
+    "language": "Rust"
+  },
+  {
+    "repo": "cli/cli",
+    "stars": 46899,
+    "open_issues": 1121,
+    "language": "Go"
+  },
+  {
+    "repo": "jgm/pandoc",
+    "stars": 46843,
+    "open_issues": 1056,
+    "language": "Haskell"
+  },
+  {
+    "repo": "LibreChat-AI/LibreChat",
+    "stars": 46824,
+    "open_issues": 1157,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "mitmproxy/mitmproxy",
+    "stars": 46690,
+    "open_issues": 541,
+    "language": "Python"
+  },
+  {
+    "repo": "luongnv89/claude-howto",
+    "stars": 46675,
+    "open_issues": 52,
+    "language": "Python"
+  },
+  {
+    "repo": "milvus-io/milvus",
+    "stars": 46610,
+    "open_issues": 1568,
+    "language": "Go"
+  },
+  {
+    "repo": "files-community/Files",
+    "stars": 46514,
+    "open_issues": 461,
+    "language": "C#"
+  },
+  {
+    "repo": "RocketChat/Rocket.Chat",
+    "stars": 46376,
+    "open_issues": 4364,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "vercel-labs/agent-browser",
+    "stars": 46334,
+    "open_issues": 489,
+    "language": "Rust"
+  },
+  {
+    "repo": "anthropics/claude-plugins-official",
+    "stars": 46318,
+    "open_issues": 1268,
+    "language": "Python"
+  },
+  {
+    "repo": "AstrBotDevs/AstrBot",
+    "stars": 46283,
+    "open_issues": 1162,
+    "language": "Python"
+  },
+  {
+    "repo": "streamlit/streamlit",
+    "stars": 46246,
+    "open_issues": 1187,
+    "language": "Python"
+  },
+  {
+    "repo": "android/architecture-samples",
+    "stars": 45890,
+    "open_issues": 228,
+    "language": "Kotlin"
+  },
+  {
+    "repo": "imputnet/cobalt",
+    "stars": 45875,
+    "open_issues": 288,
+    "language": "Svelte"
+  },
+  {
+    "repo": "Leaflet/Leaflet",
+    "stars": 45874,
+    "open_issues": 308,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "mifi/lossless-cut",
+    "stars": 45774,
+    "open_issues": 161,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "getsentry/sentry",
+    "stars": 45726,
+    "open_issues": 2223,
+    "language": "Python"
+  },
+  {
+    "repo": "payloadcms/payload",
+    "stars": 45716,
+    "open_issues": 1553,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "charmbracelet/bubbletea",
+    "stars": 45632,
+    "open_issues": 277,
+    "language": "Go"
+  },
+  {
+    "repo": "zen-browser/desktop",
+    "stars": 45618,
+    "open_issues": 848,
+    "language": "C++"
+  },
+  {
+    "repo": "janhq/jan",
+    "stars": 45541,
+    "open_issues": 568,
+    "language": "Rust"
+  },
+  {
+    "repo": "logseq/logseq",
+    "stars": 45504,
+    "open_issues": 1027,
+    "language": "Clojure"
+  },
+  {
+    "repo": "jestjs/jest",
+    "stars": 45470,
+    "open_issues": 255,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "juanfont/headscale",
+    "stars": 45431,
+    "open_issues": 95,
+    "language": "Go"
+  },
+  {
+    "repo": "grpc/grpc",
+    "stars": 45425,
+    "open_issues": 1359,
+    "language": "C++"
+  },
+  {
+    "repo": "sharkdp/fd",
+    "stars": 45091,
+    "open_issues": 210,
+    "language": "Rust"
+  },
+  {
+    "repo": "spf13/cobra",
+    "stars": 44835,
+    "open_issues": 493,
+    "language": "Go"
+  },
+  {
+    "repo": "meteor/meteor",
+    "stars": 44798,
+    "open_issues": 442,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "ccxt/ccxt",
+    "stars": 44781,
+    "open_issues": 772,
+    "language": "Python"
+  },
+  {
+    "repo": "langchain-ai/langgraph",
+    "stars": 44596,
+    "open_issues": 461,
+    "language": "Python"
+  },
+  {
+    "repo": "apache/spark",
+    "stars": 44429,
+    "open_issues": 747,
+    "language": "Scala"
+  },
+  {
+    "repo": "Kong/kong",
+    "stars": 44366,
+    "open_issues": 228,
+    "language": "Lua"
+  },
+  {
+    "repo": "colinhacks/zod",
+    "stars": 44274,
+    "open_issues": 116,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "ray-project/ray",
+    "stars": 44225,
+    "open_issues": 3722,
+    "language": "Python"
+  },
+  {
+    "repo": "babel/babel",
+    "stars": 44053,
+    "open_issues": 760,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "parcel-bundler/parcel",
+    "stars": 44013,
+    "open_issues": 617,
+    "language": "Rust"
+  },
+  {
+    "repo": "gradio-app/gradio",
+    "stars": 43998,
+    "open_issues": 117,
+    "language": "Python"
+  },
+  {
+    "repo": "streamich/react-use",
+    "stars": 43981,
+    "open_issues": 677,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "lysine-dev/retrofit",
+    "stars": 43937,
+    "open_issues": 148,
+    "language": "Java"
+  },
+  {
+    "repo": "astaxie/build-web-application-with-golang",
+    "stars": 43857,
+    "open_issues": 139,
+    "language": "Go"
+  },
+  {
+    "repo": "aria2/aria2",
+    "stars": 43420,
+    "open_issues": 1187,
+    "language": "C++"
+  },
+  {
+    "repo": "curl/curl",
+    "stars": 43414,
+    "open_issues": 95,
+    "language": "C"
+  },
+  {
+    "repo": "Unitech/pm2",
+    "stars": 43325,
+    "open_issues": 1084,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "deepspeedai/DeepSpeed",
+    "stars": 43306,
+    "open_issues": 1608,
+    "language": "Python"
+  },
+  {
+    "repo": "sxyazi/yazi",
+    "stars": 43271,
+    "open_issues": 64,
+    "language": "Rust"
+  },
+  {
+    "repo": "ziglang/zig",
+    "stars": 43257,
+    "open_issues": 2712,
+    "language": "Zig"
+  },
+  {
+    "repo": "agno-agi/agno",
+    "stars": 43088,
+    "open_issues": 1977,
+    "language": "Python"
+  },
+  {
+    "repo": "LizardByte/Sunshine",
+    "stars": 43084,
+    "open_issues": 181,
+    "language": "C++"
+  },
+  {
+    "repo": "FuelLabs/fuels-rs",
+    "stars": 42950,
+    "open_issues": 77,
+    "language": "Rust"
+  },
+  {
+    "repo": "FuelLabs/fuels-ts",
+    "stars": 42910,
+    "open_issues": 80,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "duckdb/duckdb",
+    "stars": 42868,
+    "open_issues": 1140,
+    "language": "C++"
+  },
+  {
+    "repo": "THU-MAIC/OpenMAIC",
+    "stars": 42845,
+    "open_issues": 207,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "mingrammer/diagrams",
+    "stars": 42793,
+    "open_issues": 399,
+    "language": "Python"
+  },
+  {
+    "repo": "XTLS/Xray-core",
+    "stars": 42673,
+    "open_issues": 68,
+    "language": "Go"
+  },
+  {
+    "repo": "tinyhumansai/openhuman",
+    "stars": 42577,
+    "open_issues": 323,
+    "language": "Rust"
+  },
+  {
+    "repo": "Crosstalk-Solutions/project-nomad",
+    "stars": 42443,
+    "open_issues": 169,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "fastlane/fastlane",
+    "stars": 42368,
+    "open_issues": 687,
+    "language": "Ruby"
+  },
+  {
+    "repo": "ManimCommunity/manim",
+    "stars": 42310,
+    "open_issues": 397,
+    "language": "Python"
+  },
+  {
+    "repo": "chatboxai/chatbox",
+    "stars": 42262,
+    "open_issues": 1367,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "psf/black",
+    "stars": 42124,
+    "open_issues": 256,
+    "language": "Python"
+  },
+  {
+    "repo": "GyulyVGC/sniffnet",
+    "stars": 41939,
+    "open_issues": 56,
+    "language": "Rust"
+  },
+  {
+    "repo": "nolimits4web/swiper",
+    "stars": 41907,
+    "open_issues": 232,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "hexojs/hexo",
+    "stars": 41772,
+    "open_issues": 82,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "php/php-src",
+    "stars": 41761,
+    "open_issues": 2305,
+    "language": "C"
+  },
+  {
+    "repo": "volcengine/OpenViking",
+    "stars": 41713,
+    "open_issues": 1302,
+    "language": "Python"
+  },
+  {
+    "repo": "dcloudio/uni-app",
+    "stars": 41625,
+    "open_issues": 714,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "apache/dubbo",
+    "stars": 41571,
+    "open_issues": 1070,
+    "language": "Java"
+  },
+  {
+    "repo": "lightpanda-io/browser",
+    "stars": 41515,
+    "open_issues": 78,
+    "language": "Zig"
+  },
+  {
+    "repo": "microsoft/BitNet",
+    "stars": 41482,
+    "open_issues": 380,
+    "language": "C++"
+  },
+  {
+    "repo": "yarnpkg/yarn",
+    "stars": 41459,
+    "open_issues": 2055,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "hpcaitech/ColossalAI",
+    "stars": 41428,
+    "open_issues": 340,
+    "language": "Python"
+  },
+  {
+    "repo": "qbittorrent/qBittorrent",
+    "stars": 41399,
+    "open_issues": 2730,
+    "language": "C++"
+  },
+  {
+    "repo": "outline/outline",
+    "stars": 41195,
+    "open_issues": 64,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "appsmithorg/appsmith",
+    "stars": 41182,
+    "open_issues": 4527,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "codewhale-hq/Codewhale",
+    "stars": 41160,
+    "open_issues": 59,
+    "language": "Rust"
+  },
+  {
+    "repo": "CorentinTh/it-tools",
+    "stars": 41145,
+    "open_issues": 864,
+    "language": "Vue"
+  },
+  {
+    "repo": "nwjs/nw.js",
+    "stars": 41145,
+    "open_issues": 915,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "Niko1221/Strata",
+    "stars": 41145,
+    "open_issues": 1064,
+    "language": "C++"
+  },
+  {
+    "repo": "OpenBMB/VoxCPM",
+    "stars": 41140,
+    "open_issues": 171,
+    "language": "Python"
+  },
+  {
+    "repo": "anthropics/financial-services",
+    "stars": 41083,
+    "open_issues": 236,
+    "language": "Python"
+  },
+  {
+    "repo": "frappe/erpnext",
+    "stars": 41040,
+    "open_issues": 1502,
+    "language": "Python"
+  },
+  {
+    "repo": "gitroomhq/postiz-app",
+    "stars": 41040,
+    "open_issues": 212,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "vuetifyjs/vuetify",
+    "stars": 41031,
+    "open_issues": 332,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "nushell/nushell",
+    "stars": 41010,
+    "open_issues": 1457,
+    "language": "Rust"
+  },
+  {
+    "repo": "datalab-to/marker",
+    "stars": 40801,
+    "open_issues": 140,
+    "language": "Python"
+  },
+  {
+    "repo": "trpc/trpc",
+    "stars": 40780,
+    "open_issues": 114,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "aseprite/aseprite",
+    "stars": 40740,
+    "open_issues": 2059,
+    "language": "C++"
+  },
+  {
+    "repo": "pingcap/tidb",
+    "stars": 40715,
+    "open_issues": 7526,
+    "language": "Go"
+  },
+  {
+    "repo": "ShareX/ShareX",
+    "stars": 40711,
+    "open_issues": 614,
+    "language": "C#"
+  },
+  {
+    "repo": "PostHog/posthog",
+    "stars": 40680,
+    "open_issues": 4668,
+    "language": "Python"
+  },
+  {
+    "repo": "phaserjs/phaser",
+    "stars": 40656,
+    "open_issues": 178,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "HKUDS/LightRAG",
+    "stars": 40587,
+    "open_issues": 441,
+    "language": "Python"
+  },
+  {
+    "repo": "ajeetdsouza/zoxide",
+    "stars": 40483,
+    "open_issues": 162,
+    "language": "Rust"
+  },
+  {
+    "repo": "TeamNewPipe/NewPipe",
+    "stars": 40481,
+    "open_issues": 1442,
+    "language": "Java"
+  },
+  {
+    "repo": "hyprwm/Hyprland",
+    "stars": 40453,
+    "open_issues": 195,
+    "language": "C++"
+  },
+  {
+    "repo": "photoprism/photoprism",
+    "stars": 40418,
+    "open_issues": 453,
+    "language": "Go"
+  },
+  {
+    "repo": "novuhq/novu",
+    "stars": 40295,
+    "open_issues": 119,
+    "language": "TypeScript"
+  },
+  {
+    "repo": "koalaman/shellcheck",
+    "stars": 40295,
+    "open_issues": 1090,
+    "language": "Haskell"
+  },
+  {
+    "repo": "pola-rs/polars",
+    "stars": 40276,
+    "open_issues": 2929,
+    "language": "Rust"
+  },
+  {
+    "repo": "drawdb-io/drawdb",
+    "stars": 40273,
+    "open_issues": 247,
+    "language": "JavaScript"
+  },
+  {
+    "repo": "VectifyAI/PageIndex",
+    "stars": 40158,
+    "open_issues": 167,
+    "language": "Python"
+  },
+  {
+    "repo": "Kong/insomnia",
+    "stars": 40135,
+    "open_issues": 932,
+    "language": "TypeScript"
+  }
+]

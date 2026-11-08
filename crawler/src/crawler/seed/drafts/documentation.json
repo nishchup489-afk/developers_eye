@@ -1,0 +1,7275 @@
+[
+  {
+    "slug": "mdn",
+    "name": "MDN Web Docs",
+    "kind": "website",
+    "base_url": "https://developer.mozilla.org/en-US/docs/Web",
+    "allowed_hosts": [
+      "developer.mozilla.org"
+    ],
+    "crawl_interval_seconds": 3888000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 20000,
+      "allowed_path_prefixes": [
+        "/en-US/docs/Web/",
+        "/en-US/docs/Learn_web_development/",
+        "/en-US/docs/Glossary/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Web platform",
+        "version_pin": "living",
+        "est_docs": 14000,
+        "language_policy": "en_only_by_path",
+        "status": "already_in_seed_file",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "English subtree only; exclude translated /<locale>/ paths"
+      }
+    }
+  },
+  {
+    "slug": "html-standard",
+    "name": "WHATWG HTML Living Standard",
+    "kind": "website",
+    "base_url": "https://html.spec.whatwg.org/multipage/",
+    "allowed_hosts": [
+      "html.spec.whatwg.org"
+    ],
+    "crawl_interval_seconds": 3888000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/multipage/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Web platform",
+        "version_pin": "living",
+        "est_docs": 120,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Multipage spec only; the single-page / file is ~15 MB, never fetch it"
+      }
+    }
+  },
+  {
+    "slug": "web-css-spec",
+    "name": "W3C CSS specifications",
+    "kind": "website",
+    "base_url": "https://www.w3.org/Style/CSS/",
+    "allowed_hosts": [
+      "www.w3.org"
+    ],
+    "crawl_interval_seconds": 3888000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/Style/CSS/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Web platform",
+        "version_pin": "latest REC/CR",
+        "est_docs": 200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "w3.org Style/CSS index links out to drafts.csswg.org and /TR/; add www.w3.org /TR/ prefixes for the specs you want"
+      }
+    }
+  },
+  {
+    "slug": "http-rfcs",
+    "name": "HTTP Semantics and HTTP/1.1 RFCs",
+    "kind": "website",
+    "base_url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+    "allowed_hosts": [
+      "www.rfc-editor.org"
+    ],
+    "crawl_interval_seconds": 3888000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 1,
+      "max_pages": 20,
+      "allowed_path_prefixes": [
+        "/rfc/rfc9110.html",
+        "/rfc/rfc9111.html",
+        "/rfc/rfc9112.html",
+        "/rfc/rfc9113.html",
+        "/rfc/rfc9114.html",
+        "/rfc/rfc6455.html",
+        "/rfc/rfc6749.html",
+        "/rfc/rfc7519.html",
+        "/rfc/rfc8446.html",
+        "/rfc/rfc3986.html"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Web platform",
+        "version_pin": "per-RFC",
+        "est_docs": 10,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Exact-file allowlist: HTTP 9110-9114, WebSocket, OAuth2, JWT, TLS 1.3, URI"
+      }
+    }
+  },
+  {
+    "slug": "webassembly-core",
+    "name": "WebAssembly core specification",
+    "kind": "website",
+    "base_url": "https://webassembly.github.io/spec/core/",
+    "allowed_hosts": [
+      "webassembly.github.io"
+    ],
+    "crawl_interval_seconds": 3888000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 200,
+      "allowed_path_prefixes": [
+        "/spec/core/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Web platform",
+        "version_pin": "2.0",
+        "est_docs": 60,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Core spec only"
+      }
+    }
+  },
+  {
+    "slug": "python-docs",
+    "name": "Python 3 documentation",
+    "kind": "website",
+    "base_url": "https://docs.python.org/3/",
+    "allowed_hosts": [
+      "docs.python.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 5000,
+      "allowed_path_prefixes": [
+        "/3/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "3 (stable alias)",
+        "est_docs": 2000,
+        "language_policy": "en_only_by_path",
+        "status": "already_in_seed_file",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "robots.txt blocks EOL /3.x/ trees, /3/ allowed; sitemap at /sitemap.xml"
+      }
+    }
+  },
+  {
+    "slug": "nodejs-docs",
+    "name": "Node.js API documentation",
+    "kind": "website",
+    "base_url": "https://nodejs.org/api/",
+    "allowed_hosts": [
+      "nodejs.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/api/",
+        "/en/learn/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "latest (current)",
+        "est_docs": 250,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "/api/ is the current release; /docs/latest-vXX.x/ trees are duplicates, keep them out"
+      }
+    }
+  },
+  {
+    "slug": "typescript-docs",
+    "name": "TypeScript Handbook",
+    "kind": "website",
+    "base_url": "https://www.typescriptlang.org/docs/handbook/",
+    "allowed_hosts": [
+      "www.typescriptlang.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "5.x latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Renamed from version-typescript. /docs/ excludes localized /ja/docs/ etc. Add /tsconfig as a second source if needed (it is one big page)"
+      }
+    }
+  },
+  {
+    "slug": "rust-book",
+    "name": "The Rust Programming Language Book",
+    "kind": "website",
+    "base_url": "https://doc.rust-lang.org/book/",
+    "allowed_hosts": [
+      "doc.rust-lang.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/book/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "stable",
+        "est_docs": 110,
+        "language_policy": "en_only_by_path",
+        "status": "already_in_seed_file",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "English book only"
+      }
+    }
+  },
+  {
+    "slug": "rust-std",
+    "name": "Rust standard library",
+    "kind": "website",
+    "base_url": "https://doc.rust-lang.org/std/",
+    "allowed_hosts": [
+      "doc.rust-lang.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 30000,
+      "allowed_path_prefixes": [
+        "/std/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "stable",
+        "est_docs": 25000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "/std/ only; /stable/std/ and /nightly/ are duplicates, out of scope. Host doc.rust-lang.org shared by 5 sources, host cap 40K"
+      }
+    }
+  },
+  {
+    "slug": "rust-reference",
+    "name": "Rust Reference",
+    "kind": "website",
+    "base_url": "https://doc.rust-lang.org/reference/",
+    "allowed_hosts": [
+      "doc.rust-lang.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/reference/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "stable",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Language reference"
+      }
+    }
+  },
+  {
+    "slug": "rust-by-example",
+    "name": "Rust By Example",
+    "kind": "website",
+    "base_url": "https://doc.rust-lang.org/rust-by-example/",
+    "allowed_hosts": [
+      "doc.rust-lang.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/rust-by-example/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "stable",
+        "est_docs": 200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Example-driven pages"
+      }
+    }
+  },
+  {
+    "slug": "go-docs",
+    "name": "Go documentation",
+    "kind": "website",
+    "base_url": "https://go.dev/doc/",
+    "allowed_hosts": [
+      "go.dev"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 1500,
+      "allowed_path_prefixes": [
+        "/doc/",
+        "/ref/",
+        "/blog/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "latest",
+        "est_docs": 500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Added /ref/ (spec, memory model) and /blog/ (official blog)"
+      }
+    }
+  },
+  {
+    "slug": "go-stdlib",
+    "name": "Go standard library package docs",
+    "kind": "website",
+    "base_url": "https://pkg.go.dev/std",
+    "allowed_hosts": [
+      "pkg.go.dev"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/std",
+        "/archive",
+        "/bufio",
+        "/builtin",
+        "/bytes",
+        "/cmp",
+        "/compress",
+        "/container",
+        "/context",
+        "/crypto",
+        "/database",
+        "/debug",
+        "/embed",
+        "/encoding",
+        "/errors",
+        "/expvar",
+        "/flag",
+        "/fmt",
+        "/go",
+        "/hash",
+        "/html",
+        "/image",
+        "/index",
+        "/io",
+        "/iter",
+        "/log",
+        "/maps",
+        "/math",
+        "/mime",
+        "/net",
+        "/os",
+        "/path",
+        "/plugin",
+        "/reflect",
+        "/regexp",
+        "/runtime",
+        "/slices",
+        "/sort",
+        "/strconv",
+        "/strings",
+        "/structs",
+        "/sync",
+        "/syscall",
+        "/testing",
+        "/text",
+        "/time",
+        "/unicode",
+        "/unique",
+        "/unsafe",
+        "/weak"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "latest Go release",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Top-level std package names as exact path prefixes, so third-party module paths (/github.com/...) stay out"
+      }
+    }
+  },
+  {
+    "slug": "java-docs",
+    "name": "Java SE Documentation",
+    "kind": "website",
+    "base_url": "https://docs.oracle.com/en/java/javase/25/",
+    "allowed_hosts": [
+      "docs.oracle.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 10000,
+      "allowed_path_prefixes": [
+        "/en/java/javase/25/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "JDK 25 LTS",
+        "est_docs": 6000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Pinned to 25 LTS. robots.txt is 59 KB and was only partly readable; re-check /en/java/javase/25/ before enabling"
+      }
+    }
+  },
+  {
+    "slug": "kotlin-docs",
+    "name": "Kotlin documentation",
+    "kind": "website",
+    "base_url": "https://kotlinlang.org/docs/home.html",
+    "allowed_hosts": [
+      "kotlinlang.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 6000,
+      "allowed_path_prefixes": [
+        "/docs/",
+        "/api/core/kotlin-stdlib/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "latest",
+        "est_docs": 3000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Added stdlib API reference"
+      }
+    }
+  },
+  {
+    "slug": "swift-docs",
+    "name": "Swift documentation",
+    "kind": "website",
+    "base_url": "https://docs.swift.org/swift-book/documentation/the-swift-programming-language/",
+    "allowed_hosts": [
+      "docs.swift.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 200,
+      "allowed_path_prefixes": [
+        "/swift-book/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "Swift 6.x",
+        "est_docs": 60,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Swift Programming Language book"
+      }
+    }
+  },
+  {
+    "slug": "cpp-reference",
+    "name": "C++ reference",
+    "kind": "website",
+    "base_url": "https://en.cppreference.com/w/cpp",
+    "allowed_hosts": [
+      "en.cppreference.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 8000,
+      "allowed_path_prefixes": [
+        "/w/cpp"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "living",
+        "est_docs": 5000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Scoped to /w/cpp so it doesn't overlap c-reference. robots.txt: Content-Signal search=yes, ai-train=no; blocks ~35 named AI bots. Search indexing is allowed, model training is not"
+      }
+    }
+  },
+  {
+    "slug": "c-reference",
+    "name": "C reference",
+    "kind": "website",
+    "base_url": "https://en.cppreference.com/w/c",
+    "allowed_hosts": [
+      "en.cppreference.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 2000,
+      "allowed_path_prefixes": [
+        "/w/c"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "living",
+        "est_docs": 1200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Prefix /w/c matches /w/c/... only (segment match), so no collision with /w/cpp"
+      }
+    }
+  },
+  {
+    "slug": "csharp-docs",
+    "name": "C# language docs",
+    "kind": "website",
+    "base_url": "https://learn.microsoft.com/en-us/dotnet/csharp/",
+    "allowed_hosts": [
+      "learn.microsoft.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 3000,
+      "allowed_path_prefixes": [
+        "/en-us/dotnet/csharp/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "C# 14 / .NET 10",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "C# only"
+      }
+    }
+  },
+  {
+    "slug": "net-docs",
+    "name": ".NET APIs and fundamentals",
+    "kind": "website",
+    "base_url": "https://learn.microsoft.com/en-us/dotnet/fundamentals/",
+    "allowed_hosts": [
+      "learn.microsoft.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 12000,
+      "allowed_path_prefixes": [
+        "/en-us/dotnet/fundamentals/",
+        "/en-us/dotnet/core/",
+        "/en-us/dotnet/standard/",
+        "/en-us/dotnet/fsharp/",
+        "/en-us/aspnet/core/",
+        "/en-us/ef/core/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": ".NET 10 LTS",
+        "est_docs": 8000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Excludes /en-us/dotnet/csharp/ (own source) and /en-us/dotnet/api/ (200K+ API pages; add later with its own cap). learn.microsoft.com host shared with azure-*, host cap 40K"
+      }
+    }
+  },
+  {
+    "slug": "php-docs",
+    "name": "PHP Manual",
+    "kind": "website",
+    "base_url": "https://www.php.net/manual/en/",
+    "allowed_hosts": [
+      "www.php.net"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 15000,
+      "allowed_path_prefixes": [
+        "/manual/en/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "8.x",
+        "est_docs": 12000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "English manual only"
+      }
+    }
+  },
+  {
+    "slug": "ruby-docs",
+    "name": "Ruby official documentation",
+    "kind": "website",
+    "base_url": "https://docs.ruby-lang.org/en/master/",
+    "allowed_hosts": [
+      "docs.ruby-lang.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 5000,
+      "allowed_path_prefixes": [
+        "/en/master/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "master (pin to latest x.y when verified)",
+        "est_docs": 3000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Pick one version tree only; /en/3.x/ trees are near-duplicates"
+      }
+    }
+  },
+  {
+    "slug": "dart-docs",
+    "name": "Dart documentation",
+    "kind": "website",
+    "base_url": "https://dart.dev/language",
+    "allowed_hosts": [
+      "dart.dev"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/language",
+        "/libraries",
+        "/tools",
+        "/effective-dart",
+        "/guides",
+        "/interop",
+        "/null-safety",
+        "/web",
+        "/server"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "Dart 3.x",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Allowlist /language and /libraries; exclude unrelated site paths"
+      }
+    }
+  },
+  {
+    "slug": "bash-manual",
+    "name": "GNU Bash Manual",
+    "kind": "website",
+    "base_url": "https://www.gnu.org/software/bash/manual/html_node/index.html",
+    "allowed_hosts": [
+      "www.gnu.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/software/bash/manual/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "5.x",
+        "est_docs": 200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "gnu.org robots.txt could not be read by our checker (it refused automated fetch); verify before enabling"
+      }
+    }
+  },
+  {
+    "slug": "gnu-coreutils",
+    "name": "GNU Coreutils Manual",
+    "kind": "website",
+    "base_url": "https://www.gnu.org/software/coreutils/manual/html_node/index.html",
+    "allowed_hosts": [
+      "www.gnu.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 500,
+      "allowed_path_prefixes": [
+        "/software/coreutils/manual/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "9.x",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Same gnu.org robots caveat as bash-manual"
+      }
+    }
+  },
+  {
+    "slug": "postgres-docs",
+    "name": "PostgreSQL Documentation",
+    "kind": "website",
+    "base_url": "https://www.postgresql.org/docs/current/",
+    "allowed_hosts": [
+      "www.postgresql.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 3000,
+      "allowed_path_prefixes": [
+        "/docs/current/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Databases and tooling",
+        "version_pin": "current (18)",
+        "est_docs": 1200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current version only; pin version in snapshots"
+      }
+    }
+  },
+  {
+    "slug": "sqlite-docs",
+    "name": "SQLite Documentation",
+    "kind": "website",
+    "base_url": "https://www.sqlite.org/docs.html",
+    "allowed_hosts": [
+      "www.sqlite.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 2,
+      "max_pages": 1200,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Databases and tooling",
+        "version_pin": "3.x",
+        "est_docs": 500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Kept '/' on purpose: SQLite docs are flat files (/lang_*.html, /c3ref/*). The scope only matches whole path segments, so '/lang_' can't work; depth 2 from docs.html plus the cap keeps it tight. robots blocks /src, /cgi, /cvstrac"
+      }
+    }
+  },
+  {
+    "slug": "git-docs",
+    "name": "Git Reference",
+    "kind": "website",
+    "base_url": "https://git-scm.com/docs",
+    "allowed_hosts": [
+      "git-scm.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 1500,
+      "allowed_path_prefixes": [
+        "/docs",
+        "/book/en/v2"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Databases and tooling",
+        "version_pin": "latest",
+        "est_docs": 800,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Added English Pro Git book"
+      }
+    }
+  },
+  {
+    "slug": "react-docs",
+    "name": "React",
+    "kind": "website",
+    "base_url": "https://react.dev/reference/react",
+    "allowed_hosts": [
+      "react.dev"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/learn",
+        "/reference",
+        "/blog"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "19.x",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Allowlist /learn and /reference"
+      }
+    }
+  },
+  {
+    "slug": "nextjs-docs",
+    "name": "Next.js",
+    "kind": "website",
+    "base_url": "https://nextjs.org/docs",
+    "allowed_hosts": [
+      "nextjs.org"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 2000,
+      "allowed_path_prefixes": [
+        "/docs",
+        "/learn",
+        "/blog"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "latest (App Router)",
+        "est_docs": 700,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "/docs/pages/ is the legacy router; keep or drop"
+      }
+    }
+  },
+  {
+    "slug": "vue-docs",
+    "name": "Vue",
+    "kind": "website",
+    "base_url": "https://vuejs.org/guide/",
+    "allowed_hosts": [
+      "vuejs.org"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 500,
+      "allowed_path_prefixes": [
+        "/guide/",
+        "/api/",
+        "/tutorial/",
+        "/examples/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "3.x",
+        "est_docs": 200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Official guide"
+      }
+    }
+  },
+  {
+    "slug": "angular-docs",
+    "name": "Angular",
+    "kind": "website",
+    "base_url": "https://angular.dev/overview",
+    "allowed_hosts": [
+      "angular.dev"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 3000,
+      "allowed_path_prefixes": [
+        "/overview",
+        "/guide",
+        "/api",
+        "/tutorials",
+        "/reference",
+        "/tools",
+        "/best-practices",
+        "/cli",
+        "/ecosystem"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "latest",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Allowlist /guide and /api"
+      }
+    }
+  },
+  {
+    "slug": "svelte-docs",
+    "name": "Svelte",
+    "kind": "website",
+    "base_url": "https://svelte.dev/docs/svelte/overview",
+    "allowed_hosts": [
+      "svelte.dev"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/docs/svelte/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "5.x",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Narrowed to /docs/svelte/ so it doesn't overlap sveltekit-docs"
+      }
+    }
+  },
+  {
+    "slug": "sveltekit-docs",
+    "name": "SvelteKit",
+    "kind": "website",
+    "base_url": "https://svelte.dev/docs/kit/introduction",
+    "allowed_hosts": [
+      "svelte.dev"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/docs/kit/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "2.x",
+        "est_docs": 100,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "SvelteKit docs only"
+      }
+    }
+  },
+  {
+    "slug": "tailwind-docs",
+    "name": "Tailwind CSS",
+    "kind": "website",
+    "base_url": "https://tailwindcss.com/docs",
+    "allowed_hosts": [
+      "tailwindcss.com"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 500,
+      "allowed_path_prefixes": [
+        "/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "4.x",
+        "est_docs": 250,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Utilities and configuration"
+      }
+    }
+  },
+  {
+    "slug": "vite-docs",
+    "name": "Vite",
+    "kind": "website",
+    "base_url": "https://vite.dev/guide/",
+    "allowed_hosts": [
+      "vite.dev"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/guide/",
+        "/config/",
+        "/plugins/",
+        "/blog/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "latest",
+        "est_docs": 80,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Official docs"
+      }
+    }
+  },
+  {
+    "slug": "webpack-docs",
+    "name": "webpack",
+    "kind": "website",
+    "base_url": "https://webpack.js.org/concepts/",
+    "allowed_hosts": [
+      "webpack.js.org"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/concepts",
+        "/configuration",
+        "/api",
+        "/guides",
+        "/loaders",
+        "/plugins",
+        "/migrate"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "5.x",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Allowlist /concepts /configuration /guides and /api"
+      }
+    }
+  },
+  {
+    "slug": "astro-docs",
+    "name": "Astro",
+    "kind": "website",
+    "base_url": "https://docs.astro.build/en/getting-started/",
+    "allowed_hosts": [
+      "docs.astro.build"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/en/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "5.x",
+        "est_docs": 500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "English content"
+      }
+    }
+  },
+  {
+    "slug": "nuxt-docs",
+    "name": "Nuxt",
+    "kind": "website",
+    "base_url": "https://nuxt.com/docs",
+    "allowed_hosts": [
+      "nuxt.com"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "4.x",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "nuxt.com/docs is current; /docs/3.x/ duplicates if present"
+      }
+    }
+  },
+  {
+    "slug": "react-router-docs",
+    "name": "React Router",
+    "kind": "website",
+    "base_url": "https://reactrouter.com/home",
+    "allowed_hosts": [
+      "reactrouter.com"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/home",
+        "/start",
+        "/api",
+        "/tutorials",
+        "/explanation",
+        "/how-to",
+        "/community",
+        "/upgrading"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "7.x",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "RR7 is where Remix v2 went; this replaces remix-docs"
+      }
+    }
+  },
+  {
+    "slug": "solid-docs",
+    "name": "SolidJS",
+    "kind": "website",
+    "base_url": "https://docs.solidjs.com/quick-start",
+    "allowed_hosts": [
+      "docs.solidjs.com"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/quick-start",
+        "/concepts",
+        "/reference",
+        "/guides",
+        "/configuration",
+        "/advanced-concepts",
+        "/solid-router",
+        "/solid-start",
+        "/solid-meta"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "1.x",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Docs only"
+      }
+    }
+  },
+  {
+    "slug": "redux-toolkit-docs",
+    "name": "Redux Toolkit",
+    "kind": "website",
+    "base_url": "https://redux-toolkit.js.org/introduction/getting-started",
+    "allowed_hosts": [
+      "redux-toolkit.js.org"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/introduction",
+        "/tutorials",
+        "/usage",
+        "/api",
+        "/rtk-query"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "2.x",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Docs only"
+      }
+    }
+  },
+  {
+    "slug": "tanstack-query-docs",
+    "name": "TanStack Query",
+    "kind": "website",
+    "base_url": "https://tanstack.com/query/latest/docs/framework/react/overview",
+    "allowed_hosts": [
+      "tanstack.com"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/query/latest/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "v5 (latest)",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "All frameworks under /latest/docs/; restrict to /framework/react/ if dupes hurt"
+      }
+    }
+  },
+  {
+    "slug": "remix-docs",
+    "name": "Remix",
+    "kind": "website",
+    "base_url": "https://remix.run/docs/en/main",
+    "allowed_hosts": [
+      "remix.run"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 200,
+      "allowed_path_prefixes": [
+        "/docs/en/main"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "v2 (legacy)",
+        "est_docs": 0,
+        "language_policy": "en_only_by_path",
+        "status": "duplicate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Disabled: Remix v2 merged into React Router 7, covered by react-router-docs"
+      }
+    }
+  },
+  {
+    "slug": "playwright-docs",
+    "name": "Playwright",
+    "kind": "website",
+    "base_url": "https://playwright.dev/docs/intro",
+    "allowed_hosts": [
+      "playwright.dev"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend tooling and tests",
+        "version_pin": "latest",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "English test docs"
+      }
+    }
+  },
+  {
+    "slug": "vitest-docs",
+    "name": "Vitest",
+    "kind": "website",
+    "base_url": "https://vitest.dev/guide/",
+    "allowed_hosts": [
+      "vitest.dev"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/guide/",
+        "/api/",
+        "/config/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend tooling and tests",
+        "version_pin": "latest",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Guides and API"
+      }
+    }
+  },
+  {
+    "slug": "jest-docs",
+    "name": "Jest",
+    "kind": "website",
+    "base_url": "https://jestjs.io/docs/getting-started",
+    "allowed_hosts": [
+      "jestjs.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend tooling and tests",
+        "version_pin": "current",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "/docs/next/ and /docs/29.x/ are versioned dupes; jestjs.io/docs/ is current"
+      }
+    }
+  },
+  {
+    "slug": "cypress-docs",
+    "name": "Cypress",
+    "kind": "website",
+    "base_url": "https://docs.cypress.io/app/get-started/why-cypress",
+    "allowed_hosts": [
+      "docs.cypress.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/app/",
+        "/api/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend tooling and tests",
+        "version_pin": "latest",
+        "est_docs": 500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "App testing docs"
+      }
+    }
+  },
+  {
+    "slug": "testing-library-docs",
+    "name": "Testing Library",
+    "kind": "website",
+    "base_url": "https://testing-library.com/docs/",
+    "allowed_hosts": [
+      "testing-library.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend tooling and tests",
+        "version_pin": "latest",
+        "est_docs": 120,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Official docs"
+      }
+    }
+  },
+  {
+    "slug": "storybook-docs",
+    "name": "Storybook",
+    "kind": "website",
+    "base_url": "https://storybook.js.org/docs",
+    "allowed_hosts": [
+      "storybook.js.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend tooling and tests",
+        "version_pin": "latest",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Component-development docs"
+      }
+    }
+  },
+  {
+    "slug": "eslint-docs",
+    "name": "ESLint",
+    "kind": "website",
+    "base_url": "https://eslint.org/docs/latest/",
+    "allowed_hosts": [
+      "eslint.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/docs/latest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend tooling and tests",
+        "version_pin": "9.x",
+        "est_docs": 600,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current rules and guides"
+      }
+    }
+  },
+  {
+    "slug": "prettier-docs",
+    "name": "Prettier",
+    "kind": "website",
+    "base_url": "https://prettier.io/docs/",
+    "allowed_hosts": [
+      "prettier.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 100,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend tooling and tests",
+        "version_pin": "3.x",
+        "est_docs": 40,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Official docs"
+      }
+    }
+  },
+  {
+    "slug": "django",
+    "name": "Django",
+    "kind": "website",
+    "base_url": "https://docs.djangoproject.com/en/stable/",
+    "allowed_hosts": [
+      "docs.djangoproject.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 2000,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable (5.2/6.0)",
+        "est_docs": 800,
+        "language_policy": "en_only_by_path",
+        "status": "already_in_seed_file",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Already seeded with no path prefix; seed.py skips existing slugs, so this prefix only takes effect via update_source"
+      }
+    }
+  },
+  {
+    "slug": "flask-docs",
+    "name": "Flask",
+    "kind": "website",
+    "base_url": "https://flask.palletsprojects.com/en/stable/",
+    "allowed_hosts": [
+      "flask.palletsprojects.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Stable docs"
+      }
+    }
+  },
+  {
+    "slug": "fastapi",
+    "name": "FastAPI",
+    "kind": "website",
+    "base_url": "https://fastapi.tiangolo.com/learn/",
+    "allowed_hosts": [
+      "fastapi.tiangolo.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/learn/",
+        "/tutorial/",
+        "/advanced/",
+        "/reference/",
+        "/how-to/",
+        "/deployment/",
+        "/fastapi-cli/",
+        "/features/",
+        "/async/",
+        "/python-types/",
+        "/virtual-environments/",
+        "/environment-variables/",
+        "/alternatives/",
+        "/history-design-future/",
+        "/project-generation/",
+        "/release-notes/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "already_in_seed_file",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "English prefixes only (translations live under /es/, /zh/, /ja/ ...). Already seeded; apply via update_source"
+      }
+    }
+  },
+  {
+    "slug": "sqlalchemy-docs",
+    "name": "SQLAlchemy",
+    "kind": "website",
+    "base_url": "https://docs.sqlalchemy.org/en/20/",
+    "allowed_hosts": [
+      "docs.sqlalchemy.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1500,
+      "allowed_path_prefixes": [
+        "/en/20/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "2.0",
+        "est_docs": 600,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "SQLAlchemy 2.x docs"
+      }
+    }
+  },
+  {
+    "slug": "pydantic-docs",
+    "name": "Pydantic",
+    "kind": "website",
+    "base_url": "https://docs.pydantic.dev/latest/",
+    "allowed_hosts": [
+      "docs.pydantic.dev"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/latest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "2.x latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current docs"
+      }
+    }
+  },
+  {
+    "slug": "pandas-docs",
+    "name": "pandas",
+    "kind": "website",
+    "base_url": "https://pandas.pydata.org/docs/",
+    "allowed_hosts": [
+      "pandas.pydata.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 6000,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable",
+        "est_docs": 4000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Guide and reference"
+      }
+    }
+  },
+  {
+    "slug": "numpy-docs",
+    "name": "NumPy",
+    "kind": "website",
+    "base_url": "https://numpy.org/doc/stable/",
+    "allowed_hosts": [
+      "numpy.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 5000,
+      "allowed_path_prefixes": [
+        "/doc/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable",
+        "est_docs": 3500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Stable reference"
+      }
+    }
+  },
+  {
+    "slug": "scipy-docs",
+    "name": "SciPy",
+    "kind": "website",
+    "base_url": "https://docs.scipy.org/doc/scipy/",
+    "allowed_hosts": [
+      "docs.scipy.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 4500,
+      "allowed_path_prefixes": [
+        "/doc/scipy/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable",
+        "est_docs": 3000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Stable SciPy docs"
+      }
+    }
+  },
+  {
+    "slug": "pytest-docs",
+    "name": "pytest",
+    "kind": "website",
+    "base_url": "https://docs.pytest.org/en/stable/",
+    "allowed_hosts": [
+      "docs.pytest.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 500,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable",
+        "est_docs": 250,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Stable pytest docs"
+      }
+    }
+  },
+  {
+    "slug": "requests-docs",
+    "name": "Requests",
+    "kind": "website",
+    "base_url": "https://requests.readthedocs.io/en/latest/",
+    "allowed_hosts": [
+      "requests.readthedocs.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 100,
+      "allowed_path_prefixes": [
+        "/en/latest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "latest",
+        "est_docs": 30,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Official Requests docs"
+      }
+    }
+  },
+  {
+    "slug": "httpx-docs",
+    "name": "HTTPX",
+    "kind": "website",
+    "base_url": "https://www.python-httpx.org/",
+    "allowed_hosts": [
+      "www.python-httpx.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 150,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "latest",
+        "est_docs": 50,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "'/' is fine: docs-only host"
+      }
+    }
+  },
+  {
+    "slug": "celery-docs",
+    "name": "Celery",
+    "kind": "website",
+    "base_url": "https://docs.celeryq.dev/en/stable/",
+    "allowed_hosts": [
+      "docs.celeryq.dev"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Stable docs"
+      }
+    }
+  },
+  {
+    "slug": "polars-docs",
+    "name": "Polars",
+    "kind": "website",
+    "base_url": "https://docs.pola.rs/user-guide/",
+    "allowed_hosts": [
+      "docs.pola.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 3000,
+      "allowed_path_prefixes": [
+        "/user-guide/",
+        "/api/python/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Allowlist Python user guide and API"
+      }
+    }
+  },
+  {
+    "slug": "matplotlib-docs",
+    "name": "Matplotlib",
+    "kind": "website",
+    "base_url": "https://matplotlib.org/stable/",
+    "allowed_hosts": [
+      "matplotlib.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 4000,
+      "allowed_path_prefixes": [
+        "/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable",
+        "est_docs": 3000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current docs"
+      }
+    }
+  },
+  {
+    "slug": "beautifulsoup-docs",
+    "name": "Beautiful Soup",
+    "kind": "website",
+    "base_url": "https://www.crummy.com/software/BeautifulSoup/bs4/doc/",
+    "allowed_hosts": [
+      "www.crummy.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 20,
+      "allowed_path_prefixes": [
+        "/software/BeautifulSoup/bs4/doc/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "4.x",
+        "est_docs": 5,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Specific bs4 documentation"
+      }
+    }
+  },
+  {
+    "slug": "jinja-docs",
+    "name": "Jinja",
+    "kind": "website",
+    "base_url": "https://jinja.palletsprojects.com/en/stable/",
+    "allowed_hosts": [
+      "jinja.palletsprojects.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 100,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable",
+        "est_docs": 40,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current docs"
+      }
+    }
+  },
+  {
+    "slug": "rich-docs",
+    "name": "Rich",
+    "kind": "website",
+    "base_url": "https://rich.readthedocs.io/en/stable/",
+    "allowed_hosts": [
+      "rich.readthedocs.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 150,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable",
+        "est_docs": 50,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Rich docs"
+      }
+    }
+  },
+  {
+    "slug": "click-docs",
+    "name": "Click",
+    "kind": "website",
+    "base_url": "https://click.palletsprojects.com/en/stable/",
+    "allowed_hosts": [
+      "click.palletsprojects.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 150,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable",
+        "est_docs": 50,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current docs"
+      }
+    }
+  },
+  {
+    "slug": "typer-docs",
+    "name": "Typer",
+    "kind": "website",
+    "base_url": "https://typer.tiangolo.com/tutorial/",
+    "allowed_hosts": [
+      "typer.tiangolo.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/tutorial/",
+        "/features/",
+        "/typer-cli/",
+        "/alternatives/",
+        "/virtual-environments/",
+        "/environment-variables/",
+        "/release-notes/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "latest",
+        "est_docs": 120,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "English prefixes only, same pattern as fastapi"
+      }
+    }
+  },
+  {
+    "slug": "pillow-docs",
+    "name": "Pillow",
+    "kind": "website",
+    "base_url": "https://pillow.readthedocs.io/en/stable/",
+    "allowed_hosts": [
+      "pillow.readthedocs.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Image processing docs"
+      }
+    }
+  },
+  {
+    "slug": "aiohttp-docs",
+    "name": "aiohttp",
+    "kind": "website",
+    "base_url": "https://docs.aiohttp.org/en/stable/",
+    "allowed_hosts": [
+      "docs.aiohttp.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python frameworks and libraries",
+        "version_pin": "stable",
+        "est_docs": 100,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Stable docs"
+      }
+    }
+  },
+  {
+    "slug": "express-docs",
+    "name": "Express",
+    "kind": "website",
+    "base_url": "https://expressjs.com/en/starter/installing.html",
+    "allowed_hosts": [
+      "expressjs.com"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/en/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JavaScript backend and libraries",
+        "version_pin": "5.x",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "/en/ is English; /en/4x/ is a versioned dupe"
+      }
+    }
+  },
+  {
+    "slug": "nestjs-docs",
+    "name": "NestJS",
+    "kind": "website",
+    "base_url": "https://docs.nestjs.com/",
+    "allowed_hosts": [
+      "docs.nestjs.com"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 500,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JavaScript backend and libraries",
+        "version_pin": "latest",
+        "est_docs": 250,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "'/' is fine: docs-only host"
+      }
+    }
+  },
+  {
+    "slug": "prisma-docs",
+    "name": "Prisma",
+    "kind": "website",
+    "base_url": "https://www.prisma.io/docs",
+    "allowed_hosts": [
+      "www.prisma.io"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 2000,
+      "allowed_path_prefixes": [
+        "/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JavaScript backend and libraries",
+        "version_pin": "latest",
+        "est_docs": 1200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "ORM docs"
+      }
+    }
+  },
+  {
+    "slug": "fastify-docs",
+    "name": "Fastify",
+    "kind": "website",
+    "base_url": "https://fastify.dev/docs/latest/",
+    "allowed_hosts": [
+      "fastify.dev"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/docs/latest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JavaScript backend and libraries",
+        "version_pin": "latest",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current docs"
+      }
+    }
+  },
+  {
+    "slug": "zod-docs",
+    "name": "Zod",
+    "kind": "website",
+    "base_url": "https://zod.dev/",
+    "allowed_hosts": [
+      "zod.dev"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 100,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JavaScript backend and libraries",
+        "version_pin": "4.x",
+        "est_docs": 40,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "'/' is fine: docs-only host"
+      }
+    }
+  },
+  {
+    "slug": "typeorm-docs",
+    "name": "TypeORM",
+    "kind": "website",
+    "base_url": "https://typeorm.io/docs/",
+    "allowed_hosts": [
+      "typeorm.io"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JavaScript backend and libraries",
+        "version_pin": "latest",
+        "est_docs": 100,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Core docs"
+      }
+    }
+  },
+  {
+    "slug": "drizzle-docs",
+    "name": "Drizzle ORM",
+    "kind": "website",
+    "base_url": "https://orm.drizzle.team/docs/overview",
+    "allowed_hosts": [
+      "orm.drizzle.team"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JavaScript backend and libraries",
+        "version_pin": "latest",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "ORM docs"
+      }
+    }
+  },
+  {
+    "slug": "mongoose-docs",
+    "name": "Mongoose",
+    "kind": "website",
+    "base_url": "https://mongoosejs.com/docs/",
+    "allowed_hosts": [
+      "mongoosejs.com"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 500,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JavaScript backend and libraries",
+        "version_pin": "8.x",
+        "est_docs": 200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current docs"
+      }
+    }
+  },
+  {
+    "slug": "bun-docs",
+    "name": "Bun",
+    "kind": "website",
+    "base_url": "https://bun.com/docs",
+    "allowed_hosts": [
+      "bun.com",
+      "bun.sh"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JavaScript backend and libraries",
+        "version_pin": "latest",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "bun.sh redirects to bun.com; both hosts allowed so redirects pass"
+      }
+    }
+  },
+  {
+    "slug": "deno-docs",
+    "name": "Deno",
+    "kind": "website",
+    "base_url": "https://docs.deno.com/runtime/",
+    "allowed_hosts": [
+      "docs.deno.com"
+    ],
+    "crawl_interval_seconds": 1814400,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1500,
+      "allowed_path_prefixes": [
+        "/runtime/",
+        "/examples/",
+        "/deploy/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JavaScript backend and libraries",
+        "version_pin": "2.x",
+        "est_docs": 600,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Official runtime docs"
+      }
+    }
+  },
+  {
+    "slug": "spring-docs",
+    "name": "Spring Framework",
+    "kind": "website",
+    "base_url": "https://docs.spring.io/spring-framework/reference/",
+    "allowed_hosts": [
+      "docs.spring.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1500,
+      "allowed_path_prefixes": [
+        "/spring-framework/reference/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JVM and server",
+        "version_pin": "7.x (current)",
+        "est_docs": 600,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Official framework docs"
+      }
+    }
+  },
+  {
+    "slug": "springboot-docs",
+    "name": "Spring Boot",
+    "kind": "website",
+    "base_url": "https://docs.spring.io/spring-boot/reference/",
+    "allowed_hosts": [
+      "docs.spring.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1200,
+      "allowed_path_prefixes": [
+        "/spring-boot/reference/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JVM and server",
+        "version_pin": "4.x (current)",
+        "est_docs": 500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Boot docs"
+      }
+    }
+  },
+  {
+    "slug": "hibernate-docs",
+    "name": "Hibernate ORM",
+    "kind": "website",
+    "base_url": "https://docs.jboss.org/hibernate/orm/current/userguide/html_single/Hibernate_User_Guide.html",
+    "allowed_hosts": [
+      "docs.jboss.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 200,
+      "allowed_path_prefixes": [
+        "/hibernate/orm/current/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JVM and server",
+        "version_pin": "current",
+        "est_docs": 50,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Pinned to /current/; the bare /hibernate/orm/ tree has every version since 3.x"
+      }
+    }
+  },
+  {
+    "slug": "quarkus-docs",
+    "name": "Quarkus",
+    "kind": "website",
+    "base_url": "https://quarkus.io/guides/",
+    "allowed_hosts": [
+      "quarkus.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/guides/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JVM and server",
+        "version_pin": "latest",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Guides"
+      }
+    }
+  },
+  {
+    "slug": "micronaut-docs",
+    "name": "Micronaut",
+    "kind": "website",
+    "base_url": "https://docs.micronaut.io/latest/guide/",
+    "allowed_hosts": [
+      "docs.micronaut.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 100,
+      "allowed_path_prefixes": [
+        "/latest/guide/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JVM and server",
+        "version_pin": "latest",
+        "est_docs": 20,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Guide"
+      }
+    }
+  },
+  {
+    "slug": "junit-docs",
+    "name": "JUnit 5",
+    "kind": "website",
+    "base_url": "https://docs.junit.org/current/user-guide/",
+    "allowed_hosts": [
+      "docs.junit.org",
+      "junit.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 100,
+      "allowed_path_prefixes": [
+        "/current/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JVM and server",
+        "version_pin": "current (JUnit 6)",
+        "est_docs": 30,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "JUnit docs moved to docs.junit.org; old junit.org/junit5/docs URL redirects"
+      }
+    }
+  },
+  {
+    "slug": "rails-docs",
+    "name": "Ruby on Rails",
+    "kind": "website",
+    "base_url": "https://guides.rubyonrails.org/",
+    "allowed_hosts": [
+      "guides.rubyonrails.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 200,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JVM and server",
+        "version_pin": "8.x",
+        "est_docs": 80,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "'/' is fine: guides-only host. Consider api.rubyonrails.org as a tier-3 extra"
+      }
+    }
+  },
+  {
+    "slug": "laravel-docs",
+    "name": "Laravel",
+    "kind": "website",
+    "base_url": "https://laravel.com/docs",
+    "allowed_hosts": [
+      "laravel.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JVM and server",
+        "version_pin": "current",
+        "est_docs": 100,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "laravel.com/docs redirects to the current major (/docs/12.x or 13.x); allow both via /docs"
+      }
+    }
+  },
+  {
+    "slug": "symfony-docs",
+    "name": "Symfony",
+    "kind": "website",
+    "base_url": "https://symfony.com/doc/current/",
+    "allowed_hosts": [
+      "symfony.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 2000,
+      "allowed_path_prefixes": [
+        "/doc/current/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "JVM and server",
+        "version_pin": "current",
+        "est_docs": 1000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Symfony current docs"
+      }
+    }
+  },
+  {
+    "slug": "tokio-docs",
+    "name": "Tokio",
+    "kind": "website",
+    "base_url": "https://docs.rs/tokio/latest/tokio/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 4000,
+      "allowed_path_prefixes": [
+        "/tokio/latest/tokio/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust ecosystem and mobile",
+        "version_pin": "latest",
+        "est_docs": 3000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "docs.rs allowlist specific crate only"
+      }
+    }
+  },
+  {
+    "slug": "serde-docs",
+    "name": "Serde",
+    "kind": "website",
+    "base_url": "https://docs.rs/serde/latest/serde/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/serde/latest/serde/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust ecosystem and mobile",
+        "version_pin": "latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "docs.rs allowlist specific crate only"
+      }
+    }
+  },
+  {
+    "slug": "axum-docs",
+    "name": "Axum",
+    "kind": "website",
+    "base_url": "https://docs.rs/axum/latest/axum/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1500,
+      "allowed_path_prefixes": [
+        "/axum/latest/axum/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust ecosystem and mobile",
+        "version_pin": "latest",
+        "est_docs": 800,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "docs.rs allowlist specific crate only"
+      }
+    }
+  },
+  {
+    "slug": "clap-docs",
+    "name": "clap",
+    "kind": "website",
+    "base_url": "https://docs.rs/clap/latest/clap/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1500,
+      "allowed_path_prefixes": [
+        "/clap/latest/clap/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust ecosystem and mobile",
+        "version_pin": "latest",
+        "est_docs": 800,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "docs.rs allowlist specific crate only"
+      }
+    }
+  },
+  {
+    "slug": "flutter-docs",
+    "name": "Flutter",
+    "kind": "website",
+    "base_url": "https://docs.flutter.dev/",
+    "allowed_hosts": [
+      "docs.flutter.dev"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 2000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust ecosystem and mobile",
+        "version_pin": "stable",
+        "est_docs": 1000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "'/' is fine: docs-only host"
+      }
+    }
+  },
+  {
+    "slug": "android-docs",
+    "name": "Android Developers",
+    "kind": "website",
+    "base_url": "https://developer.android.com/develop",
+    "allowed_hosts": [
+      "developer.android.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 10000,
+      "allowed_path_prefixes": [
+        "/develop",
+        "/guide",
+        "/topic",
+        "/training",
+        "/kotlin"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust ecosystem and mobile",
+        "version_pin": "latest",
+        "est_docs": 6000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Curated Android SDK docs only"
+      }
+    }
+  },
+  {
+    "slug": "apple-swiftui-docs",
+    "name": "SwiftUI",
+    "kind": "website",
+    "base_url": "https://developer.apple.com/documentation/swiftui",
+    "allowed_hosts": [
+      "developer.apple.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1,
+      "allowed_path_prefixes": [
+        "/documentation/swiftui"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust ecosystem and mobile",
+        "version_pin": "n/a",
+        "est_docs": 0,
+        "language_policy": "en_only_by_path",
+        "status": "blocked_js_rendered",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Disabled: developer.apple.com/documentation is a JS app, HTML fetch returns an empty shell. Alternative: its JSON at /tutorials/data/documentation/swiftui.json via an api source"
+      }
+    }
+  },
+  {
+    "slug": "pytorch-docs",
+    "name": "PyTorch",
+    "kind": "website",
+    "base_url": "https://docs.pytorch.org/docs/stable/",
+    "allowed_hosts": [
+      "docs.pytorch.org",
+      "pytorch.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 5000,
+      "allowed_path_prefixes": [
+        "/docs/stable/",
+        "/tutorials/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "AI ML and data science",
+        "version_pin": "stable",
+        "est_docs": 3800,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "pytorch.org/docs redirects to docs.pytorch.org; added /tutorials/"
+      }
+    }
+  },
+  {
+    "slug": "tensorflow-docs",
+    "name": "TensorFlow",
+    "kind": "website",
+    "base_url": "https://www.tensorflow.org/api_docs/python/tf",
+    "allowed_hosts": [
+      "www.tensorflow.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 10000,
+      "allowed_path_prefixes": [
+        "/api_docs/python/",
+        "/guide/",
+        "/tutorials/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "AI ML and data science",
+        "version_pin": "2.x stable",
+        "est_docs": 8000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Locales use ?hl= query, so the path scope can't drop them; normalizer should strip hl="
+      }
+    }
+  },
+  {
+    "slug": "sklearn-docs",
+    "name": "scikit-learn",
+    "kind": "website",
+    "base_url": "https://scikit-learn.org/stable/",
+    "allowed_hosts": [
+      "scikit-learn.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 4000,
+      "allowed_path_prefixes": [
+        "/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "AI ML and data science",
+        "version_pin": "stable",
+        "est_docs": 2500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current stable docs"
+      }
+    }
+  },
+  {
+    "slug": "hf-transformers",
+    "name": "Hugging Face Transformers",
+    "kind": "website",
+    "base_url": "https://huggingface.co/docs/transformers/index",
+    "allowed_hosts": [
+      "huggingface.co"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 2500,
+      "allowed_path_prefixes": [
+        "/docs/transformers/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "AI ML and data science",
+        "version_pin": "unversioned (main release)",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Prefix also admits /docs/transformers/v4.x/, /main/ and /ja/ trees; cap keeps it bounded until a deny list exists"
+      }
+    }
+  },
+  {
+    "slug": "hf-datasets",
+    "name": "Hugging Face Datasets",
+    "kind": "website",
+    "base_url": "https://huggingface.co/docs/datasets/index",
+    "allowed_hosts": [
+      "huggingface.co"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/docs/datasets/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "AI ML and data science",
+        "version_pin": "latest",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Same versioned-tree caveat as hf-transformers"
+      }
+    }
+  },
+  {
+    "slug": "hf-tokenizers",
+    "name": "Hugging Face Tokenizers",
+    "kind": "website",
+    "base_url": "https://huggingface.co/docs/tokenizers/index",
+    "allowed_hosts": [
+      "huggingface.co"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 200,
+      "allowed_path_prefixes": [
+        "/docs/tokenizers/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "AI ML and data science",
+        "version_pin": "latest",
+        "est_docs": 60,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Tokenizers library only"
+      }
+    }
+  },
+  {
+    "slug": "lightning-docs",
+    "name": "Lightning",
+    "kind": "website",
+    "base_url": "https://lightning.ai/docs/pytorch/stable/",
+    "allowed_hosts": [
+      "lightning.ai"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/docs/pytorch/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "AI ML and data science",
+        "version_pin": "stable",
+        "est_docs": 600,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "PyTorch Lightning docs"
+      }
+    }
+  },
+  {
+    "slug": "langchain-docs",
+    "name": "LangChain",
+    "kind": "website",
+    "base_url": "https://docs.langchain.com/oss/python/langchain/overview",
+    "allowed_hosts": [
+      "docs.langchain.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1200,
+      "allowed_path_prefixes": [
+        "/oss/python/langchain/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "AI ML and data science",
+        "version_pin": "1.x",
+        "est_docs": 600,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Python LangChain only"
+      }
+    }
+  },
+  {
+    "slug": "llamaindex-docs",
+    "name": "LlamaIndex",
+    "kind": "website",
+    "base_url": "https://docs.llamaindex.ai/en/stable/",
+    "allowed_hosts": [
+      "docs.llamaindex.ai"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 2500,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "AI ML and data science",
+        "version_pin": "stable",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "docs.llamaindex.ai may redirect to developers.llamaindex.ai; verify host"
+      }
+    }
+  },
+  {
+    "slug": "onnx-docs",
+    "name": "ONNX",
+    "kind": "website",
+    "base_url": "https://onnx.ai/onnx/",
+    "allowed_hosts": [
+      "onnx.ai"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/onnx/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "AI ML and data science",
+        "version_pin": "latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Core docs"
+      }
+    }
+  },
+  {
+    "slug": "xgboost-docs",
+    "name": "XGBoost",
+    "kind": "website",
+    "base_url": "https://xgboost.readthedocs.io/en/stable/",
+    "allowed_hosts": [
+      "xgboost.readthedocs.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "AI ML and data science",
+        "version_pin": "stable",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current docs"
+      }
+    }
+  },
+  {
+    "slug": "docker-docs",
+    "name": "Docker",
+    "kind": "website",
+    "base_url": "https://docs.docker.com/get-started/",
+    "allowed_hosts": [
+      "docs.docker.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 4000,
+      "allowed_path_prefixes": [
+        "/get-started/",
+        "/engine/",
+        "/build/",
+        "/compose/",
+        "/reference/",
+        "/manuals/",
+        "/guides/",
+        "/desktop/",
+        "/docker-hub/",
+        "/scout/",
+        "/security/",
+        "/dhi/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Containers and orchestration",
+        "version_pin": "latest",
+        "est_docs": 2500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Docs subtree only"
+      }
+    }
+  },
+  {
+    "slug": "kubernetes-docs",
+    "name": "Kubernetes",
+    "kind": "website",
+    "base_url": "https://kubernetes.io/docs/",
+    "allowed_hosts": [
+      "kubernetes.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 3000,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Containers and orchestration",
+        "version_pin": "latest (v1.3x)",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "/docs/ excludes /zh-cn/docs/ etc. robots blocks /legacy/, /v1.0/, /v1.1/"
+      }
+    }
+  },
+  {
+    "slug": "helm-docs",
+    "name": "Helm",
+    "kind": "website",
+    "base_url": "https://helm.sh/docs/",
+    "allowed_hosts": [
+      "helm.sh"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Containers and orchestration",
+        "version_pin": "3.x/4.x",
+        "est_docs": 200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Helm docs"
+      }
+    }
+  },
+  {
+    "slug": "podman-docs",
+    "name": "Podman",
+    "kind": "website",
+    "base_url": "https://docs.podman.io/en/latest/",
+    "allowed_hosts": [
+      "docs.podman.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/en/latest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Containers and orchestration",
+        "version_pin": "latest",
+        "est_docs": 200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "CLI docs"
+      }
+    }
+  },
+  {
+    "slug": "terraform-docs",
+    "name": "Terraform",
+    "kind": "website",
+    "base_url": "https://developer.hashicorp.com/terraform/docs",
+    "allowed_hosts": [
+      "developer.hashicorp.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 5000,
+      "allowed_path_prefixes": [
+        "/terraform/docs",
+        "/terraform/language",
+        "/terraform/cli",
+        "/terraform/tutorials",
+        "/terraform/cloud-docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infra as code and servers",
+        "version_pin": "latest",
+        "est_docs": 3000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Provider docs live on registry.terraform.io (JS app); not included"
+      }
+    }
+  },
+  {
+    "slug": "opentofu-docs",
+    "name": "OpenTofu",
+    "kind": "website",
+    "base_url": "https://opentofu.org/docs/",
+    "allowed_hosts": [
+      "opentofu.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infra as code and servers",
+        "version_pin": "latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Official docs"
+      }
+    }
+  },
+  {
+    "slug": "ansible-docs",
+    "name": "Ansible",
+    "kind": "website",
+    "base_url": "https://docs.ansible.com/ansible/latest/",
+    "allowed_hosts": [
+      "docs.ansible.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 10000,
+      "allowed_path_prefixes": [
+        "/ansible/latest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infra as code and servers",
+        "version_pin": "latest",
+        "est_docs": 8000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Includes collection module docs (most of the 8K). docs.ansible.com reorganized in 2025 under /projects/; verify the redirect"
+      }
+    }
+  },
+  {
+    "slug": "nginx-docs",
+    "name": "NGINX",
+    "kind": "website",
+    "base_url": "https://nginx.org/en/docs/",
+    "allowed_hosts": [
+      "nginx.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 500,
+      "allowed_path_prefixes": [
+        "/en/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infra as code and servers",
+        "version_pin": "mainline",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Official docs"
+      }
+    }
+  },
+  {
+    "slug": "caddy-docs",
+    "name": "Caddy",
+    "kind": "website",
+    "base_url": "https://caddyserver.com/docs/",
+    "allowed_hosts": [
+      "caddyserver.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infra as code and servers",
+        "version_pin": "2.x",
+        "est_docs": 200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Caddy docs"
+      }
+    }
+  },
+  {
+    "slug": "traefik-docs",
+    "name": "Traefik",
+    "kind": "website",
+    "base_url": "https://doc.traefik.io/traefik/",
+    "allowed_hosts": [
+      "doc.traefik.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/traefik/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infra as code and servers",
+        "version_pin": "v3",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current reverse proxy docs"
+      }
+    }
+  },
+  {
+    "slug": "redis-docs",
+    "name": "Redis",
+    "kind": "website",
+    "base_url": "https://redis.io/docs/latest/",
+    "allowed_hosts": [
+      "redis.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 6000,
+      "allowed_path_prefixes": [
+        "/docs/latest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Datastores and messaging",
+        "version_pin": "latest",
+        "est_docs": 5000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current docs"
+      }
+    }
+  },
+  {
+    "slug": "mongodb-docs",
+    "name": "MongoDB",
+    "kind": "website",
+    "base_url": "https://www.mongodb.com/docs/manual/",
+    "allowed_hosts": [
+      "www.mongodb.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 4000,
+      "allowed_path_prefixes": [
+        "/docs/manual/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Datastores and messaging",
+        "version_pin": "current (8.x)",
+        "est_docs": 2500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Core database manual"
+      }
+    }
+  },
+  {
+    "slug": "mysql-docs",
+    "name": "MySQL",
+    "kind": "website",
+    "base_url": "https://dev.mysql.com/doc/refman/8.4/en/",
+    "allowed_hosts": [
+      "dev.mysql.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 4000,
+      "allowed_path_prefixes": [
+        "/doc/refman/8.4/en/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Datastores and messaging",
+        "version_pin": "8.4 LTS",
+        "est_docs": 2500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Version-pinned MySQL manual"
+      }
+    }
+  },
+  {
+    "slug": "mariadb-docs",
+    "name": "MariaDB",
+    "kind": "website",
+    "base_url": "https://mariadb.com/docs/server/",
+    "allowed_hosts": [
+      "mariadb.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 3000,
+      "allowed_path_prefixes": [
+        "/docs/server/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Datastores and messaging",
+        "version_pin": "latest",
+        "est_docs": 2000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Server docs"
+      }
+    }
+  },
+  {
+    "slug": "elasticsearch-docs",
+    "name": "Elasticsearch",
+    "kind": "website",
+    "base_url": "https://www.elastic.co/docs/reference/elasticsearch",
+    "allowed_hosts": [
+      "www.elastic.co"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 8000,
+      "allowed_path_prefixes": [
+        "/docs/reference/elasticsearch",
+        "/docs/reference/query-languages",
+        "/docs/manage-data",
+        "/docs/solutions/search",
+        "/docs/deploy-manage",
+        "/docs/explore-analyze"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Datastores and messaging",
+        "version_pin": "9.x (unversioned /docs)",
+        "est_docs": 5000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Narrowed from /docs/ (all Elastic products, ~40K)"
+      }
+    }
+  },
+  {
+    "slug": "opensearch-docs",
+    "name": "OpenSearch",
+    "kind": "website",
+    "base_url": "https://docs.opensearch.org/latest/",
+    "allowed_hosts": [
+      "docs.opensearch.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 3000,
+      "allowed_path_prefixes": [
+        "/latest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Datastores and messaging",
+        "version_pin": "latest",
+        "est_docs": 2000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current docs"
+      }
+    }
+  },
+  {
+    "slug": "kafka-docs",
+    "name": "Apache Kafka",
+    "kind": "website",
+    "base_url": "https://kafka.apache.org/documentation/",
+    "allowed_hosts": [
+      "kafka.apache.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/documentation/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Datastores and messaging",
+        "version_pin": "latest (4.x)",
+        "est_docs": 60,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Mostly a few very large pages"
+      }
+    }
+  },
+  {
+    "slug": "rabbitmq-docs",
+    "name": "RabbitMQ",
+    "kind": "website",
+    "base_url": "https://www.rabbitmq.com/docs",
+    "allowed_hosts": [
+      "www.rabbitmq.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Datastores and messaging",
+        "version_pin": "4.x",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Current docs"
+      }
+    }
+  },
+  {
+    "slug": "nats-docs",
+    "name": "NATS",
+    "kind": "website",
+    "base_url": "https://docs.nats.io/",
+    "allowed_hosts": [
+      "docs.nats.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Datastores and messaging",
+        "version_pin": "latest",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "'/' is fine: docs-only host"
+      }
+    }
+  },
+  {
+    "slug": "clickhouse-docs",
+    "name": "ClickHouse",
+    "kind": "website",
+    "base_url": "https://clickhouse.com/docs",
+    "allowed_hosts": [
+      "clickhouse.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 5000,
+      "allowed_path_prefixes": [
+        "/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Datastores and messaging",
+        "version_pin": "latest",
+        "est_docs": 3000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Translations live under /docs/zh/, /docs/ru/, /docs/jp/, which /docs admits; the cap bounds them until a deny list exists"
+      }
+    }
+  },
+  {
+    "slug": "aws-ec2",
+    "name": "AWS EC2 Documentation",
+    "kind": "website",
+    "base_url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/",
+    "allowed_hosts": [
+      "docs.aws.amazon.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 3000,
+      "allowed_path_prefixes": [
+        "/AWSEC2/latest/UserGuide/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud AWS selected",
+        "version_pin": "latest",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "EC2 only; large tree"
+      }
+    }
+  },
+  {
+    "slug": "aws-s3",
+    "name": "AWS S3 Documentation",
+    "kind": "website",
+    "base_url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/",
+    "allowed_hosts": [
+      "docs.aws.amazon.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 2500,
+      "allowed_path_prefixes": [
+        "/AmazonS3/latest/userguide/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud AWS selected",
+        "version_pin": "latest",
+        "est_docs": 1200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "S3 only; large tree"
+      }
+    }
+  },
+  {
+    "slug": "aws-lambda",
+    "name": "AWS Lambda Documentation",
+    "kind": "website",
+    "base_url": "https://docs.aws.amazon.com/lambda/latest/dg/",
+    "allowed_hosts": [
+      "docs.aws.amazon.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 1500,
+      "allowed_path_prefixes": [
+        "/lambda/latest/dg/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud AWS selected",
+        "version_pin": "latest",
+        "est_docs": 800,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Lambda only"
+      }
+    }
+  },
+  {
+    "slug": "aws-rds",
+    "name": "AWS RDS Documentation",
+    "kind": "website",
+    "base_url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/",
+    "allowed_hosts": [
+      "docs.aws.amazon.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 2500,
+      "allowed_path_prefixes": [
+        "/AmazonRDS/latest/UserGuide/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud AWS selected",
+        "version_pin": "latest",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "RDS only"
+      }
+    }
+  },
+  {
+    "slug": "aws-iam",
+    "name": "AWS IAM Documentation",
+    "kind": "website",
+    "base_url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/",
+    "allowed_hosts": [
+      "docs.aws.amazon.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 2000,
+      "allowed_path_prefixes": [
+        "/IAM/latest/UserGuide/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud AWS selected",
+        "version_pin": "latest",
+        "est_docs": 1000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "IAM only"
+      }
+    }
+  },
+  {
+    "slug": "aws-cloudwatch",
+    "name": "AWS CloudWatch Documentation",
+    "kind": "website",
+    "base_url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/",
+    "allowed_hosts": [
+      "docs.aws.amazon.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 1500,
+      "allowed_path_prefixes": [
+        "/AmazonCloudWatch/latest/monitoring/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud AWS selected",
+        "version_pin": "latest",
+        "est_docs": 800,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "docs.aws.amazon.com robots: Crawl-delay 5. Host shared by all aws-* sources; politeness must be per host, not per source"
+      }
+    }
+  },
+  {
+    "slug": "gcp-cloudrun",
+    "name": "Google Cloud Run",
+    "kind": "website",
+    "base_url": "https://cloud.google.com/run/docs",
+    "allowed_hosts": [
+      "cloud.google.com",
+      "docs.cloud.google.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 1200,
+      "allowed_path_prefixes": [
+        "/run/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud GCP selected",
+        "version_pin": "latest",
+        "est_docs": 600,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Cloud Run docs only"
+      }
+    }
+  },
+  {
+    "slug": "gcp-gcs",
+    "name": "Google Cloud Storage",
+    "kind": "website",
+    "base_url": "https://cloud.google.com/storage/docs",
+    "allowed_hosts": [
+      "cloud.google.com",
+      "docs.cloud.google.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 1200,
+      "allowed_path_prefixes": [
+        "/storage/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud GCP selected",
+        "version_pin": "latest",
+        "est_docs": 600,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Storage docs"
+      }
+    }
+  },
+  {
+    "slug": "gcp-compute",
+    "name": "Google Compute Engine",
+    "kind": "website",
+    "base_url": "https://cloud.google.com/compute/docs",
+    "allowed_hosts": [
+      "cloud.google.com",
+      "docs.cloud.google.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 2500,
+      "allowed_path_prefixes": [
+        "/compute/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud GCP selected",
+        "version_pin": "latest",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Compute docs"
+      }
+    }
+  },
+  {
+    "slug": "gcp-pubsub",
+    "name": "Google Pub/Sub",
+    "kind": "website",
+    "base_url": "https://cloud.google.com/pubsub/docs",
+    "allowed_hosts": [
+      "cloud.google.com",
+      "docs.cloud.google.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/pubsub/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud GCP selected",
+        "version_pin": "latest",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Pub/Sub docs"
+      }
+    }
+  },
+  {
+    "slug": "gcp-bigquery",
+    "name": "Google BigQuery",
+    "kind": "website",
+    "base_url": "https://cloud.google.com/bigquery/docs",
+    "allowed_hosts": [
+      "cloud.google.com",
+      "docs.cloud.google.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 2500,
+      "allowed_path_prefixes": [
+        "/bigquery/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud GCP selected",
+        "version_pin": "latest",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "robots disallows /<lang>/docs/reference/*; English unprefixed paths are fine"
+      }
+    }
+  },
+  {
+    "slug": "azure-functions",
+    "name": "Azure Functions",
+    "kind": "website",
+    "base_url": "https://learn.microsoft.com/en-us/azure/azure-functions/",
+    "allowed_hosts": [
+      "learn.microsoft.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/en-us/azure/azure-functions/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud Azure selected",
+        "version_pin": "latest",
+        "est_docs": 500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Azure Functions only"
+      }
+    }
+  },
+  {
+    "slug": "azure-blob",
+    "name": "Azure Blob Storage",
+    "kind": "website",
+    "base_url": "https://learn.microsoft.com/en-us/azure/storage/blobs/",
+    "allowed_hosts": [
+      "learn.microsoft.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/en-us/azure/storage/blobs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud Azure selected",
+        "version_pin": "latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Blob Storage only"
+      }
+    }
+  },
+  {
+    "slug": "azure-vm",
+    "name": "Azure Virtual Machines",
+    "kind": "website",
+    "base_url": "https://learn.microsoft.com/en-us/azure/virtual-machines/",
+    "allowed_hosts": [
+      "learn.microsoft.com"
+    ],
+    "crawl_interval_seconds": 5184000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 2000,
+      "allowed_path_prefixes": [
+        "/en-us/azure/virtual-machines/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Cloud Azure selected",
+        "version_pin": "latest",
+        "est_docs": 1000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "VM docs only"
+      }
+    }
+  },
+  {
+    "slug": "prometheus-docs",
+    "name": "Prometheus",
+    "kind": "website",
+    "base_url": "https://prometheus.io/docs/",
+    "allowed_hosts": [
+      "prometheus.io"
+    ],
+    "crawl_interval_seconds": 3888000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Observability and operations",
+        "version_pin": "latest",
+        "est_docs": 200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Monitoring docs"
+      }
+    }
+  },
+  {
+    "slug": "grafana-docs",
+    "name": "Grafana",
+    "kind": "website",
+    "base_url": "https://grafana.com/docs/grafana/latest/",
+    "allowed_hosts": [
+      "grafana.com"
+    ],
+    "crawl_interval_seconds": 3888000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 3000,
+      "allowed_path_prefixes": [
+        "/docs/grafana/latest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Observability and operations",
+        "version_pin": "latest",
+        "est_docs": 2000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Grafana OSS docs"
+      }
+    }
+  },
+  {
+    "slug": "opentelemetry-docs",
+    "name": "OpenTelemetry",
+    "kind": "website",
+    "base_url": "https://opentelemetry.io/docs/",
+    "allowed_hosts": [
+      "opentelemetry.io"
+    ],
+    "crawl_interval_seconds": 3888000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 2000,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Observability and operations",
+        "version_pin": "latest",
+        "est_docs": 1000,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Core docs"
+      }
+    }
+  },
+  {
+    "slug": "linux-manpages",
+    "name": "Linux man-pages",
+    "kind": "website",
+    "base_url": "https://man7.org/linux/man-pages/",
+    "allowed_hosts": [
+      "man7.org"
+    ],
+    "crawl_interval_seconds": 3888000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 3500,
+      "allowed_path_prefixes": [
+        "/linux/man-pages/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Observability and operations",
+        "version_pin": "latest man-pages release",
+        "est_docs": 2500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Official online man-pages"
+      }
+    }
+  },
+  {
+    "slug": "systemd-docs",
+    "name": "systemd Manual",
+    "kind": "website",
+    "base_url": "https://www.freedesktop.org/software/systemd/man/latest/",
+    "allowed_hosts": [
+      "www.freedesktop.org"
+    ],
+    "crawl_interval_seconds": 3888000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/software/systemd/man/latest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Observability and operations",
+        "version_pin": "latest",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "systemd manuals"
+      }
+    }
+  },
+  {
+    "slug": "curl-docs",
+    "name": "curl",
+    "kind": "website",
+    "base_url": "https://curl.se/docs/",
+    "allowed_hosts": [
+      "curl.se"
+    ],
+    "crawl_interval_seconds": 3888000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Observability and operations",
+        "version_pin": "latest",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "curl manual"
+      }
+    }
+  },
+  {
+    "slug": "openssl-docs",
+    "name": "OpenSSL",
+    "kind": "website",
+    "base_url": "https://docs.openssl.org/3.5/",
+    "allowed_hosts": [
+      "docs.openssl.org"
+    ],
+    "crawl_interval_seconds": 3888000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 2500,
+      "allowed_path_prefixes": [
+        "/3.5/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Observability and operations",
+        "version_pin": "3.5 LTS",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Pinned to 3.5 LTS instead of /master/"
+      }
+    }
+  },
+  {
+    "slug": "github-actions-docs",
+    "name": "GitHub Actions",
+    "kind": "website",
+    "base_url": "https://docs.github.com/en/actions",
+    "allowed_hosts": [
+      "docs.github.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 1200,
+      "allowed_path_prefixes": [
+        "/en/actions"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "CI/CD and developer tooling",
+        "version_pin": "latest",
+        "est_docs": 600,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "docs.github.com robots has no rules"
+      }
+    }
+  },
+  {
+    "slug": "gitlab-ci-docs",
+    "name": "GitLab CI/CD",
+    "kind": "website",
+    "base_url": "https://docs.gitlab.com/ci/",
+    "allowed_hosts": [
+      "docs.gitlab.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/ci/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "CI/CD and developer tooling",
+        "version_pin": "latest",
+        "est_docs": 500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "CI docs only"
+      }
+    }
+  },
+  {
+    "slug": "circleci-docs",
+    "name": "CircleCI",
+    "kind": "website",
+    "base_url": "https://circleci.com/docs/",
+    "allowed_hosts": [
+      "circleci.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 1500,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "CI/CD and developer tooling",
+        "version_pin": "latest",
+        "est_docs": 800,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "CircleCI docs"
+      }
+    }
+  },
+  {
+    "slug": "vscode-docs",
+    "name": "VS Code",
+    "kind": "website",
+    "base_url": "https://code.visualstudio.com/docs",
+    "allowed_hosts": [
+      "code.visualstudio.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/docs",
+        "/api"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "CI/CD and developer tooling",
+        "version_pin": "latest",
+        "est_docs": 500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Added extension API docs"
+      }
+    }
+  },
+  {
+    "slug": "npm-docs",
+    "name": "npm CLI",
+    "kind": "website",
+    "base_url": "https://docs.npmjs.com/cli/",
+    "allowed_hosts": [
+      "docs.npmjs.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/cli/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "CI/CD and developer tooling",
+        "version_pin": "latest CLI",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "npm CLI docs"
+      }
+    }
+  },
+  {
+    "slug": "pypa-pip",
+    "name": "pip",
+    "kind": "website",
+    "base_url": "https://pip.pypa.io/en/stable/",
+    "allowed_hosts": [
+      "pip.pypa.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 200,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "CI/CD and developer tooling",
+        "version_pin": "stable",
+        "est_docs": 100,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Stable pip docs"
+      }
+    }
+  },
+  {
+    "slug": "python-poetry",
+    "name": "Poetry",
+    "kind": "website",
+    "base_url": "https://python-poetry.org/docs/",
+    "allowed_hosts": [
+      "python-poetry.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 150,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "CI/CD and developer tooling",
+        "version_pin": "latest",
+        "est_docs": 50,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Dependency manager docs"
+      }
+    }
+  },
+  {
+    "slug": "astral-uv",
+    "name": "uv",
+    "kind": "website",
+    "base_url": "https://docs.astral.sh/uv/",
+    "allowed_hosts": [
+      "docs.astral.sh"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/uv/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "CI/CD and developer tooling",
+        "version_pin": "latest",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "uv docs"
+      }
+    }
+  },
+  {
+    "slug": "cargo-book",
+    "name": "Cargo Book",
+    "kind": "website",
+    "base_url": "https://doc.rust-lang.org/cargo/",
+    "allowed_hosts": [
+      "doc.rust-lang.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/cargo/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "CI/CD and developer tooling",
+        "version_pin": "stable",
+        "est_docs": 200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Official Cargo docs"
+      }
+    }
+  },
+  {
+    "slug": "homebrew-docs",
+    "name": "Homebrew",
+    "kind": "website",
+    "base_url": "https://docs.brew.sh/",
+    "allowed_hosts": [
+      "docs.brew.sh"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 200,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "CI/CD and developer tooling",
+        "version_pin": "latest",
+        "est_docs": 100,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "'/' is fine: docs-only host"
+      }
+    }
+  },
+  {
+    "slug": "github-cli-docs",
+    "name": "GitHub CLI",
+    "kind": "website",
+    "base_url": "https://cli.github.com/manual/",
+    "allowed_hosts": [
+      "cli.github.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/manual/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "CI/CD and developer tooling",
+        "version_pin": "latest",
+        "est_docs": 200,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "gh commands"
+      }
+    }
+  },
+  {
+    "slug": "maven-docs",
+    "name": "Apache Maven",
+    "kind": "website",
+    "base_url": "https://maven.apache.org/guides/",
+    "allowed_hosts": [
+      "maven.apache.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 200,
+      "allowed_path_prefixes": [
+        "/guides/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "CI/CD and developer tooling",
+        "version_pin": "latest",
+        "est_docs": 80,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Maven guide"
+      }
+    }
+  },
+  {
+    "slug": "gradle-docs",
+    "name": "Gradle",
+    "kind": "website",
+    "base_url": "https://docs.gradle.org/current/userguide/",
+    "allowed_hosts": [
+      "docs.gradle.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/current/userguide/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "CI/CD and developer tooling",
+        "version_pin": "current",
+        "est_docs": 500,
+        "language_policy": "en_only_by_path",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Gradle current docs"
+      }
+    }
+  },
+  {
+    "slug": "web-dev",
+    "name": "web.dev guides",
+    "kind": "website",
+    "base_url": "https://web.dev/learn",
+    "allowed_hosts": [
+      "web.dev"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 2500,
+      "allowed_path_prefixes": [
+        "/learn",
+        "/articles",
+        "/explore"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Web platform",
+        "version_pin": "living",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Google's web guides (performance, a11y, PWA)"
+      }
+    }
+  },
+  {
+    "slug": "rust-nomicon",
+    "name": "Rustonomicon",
+    "kind": "website",
+    "base_url": "https://doc.rust-lang.org/nomicon/",
+    "allowed_hosts": [
+      "doc.rust-lang.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 150,
+      "allowed_path_prefixes": [
+        "/nomicon/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "stable",
+        "est_docs": 60,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "rust-async-book",
+    "name": "Async Rust book",
+    "kind": "website",
+    "base_url": "https://rust-lang.github.io/async-book/",
+    "allowed_hosts": [
+      "rust-lang.github.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 100,
+      "allowed_path_prefixes": [
+        "/async-book/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "latest",
+        "est_docs": 40,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "java-tutorials",
+    "name": "dev.java Learn",
+    "kind": "website",
+    "base_url": "https://dev.java/learn/",
+    "allowed_hosts": [
+      "dev.java"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/learn/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Official Java tutorials"
+      }
+    }
+  },
+  {
+    "slug": "gnu-make",
+    "name": "GNU Make Manual",
+    "kind": "website",
+    "base_url": "https://www.gnu.org/software/make/manual/html_node/index.html",
+    "allowed_hosts": [
+      "www.gnu.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/software/make/manual/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "4.x",
+        "est_docs": 200,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "gnu.org robots caveat"
+      }
+    }
+  },
+  {
+    "slug": "gnu-gawk",
+    "name": "GNU Awk Manual",
+    "kind": "website",
+    "base_url": "https://www.gnu.org/software/gawk/manual/html_node/index.html",
+    "allowed_hosts": [
+      "www.gnu.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/software/gawk/manual/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "5.x",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "gnu.org robots caveat"
+      }
+    }
+  },
+  {
+    "slug": "scala-docs",
+    "name": "Scala documentation",
+    "kind": "website",
+    "base_url": "https://docs.scala-lang.org/",
+    "allowed_hosts": [
+      "docs.scala-lang.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 2500,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "3.x",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Has /ja/, /zh-cn/ trees; cap until a deny list exists"
+      }
+    }
+  },
+  {
+    "slug": "elixir-docs",
+    "name": "Elixir documentation",
+    "kind": "website",
+    "base_url": "https://hexdocs.pm/elixir/",
+    "allowed_hosts": [
+      "hexdocs.pm"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/elixir/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "latest",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "hexdocs.pm/elixir/ is current; versioned trees at /elixir/1.x/"
+      }
+    }
+  },
+  {
+    "slug": "python-peps",
+    "name": "Python PEPs",
+    "kind": "website",
+    "base_url": "https://peps.python.org/",
+    "allowed_hosts": [
+      "peps.python.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "living",
+        "est_docs": 700,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "linux-kernel-docs",
+    "name": "Linux kernel documentation",
+    "kind": "website",
+    "base_url": "https://docs.kernel.org/",
+    "allowed_hosts": [
+      "docs.kernel.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 100,
+      "max_depth": 8,
+      "max_pages": 5000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "1",
+        "category": "Languages",
+        "version_pin": "latest",
+        "est_docs": 3000,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Translations under /translations/; cap"
+      }
+    }
+  },
+  {
+    "slug": "anyhow-docs",
+    "name": "anyhow (docs.rs)",
+    "kind": "website",
+    "base_url": "https://docs.rs/anyhow/latest/anyhow/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 100,
+      "allowed_path_prefixes": [
+        "/anyhow/latest/anyhow/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust crates",
+        "version_pin": "latest",
+        "est_docs": 40,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "docs.rs host cap 30K across crates"
+      }
+    }
+  },
+  {
+    "slug": "thiserror-docs",
+    "name": "thiserror (docs.rs)",
+    "kind": "website",
+    "base_url": "https://docs.rs/thiserror/latest/thiserror/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 50,
+      "allowed_path_prefixes": [
+        "/thiserror/latest/thiserror/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust crates",
+        "version_pin": "latest",
+        "est_docs": 10,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "reqwest-docs",
+    "name": "reqwest (docs.rs)",
+    "kind": "website",
+    "base_url": "https://docs.rs/reqwest/latest/reqwest/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/reqwest/latest/reqwest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust crates",
+        "version_pin": "latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "serde-json-docs",
+    "name": "serde_json (docs.rs)",
+    "kind": "website",
+    "base_url": "https://docs.rs/serde_json/latest/serde_json/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/serde_json/latest/serde_json/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust crates",
+        "version_pin": "latest",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "sqlx-docs",
+    "name": "sqlx (docs.rs)",
+    "kind": "website",
+    "base_url": "https://docs.rs/sqlx/latest/sqlx/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1500,
+      "allowed_path_prefixes": [
+        "/sqlx/latest/sqlx/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust crates",
+        "version_pin": "latest",
+        "est_docs": 800,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "tracing-docs",
+    "name": "tracing (docs.rs)",
+    "kind": "website",
+    "base_url": "https://docs.rs/tracing/latest/tracing/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/tracing/latest/tracing/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust crates",
+        "version_pin": "latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "hyper-docs",
+    "name": "hyper (docs.rs)",
+    "kind": "website",
+    "base_url": "https://docs.rs/hyper/latest/hyper/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/hyper/latest/hyper/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust crates",
+        "version_pin": "latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "rand-docs",
+    "name": "rand (docs.rs)",
+    "kind": "website",
+    "base_url": "https://docs.rs/rand/latest/rand/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 400,
+      "allowed_path_prefixes": [
+        "/rand/latest/rand/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust crates",
+        "version_pin": "latest",
+        "est_docs": 200,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "regex-docs",
+    "name": "regex (docs.rs)",
+    "kind": "website",
+    "base_url": "https://docs.rs/regex/latest/regex/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 200,
+      "allowed_path_prefixes": [
+        "/regex/latest/regex/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust crates",
+        "version_pin": "latest",
+        "est_docs": 100,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "chrono-docs",
+    "name": "chrono (docs.rs)",
+    "kind": "website",
+    "base_url": "https://docs.rs/chrono/latest/chrono/",
+    "allowed_hosts": [
+      "docs.rs"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 600,
+      "allowed_path_prefixes": [
+        "/chrono/latest/chrono/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Rust crates",
+        "version_pin": "latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "react-native-docs",
+    "name": "React Native",
+    "kind": "website",
+    "base_url": "https://reactnative.dev/docs/getting-started",
+    "allowed_hosts": [
+      "reactnative.dev"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1200,
+      "allowed_path_prefixes": [
+        "/docs/",
+        "/blog/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "latest",
+        "est_docs": 600,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "/docs/next/ and /docs/0.7x/ are versioned dupes"
+      }
+    }
+  },
+  {
+    "slug": "expo-docs",
+    "name": "Expo",
+    "kind": "website",
+    "base_url": "https://docs.expo.dev/",
+    "allowed_hosts": [
+      "docs.expo.dev"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 2500,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "latest",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "electron-docs",
+    "name": "Electron",
+    "kind": "website",
+    "base_url": "https://www.electronjs.org/docs/latest/",
+    "allowed_hosts": [
+      "www.electronjs.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/docs/latest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "latest",
+        "est_docs": 500,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "sass-docs",
+    "name": "Sass",
+    "kind": "website",
+    "base_url": "https://sass-lang.com/documentation/",
+    "allowed_hosts": [
+      "sass-lang.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 500,
+      "allowed_path_prefixes": [
+        "/documentation/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "bootstrap-docs",
+    "name": "Bootstrap",
+    "kind": "website",
+    "base_url": "https://getbootstrap.com/docs/5.3/getting-started/introduction/",
+    "allowed_hosts": [
+      "getbootstrap.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 200,
+      "allowed_path_prefixes": [
+        "/docs/5.3/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "5.3",
+        "est_docs": 100,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "d3-docs",
+    "name": "D3",
+    "kind": "website",
+    "base_url": "https://d3js.org/what-is-d3",
+    "allowed_hosts": [
+      "d3js.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Frontend frameworks",
+        "version_pin": "7.x",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "mypy-docs",
+    "name": "mypy",
+    "kind": "website",
+    "base_url": "https://mypy.readthedocs.io/en/stable/",
+    "allowed_hosts": [
+      "mypy.readthedocs.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 200,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python libraries",
+        "version_pin": "stable",
+        "est_docs": 100,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "ruff-docs",
+    "name": "Ruff",
+    "kind": "website",
+    "base_url": "https://docs.astral.sh/ruff/",
+    "allowed_hosts": [
+      "docs.astral.sh"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1500,
+      "allowed_path_prefixes": [
+        "/ruff/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python libraries",
+        "version_pin": "latest",
+        "est_docs": 1000,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Mostly one page per lint rule"
+      }
+    }
+  },
+  {
+    "slug": "keras-docs",
+    "name": "Keras",
+    "kind": "website",
+    "base_url": "https://keras.io/api/",
+    "allowed_hosts": [
+      "keras.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/api/",
+        "/guides/",
+        "/examples/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python libraries",
+        "version_pin": "3.x",
+        "est_docs": 600,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "jax-docs",
+    "name": "JAX",
+    "kind": "website",
+    "base_url": "https://docs.jax.dev/en/latest/",
+    "allowed_hosts": [
+      "docs.jax.dev"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/en/latest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Python libraries",
+        "version_pin": "latest",
+        "est_docs": 600,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "ktor-docs",
+    "name": "Ktor",
+    "kind": "website",
+    "base_url": "https://ktor.io/docs/welcome.html",
+    "allowed_hosts": [
+      "ktor.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Backend frameworks",
+        "version_pin": "3.x",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "gin-docs",
+    "name": "Gin",
+    "kind": "website",
+    "base_url": "https://gin-gonic.com/en/docs/",
+    "allowed_hosts": [
+      "gin-gonic.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 150,
+      "allowed_path_prefixes": [
+        "/en/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Backend frameworks",
+        "version_pin": "latest",
+        "est_docs": 50,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "gorm-docs",
+    "name": "GORM",
+    "kind": "website",
+    "base_url": "https://gorm.io/docs/",
+    "allowed_hosts": [
+      "gorm.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 200,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Backend frameworks",
+        "version_pin": "latest",
+        "est_docs": 100,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "phoenix-docs",
+    "name": "Phoenix",
+    "kind": "website",
+    "base_url": "https://hexdocs.pm/phoenix/overview.html",
+    "allowed_hosts": [
+      "hexdocs.pm"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 500,
+      "allowed_path_prefixes": [
+        "/phoenix/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Backend frameworks",
+        "version_pin": "latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "rails-api",
+    "name": "Rails API reference",
+    "kind": "website",
+    "base_url": "https://api.rubyonrails.org/",
+    "allowed_hosts": [
+      "api.rubyonrails.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 90,
+      "max_depth": 8,
+      "max_pages": 4000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "2",
+        "category": "Backend frameworks",
+        "version_pin": "8.x",
+        "est_docs": 3000,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "vault-docs",
+    "name": "HashiCorp Vault",
+    "kind": "website",
+    "base_url": "https://developer.hashicorp.com/vault/docs",
+    "allowed_hosts": [
+      "developer.hashicorp.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 2500,
+      "allowed_path_prefixes": [
+        "/vault/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infrastructure",
+        "version_pin": "latest",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "istio-docs",
+    "name": "Istio",
+    "kind": "website",
+    "base_url": "https://istio.io/latest/docs/",
+    "allowed_hosts": [
+      "istio.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/latest/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infrastructure",
+        "version_pin": "latest",
+        "est_docs": 600,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "argocd-docs",
+    "name": "Argo CD",
+    "kind": "website",
+    "base_url": "https://argo-cd.readthedocs.io/en/stable/",
+    "allowed_hosts": [
+      "argo-cd.readthedocs.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 800,
+      "allowed_path_prefixes": [
+        "/en/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infrastructure",
+        "version_pin": "stable",
+        "est_docs": 400,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "jenkins-docs",
+    "name": "Jenkins",
+    "kind": "website",
+    "base_url": "https://www.jenkins.io/doc/",
+    "allowed_hosts": [
+      "www.jenkins.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 2500,
+      "allowed_path_prefixes": [
+        "/doc/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infrastructure",
+        "version_pin": "latest",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "cloudflare-dev-docs",
+    "name": "Cloudflare developer docs",
+    "kind": "website",
+    "base_url": "https://developers.cloudflare.com/workers/",
+    "allowed_hosts": [
+      "developers.cloudflare.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 8000,
+      "allowed_path_prefixes": [
+        "/workers/",
+        "/pages/",
+        "/r2/",
+        "/d1/",
+        "/kv/",
+        "/durable-objects/",
+        "/queues/",
+        "/dns/",
+        "/ssl/",
+        "/cache/",
+        "/rules/",
+        "/waf/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infrastructure",
+        "version_pin": "latest",
+        "est_docs": 5000,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "vercel-docs",
+    "name": "Vercel docs",
+    "kind": "website",
+    "base_url": "https://vercel.com/docs",
+    "allowed_hosts": [
+      "vercel.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 1500,
+      "allowed_path_prefixes": [
+        "/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infrastructure",
+        "version_pin": "latest",
+        "est_docs": 800,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "supabase-docs",
+    "name": "Supabase docs",
+    "kind": "website",
+    "base_url": "https://supabase.com/docs",
+    "allowed_hosts": [
+      "supabase.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 3000,
+      "allowed_path_prefixes": [
+        "/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infrastructure",
+        "version_pin": "latest",
+        "est_docs": 2000,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "firebase-docs",
+    "name": "Firebase docs",
+    "kind": "website",
+    "base_url": "https://firebase.google.com/docs",
+    "allowed_hosts": [
+      "firebase.google.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 5000,
+      "allowed_path_prefixes": [
+        "/docs"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infrastructure",
+        "version_pin": "latest",
+        "est_docs": 3000,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "?hl= locales: strip in normalizer"
+      }
+    }
+  },
+  {
+    "slug": "heroku-devcenter",
+    "name": "Heroku Dev Center",
+    "kind": "website",
+    "base_url": "https://devcenter.heroku.com/categories/reference",
+    "allowed_hosts": [
+      "devcenter.heroku.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 2500,
+      "allowed_path_prefixes": [
+        "/articles/",
+        "/categories/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Infrastructure",
+        "version_pin": "latest",
+        "est_docs": 1500,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "duckdb-docs",
+    "name": "DuckDB",
+    "kind": "website",
+    "base_url": "https://duckdb.org/docs/stable/",
+    "allowed_hosts": [
+      "duckdb.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 1200,
+      "allowed_path_prefixes": [
+        "/docs/stable/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Databases and tooling",
+        "version_pin": "stable",
+        "est_docs": 800,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "sqlalchemy-alembic",
+    "name": "Alembic",
+    "kind": "website",
+    "base_url": "https://alembic.sqlalchemy.org/en/latest/",
+    "allowed_hosts": [
+      "alembic.sqlalchemy.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 150,
+      "allowed_path_prefixes": [
+        "/en/latest/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Databases and tooling",
+        "version_pin": "latest",
+        "est_docs": 60,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "grpc-docs",
+    "name": "gRPC",
+    "kind": "website",
+    "base_url": "https://grpc.io/docs/",
+    "allowed_hosts": [
+      "grpc.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 500,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "APIs and protocols",
+        "version_pin": "latest",
+        "est_docs": 300,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "protobuf-docs",
+    "name": "Protocol Buffers",
+    "kind": "website",
+    "base_url": "https://protobuf.dev/overview/",
+    "allowed_hosts": [
+      "protobuf.dev"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "APIs and protocols",
+        "version_pin": "latest",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "graphql-docs",
+    "name": "GraphQL",
+    "kind": "website",
+    "base_url": "https://graphql.org/learn/",
+    "allowed_hosts": [
+      "graphql.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 100,
+      "allowed_path_prefixes": [
+        "/learn/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "APIs and protocols",
+        "version_pin": "latest",
+        "est_docs": 50,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "openapi-spec",
+    "name": "OpenAPI Specification",
+    "kind": "website",
+    "base_url": "https://spec.openapis.org/oas/latest.html",
+    "allowed_hosts": [
+      "spec.openapis.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 5,
+      "allowed_path_prefixes": [
+        "/oas/latest.html"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "APIs and protocols",
+        "version_pin": "3.2",
+        "est_docs": 1,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "owasp-cheatsheets",
+    "name": "OWASP Cheat Sheet Series",
+    "kind": "website",
+    "base_url": "https://cheatsheetseries.owasp.org/",
+    "allowed_hosts": [
+      "cheatsheetseries.owasp.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 250,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Security",
+        "version_pin": "living",
+        "est_docs": 120,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": true,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "CC BY-SA"
+      }
+    }
+  },
+  {
+    "slug": "letsencrypt-docs",
+    "name": "Let's Encrypt docs",
+    "kind": "website",
+    "base_url": "https://letsencrypt.org/docs/",
+    "allowed_hosts": [
+      "letsencrypt.org"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 150,
+      "allowed_path_prefixes": [
+        "/docs/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Security",
+        "version_pin": "latest",
+        "est_docs": 60,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Locale trees under /<lang>/docs/ are excluded by prefix"
+      }
+    }
+  },
+  {
+    "slug": "neovim-docs",
+    "name": "Neovim user docs",
+    "kind": "website",
+    "base_url": "https://neovim.io/doc/user/",
+    "allowed_hosts": [
+      "neovim.io"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/doc/user/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Editors and shells",
+        "version_pin": "stable",
+        "est_docs": 150,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "powershell-docs",
+    "name": "PowerShell docs",
+    "kind": "website",
+    "base_url": "https://learn.microsoft.com/en-us/powershell/scripting/overview",
+    "allowed_hosts": [
+      "learn.microsoft.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 4000,
+      "allowed_path_prefixes": [
+        "/en-us/powershell/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Editors and shells",
+        "version_pin": "7.x",
+        "est_docs": 3000,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "?view= variants per version; strip in normalizer"
+      }
+    }
+  },
+  {
+    "slug": "digitalocean-tutorials",
+    "name": "DigitalOcean community tutorials",
+    "kind": "website",
+    "base_url": "https://www.digitalocean.com/community/tutorials",
+    "allowed_hosts": [
+      "www.digitalocean.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 10000,
+      "allowed_path_prefixes": [
+        "/community/tutorials"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Tutorials",
+        "version_pin": "n/a",
+        "est_docs": 8000,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "robots allows /community/tutorials; sitemap.xml listed. Excellent English tutorials, content license: check per page"
+      }
+    }
+  },
+  {
+    "slug": "baeldung",
+    "name": "Baeldung (Java/Spring)",
+    "kind": "website",
+    "base_url": "https://www.baeldung.com/",
+    "allowed_hosts": [
+      "www.baeldung.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 80,
+      "max_depth": 8,
+      "max_pages": 8000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "discover_sitemaps": true,
+      "registry": {
+        "tier": "3",
+        "category": "Tutorials",
+        "version_pin": "n/a",
+        "est_docs": 6000,
+        "language_policy": "en_only_by_path",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Commercial site: check terms before enabling"
+      }
+    }
+  }
+]

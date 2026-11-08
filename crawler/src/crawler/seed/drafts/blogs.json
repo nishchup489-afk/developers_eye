@@ -1,0 +1,5894 @@
+[
+  {
+    "slug": "cloudflare-blog",
+    "name": "Cloudflare Blog",
+    "kind": "rss",
+    "base_url": "https://blog.cloudflare.com/rss/",
+    "allowed_hosts": [
+      "blog.cloudflare.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Prefer RSS and curated technical posts only"
+      }
+    }
+  },
+  {
+    "slug": "netflix-techblog",
+    "name": "Netflix TechBlog",
+    "kind": "rss",
+    "base_url": "https://netflixtechblog.com/feed",
+    "allowed_hosts": [
+      "netflixtechblog.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Find official publication feed; validate rights"
+      }
+    }
+  },
+  {
+    "slug": "stripe-engineering",
+    "name": "Stripe Engineering",
+    "kind": "rss",
+    "base_url": "https://stripe.com/blog/feed.rss",
+    "allowed_hosts": [
+      "stripe.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Filter engineering posts only"
+      }
+    }
+  },
+  {
+    "slug": "discord-engineering",
+    "name": "Discord Engineering",
+    "kind": "rss",
+    "base_url": "https://discord.com/blog/rss.xml",
+    "allowed_hosts": [
+      "discord.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Engineering posts only"
+      }
+    }
+  },
+  {
+    "slug": "uber-engineering",
+    "name": "Uber Engineering",
+    "kind": "rss",
+    "base_url": "https://www.uber.com/blog/engineering/rss/",
+    "allowed_hosts": [
+      "www.uber.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Engineering posts only"
+      }
+    }
+  },
+  {
+    "slug": "airbnb-engineering",
+    "name": "Airbnb Engineering",
+    "kind": "rss",
+    "base_url": "https://medium.com/feed/airbnb-engineering",
+    "allowed_hosts": [
+      "medium.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/airbnb-engineering"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Publication feed if available; medium.com allows generic crawlers but blocks named AI bots; use our own UA and keep the rate low"
+      }
+    }
+  },
+  {
+    "slug": "shopify-engineering",
+    "name": "Shopify Engineering",
+    "kind": "rss",
+    "base_url": "https://shopify.engineering/blog.atom",
+    "allowed_hosts": [
+      "shopify.engineering"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Engineering only"
+      }
+    }
+  },
+  {
+    "slug": "github-engineering",
+    "name": "GitHub Blog Engineering",
+    "kind": "rss",
+    "base_url": "https://github.blog/engineering/feed/",
+    "allowed_hosts": [
+      "github.blog"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/engineering/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Engineering topics only"
+      }
+    }
+  },
+  {
+    "slug": "gitlab-blog",
+    "name": "GitLab Blog Engineering",
+    "kind": "rss",
+    "base_url": "https://about.gitlab.com/atom.xml",
+    "allowed_hosts": [
+      "about.gitlab.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Technical posts by curated topic"
+      }
+    }
+  },
+  {
+    "slug": "mozilla-hacks",
+    "name": "Mozilla Hacks",
+    "kind": "rss",
+    "base_url": "https://hacks.mozilla.org/feed/",
+    "allowed_hosts": [
+      "hacks.mozilla.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Web engineering tutorials"
+      }
+    }
+  },
+  {
+    "slug": "vercel-blog",
+    "name": "Vercel Blog",
+    "kind": "rss",
+    "base_url": "https://vercel.com/atom",
+    "allowed_hosts": [
+      "vercel.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Technical docs and engineering posts"
+      }
+    }
+  },
+  {
+    "slug": "aws-architecture-blog",
+    "name": "AWS Architecture Blog",
+    "kind": "rss",
+    "base_url": "https://aws.amazon.com/blogs/architecture/feed/",
+    "allowed_hosts": [
+      "aws.amazon.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blogs/architecture/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Architecture posts only"
+      }
+    }
+  },
+  {
+    "slug": "google-cloud-blog",
+    "name": "Google Cloud Blog",
+    "kind": "rss",
+    "base_url": "https://cloudblog.withgoogle.com/rss/",
+    "allowed_hosts": [
+      "cloudblog.withgoogle.com",
+      "cloud.google.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Engineering articles by curated topic"
+      }
+    }
+  },
+  {
+    "slug": "microsoft-devblogs",
+    "name": "Microsoft DevBlogs",
+    "kind": "rss",
+    "base_url": "https://devblogs.microsoft.com/feed/",
+    "allowed_hosts": [
+      "devblogs.microsoft.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Product-specific technical posts only"
+      }
+    }
+  },
+  {
+    "slug": "dropbox-techblog",
+    "name": "Dropbox Tech Blog",
+    "kind": "rss",
+    "base_url": "https://dropbox.tech/feed",
+    "allowed_hosts": [
+      "dropbox.tech"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Engineering articles"
+      }
+    }
+  },
+  {
+    "slug": "slack-engineering",
+    "name": "Slack Engineering",
+    "kind": "rss",
+    "base_url": "https://slack.engineering/feed/",
+    "allowed_hosts": [
+      "slack.engineering"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Engineering articles"
+      }
+    }
+  },
+  {
+    "slug": "figma-engineering",
+    "name": "Figma Engineering",
+    "kind": "rss",
+    "base_url": "https://www.figma.com/blog/feed/atom.xml",
+    "allowed_hosts": [
+      "www.figma.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Technical posts only"
+      }
+    }
+  },
+  {
+    "slug": "sentry-blog",
+    "name": "Sentry Engineering",
+    "kind": "rss",
+    "base_url": "https://blog.sentry.io/feed.xml",
+    "allowed_hosts": [
+      "blog.sentry.io"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Engineering posts by curated tags"
+      }
+    }
+  },
+  {
+    "slug": "realpython",
+    "name": "Real Python",
+    "kind": "rss",
+    "base_url": "https://realpython.com/atom.xml",
+    "allowed_hosts": [
+      "realpython.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Curated Python tutorials; rights review"
+      }
+    }
+  },
+  {
+    "slug": "webdev",
+    "name": "web.dev",
+    "kind": "rss",
+    "base_url": "https://web.dev/static/blog/feed.xml",
+    "allowed_hosts": [
+      "web.dev"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Core tutorials and guides only"
+      }
+    }
+  },
+  {
+    "slug": "css-tricks",
+    "name": "CSS-Tricks",
+    "kind": "rss",
+    "base_url": "https://css-tricks.com/feed/",
+    "allowed_hosts": [
+      "css-tricks.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Curated CSS learning articles"
+      }
+    }
+  },
+  {
+    "slug": "julia-evans",
+    "name": "Julia Evans",
+    "kind": "rss",
+    "base_url": "https://jvns.ca/atom.xml",
+    "allowed_hosts": [
+      "jvns.ca"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Technical blog; do not redistribute original illustrations without permission"
+      }
+    }
+  },
+  {
+    "slug": "martin-fowler",
+    "name": "Martin Fowler",
+    "kind": "rss",
+    "base_url": "https://martinfowler.com/feed.atom",
+    "allowed_hosts": [
+      "martinfowler.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Architecture and engineering essays"
+      }
+    }
+  },
+  {
+    "slug": "dan-luu",
+    "name": "Dan Luu",
+    "kind": "rss",
+    "base_url": "https://danluu.com/atom.xml",
+    "allowed_hosts": [
+      "danluu.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Long-form engineering essays"
+      }
+    }
+  },
+  {
+    "slug": "brendan-gregg",
+    "name": "Brendan Gregg",
+    "kind": "rss",
+    "base_url": "https://www.brendangregg.com/blog/rss.xml",
+    "allowed_hosts": [
+      "www.brendangregg.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Performance articles; avoid bulk media"
+      }
+    }
+  },
+  {
+    "slug": "highscalability",
+    "name": "High Scalability",
+    "kind": "rss",
+    "base_url": "https://highscalability.com/rss/",
+    "allowed_hosts": [
+      "highscalability.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Curated systems architecture articles"
+      }
+    }
+  },
+  {
+    "slug": "planet-python",
+    "name": "Planet Python",
+    "kind": "rss",
+    "base_url": "https://planetpython.org/rss20.xml",
+    "allowed_hosts": [
+      "planetpython.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Aggregator: index links only; avoid duplicate content; aggregator: entries link to other hosts, so follow_entry_links only fetches same-host pages"
+      }
+    }
+  },
+  {
+    "slug": "rust-blog",
+    "name": "Rust Blog",
+    "kind": "rss",
+    "base_url": "https://blog.rust-lang.org/feed.xml",
+    "allowed_hosts": [
+      "blog.rust-lang.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Engineering blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "candidate_disabled",
+        "suggested_mvp": true,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "Official Rust development articles"
+      }
+    }
+  },
+  {
+    "slug": "meta-engineering",
+    "name": "Engineering at Meta",
+    "kind": "rss",
+    "base_url": "https://engineering.fb.com/feed/",
+    "allowed_hosts": [
+      "engineering.fb.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": true,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "google-developers-blog",
+    "name": "Google Developers Blog",
+    "kind": "rss",
+    "base_url": "https://developers.googleblog.com/rss/",
+    "allowed_hosts": [
+      "developers.googleblog.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "google-research-blog",
+    "name": "Google Research Blog",
+    "kind": "rss",
+    "base_url": "https://research.google/blog/rss/",
+    "allowed_hosts": [
+      "research.google"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "aws-news-blog",
+    "name": "AWS News Blog",
+    "kind": "rss",
+    "base_url": "https://aws.amazon.com/blogs/aws/feed/",
+    "allowed_hosts": [
+      "aws.amazon.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blogs/aws/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "aws-compute-blog",
+    "name": "AWS Compute Blog",
+    "kind": "rss",
+    "base_url": "https://aws.amazon.com/blogs/compute/feed/",
+    "allowed_hosts": [
+      "aws.amazon.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blogs/compute/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "aws-database-blog",
+    "name": "AWS Database Blog",
+    "kind": "rss",
+    "base_url": "https://aws.amazon.com/blogs/database/feed/",
+    "allowed_hosts": [
+      "aws.amazon.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blogs/database/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "pinterest-engineering",
+    "name": "Pinterest Engineering",
+    "kind": "rss",
+    "base_url": "https://medium.com/feed/pinterest-engineering",
+    "allowed_hosts": [
+      "medium.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/pinterest-engineering"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "medium.com allows generic crawlers but blocks named AI bots; use our own UA and keep the rate low"
+      }
+    }
+  },
+  {
+    "slug": "lyft-engineering",
+    "name": "Lyft Engineering",
+    "kind": "rss",
+    "base_url": "https://eng.lyft.com/feed",
+    "allowed_hosts": [
+      "eng.lyft.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "spotify-engineering",
+    "name": "Spotify Engineering",
+    "kind": "rss",
+    "base_url": "https://engineering.atspotify.com/feed/",
+    "allowed_hosts": [
+      "engineering.atspotify.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "etsy-codeascraft",
+    "name": "Etsy Code as Craft",
+    "kind": "rss",
+    "base_url": "https://www.etsy.com/codeascraft/rss",
+    "allowed_hosts": [
+      "www.etsy.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/codeascraft/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "instacart-tech",
+    "name": "Instacart Tech",
+    "kind": "rss",
+    "base_url": "https://tech.instacart.com/feed",
+    "allowed_hosts": [
+      "tech.instacart.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "zalando-engineering",
+    "name": "Zalando Engineering",
+    "kind": "rss",
+    "base_url": "https://engineering.zalando.com/atom.xml",
+    "allowed_hosts": [
+      "engineering.zalando.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "heroku-engineering",
+    "name": "Heroku Engineering",
+    "kind": "rss",
+    "base_url": "https://blog.heroku.com/engineering/feed",
+    "allowed_hosts": [
+      "blog.heroku.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "flyio-blog",
+    "name": "Fly.io Blog",
+    "kind": "rss",
+    "base_url": "https://fly.io/blog/feed.xml",
+    "allowed_hosts": [
+      "fly.io"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "supabase-blog",
+    "name": "Supabase Blog",
+    "kind": "rss",
+    "base_url": "https://supabase.com/rss.xml",
+    "allowed_hosts": [
+      "supabase.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "tailscale-blog",
+    "name": "Tailscale Blog",
+    "kind": "rss",
+    "base_url": "https://tailscale.com/blog/index.xml",
+    "allowed_hosts": [
+      "tailscale.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "grafana-blog",
+    "name": "Grafana Labs Blog",
+    "kind": "rss",
+    "base_url": "https://grafana.com/blog/index.xml",
+    "allowed_hosts": [
+      "grafana.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "elastic-blog",
+    "name": "Elastic Blog",
+    "kind": "rss",
+    "base_url": "https://www.elastic.co/blog/feed",
+    "allowed_hosts": [
+      "www.elastic.co"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/",
+        "/search-labs/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "redis-blog",
+    "name": "Redis Blog",
+    "kind": "rss",
+    "base_url": "https://redis.io/blog/feed/",
+    "allowed_hosts": [
+      "redis.io"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "docker-blog",
+    "name": "Docker Blog",
+    "kind": "rss",
+    "base_url": "https://www.docker.com/blog/feed/",
+    "allowed_hosts": [
+      "www.docker.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "hashicorp-blog",
+    "name": "HashiCorp Blog",
+    "kind": "rss",
+    "base_url": "https://www.hashicorp.com/blog/feed.xml",
+    "allowed_hosts": [
+      "www.hashicorp.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "salesforce-engineering",
+    "name": "Salesforce Engineering",
+    "kind": "rss",
+    "base_url": "https://engineering.salesforce.com/feed/",
+    "allowed_hosts": [
+      "engineering.salesforce.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "grab-engineering",
+    "name": "Grab Engineering",
+    "kind": "rss",
+    "base_url": "https://engineering.grab.com/feed.xml",
+    "allowed_hosts": [
+      "engineering.grab.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "yelp-engineering",
+    "name": "Yelp Engineering",
+    "kind": "rss",
+    "base_url": "https://engineeringblog.yelp.com/feed.xml",
+    "allowed_hosts": [
+      "engineeringblog.yelp.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "palantir-blog",
+    "name": "Palantir Blog",
+    "kind": "rss",
+    "base_url": "https://blog.palantir.com/feed",
+    "allowed_hosts": [
+      "blog.palantir.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "medium-engineering",
+    "name": "Medium Engineering",
+    "kind": "rss",
+    "base_url": "https://medium.engineering/feed",
+    "allowed_hosts": [
+      "medium.engineering"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "expedia-tech",
+    "name": "Expedia Group Tech",
+    "kind": "rss",
+    "base_url": "https://medium.com/feed/expedia-group-tech",
+    "allowed_hosts": [
+      "medium.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/expedia-group-tech"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "medium.com allows generic crawlers but blocks named AI bots; use our own UA and keep the rate low"
+      }
+    }
+  },
+  {
+    "slug": "paypal-tech",
+    "name": "PayPal Tech",
+    "kind": "rss",
+    "base_url": "https://medium.com/feed/paypal-tech",
+    "allowed_hosts": [
+      "medium.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/paypal-tech"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "medium.com allows generic crawlers but blocks named AI bots; use our own UA and keep the rate low"
+      }
+    }
+  },
+  {
+    "slug": "37signals-dev",
+    "name": "37signals Dev",
+    "kind": "rss",
+    "base_url": "https://dev.37signals.com/feed/posts.xml",
+    "allowed_hosts": [
+      "dev.37signals.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "jane-street-tech",
+    "name": "Jane Street Tech Blog",
+    "kind": "rss",
+    "base_url": "https://blog.janestreet.com/feed.xml",
+    "allowed_hosts": [
+      "blog.janestreet.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "stackoverflow-blog",
+    "name": "Stack Overflow Blog",
+    "kind": "rss",
+    "base_url": "https://stackoverflow.blog/feed/",
+    "allowed_hosts": [
+      "stackoverflow.blog"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "redhat-developers",
+    "name": "Red Hat Developer",
+    "kind": "rss",
+    "base_url": "https://developers.redhat.com/blog/feed",
+    "allowed_hosts": [
+      "developers.redhat.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "ubuntu-blog",
+    "name": "Ubuntu Blog",
+    "kind": "rss",
+    "base_url": "https://ubuntu.com/blog/feed",
+    "allowed_hosts": [
+      "ubuntu.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "postman-blog",
+    "name": "Postman Blog",
+    "kind": "rss",
+    "base_url": "https://blog.postman.com/feed/",
+    "allowed_hosts": [
+      "blog.postman.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Company engineering",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "percona-blog",
+    "name": "Percona Blog",
+    "kind": "rss",
+    "base_url": "https://www.percona.com/blog/feed/",
+    "allowed_hosts": [
+      "www.percona.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Databases",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "planet-postgresql",
+    "name": "Planet PostgreSQL",
+    "kind": "rss",
+    "base_url": "https://planet.postgresql.org/rss20.xml",
+    "allowed_hosts": [
+      "planet.postgresql.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Databases",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "aggregator: entries link to other hosts, so follow_entry_links only fetches same-host pages"
+      }
+    }
+  },
+  {
+    "slug": "duckdb-blog",
+    "name": "DuckDB Blog",
+    "kind": "rss",
+    "base_url": "https://duckdb.org/feed.xml",
+    "allowed_hosts": [
+      "duckdb.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Databases",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "opensource-connections",
+    "name": "OpenSource Connections (search relevance)",
+    "kind": "rss",
+    "base_url": "https://opensourceconnections.com/feed/",
+    "allowed_hosts": [
+      "opensourceconnections.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Databases",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "inside-rust",
+    "name": "Inside Rust",
+    "kind": "rss",
+    "base_url": "https://blog.rust-lang.org/inside-rust/feed.xml",
+    "allowed_hosts": [
+      "blog.rust-lang.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/inside-rust/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "this-week-in-rust",
+    "name": "This Week in Rust",
+    "kind": "rss",
+    "base_url": "https://this-week-in-rust.org/rss.xml",
+    "allowed_hosts": [
+      "this-week-in-rust.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "aggregator: entries link to other hosts, so follow_entry_links only fetches same-host pages"
+      }
+    }
+  },
+  {
+    "slug": "go-blog",
+    "name": "The Go Blog",
+    "kind": "rss",
+    "base_url": "https://go.dev/blog/feed.atom",
+    "allowed_hosts": [
+      "go.dev"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": true,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "python-insider",
+    "name": "Python Insider",
+    "kind": "rss",
+    "base_url": "https://blog.python.org/feeds/posts/default",
+    "allowed_hosts": [
+      "blog.python.org",
+      "pyfound.blogspot.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "nodejs-blog",
+    "name": "Node.js Blog",
+    "kind": "rss",
+    "base_url": "https://nodejs.org/en/feed/blog.xml",
+    "allowed_hosts": [
+      "nodejs.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/en/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "v8-blog",
+    "name": "V8 Blog",
+    "kind": "rss",
+    "base_url": "https://v8.dev/blog.atom",
+    "allowed_hosts": [
+      "v8.dev"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/",
+        "/features/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "webkit-blog",
+    "name": "WebKit Blog",
+    "kind": "rss",
+    "base_url": "https://webkit.org/feed/",
+    "allowed_hosts": [
+      "webkit.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "chromium-blog",
+    "name": "Chromium Blog",
+    "kind": "rss",
+    "base_url": "https://blog.chromium.org/feeds/posts/default",
+    "allowed_hosts": [
+      "blog.chromium.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "typescript-blog",
+    "name": "TypeScript Blog",
+    "kind": "rss",
+    "base_url": "https://devblogs.microsoft.com/typescript/feed/",
+    "allowed_hosts": [
+      "devblogs.microsoft.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/typescript/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "dotnet-blog",
+    "name": ".NET Blog",
+    "kind": "rss",
+    "base_url": "https://devblogs.microsoft.com/dotnet/feed/",
+    "allowed_hosts": [
+      "devblogs.microsoft.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/dotnet/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "oldnewthing",
+    "name": "The Old New Thing",
+    "kind": "rss",
+    "base_url": "https://devblogs.microsoft.com/oldnewthing/feed",
+    "allowed_hosts": [
+      "devblogs.microsoft.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/oldnewthing/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "kotlin-blog",
+    "name": "Kotlin Blog",
+    "kind": "rss",
+    "base_url": "https://blog.jetbrains.com/kotlin/feed/",
+    "allowed_hosts": [
+      "blog.jetbrains.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/kotlin/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "inside-java",
+    "name": "Inside Java",
+    "kind": "rss",
+    "base_url": "https://inside.java/feed.xml",
+    "allowed_hosts": [
+      "inside.java"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "spring-blog",
+    "name": "Spring Blog",
+    "kind": "rss",
+    "base_url": "https://spring.io/blog.atom",
+    "allowed_hosts": [
+      "spring.io"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "swift-blog",
+    "name": "Swift.org Blog",
+    "kind": "rss",
+    "base_url": "https://www.swift.org/atom.xml",
+    "allowed_hosts": [
+      "www.swift.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "android-dev-blog",
+    "name": "Android Developers Blog",
+    "kind": "rss",
+    "base_url": "https://android-developers.googleblog.com/feeds/posts/default",
+    "allowed_hosts": [
+      "android-developers.googleblog.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "flutter-blog",
+    "name": "Flutter Blog",
+    "kind": "rss",
+    "base_url": "https://medium.com/feed/flutter",
+    "allowed_hosts": [
+      "medium.com",
+      "blog.flutter.dev"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "medium.com allows generic crawlers but blocks named AI bots; use our own UA and keep the rate low"
+      }
+    }
+  },
+  {
+    "slug": "ruby-news",
+    "name": "Ruby News",
+    "kind": "rss",
+    "base_url": "https://www.ruby-lang.org/en/feeds/news.rss",
+    "allowed_hosts": [
+      "www.ruby-lang.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/en/news/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "rails-blog",
+    "name": "Ruby on Rails Blog",
+    "kind": "rss",
+    "base_url": "https://rubyonrails.org/feed.xml",
+    "allowed_hosts": [
+      "rubyonrails.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "elixir-blog",
+    "name": "Elixir Blog",
+    "kind": "rss",
+    "base_url": "https://elixir-lang.org/atom.xml",
+    "allowed_hosts": [
+      "elixir-lang.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "llvm-blog",
+    "name": "LLVM Blog",
+    "kind": "rss",
+    "base_url": "https://blog.llvm.org/index.xml",
+    "allowed_hosts": [
+      "blog.llvm.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Official language blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "django-weblog",
+    "name": "Django Weblog",
+    "kind": "rss",
+    "base_url": "https://www.djangoproject.com/rss/weblog/",
+    "allowed_hosts": [
+      "www.djangoproject.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/weblog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Framework blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "react-blog",
+    "name": "React Blog",
+    "kind": "rss",
+    "base_url": "https://react.dev/rss.xml",
+    "allowed_hosts": [
+      "react.dev"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Framework blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "nextjs-blog",
+    "name": "Next.js Blog",
+    "kind": "rss",
+    "base_url": "https://nextjs.org/feed.xml",
+    "allowed_hosts": [
+      "nextjs.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Framework blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "vue-blog",
+    "name": "Vue Blog",
+    "kind": "rss",
+    "base_url": "https://blog.vuejs.org/feed.rss",
+    "allowed_hosts": [
+      "blog.vuejs.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Framework blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "svelte-blog",
+    "name": "Svelte Blog",
+    "kind": "rss",
+    "base_url": "https://svelte.dev/blog/rss.xml",
+    "allowed_hosts": [
+      "svelte.dev"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Framework blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "angular-blog",
+    "name": "Angular Blog",
+    "kind": "rss",
+    "base_url": "https://blog.angular.dev/feed",
+    "allowed_hosts": [
+      "blog.angular.dev"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Framework blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "deno-blog",
+    "name": "Deno Blog",
+    "kind": "rss",
+    "base_url": "https://deno.com/feed",
+    "allowed_hosts": [
+      "deno.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Framework blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "astro-blog",
+    "name": "Astro Blog",
+    "kind": "rss",
+    "base_url": "https://astro.build/rss.xml",
+    "allowed_hosts": [
+      "astro.build"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Framework blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "kubernetes-blog",
+    "name": "Kubernetes Blog",
+    "kind": "rss",
+    "base_url": "https://kubernetes.io/feed.xml",
+    "allowed_hosts": [
+      "kubernetes.io"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Framework blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "cncf-blog",
+    "name": "CNCF Blog",
+    "kind": "rss",
+    "base_url": "https://www.cncf.io/feed/",
+    "allowed_hosts": [
+      "www.cncf.io"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Framework blogs",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "tensorflow-blog",
+    "name": "TensorFlow Blog",
+    "kind": "rss",
+    "base_url": "https://blog.tensorflow.org/feeds/posts/default",
+    "allowed_hosts": [
+      "blog.tensorflow.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "AI/ML",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "pytorch-blog",
+    "name": "PyTorch Blog",
+    "kind": "rss",
+    "base_url": "https://pytorch.org/feed/",
+    "allowed_hosts": [
+      "pytorch.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "AI/ML",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "huggingface-blog",
+    "name": "Hugging Face Blog",
+    "kind": "rss",
+    "base_url": "https://huggingface.co/blog/feed.xml",
+    "allowed_hosts": [
+      "huggingface.co"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "AI/ML",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "deepmind-blog",
+    "name": "Google DeepMind Blog",
+    "kind": "rss",
+    "base_url": "https://deepmind.google/blog/rss.xml",
+    "allowed_hosts": [
+      "deepmind.google"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/discover/blog/",
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "AI/ML",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "karpathy-blog",
+    "name": "Andrej Karpathy",
+    "kind": "rss",
+    "base_url": "https://karpathy.github.io/feed.xml",
+    "allowed_hosts": [
+      "karpathy.github.io"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "AI/ML",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "lilian-weng",
+    "name": "Lil'Log (Lilian Weng)",
+    "kind": "rss",
+    "base_url": "https://lilianweng.github.io/index.xml",
+    "allowed_hosts": [
+      "lilianweng.github.io"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/posts/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "AI/ML",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "chip-huyen",
+    "name": "Chip Huyen",
+    "kind": "rss",
+    "base_url": "https://huyenchip.com/feed.xml",
+    "allowed_hosts": [
+      "huyenchip.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "AI/ML",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "eugene-yan",
+    "name": "Eugene Yan",
+    "kind": "rss",
+    "base_url": "https://eugeneyan.com/rss/",
+    "allowed_hosts": [
+      "eugeneyan.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/writing/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "AI/ML",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "jay-alammar",
+    "name": "Jay Alammar",
+    "kind": "rss",
+    "base_url": "https://jalammar.github.io/feed.xml",
+    "allowed_hosts": [
+      "jalammar.github.io"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "AI/ML",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "hamel-husain",
+    "name": "Hamel Husain",
+    "kind": "rss",
+    "base_url": "https://hamel.dev/index.xml",
+    "allowed_hosts": [
+      "hamel.dev"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "AI/ML",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "sebastian-raschka",
+    "name": "Ahead of AI (Sebastian Raschka)",
+    "kind": "rss",
+    "base_url": "https://magazine.sebastianraschka.com/feed",
+    "allowed_hosts": [
+      "magazine.sebastianraschka.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/p/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "AI/ML",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "simon-willison",
+    "name": "Simon Willison",
+    "kind": "rss",
+    "base_url": "https://simonwillison.net/atom/everything/",
+    "allowed_hosts": [
+      "simonwillison.net"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": true,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "joel-on-software",
+    "name": "Joel on Software",
+    "kind": "rss",
+    "base_url": "https://www.joelonsoftware.com/feed/",
+    "allowed_hosts": [
+      "www.joelonsoftware.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "coding-horror",
+    "name": "Coding Horror",
+    "kind": "rss",
+    "base_url": "https://blog.codinghorror.com/rss/",
+    "allowed_hosts": [
+      "blog.codinghorror.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "russ-cox",
+    "name": "research!rsc (Russ Cox)",
+    "kind": "rss",
+    "base_url": "https://research.swtch.com/feed.atom",
+    "allowed_hosts": [
+      "research.swtch.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "rachel-by-the-bay",
+    "name": "Rachel by the Bay",
+    "kind": "rss",
+    "base_url": "https://rachelbythebay.com/w/atom.xml",
+    "allowed_hosts": [
+      "rachelbythebay.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/w/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "eli-bendersky",
+    "name": "Eli Bendersky",
+    "kind": "rss",
+    "base_url": "https://eli.thegreenplace.net/feeds/all.atom.xml",
+    "allowed_hosts": [
+      "eli.thegreenplace.net"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "josh-comeau",
+    "name": "Josh W. Comeau",
+    "kind": "rss",
+    "base_url": "https://www.joshwcomeau.com/rss.xml",
+    "allowed_hosts": [
+      "www.joshwcomeau.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "kent-c-dodds",
+    "name": "Kent C. Dodds",
+    "kind": "rss",
+    "base_url": "https://kentcdodds.com/blog/rss.xml",
+    "allowed_hosts": [
+      "kentcdodds.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "overreacted",
+    "name": "Overreacted (Dan Abramov)",
+    "kind": "rss",
+    "base_url": "https://overreacted.io/rss.xml",
+    "allowed_hosts": [
+      "overreacted.io"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "armin-ronacher",
+    "name": "Armin Ronacher",
+    "kind": "rss",
+    "base_url": "https://lucumr.pocoo.org/feed.atom",
+    "allowed_hosts": [
+      "lucumr.pocoo.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "hynek",
+    "name": "Hynek Schlawack",
+    "kind": "rss",
+    "base_url": "https://hynek.me/index.xml",
+    "allowed_hosts": [
+      "hynek.me"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/articles/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "ned-batchelder",
+    "name": "Ned Batchelder",
+    "kind": "rss",
+    "base_url": "https://nedbatchelder.com/blog/rss.xml",
+    "allowed_hosts": [
+      "nedbatchelder.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "charity-majors",
+    "name": "charity.wtf",
+    "kind": "rss",
+    "base_url": "https://charity.wtf/feed/",
+    "allowed_hosts": [
+      "charity.wtf"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "jake-archibald",
+    "name": "Jake Archibald",
+    "kind": "rss",
+    "base_url": "https://jakearchibald.com/posts.rss",
+    "allowed_hosts": [
+      "jakearchibald.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "addy-osmani",
+    "name": "Addy Osmani",
+    "kind": "rss",
+    "base_url": "https://addyosmani.com/rss.xml",
+    "allowed_hosts": [
+      "addyosmani.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "lea-verou",
+    "name": "Lea Verou",
+    "kind": "rss",
+    "base_url": "https://lea.verou.me/feed.xml",
+    "allowed_hosts": [
+      "lea.verou.me"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "ahmad-shadeed",
+    "name": "Ahmad Shadeed",
+    "kind": "rss",
+    "base_url": "https://ishadeed.com/feed.xml",
+    "allowed_hosts": [
+      "ishadeed.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/article/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "tkdodo",
+    "name": "TkDodo",
+    "kind": "rss",
+    "base_url": "https://tkdodo.eu/blog/rss.xml",
+    "allowed_hosts": [
+      "tkdodo.eu"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "matklad",
+    "name": "matklad",
+    "kind": "rss",
+    "base_url": "https://matklad.github.io/feed.xml",
+    "allowed_hosts": [
+      "matklad.github.io"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "fasterthanlime",
+    "name": "fasterthanlime",
+    "kind": "rss",
+    "base_url": "https://fasterthanli.me/index.xml",
+    "allowed_hosts": [
+      "fasterthanli.me"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/articles/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "without-boats",
+    "name": "without.boats",
+    "kind": "rss",
+    "base_url": "https://without.boats/index.xml",
+    "allowed_hosts": [
+      "without.boats"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "mitchell-hashimoto",
+    "name": "Mitchell Hashimoto",
+    "kind": "rss",
+    "base_url": "https://mitchellh.com/feed.xml",
+    "allowed_hosts": [
+      "mitchellh.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/writing/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "scott-hanselman",
+    "name": "Scott Hanselman",
+    "kind": "rss",
+    "base_url": "https://feeds.hanselman.com/ScottHanselman",
+    "allowed_hosts": [
+      "feeds.hanselman.com",
+      "www.hanselman.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "andrew-lock",
+    "name": ".NET Escapades (Andrew Lock)",
+    "kind": "rss",
+    "base_url": "https://andrewlock.net/rss.xml",
+    "allowed_hosts": [
+      "andrewlock.net"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "vlad-mihalcea",
+    "name": "Vlad Mihalcea",
+    "kind": "rss",
+    "base_url": "https://vladmihalcea.com/feed/",
+    "allowed_hosts": [
+      "vladmihalcea.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "dave-cheney",
+    "name": "Dave Cheney",
+    "kind": "rss",
+    "base_url": "https://dave.cheney.net/feed",
+    "allowed_hosts": [
+      "dave.cheney.net"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "swift-by-sundell",
+    "name": "Swift by Sundell",
+    "kind": "rss",
+    "base_url": "https://www.swiftbysundell.com/rss",
+    "allowed_hosts": [
+      "www.swiftbysundell.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/articles/",
+        "/tips/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "hacking-with-swift",
+    "name": "Hacking with Swift",
+    "kind": "rss",
+    "base_url": "https://www.hackingwithswift.com/articles/rss",
+    "allowed_hosts": [
+      "www.hackingwithswift.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/articles/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "nshipster",
+    "name": "NSHipster",
+    "kind": "rss",
+    "base_url": "https://nshipster.com/feed.xml",
+    "allowed_hosts": [
+      "nshipster.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "evil-martians",
+    "name": "Evil Martians Chronicles",
+    "kind": "rss",
+    "base_url": "https://evilmartians.com/chronicles.atom",
+    "allowed_hosts": [
+      "evilmartians.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/chronicles/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "stitcher-io",
+    "name": "stitcher.io (PHP)",
+    "kind": "rss",
+    "base_url": "https://stitcher.io/rss",
+    "allowed_hosts": [
+      "stitcher.io"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "laravel-news",
+    "name": "Laravel News",
+    "kind": "rss",
+    "base_url": "https://feed.laravel-news.com/",
+    "allowed_hosts": [
+      "feed.laravel-news.com",
+      "laravel-news.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "dashbit-blog",
+    "name": "Dashbit (Elixir)",
+    "kind": "rss",
+    "base_url": "https://dashbit.co/feed",
+    "allowed_hosts": [
+      "dashbit.co"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "will-larson",
+    "name": "Irrational Exuberance (Will Larson)",
+    "kind": "rss",
+    "base_url": "https://lethain.com/feeds/",
+    "allowed_hosts": [
+      "lethain.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "hillel-wayne",
+    "name": "Hillel Wayne",
+    "kind": "rss",
+    "base_url": "https://www.hillelwayne.com/index.xml",
+    "allowed_hosts": [
+      "www.hillelwayne.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/post/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "bartosz-ciechanowski",
+    "name": "Bartosz Ciechanowski",
+    "kind": "rss",
+    "base_url": "https://ciechanow.ski/atom.xml",
+    "allowed_hosts": [
+      "ciechanow.ski"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "xe-iaso",
+    "name": "Xe Iaso",
+    "kind": "rss",
+    "base_url": "https://xeiaso.net/blog.rss",
+    "allowed_hosts": [
+      "xeiaso.net"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "drew-devault",
+    "name": "Drew DeVault",
+    "kind": "rss",
+    "base_url": "https://drewdevault.com/blog/index.xml",
+    "allowed_hosts": [
+      "drewdevault.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "daniel-stenberg",
+    "name": "Daniel Stenberg (curl)",
+    "kind": "rss",
+    "base_url": "https://daniel.haxx.se/blog/feed/",
+    "allowed_hosts": [
+      "daniel.haxx.se"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "lemire",
+    "name": "Daniel Lemire",
+    "kind": "rss",
+    "base_url": "https://lemire.me/blog/feed/",
+    "allowed_hosts": [
+      "lemire.me"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "fabien-sanglard",
+    "name": "Fabien Sanglard",
+    "kind": "rss",
+    "base_url": "https://fabiensanglard.net/rss.xml",
+    "allowed_hosts": [
+      "fabiensanglard.net"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "thorsten-ball",
+    "name": "Register Spill (Thorsten Ball)",
+    "kind": "rss",
+    "base_url": "https://registerspill.thorstenball.com/feed",
+    "allowed_hosts": [
+      "registerspill.thorstenball.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/p/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Individual engineers",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "marc-brooker",
+    "name": "Marc Brooker",
+    "kind": "rss",
+    "base_url": "https://brooker.co.za/blog/rss.xml",
+    "allowed_hosts": [
+      "brooker.co.za"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Systems and databases",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "murat-demirbas",
+    "name": "Metadata (Murat Demirbas)",
+    "kind": "rss",
+    "base_url": "https://muratbuffalo.blogspot.com/feeds/posts/default",
+    "allowed_hosts": [
+      "muratbuffalo.blogspot.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Systems and databases",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "aphyr",
+    "name": "Aphyr (Jepsen)",
+    "kind": "rss",
+    "base_url": "https://aphyr.com/posts.atom",
+    "allowed_hosts": [
+      "aphyr.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/posts/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Systems and databases",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "phil-eaton",
+    "name": "Phil Eaton",
+    "kind": "rss",
+    "base_url": "https://notes.eatonphil.com/rss.xml",
+    "allowed_hosts": [
+      "notes.eatonphil.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Systems and databases",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "jack-vanlightly",
+    "name": "Jack Vanlightly",
+    "kind": "rss",
+    "base_url": "https://jack-vanlightly.com/blog?format=rss",
+    "allowed_hosts": [
+      "jack-vanlightly.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/blog/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Systems and databases",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "troy-hunt",
+    "name": "Troy Hunt",
+    "kind": "rss",
+    "base_url": "https://www.troyhunt.com/rss/",
+    "allowed_hosts": [
+      "www.troyhunt.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Security",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "portswigger-research",
+    "name": "PortSwigger Research",
+    "kind": "rss",
+    "base_url": "https://portswigger.net/research/rss",
+    "allowed_hosts": [
+      "portswigger.net"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/research/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Security",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "project-zero",
+    "name": "Google Project Zero",
+    "kind": "rss",
+    "base_url": "https://googleprojectzero.blogspot.com/feeds/posts/default",
+    "allowed_hosts": [
+      "googleprojectzero.blogspot.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Security",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "trail-of-bits",
+    "name": "Trail of Bits Blog",
+    "kind": "rss",
+    "base_url": "https://blog.trailofbits.com/feed/",
+    "allowed_hosts": [
+      "blog.trailofbits.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Security",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "smashing-magazine",
+    "name": "Smashing Magazine",
+    "kind": "rss",
+    "base_url": "https://www.smashingmagazine.com/feed/",
+    "allowed_hosts": [
+      "www.smashingmagazine.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Publications",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "a-list-apart",
+    "name": "A List Apart",
+    "kind": "rss",
+    "base_url": "https://alistapart.com/main/feed/",
+    "allowed_hosts": [
+      "alistapart.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/article/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Publications",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "lwn",
+    "name": "LWN.net",
+    "kind": "rss",
+    "base_url": "https://lwn.net/headlines/rss",
+    "allowed_hosts": [
+      "lwn.net"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/Articles/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Publications",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "partly paywalled: index only the free text the page serves"
+      }
+    }
+  },
+  {
+    "slug": "infoq",
+    "name": "InfoQ",
+    "kind": "rss",
+    "base_url": "https://feed.infoq.com/",
+    "allowed_hosts": [
+      "feed.infoq.com",
+      "www.infoq.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/articles/",
+        "/news/",
+        "/presentations/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Publications",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "freecodecamp-news",
+    "name": "freeCodeCamp News",
+    "kind": "rss",
+    "base_url": "https://www.freecodecamp.org/news/rss/",
+    "allowed_hosts": [
+      "www.freecodecamp.org"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/news/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Publications",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "baeldung-feed",
+    "name": "Baeldung feed",
+    "kind": "rss",
+    "base_url": "https://www.baeldung.com/feed",
+    "allowed_hosts": [
+      "www.baeldung.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Publications",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": ""
+      }
+    }
+  },
+  {
+    "slug": "pragmatic-engineer",
+    "name": "The Pragmatic Engineer",
+    "kind": "rss",
+    "base_url": "https://newsletter.pragmaticengineer.com/feed",
+    "allowed_hosts": [
+      "newsletter.pragmaticengineer.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/p/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Publications",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "partly paywalled: index only the free text the page serves"
+      }
+    }
+  },
+  {
+    "slug": "bytebytego",
+    "name": "ByteByteGo",
+    "kind": "rss",
+    "base_url": "https://blog.bytebytego.com/feed",
+    "allowed_hosts": [
+      "blog.bytebytego.com"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 1000,
+      "allowed_path_prefixes": [
+        "/p/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Publications",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "partly paywalled: index only the free text the page serves"
+      }
+    }
+  },
+  {
+    "slug": "devto",
+    "name": "DEV Community",
+    "kind": "rss",
+    "base_url": "https://dev.to/feed",
+    "allowed_hosts": [
+      "dev.to"
+    ],
+    "crawl_interval_seconds": 86400,
+    "is_enabled": false,
+    "config": {
+      "priority": 70,
+      "max_depth": 1,
+      "max_pages": 300,
+      "allowed_path_prefixes": [
+        "/"
+      ],
+      "follow_entry_links": true,
+      "discover_sitemaps": false,
+      "registry": {
+        "tier": "4",
+        "category": "Publications",
+        "version_pin": "n/a",
+        "est_docs": 30,
+        "est_docs_with_sitemap_backfill": 300,
+        "language_policy": "en_feed",
+        "status": "new_candidate_disabled",
+        "suggested_mvp": false,
+        "feed_url_verified": false,
+        "robots_reviewed": false,
+        "terms_reviewed": false,
+        "notes": "aggregator: entries link to other hosts, so follow_entry_links only fetches same-host pages"
+      }
+    }
+  }
+]

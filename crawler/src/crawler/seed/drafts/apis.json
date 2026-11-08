@@ -1,0 +1,79 @@
+[
+  {
+    "slug": "github-curated-issues",
+    "name": "GitHub issues (curated repos)",
+    "kind": "api",
+    "base_url": "https://api.github.com/repos/facebook/react/issues?state=closed&per_page=100&sort=comments&direction=desc",
+    "allowed_hosts": [
+      "api.github.com",
+      "github.com"
+    ],
+    "crawl_interval_seconds": 604800,
+    "is_enabled": false,
+    "config": {
+      "priority": 60,
+      "max_depth": 0,
+      "max_pages": 100000,
+      "discover_sitemaps": false,
+      "api": {
+        "items_path": "",
+        "fields": {
+          "url": "html_url",
+          "title": "title",
+          "body": "body",
+          "author": "user.login",
+          "published_at": "created_at"
+        },
+        "body_format": "text"
+      },
+      "registry": {
+        "tier": "S",
+        "category": "Discussions",
+        "est_docs": 100000,
+        "status": "blocked_needs_crawler_work",
+        "repo_allowlist_file": "github_issue_repos.json",
+        "repo_count": 500,
+        "per_repo_cap": 200,
+        "selection": "closed issues, sorted by comments, skip items with pull_request key",
+        "notes": "Blocked on 3 crawler gaps: (1) no auth header support, unauthenticated limit is 60 req/h; needs GITHUB_TOKEN from env (5000 req/h). (2) pagination is in the Link header, but ApiMapping.next_path only reads the JSON body. (3) one source = one base_url, so either one source per repo or a fan-out step that enqueues one API target per repo from the allowlist. The issues endpoint also returns PRs; drop items with a pull_request key. Comments need a second call per issue (/issues/N/comments)."
+      }
+    }
+  },
+  {
+    "slug": "stackoverflow-api-sample",
+    "name": "Stack Overflow top-voted Q&A (API sample)",
+    "kind": "api",
+    "base_url": "https://api.stackexchange.com/2.3/questions?order=desc&sort=votes&tagged=python&site=stackoverflow&filter=withbody&pagesize=100",
+    "allowed_hosts": [
+      "api.stackexchange.com",
+      "stackoverflow.com"
+    ],
+    "crawl_interval_seconds": 2592000,
+    "is_enabled": false,
+    "config": {
+      "priority": 60,
+      "max_depth": 0,
+      "max_pages": 10000,
+      "discover_sitemaps": false,
+      "api": {
+        "items_path": "items",
+        "fields": {
+          "url": "link",
+          "title": "title",
+          "body": "body",
+          "author": "owner.display_name",
+          "published_at": "creation_date"
+        },
+        "body_format": "html"
+      },
+      "registry": {
+        "tier": "S",
+        "category": "Discussions",
+        "est_docs": 10000,
+        "status": "candidate_disabled",
+        "license": "CC BY-SA 4.0 (attribution required)",
+        "notes": "Small live sample only; the bulk path is the offline dump (offline_datasets.json). Quota: 300 req/day without a key, 10K with one. Pagination uses page=N + has_more, which next_path can't express yet. Answers need /questions/{ids}/answers. creation_date is a unix timestamp: check parse_record_date handles ints."
+      }
+    }
+  }
+]

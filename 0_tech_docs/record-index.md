@@ -35,7 +35,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0022 | backend/database-schema | [Use reviewed Alembic revisions as the schema authority](backend/database-schema/ADR-0022-forward-only-schema-repair.md) | accepted |
 | ADR-0023 | backend/query-planning | [Keep query normalization and retrieval planning pure and explicit](backend/query-planning/ADR-0023-pure-query-analysis-and-explicit-planning.md) | accepted |
 | ADR-0024 | backend/retrieval | [Use bounded PostgreSQL candidate retrieval before final ranking](backend/retrieval/ADR-0024-bounded-postgres-candidate-retrieval.md) | accepted |
-| ADR-0025 | backend/fuzzy-correction | [Suggest bounded spelling corrections without silently rewriting developer queries](backend/fuzzy-correction/ADR-0025-conservative-fuzzy-suggestions.md) | proposed |
+| ADR-0025 | backend/fuzzy-correction | [Suggest bounded spelling corrections without silently rewriting developer queries](backend/fuzzy-correction/ADR-0025-conservative-fuzzy-suggestions.md) | superseded |
 | ADR-0026 | backend/merge-and-contracts | [Merge candidates by document ID while retaining independent channel evidence](backend/merge-and-contracts/ADR-0026-merge-channel-scores-by-document.md) | accepted |
 | ADR-0027 | backend/bm25-statistics | [Batch query statistics and keep full-corpus aggregation outside the request path](backend/bm25-statistics/ADR-0027-batch-ranking-statistics-and-external-corpus.md) | accepted |
 | ADR-0028 | backend/ranking | [Introduce BM25 reranking only after statistics and relevance validation](backend/ranking/ADR-0028-candidate-bm25-ranking-plan.md) | proposed |
@@ -55,6 +55,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0042 | crawler/robots-and-politeness | [Enforce host politeness across processes with a crawl_host row and one atomic claim](crawler/robots-and-politeness/ADR-0042-shared-host-politeness-in-postgres.md) | accepted |
 | ADR-0043 | indexer/vocubulary | [Update vocabulary counts through a transactional outbox, not a global lock](indexer/vocubulary/ADR-0043-vocabulary-outbox.md) | accepted |
 | ADR-0044 | backend/admin-api | [Record search outcomes per minute in PostgreSQL, and sample the corpus for statistics](backend/admin-api/ADR-0044-search-availability-telemetry.md) | accepted |
+| ADR-0045 | backend/fuzzy-correction | [Offer "Did you mean" on few results, with stems mapped back to real words](backend/fuzzy-correction/ADR-0045-did-you-mean-with-surface-word-suggestions.md) | accepted |
 
 ## Incidents
 
@@ -67,13 +68,14 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | INC-0005 | crawler/url-safety | [Pinned transport accepted any path, Host header or TLS server name on an approved origin](crawler/url-safety/INC-0005-pinned-transport-accepted-unchecked-urls.md) | resolved |
 | INC-0006 | infra/configuration-and-secrets | [CRAWLER_REPORT_API_KEY Exposed in Git Commit 5752803](infra/configuration-and-secrets/INC-0006-reporting-api-key-committed-to-git.md) | resolved |
 | INC-0007 | indexer/vocubulary | [Vocabulary bulk additions repeat and one removal path skips the mutex](indexer/vocubulary/INC-0007-vocabulary-overcount-and-uncoordinated-removal.md) | open |
-| INC-0008 | backend/fuzzy-correction | [Fuzzy correction imports missing and self-referenced symbols](backend/fuzzy-correction/INC-0008-fuzzy-import-contract-broken.md) | open |
+| INC-0008 | backend/fuzzy-correction | [Fuzzy correction imports missing and self-referenced symbols](backend/fuzzy-correction/INC-0008-fuzzy-import-contract-broken.md) | resolved |
 | INC-0009 | backend/snippets | [Code snippet boundary adjustment could exceed max_chars](backend/snippets/INC-0009-snippet-window-budget-regression.md) | resolved |
 | INC-0010 | crawler/fetcher | [Transport exceptions and shadowed policy errors broke classification](crawler/fetcher/INC-0010-transport-error-identity.md) | resolved |
 | INC-0011 | crawler/worker-runtime | [Expired jobs left unfinished attempts and bypassed failure backoff](crawler/worker-runtime/INC-0011-abandoned-attempt-accounting.md) | resolved |
 | INC-0012 | crawler/parser | [Later or bot-specific robots metadata restrictions were ignored](crawler/parser/INC-0012-robots-metadata-union.md) | resolved |
 | INC-0013 | backend/bm25-statistics | [BM25 ranking corruption caused by double-stemming](backend/bm25-statistics/INC-0013-BM25-ranking-corruption-caused-by-double-stemming.md) | resolved |
 | INC-0032 | crawler/scheduler-and-leases | [Crawler Pipeline Stalled by PostgreSQL Advisory-Lock Contention](crawler/scheduler-and-leases/INC-0032-crawler-pipeline-stalled-by-postgres-advisory-lock-contention.md) |  |
+| INC-0033 | frontend/search-experience | [Upstream timeout ignored on a Next.js server's first hung request](frontend/search-experience/INC-0033-upstream-timeout-ignored-on-first-hung-request.md) | resolved |
 
 ## Experiments
 

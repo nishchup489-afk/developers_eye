@@ -1,0 +1,31 @@
+[
+  {
+    "slug": "stack-overflow-dump",
+    "name": "Stack Overflow data dump",
+    "kind": "dataset",
+    "ingestion_method": "bulk_dump_import",
+    "source_url": "https://stackoverflow.com/help/data-dumps",
+    "legacy_mirror": "https://archive.org/details/stackexchange",
+    "license": "CC BY-SA (4.0 for posts after 2018-05-02, 3.0/2.5 earlier); keep author, post link and license per document",
+    "filter": {
+      "site": "stackoverflow.com",
+      "post_types": [
+        "question+accepted_answer",
+        "answer score>=5"
+      ],
+      "min_question_score": 5,
+      "tags_allowlist": "tags matching tier 1-3 sources (python, javascript, typescript, rust, go, java, c++, sql, docker, kubernetes, react, django, ...)",
+      "exclude": [
+        "closed",
+        "deleted",
+        "community wiki"
+      ]
+    },
+    "est_docs": {
+      "prototype": 50000,
+      "local_corpus": 500000
+    },
+    "status": "needs_terms_review",
+    "notes": "The archive.org mirror stopped updating in 2024; newer dumps are distributed by Stack Exchange directly behind an account and their own terms. Read those terms before importing. Not a crawl seed: this needs an importer that writes straight to documents."
+  }
+]
