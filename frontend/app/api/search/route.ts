@@ -1,6 +1,13 @@
 import { backend, isOk, isTimeout } from "@/lib/axios";
 import { searchDemo } from "@/lib/demo";
-import { forwardedFor, isSearchResult, sources, upstreamFailure } from "@/lib/search";
+import {
+  forwardedFor,
+  isSearchableLength,
+  isSearchResult,
+  queryLengthError,
+  sources,
+  upstreamFailure,
+} from "@/lib/search";
 
 // Above FastAPI's total search deadline (SEARCH_TOTAL_DEADLINE_MS, 4 s), so a slow
 // search comes back as FastAPI's 504 rather than as this proxy giving up.
@@ -13,8 +20,7 @@ export async function GET(request: Request) {
   const source = params.get("source") ?? "";
   const json = (body: unknown, status = 200, headers: Record<string, string> = {}) =>
     Response.json(body, { status, headers: { "Cache-Control": "no-store", ...headers } });
-  if (!query || query.length > 300)
-    return json({ error: "Enter a query between 1 and 300 characters." }, 400);
+  if (!isSearchableLength(query)) return json({ error: queryLengthError }, 400);
   if (source && ![...sources, "discussions"].includes(source))
     return json({ error: "Unknown source filter." }, 400);
   const page = params.get("page") ?? "";

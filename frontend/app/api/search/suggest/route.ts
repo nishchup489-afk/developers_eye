@@ -1,8 +1,10 @@
 import { backend, isOk, isTimeout } from "@/lib/axios";
 import {
   forwardedFor,
+  isSearchableLength,
   maxSuggestQueryLength,
   parseCorrection,
+  queryLengthError,
   upstreamFailure,
 } from "@/lib/search";
 
@@ -12,8 +14,7 @@ export async function GET(request: Request) {
   const query = new URL(request.url).searchParams.get("q")?.trim() ?? "";
   const json = (body: unknown, status = 200, headers: Record<string, string> = {}) =>
     Response.json(body, { status, headers: { "Cache-Control": "no-store", ...headers } });
-  if (!query || query.length > 300)
-    return json({ error: "Enter a query between 1 and 300 characters." }, 400);
+  if (!isSearchableLength(query)) return json({ error: queryLengthError }, 400);
   const none = (mode: "demo" | "live") =>
     json({ query, suggestion: null, corrections: [], mode });
 

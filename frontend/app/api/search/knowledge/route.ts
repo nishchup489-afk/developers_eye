@@ -1,5 +1,6 @@
 import { backend, isOk, isTimeout } from "@/lib/axios";
 import { knowledgeQuery, pickPanel, type KnowledgePanel } from "@/lib/knowledge";
+import { isSearchableLength, queryLengthError } from "@/lib/search";
 
 // Knowledge panel for the results page, from Wikipedia. Asks the MediaWiki action
 // API for the exact title (following redirects) and for a full-text search at the
@@ -71,8 +72,7 @@ export async function GET(request: Request) {
         "Cache-Control": cacheable ? "public, max-age=3600" : "no-store",
       },
     });
-  if (!raw.trim() || raw.length > 300)
-    return json({ error: "Enter a query between 1 and 300 characters." }, 400);
+  if (!isSearchableLength(raw.trim())) return json({ error: queryLengthError }, 400);
   const query = knowledgeQuery(raw);
   if (!query || process.env.KNOWLEDGE_PANEL === "off")
     return json({ query: raw.trim(), panel: null }, 200, true);
