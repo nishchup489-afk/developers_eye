@@ -26,9 +26,10 @@ export async function GET(request: Request) {
   try {
     const url = new URL(`${base.replace(/\/$/, "")}/search/suggest`);
     url.searchParams.set("q", query);
-    // Above FastAPI's 4 s deadline.
+    // Above FastAPI's 4 s deadline; request.signal cancels when the browser goes away.
     const response = await backend.get(url.toString(), {
       timeout: 5000,
+      signal: request.signal,
       headers: forwardedFor(request),
     });
     // The backend rejects queries its analyzer refuses; that just means no suggestion.
@@ -53,6 +54,7 @@ export async function GET(request: Request) {
       );
     return json({ query, ...parsed, mode: "live" });
   } catch (error) {
+    if (request.signal.aborted) return new Response(null, { status: 499 });
     const timeout = isTimeout(error);
     return json(
       {

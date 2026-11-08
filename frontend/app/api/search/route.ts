@@ -39,8 +39,11 @@ export async function GET(request: Request) {
     if (source) url.searchParams.set("source", source);
     if (page) url.searchParams.set("page", page);
     if (mode) url.searchParams.set("mode", mode);
+    // request.signal aborts when the browser goes away (a newer search, a closed tab);
+    // aborting the upstream request makes FastAPI cancel the database work too.
     const response = await backend.get(url.toString(), {
       timeout: backendTimeoutMs,
+      signal: request.signal,
       headers: forwardedFor(request),
     });
     if (!isOk(response.status)) {
@@ -69,6 +72,8 @@ export async function GET(request: Request) {
       mode: "live",
     });
   } catch (error) {
+    // Nobody is listening; 499 only shows up in logs.
+    if (request.signal.aborted) return new Response(null, { status: 499 });
     const timeout = isTimeout(error);
     return json(
       {
