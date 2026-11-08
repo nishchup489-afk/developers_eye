@@ -8,6 +8,11 @@ export const sources = [
   "practice",
 ] as const;
 export type Source = (typeof sources)[number];
+export const searchModes = ["all", "text", "code"] as const;
+export type SearchMode = (typeof searchModes)[number];
+export function isSearchMode(value: unknown): value is SearchMode {
+  return typeof value === "string" && searchModes.some((mode) => mode === value);
+}
 export type SearchResult = {
   title: string;
   source: Source;
