@@ -30,10 +30,11 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/api/test_search_route.py](../../backend/tests/api/test_search_route.py)
 
-3 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-http-api)
+4 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-http-api)
 
 - `test_returns_results`
 - `test_rejects_invalid_input`
+- `test_failed_database_connection_is_503`: asyncpg raises these while connecting, and SQLAlchemy does not wrap them.
 - `test_database_error_is_503`
 
 ### [backend/tests/golden/test_bm25_golden.py](../../backend/tests/golden/test_bm25_golden.py)
@@ -576,6 +577,15 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_cli_returns_nonzero_when_rebuild_fails`
 - `test_rebuild_validates_limits_before_connecting`
 
+### [crawler/tests/indexer/test_worker_recovery.py](../../crawler/tests/indexer/test_worker_recovery.py)
+
+4 cases
+
+- `test_forever_mode_retries_when_selection_loses_the_database`
+- `test_cursors_are_kept_across_an_outage`
+- `test_one_shot_mode_reports_the_outage`
+- `test_vocabulary_drain_outage_does_not_stop_indexing`
+
 ## Crawler
 
 ### [crawler/tests/crawler/fetcher/test_fetcher.py](../../crawler/tests/crawler/fetcher/test_fetcher.py)
@@ -1033,11 +1043,12 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
 
-4 cases
+5 cases
 
 - `test_slow_job_does_not_hold_up_a_free_slot`
 - `test_never_claims_more_than_free_slots`
 - `test_claim_database_failure_retries_instead_of_stopping`
+- `test_claim_retries_for_every_way_the_database_can_be_unavailable`
 - `test_shutdown_cancels_running_jobs_and_leaves_them_to_lease_expiry`
 
 ### [crawler/tests/crawler/writer/test_database_writer.py](../../crawler/tests/crawler/writer/test_database_writer.py)
@@ -1105,4 +1116,5 @@ These test files have no matching heading in a `test_case.md`.
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
 - [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
 - [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
+- [crawler/tests/indexer/test_worker_recovery.py](../../crawler/tests/indexer/test_worker_recovery.py)
 <!-- test-index:end -->

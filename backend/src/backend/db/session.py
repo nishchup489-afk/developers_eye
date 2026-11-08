@@ -1,4 +1,7 @@
-from collections.abc import AsyncGenerator 
+from collections.abc import AsyncGenerator
+
+import asyncpg
+from sqlalchemy.exc import DBAPIError, TimeoutError as PoolTimeoutError
 
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -7,6 +10,18 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from backend.core.config import settings 
+
+
+# What a lost or restarting database looks like to a caller. asyncpg's errors are
+# listed because SQLAlchemy does not wrap the ones raised while connecting, such
+# as "the database system is starting up".
+DATABASE_UNAVAILABLE_ERRORS = (
+    DBAPIError,
+    PoolTimeoutError,
+    OSError,
+    asyncpg.PostgresError,
+    asyncpg.InterfaceError,
+)
 
 
 engine = create_async_engine(

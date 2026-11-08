@@ -26,14 +26,14 @@ indexes refresh on every commit. `--check` exits 1 when they are stale.
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**81 test files, 681 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**82 test files, 687 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 28 | 265 | `cd backend && poetry run pytest` |
-| [Indexer](#indexer) | 11 | 99 | `cd crawler && poetry run pytest tests/indexer` |
-| [Crawler](#crawler) | 33 | 317 | `cd crawler && poetry run pytest tests/crawler` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 28 | 266 | `cd backend && poetry run pytest` |
+| [Indexer](#indexer) | 12 | 103 | `cd crawler && poetry run pytest tests/indexer` |
+| [Crawler](#crawler) | 33 | 318 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 9 | 0 | npm scripts in `frontend/package.json` (see below) |
 
 ### End-to-end (full app)
@@ -46,7 +46,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 |---|---|---:|---|
 | [__init__.py](../backend/tests/__init__.py) | helper |  |  |
 | [api/test_search.py](../backend/tests/api/test_search.py) | tests | 8 | [test_case.md](../backend/tests/test_case.md#search-http-api) |
-| [api/test_search_route.py](../backend/tests/api/test_search_route.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#search-http-api) |
+| [api/test_search_route.py](../backend/tests/api/test_search_route.py) | tests | 4 | [test_case.md](../backend/tests/test_case.md#search-http-api) |
 | [golden/test_bm25_golden.py](../backend/tests/golden/test_bm25_golden.py) | tests | 8 |  |
 | [integration/test_code.py](../backend/tests/integration/test_code.py) | tests | 17 | [test_case.md](../backend/tests/test_case.md#code-retrieval) |
 | [integration/test_corpus_mutation_search.py](../backend/tests/integration/test_corpus_mutation_search.py) | tests | 4 |  |
@@ -96,6 +96,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [test_vocabulary.py](../crawler/tests/indexer/test_vocabulary.py) | tests | 4 | [test_case.md](../crawler/tests/test_case.md#test_vocabularypy) |
 | [test_vocabulary_outbox.py](../crawler/tests/indexer/test_vocabulary_outbox.py) | tests | 6 |  |
 | [test_vocabulary_rebuild_cli.py](../crawler/tests/indexer/test_vocabulary_rebuild_cli.py) | tests | 6 | [test_case.md](../crawler/tests/test_case.md#test_vocabulary_rebuild_clipy) |
+| [test_worker_recovery.py](../crawler/tests/indexer/test_worker_recovery.py) | tests | 4 |  |
 
 ### Crawler
 
@@ -138,7 +139,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [crawler/worker/test_monitoring.py](../crawler/tests/crawler/worker/test_monitoring.py) | tests | 4 | [test_case.md](../crawler/tests/test_case.md#test_monitoringpy) |
 | [crawler/worker/test_postgres_pipeline.py](../crawler/tests/crawler/worker/test_postgres_pipeline.py) | tests | 5 | [test_case.md](../crawler/tests/test_case.md#test_postgres_pipelinepy) |
 | [crawler/worker/test_recovery.py](../crawler/tests/crawler/worker/test_recovery.py) | tests | 5 | [test_case.md](../crawler/tests/test_case.md#test_recoverypy) |
-| [crawler/worker/test_runner_continuous.py](../crawler/tests/crawler/worker/test_runner_continuous.py) | tests | 4 |  |
+| [crawler/worker/test_runner_continuous.py](../crawler/tests/crawler/worker/test_runner_continuous.py) | tests | 5 |  |
 | [crawler/writer/test_database_writer.py](../crawler/tests/crawler/writer/test_database_writer.py) | tests | 7 | [test_case.md](../crawler/tests/test_case.md#test_database_writerpy) |
 | [test_case.md](../crawler/tests/test_case.md) | write-up |  |  |
 
