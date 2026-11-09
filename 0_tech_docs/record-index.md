@@ -60,6 +60,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0047 | backend/database-schema | [Edit an applied revision only when it cannot run and the schema stays identical](backend/database-schema/ADR-0047-edit-applied-revision-only-when-it-cannot-run.md) | accepted |
 | ADR-0048 | frontend/search-experience | [Ground AI overviews in signed search results with bounded Groq usage](frontend/search-experience/ADR-0048-ground-ai-overviews-in-signed-results.md) | superseded |
 | ADR-0049 | backend/ai-overview | [Own AI overviews in FastAPI with shared PostgreSQL budgets](backend/ai-overview/ADR-0049-backend-owned-overviews-with-shared-postgres-budgets.md) | accepted |
+| ADR-0050 | crawler/document-writer | [A feed or API record never replaces a fetched page, and only a page can remove or revive one](crawler/document-writer/ADR-0050-feed-records-never-replace-fetched-pages.md) | accepted |
 
 ## Incidents
 

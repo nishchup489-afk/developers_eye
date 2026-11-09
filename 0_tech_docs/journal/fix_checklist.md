@@ -1,7 +1,7 @@
 # Fix checklist
 
 Audited 2026-11-04, updated after the 2M scaling work. Audit ran against real runs on a disposable database (`developers_eye_audit_test`, Postgres 18, migrated from empty).
-Now: backend 390 passed, crawler and indexer 680 passed, DNS runner 73/73, frontend lint, typecheck, build, integration and admin tests pass, npm audit clean. Real browser tests were not run.
+Now: backend 390 passed, crawler and indexer 720 passed, DNS runner 73/73, frontend lint, typecheck, build, integration and admin tests pass, npm audit clean. Real browser tests were not run.
 
 Ticked items with no automated test behind them (keep ticked, but know the evidence is manual):
 - Key rotation, old-key 401/403 and deployment checks: one-off local checks recorded in INC-0006.
@@ -75,7 +75,7 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [ ] Review nested sitemap indexes and continuation behavior. (partial: nested parsing tested, continuation does not exist)
 - [x] Shorten DB transactions so no connection stays held across HTTP fetching. (ShortTransactions in jobs.py)
 - [x] Read/write robots cache with short sessions and consider in-process TTL caching. (short sessions done, TTL cache not needed yet)
-- [x] Move index/vocabulary mutation out of crawler finalize and assign it to indexer ownership. (partial: crawler no longer locks or counts, but still deletes index rows on 404 and noindex)
+- [x] Move index/vocabulary mutation out of crawler finalize and assign it to indexer ownership. (crawler only marks documents unavailable on 404, 410 and noindex; the indexer removes the index rows)
 - [x] Remove lease recovery work from every claim; design one periodic reaper. (reap_forever, one process at a time through an advisory lock)
 - [x] Drive orphan recovery from unfinished attempts with appropriate indexing. (ix_crawl_attempt_unfinished and ix_crawl_target_lease)
 - [x] Make startup seeding/discovery single-owner or advisory-lock guarded. (sync_sources_once)
@@ -87,13 +87,13 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [x] Add removal regression for after_document_id=999. (test_removal_cursor_is_part_of_the_query)
 - [x] Introduce bounded failure backoff so failed removals cannot monopolize the first page. (the working cursor moves past failed removals)
 - [x] Coordinate vocabulary mutex/locking across upserts, removals and rebuilds. (no shared lock for writers now: outbox plus one drainer, test_vocabulary_outbox)
-- [ ] Recheck 404/410, noindex and document tombstoning behavior.
+- [x] Recheck 404/410, noindex and document tombstoning behavior. (ADR-0050: a missing or noindex feed no longer marks its articles, a feed cannot revive a removed page, test_postgres_pipeline.py)
 - [x] Verify search_index and search_terms remain transactionally consistent. (change row commits with the index write; exact recount in bench_indexer shows 0 wrong)
 - [x] Stop vocabulary drift from aborting crawl finalization (writers only append to the outbox)
 - [x] Validate vocabulary DF never becomes negative and matches indexed documents. (exact recount 0 wrong at 1 and 4 processes)
-- [ ] Ensure feed/API summaries cannot silently overwrite fuller canonical page content.
-- [ ] Preserve acquisition provenance, original source ownership and content quality.
-- [ ] Test hash-unchanged indexing, updates, removals and rebuild consistency.
+- [x] Ensure feed/API summaries cannot silently overwrite fuller canonical page content. (ADR-0050, enforced in the upsert, logged as kept_existing)
+- [ ] Preserve acquisition provenance, original source ownership and content quality. (partial: feeds and APIs keep their format and origin URL and cannot take over a page, ADR-0050. Two website sources on one URL are still last-writer-wins, and a thin page can still replace a full feed entry)
+- [x] Test hash-unchanged indexing, updates, removals and rebuild consistency. (test_index_lifecycle.py on real Postgres)
 - [x] Review indexer batching and mutex serialization before adding more workers. (EXP-0006 and EXP-0008: 60 docs/s to 581 docs/s)
 
 ## P2 · Database, migrations and runtime reliability

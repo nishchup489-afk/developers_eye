@@ -571,7 +571,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [crawler/tests/indexer/test_index_lifecycle.py](../../crawler/tests/indexer/test_index_lifecycle.py)
 
-1 cases
+1 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_index_lifecyclepy)
 
 - `test_unchanged_update_removal_and_rebuild_keep_index_and_vocabulary_true`
 
@@ -1268,7 +1268,6 @@ These test files have no matching heading in a `test_case.md`.
 - [crawler/tests/crawler/worker/test_database_faults.py](../../crawler/tests/crawler/worker/test_database_faults.py)
 - [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
 - [crawler/tests/indexer/test_concurrent_writers.py](../../crawler/tests/indexer/test_concurrent_writers.py)
-- [crawler/tests/indexer/test_index_lifecycle.py](../../crawler/tests/indexer/test_index_lifecycle.py)
 - [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
 - [crawler/tests/indexer/test_worker_recovery.py](../../crawler/tests/indexer/test_worker_recovery.py)
 - [frontend/tests/overview-routes.mjs](../../frontend/tests/overview-routes.mjs)

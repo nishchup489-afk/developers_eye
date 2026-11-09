@@ -1041,3 +1041,21 @@ CLI contract for `indexer.vocabulary_rebuild` (the one-shot rebuild of `search_t
 | `test_cli_runs_and_logs_success` | `main()` passes the options to the rebuild and logs START, COMPLETE and the document and term counts. |
 | `test_cli_returns_nonzero_when_rebuild_fails` | A failing rebuild logs FAILED and exits with code 1. |
 | `test_rebuild_validates_limits_before_connecting` (4 cases) | Invalid `progress_every` / `write_batch_size` raise `ValueError` before any connection. |
+
+## document ownership and index lifecycle
+
+These need `TEST_DATABASE_URL` pointing at a migrated test database.
+
+#### test_postgres_pipeline.py (ownership cases, ADR-0050)
+
+- A feed summary does not change a fetched page's body, hash, owner or `updated_at`, and is logged as `kept_existing`.
+- A fetched page replaces an earlier feed summary.
+- A feed can update its own entry; another feed needs at least as much text.
+- A stale feed entry does not bring back a 404 or noindex page.
+- A 404 or 410 on a feed leaves its articles available.
+- A 404 on an article removes it even if a feed wrote it last.
+- A noindex header on a feed does not touch the articles it lists.
+
+#### test_index_lifecycle.py
+
+One document through unchanged, updated, removed and rebuilt states, checking the index row and vocabulary counts after each step.

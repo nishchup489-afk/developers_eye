@@ -97,7 +97,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [test_analyzer.py](../crawler/tests/indexer/test_analyzer.py) | tests | 11 | [test_case.md](../crawler/tests/test_case.md#test_analyzerpy) |
 | [test_builder.py](../crawler/tests/indexer/test_builder.py) | tests | 13 | [test_case.md](../crawler/tests/test_case.md#test_builderpy) |
 | [test_concurrent_writers.py](../crawler/tests/indexer/test_concurrent_writers.py) | tests | 5 |  |
-| [test_index_lifecycle.py](../crawler/tests/indexer/test_index_lifecycle.py) | tests | 1 |  |
+| [test_index_lifecycle.py](../crawler/tests/indexer/test_index_lifecycle.py) | tests | 1 | [test_case.md](../crawler/tests/test_case.md#test_index_lifecyclepy) |
 | [test_indexer.py](../crawler/tests/indexer/test_indexer.py) | tests | 2 | [test_case.md](../crawler/tests/test_case.md#test_indexerpy) |
 | [test_pipeline.py](../crawler/tests/indexer/test_pipeline.py) | tests | 1 | [test_case.md](../crawler/tests/test_case.md#test_pipelinepy) |
 | [test_repository.py](../crawler/tests/indexer/test_repository.py) | tests | 8 | [test_case.md](../crawler/tests/test_case.md#test_repositorypy) |
