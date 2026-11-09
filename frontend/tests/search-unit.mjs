@@ -1,6 +1,6 @@
 // Unit tests for the spelling-suggestion helpers in lib/search.ts (no build needed).
 import assert from "node:assert/strict";
-import { isSearchMode, parseCorrection, searchModes, shouldSuggest, suggestBelowResults } from "../lib/search.ts";
+import { forwardedFor, isSearchMode, isSearchableLength, maxQueryLength, maxRawQueryLength, maxSuggestQueryLength, normalizedQueryLength, parseCorrection, searchModes, shouldSuggest, suggestBelowResults, upstreamFailure } from "../lib/search.ts";
 
 assert.deepEqual(searchModes, ["all", "text", "code"]);
 for (const mode of searchModes) assert.equal(isSearchMode(mode), true);
@@ -62,3 +62,53 @@ for (const bad of [
   assert.equal(parseCorrection(bad, "pyhton"), null);
 }
 console.log("PASS parseCorrection: valid, unchanged and malformed payloads");
+
+// FastAPI's SearchConfig.max_query_length; the UI and every proxy route use this value.
+assert.equal(maxQueryLength, 256);
+assert.equal(maxSuggestQueryLength, maxQueryLength);
+assert.equal(maxRawQueryLength, 1024);
+console.log("PASS query length matches the backend (256)");
+
+// Same expectations as _normalize_whitespace and analyze_query in the backend.
+assert.equal(normalizedQueryLength("a   b\n\tc"), 5, "whitespace runs collapse");
+assert.equal(normalizedQueryLength('"a   b"'), 7, "quoted spacing is preserved");
+assert.equal(normalizedQueryLength('a  "b  c"  d'), 10);
+assert.equal(normalizedQueryLength("😀😀"), 2, "code points, not UTF-16 units");
+assert.equal(normalizedQueryLength("é"), 1, "NFC before counting");
+assert.equal(isSearchableLength(""), false);
+assert.equal(isSearchableLength("x".repeat(256)), true);
+assert.equal(isSearchableLength("x".repeat(257)), false);
+assert.equal(isSearchableLength(`x${" ".repeat(400)}y`), true, "collapses to 3 characters");
+assert.equal(isSearchableLength(`x${" ".repeat(1100)}y`), false, "over the raw limit");
+assert.equal(isSearchableLength("😀".repeat(256)), true);
+console.log("PASS query length is measured the way FastAPI's analyzer measures it");
+
+assert.deepEqual(upstreamFailure(429, "7"), {
+  status: 429,
+  error: "Too many searches. Wait a moment and try again.",
+  retryAfter: "7",
+});
+assert.equal(upstreamFailure(429).retryAfter, "1", "429 always tells the client when to retry");
+assert.equal(upstreamFailure(429, "soon").retryAfter, "1", "a malformed Retry-After is not passed on");
+assert.deepEqual(upstreamFailure(503, "1"), {
+  status: 503,
+  error: "Search is busy right now. Please try again shortly.",
+  retryAfter: "1",
+});
+assert.equal(upstreamFailure(503).retryAfter, undefined);
+assert.equal(upstreamFailure(504).status, 504);
+assert.match(upstreamFailure(504, undefined, "Suggestions").error, /^Suggestions timed out/);
+assert.equal(upstreamFailure(422).status, 400);
+for (const status of [400, 401, 404, 500, 502]) assert.equal(upstreamFailure(status).status, 502);
+console.log("PASS upstreamFailure: 429/503 keep Retry-After, 504 stays a timeout, 422 is 400, rest 502");
+
+const forwarded = (value) =>
+  forwardedFor(new Request("http://localhost/api/search", value === undefined ? {} : { headers: { "X-Forwarded-For": value } }));
+assert.deepEqual(forwarded("203.0.113.7"), { "X-Forwarded-For": "203.0.113.7" });
+assert.deepEqual(forwarded("198.51.100.1, 203.0.113.9"), { "X-Forwarded-For": "203.0.113.9" }, "last hop wins");
+assert.deepEqual(forwarded("2001:db8::1"), { "X-Forwarded-For": "2001:db8::1" });
+assert.deepEqual(forwarded(undefined), {});
+// A real Request refuses CR/LF in a header, so this needs a stand-in.
+assert.deepEqual(forwardedFor({ headers: { get: () => "evil\r\nheader" } }), {});
+assert.deepEqual(forwarded("1.2.3.4, not-an-ip"), {});
+console.log("PASS forwardedFor: last hop only, IPv4/IPv6, rejects junk");

@@ -56,6 +56,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0043 | indexer/vocubulary | [Update vocabulary counts through a transactional outbox, not a global lock](indexer/vocubulary/ADR-0043-vocabulary-outbox.md) | accepted |
 | ADR-0044 | backend/admin-api | [Record search outcomes per minute in PostgreSQL, and sample the corpus for statistics](backend/admin-api/ADR-0044-search-availability-telemetry.md) | accepted |
 | ADR-0045 | backend/fuzzy-correction | [Offer "Did you mean" on few results, with stems mapped back to real words](backend/fuzzy-correction/ADR-0045-did-you-mean-with-surface-word-suggestions.md) | accepted |
+| ADR-0046 | backend/search-api | [Bound every public search with a rate limit, a concurrency cap, deadlines and cancellation](backend/search-api/ADR-0046-bounded-public-search-requests.md) | accepted |
 | ADR-0047 | backend/database-schema | [Edit an applied revision only when it cannot run and the schema stays identical](backend/database-schema/ADR-0047-edit-applied-revision-only-when-it-cannot-run.md) | accepted |
 | ADR-0048 | frontend/search-experience | [Ground AI overviews in signed search results with bounded Groq usage](frontend/search-experience/ADR-0048-ground-ai-overviews-in-signed-results.md) | superseded |
 | ADR-0049 | backend/ai-overview | [Own AI overviews in FastAPI with shared PostgreSQL budgets](backend/ai-overview/ADR-0049-backend-owned-overviews-with-shared-postgres-budgets.md) | accepted |
@@ -97,4 +98,5 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | EXP-0009 | backend/ranking | [Human-judged lexical search relevance — BM25 versus PostgreSQL](backend/ranking/EXP-0009-search-relevance-metrics.md) | running         # planned \| running \| done |
 | EXP-0010 | backend/database-schema | [Query plans for retrieval, frontier claiming and indexing on a copy of the real data](backend/database-schema/EXP-0010-query-plans-on-real-data-copy.md) | done |
 | EXP-0011 | crawler/worker-runtime | [Worker recovery from a real database restart, and crawler and indexer writers racing](crawler/worker-runtime/EXP-0011-database-outage-and-concurrent-writers.md) | done |
+| EXP-0012 | backend/ranking | [Evaluate judged candidate recall and BM25 relevance against PostgreSQL FTS](backend/ranking/EXP-0012-judged-lexical-relevance-evaluation.md) | running |
 <!-- record-index:end -->

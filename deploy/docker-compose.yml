@@ -53,6 +53,9 @@ services:
     environment:
       <<: *python-env
       DB_POOL_SIZE: "8"
+      # The API port is only reachable from the web container, so its X-Forwarded-For
+      # can be trusted. Without this every visitor shares one rate-limit bucket.
+      FORWARDED_ALLOW_IPS: "*"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8000/health')"]
       interval: 15s

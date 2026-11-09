@@ -36,7 +36,7 @@ The homepage reads the configuration per request. A live-mode label means an ori
 
 | Query parameter | Type   | Required | Validation                                                                       |
 | --------------- | ------ | -------- | -------------------------------------------------------------------------------- |
-| q               | string | yes      | Trimmed; 1–300 characters                                                        |
+| q               | string | yes      | Trimmed; 1–256 characters after collapsing spaces; at most 1024 raw characters   |
 | source          | enum   | no       | docs, github, stackoverflow, reddit, articles, events, practice; empty means all |
 
 Unknown query parameters are ignored. Unsupported methods return 405 (Next.js also provides HEAD/OPTIONS behavior). No pagination, sort, autocomplete, or user-auth parameters are implemented.
@@ -72,14 +72,16 @@ Errors:
 
 | HTTP | Condition                                   | Body                                                                  |
 | ---- | ------------------------------------------- | --------------------------------------------------------------------- |
-| 400  | Missing, whitespace-only, or oversized q    | `{ "error": "Enter a query between 1 and 300 characters." }`          |
+| 400  | Missing, whitespace-only, or oversized q    | `{ "error": "Enter a query between 1 and 256 characters." }`          |
 | 400  | Unknown source                              | `{ "error": "Unknown source filter." }`                               |
-| 502  | Upstream non-2xx status                     | `{ "error": "The search service is unavailable. Please try again." }` |
+| 429  | Too many searches; has `Retry-After`        | `{ "error": "Too many searches. Wait a moment and try again." }`      |
+| 503  | Search is at capacity; has `Retry-After`    | `{ "error": "Search is busy right now. Please try again shortly." }`  |
+| 502  | Any other upstream non-2xx status           | `{ "error": "The search service is unavailable. Please try again." }` |
 | 502  | Schema-invalid payload                      | `{ "error": "The search service returned an invalid response." }`     |
 | 502  | Network/configuration error or invalid JSON | `{ "error": "Cannot reach the search service. Please try again." }`   |
-| 504  | Upstream timeout                            | `{ "error": "Search timed out. Please try again." }`                  |
+| 504  | Search deadline passed or upstream timeout  | `{ "error": "Search timed out. Please try again." }`                  |
 
-Upstream requests have a 10-second deadline, `Accept: application/json`, no cache, and no automatic retries. Provider errors or credentials are not forwarded to clients. A configured but broken backend never falls back to fixtures.
+If the browser disconnects, the upstream request is cancelled and the database work stops. Upstream requests have a 6-second deadline, above FastAPI's 4-second one, `Accept: application/json`, no cache, and no automatic retries. Provider errors or credentials are not forwarded to clients. A configured but broken backend never falls back to fixtures.
 
 ### POST /api/search/overview
 
@@ -95,7 +97,7 @@ The proxy preserves backend statuses and `Retry-After`: 400 invalid/expired cont
 
 | Query parameter | Type   | Required | Validation                |
 | --------------- | ------ | -------- | ------------------------- |
-| q               | string | yes      | Trimmed; 1–300 characters |
+| q               | string | yes      | Same limits as `/api/search` |
 
 ```sh
 curl --get 'http://localhost:3000/api/search/suggest' --data-urlencode 'q=fastapi configuraton'
@@ -114,7 +116,7 @@ Response, HTTP 200:
 
 - Demo mode (no `BACKEND_URL`), pasted code (multi-line), queries over 256 characters and queries the backend rejects (422) return 200 with `suggestion: null`.
 - A suggestion equal to the query (ignoring case and spacing), or one with no corrections, becomes `suggestion: null`.
-- 400 for a missing, blank or over 300 character `q`; 502 for an upstream non-2xx status, a malformed payload or an unreachable backend; 504 after the 5-second deadline. All responses use `Cache-Control: no-store`.
+- 400 for a missing, blank or oversized `q`; 429 and 503 with `Retry-After` when limited or busy; 502 for any other upstream non-2xx status, a malformed payload or an unreachable backend; 504 after the deadline. All responses use `Cache-Control: no-store`.
 
 ### Result schema
 
@@ -146,7 +148,7 @@ These contracts give the backend team concrete starting points. Only `/search` i
 
 ### GET /search — implemented
 
-Implemented in `backend/src/backend/api/search.py`. Accepts `q` (1–300 characters, 422 otherwise), optional `source` and optional `limit` (1–50, default 20). Each result also carries `type`, the raw document type. A database failure returns 503. The category comes from known hosts (GitHub/GitLab, Stack Overflow/Stack Exchange, Reddit, practice sites) and otherwise from the document type.
+Implemented in `backend/src/backend/api/search.py`. Accepts `q` (1–256 characters after normalizing, at most 1024 raw, 422 otherwise), optional `source` and optional `limit` (1–50, default 20). Each result also carries `type`, the raw document type. Over the per-client rate limit returns 429 with `Retry-After`; at the concurrency cap, 503 with `Retry-After`; past the 3-second statement or 4-second total deadline, 504. Any other database failure returns 503. Limits are set with the `SEARCH_RATE_LIMIT_PER_MINUTE`, `SEARCH_RATE_LIMIT_BURST`, `SEARCH_MAX_CONCURRENT`, `SEARCH_QUERY_DEADLINE_MS` and `SEARCH_TOTAL_DEADLINE_MS` environment variables. The category comes from known hosts (GitHub/GitLab, Stack Overflow/Stack Exchange, Reddit, practice sites) and otherwise from the document type.
 
 Original proposal: accept `q` and optional `source` using the same validation as the bridge. Return `{ "query": string, "results": SearchResult[] }`; optional `took_ms`, totals, metadata, and warnings may be added. The current bridge ignores backend top-level extras and supplies its own timing/mode. Respect the source filter when provided. Return results in relevance order and use the normalized schema above. Deduplicate canonical URLs before returning.
 
@@ -158,7 +160,7 @@ Original proposal: accept `q` and optional `source` using the same validation as
 }
 ```
 
-Proposed backend status codes: 200 for success (including partial results), 400/422 for invalid input, 429 for rate limits, 503 if no retrieval path is available. The current bridge maps all upstream non-2xx statuses to 502, so exposing a distinct 429 or partial-source UI requires a coordinated frontend change.
+The bridge keeps 429, 503 and 504 from FastAPI, including `Retry-After`, and maps 422 to 400 and other non-2xx statuses to 502. A partial-source UI would still need a coordinated frontend change.
 
 ### GET /search/suggest — implemented
 
@@ -177,7 +179,7 @@ Implemented in `backend/src/backend/api/search.py` (`suggest_query_correction` i
 - Candidates come from the indexer-maintained `search_terms` vocabulary with `pg_trgm` (similarity threshold 0.2), then must be within edit distance 1 (words up to 6 letters) or 2 (longer).
 - Only plain 4–32 letter words are corrected. Quoted words, identifiers such as `AsyncSession` or `fastapi.utils`, `and`/`or`/`not`, and words already in the vocabulary (or whose English stem is) are kept.
 - The vocabulary holds English stems (`configur`, `librari`). Each candidate is expanded into readable forms (stem plus common suffixes, `i` back to `y`), and a form is kept only if PostgreSQL's `english_stem` reduces it to that candidate. The closest form wins, so `configuraton` suggests `configuration`, not `configur`. A bare stem ending in `i` is never suggested.
-- 503 if the vocabulary query fails. `/search` never applies the suggestion by itself.
+- 429 over the rate limit, 503 at the concurrency cap or if the vocabulary query fails, 504 past the deadline. `/search` never applies the suggestion by itself.
 
 Autocomplete (query completions while typing) is a separate idea and is not implemented.
 

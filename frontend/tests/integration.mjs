@@ -5,6 +5,9 @@ import { setTimeout as delay } from "node:timers/promises";
 
 const processes = [];
 const seenSearchRequests = [];
+const seenForwardedFor = [];
+// Upstream requests whose connection closed before the mock answered them.
+const abandonedUpstream = [];
 // A tiny MediaWiki action API (formatversion=2) for the knowledge panel.
 const wikiCalls = {};
 const article = (title, description, extra = {}) => ({
@@ -58,6 +61,24 @@ const mock = createServer((req, res) => {
   res.setHeader("Content-Type", "application/json");
   if (url.pathname === "/w/api.php") return wiki(url, res);
   if (q === "timeout") return;
+  if (q === "hang") {
+    res.on("close", () => abandonedUpstream.push(url.pathname));
+    return;
+  }
+  // FastAPI's overload and deadline responses.
+  const failures = {
+    limited: [429, { "Retry-After": "7" }],
+    busy: [503, { "Retry-After": "1" }],
+    "slow-db": [504, {}],
+    "unsearchable": [422, {}],
+  };
+  if (failures[q]) {
+    const [status, headers] = failures[q];
+    res.writeHead(status, headers);
+    return res.end(JSON.stringify({ detail: "upstream detail" }));
+  }
+  if (url.pathname === "/search" && q === "whoami")
+    seenForwardedFor.push(req.headers["x-forwarded-for"] ?? null);
   if (q === "failure") {
     res.writeHead(503);
     return res.end("{}");
@@ -178,6 +199,11 @@ try {
   await get(demo, {}, 400);
   await get(demo, { q: "   " }, 400);
   await get(demo, { q: "x".repeat(301) }, 400);
+  await get(demo, { q: "x".repeat(257) }, 400);
+  await get(demo, { q: "x".repeat(256) });
+  await get(demo, { q: `  ${"x".repeat(256)}  ` });
+  await get(demo, { q: `x${" ".repeat(400)}y` });
+  await get(demo, { q: `x${" ".repeat(1100)}y` }, 400);
   await get(demo, { q: "python", source: "unknown" }, 400);
   await get(demo, { q: "python", mode: "unsupported" }, 400);
   assert.equal(
@@ -198,6 +224,7 @@ try {
   assert.deepEqual(data, { query: "pyhton", suggestion: null, corrections: [], mode: "demo" });
   await suggest(demo, {}, 400);
   await suggest(demo, { q: "x".repeat(301) }, 400);
+  await suggest(demo, { q: "x".repeat(257) }, 400);
   console.log("PASS demo suggestions return none, suggestion validation");
   const knowledge = async (params, status = 200) => {
     const response = await fetch(`${demo}/api/search/knowledge?${new URLSearchParams(params)}`);
@@ -227,6 +254,7 @@ try {
   await knowledge({ q: "wiki-timeout" }, 504);
   await knowledge({}, 400);
   await knowledge({ q: "x".repeat(301) }, 400);
+  await knowledge({ q: "x".repeat(257) }, 400);
   console.log("PASS knowledge panel: redirects, computing preference, confidence, cache, failures");
   const live = await start(3182, upstream);
   data = await get(live, { q: "python" });
@@ -243,8 +271,10 @@ try {
   await get(live, { q: "fastapi", mode: "invalid" }, 400);
   assert.equal(seenSearchRequests.length, seenBeforeInvalid, "invalid mode never reaches FastAPI");
   console.log("PASS all/text/code modes forwarded through live proxy");
+  data = await get(live, { q: "failure" }, 503);
+  assert.equal(data.results, undefined);
+  assert.match(data.error, /busy/);
   for (const q of [
-    "failure",
     "malformed",
     "unsafe",
     "bad-url",
@@ -256,6 +286,40 @@ try {
     assert.equal(data.results, undefined);
   }
   await get(live, { q: "timeout" }, 504);
+  let response = await fetch(`${live}/api/search?q=limited`);
+  assert.equal(response.status, 429);
+  assert.equal(response.headers.get("retry-after"), "7");
+  assert.doesNotMatch(await response.text(), /upstream detail/);
+  response = await fetch(`${live}/api/search?q=busy`);
+  assert.equal(response.status, 503);
+  assert.equal(response.headers.get("retry-after"), "1");
+  assert.equal((await get(live, { q: "slow-db" }, 504)).error, "Search timed out. Please try again.");
+  await get(live, { q: "unsearchable" }, 400);
+  response = await fetch(`${live}/api/search/suggest?q=limited`);
+  assert.equal(response.status, 429);
+  assert.equal(response.headers.get("retry-after"), "7");
+  await suggest(live, { q: "slow-db" }, 504);
+  console.log("PASS FastAPI 429/503 keep Retry-After, 504 stays 504, 422 becomes 400");
+  for (const [sent, expected] of [
+    ["203.0.113.7", "203.0.113.7"],
+    ["198.51.100.1, 203.0.113.9", "203.0.113.9"],
+  ]) {
+    await fetch(`${live}/api/search?q=whoami`, { headers: { "X-Forwarded-For": sent } });
+    assert.equal(seenForwardedFor.at(-1), expected);
+  }
+  console.log("PASS browser address forwarded to FastAPI for rate limiting");
+  for (const path of ["/api/search", "/api/search/suggest"]) {
+    const before = abandonedUpstream.length;
+    const controller = new AbortController();
+    const pending = fetch(`${live}${path}?q=hang`, { signal: controller.signal }).catch((error) => error);
+    await delay(300);
+    controller.abort();
+    assert.equal((await pending).name, "AbortError");
+    for (let i = 0; i < 30 && abandonedUpstream.length === before; i++) await delay(100);
+    assert.equal(abandonedUpstream.length, before + 1, `${path}: browser abort closed the FastAPI request`);
+    assert.equal(abandonedUpstream.at(-1), path.replace("/api", ""));
+  }
+  console.log("PASS browser cancellation propagates through Next.js to FastAPI");
   console.log(
     "PASS live proxy, schema/URL validation, upstream failures, timeout",
   );
@@ -267,7 +331,8 @@ try {
   assert.equal((await suggest(live, { q: "python" })).suggestion, null);
   assert.equal((await suggest(live, { q: "rejected" })).suggestion, null);
   assert.equal((await suggest(live, { q: "def f():\n  pass" })).suggestion, null);
-  for (const q of ["failure", "malformed", "bad-suggest"]) {
+  assert.match((await suggest(live, { q: "failure" }, 503)).error, /busy/);
+  for (const q of ["malformed", "bad-suggest"]) {
     data = await suggest(live, { q }, 502);
     assert.equal(typeof data.error, "string");
     assert.equal(data.suggestion, undefined);

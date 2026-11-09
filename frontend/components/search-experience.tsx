@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import {
   isSearchResult,
+  maxQueryLength,
   searchModes,
   shouldSuggest,
   sourceNames,
@@ -123,8 +124,6 @@ const tickerItems = [
   "Practice",
 ];
 
-// The search API accepts at most this many characters per query.
-const maxQueryLength = 300;
 
 /** Multi-line queries are pasted code, shown as a code block instead of in the input. */
 function splitQuery(value: string): [text: string, code: string] {

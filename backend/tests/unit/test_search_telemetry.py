@@ -111,7 +111,7 @@ def recorded(monkeypatch):
 
 
 @pytest.mark.parametrize("error, outcome, status", [
-    (OperationalError("q", {}, Canceled()), "timed_out", 503),
+    (OperationalError("q", {}, Canceled()), "timed_out", 504),
     (OperationalError("q", {}, Exception("gone")), "database_errors", 503),
     (RuntimeError("no snapshot"), "engine_errors", 503),
     (KeyError("bug"), "server_errors", 500),

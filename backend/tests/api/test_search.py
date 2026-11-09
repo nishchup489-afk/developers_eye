@@ -109,6 +109,10 @@ def suggest(monkeypatch):
                                         similarity=0.8, edit_distance=2)],
         )
 
+    async def no_deadline(session):
+        return None
+
+    monkeypatch.setattr(search_api, "apply_query_deadline", no_deadline)
     monkeypatch.setattr(search_api, "SessionFactory", fake_session)
     monkeypatch.setattr(search_api, "suggest_query_correction", fake_suggest)
     return seen

@@ -38,6 +38,33 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_suggest_rejects_invalid_query`
 - `test_suggest_database_error_is_503`
 
+### [backend/tests/api/test_search_limits.py](../../backend/tests/api/test_search_limits.py)
+
+22 cases · write-up: [test_case.md](../../backend/tests/test_case.md#public-search-limits-adr-0046)
+
+- `test_frontend_query_limits_match_the_backend`: lib/search.ts cannot import SearchConfig, so a change on one side must fail here.
+- `test_bucket_allows_burst_then_reports_wait_and_refills`
+- `test_buckets_are_per_client_and_bounded`
+- `test_zero_rate_disables_the_limit`
+- `test_search_rate_limit_is_429_with_retry_after`
+- `test_suggest_rate_limit_is_separate_from_search`
+- `test_forwarded_clients_get_their_own_buckets`: Behind Next.js, uvicorn's proxy headers make each browser its own client.
+- `test_full_concurrency_cap_is_503_with_retry_after`
+- `test_concurrent_burst_admits_only_the_cap`: Requests arriving in the same event-loop turn cannot overshoot the cap.
+- `test_suggestions_share_the_concurrency_cap`
+- `test_failed_requests_release_their_slot`
+- `test_validation_failure_does_not_take_a_slot`
+- `test_total_deadline_is_504_and_cancels_the_search`
+- `test_statement_timeout_is_504`
+- `test_connection_pool_timeout_is_504`
+- `test_other_database_errors_stay_503`
+- `test_suggest_deadline_and_statement_timeout_are_504`
+- `test_disconnect_cancels_search_and_frees_its_slot`
+- `test_disconnect_cancels_suggestion`
+- `test_finished_work_wins_over_a_later_disconnect`
+- `test_deadline_waits_for_cancelled_work_to_unwind`: A deadline that fires mid-search still lets the search close its session first.
+- `test_disconnect_raises_client_disconnected`
+
 ### [backend/tests/api/test_search_route.py](../../backend/tests/api/test_search_route.py)
 
 4 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-http-api)
@@ -179,6 +206,14 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_category_filter_and_limit`
 - `test_no_match_returns_empty`
 - `test_categorize`
+
+### [backend/tests/integration/test_search_deadlines.py](../../backend/tests/integration/test_search_deadlines.py)
+
+3 cases · write-up: [test_case.md](../../backend/tests/test_case.md#public-search-limits-adr-0046)
+
+- `test_real_statement_timeout_is_504`
+- `test_total_deadline_stops_the_postgres_query`
+- `test_client_disconnect_stops_the_postgres_query`
 
 ### [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 
@@ -328,6 +363,15 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_empty_snapshot_with_live_documents_gets_a_usable_average`
 - `test_df_cache_expires_and_never_mixes_channels`
 
+### [backend/tests/unit/test_ranking_goldens.py](../../backend/tests/unit/test_ranking_goldens.py)
+
+4 cases
+
+- `test_golden_scores_and_exact_order`
+- `test_duplicate_query_term_does_not_change_golden`
+- `test_single_term_golden_ties_use_document_id`
+- `test_zero_term_frequency_gives_exact_zero`
+
 ### [backend/tests/unit/test_ranking_orchestrator.py](../../backend/tests/unit/test_ranking_orchestrator.py)
 
 14 cases · write-up: [test_case.md](../../backend/tests/test_case.md#ranking-orchestrator)
@@ -346,6 +390,28 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_excess_candidates_fail_before_database_work`
 - `test_loader_error_propagates`
 - `test_nonfinite_combined_score_is_rejected`
+
+### [backend/tests/unit/test_relevance_cli.py](../../backend/tests/unit/test_relevance_cli.py)
+
+3 cases
+
+- `test_manifest_has_at_least_30_unique_stratified_queries`
+- `test_judgment_template_is_blinded_and_carries_titles`
+- `test_write_json_never_overwrites_human_judgments`
+
+### [backend/tests/unit/test_relevance_metrics.py](../../backend/tests/unit/test_relevance_metrics.py)
+
+9 cases
+
+- `test_exact_precision_mrr_ndcg_and_candidate_recall`: Known-relevant c is absent from retrieval and lowers recall.
+- `test_missing_top_ten_judgments_prevent_a_published_score`
+- `test_ungraded_template_cannot_pass_as_irrelevant`
+- `test_no_positive_requires_an_explicit_no_relevant_decision`
+- `test_duplicate_urls_do_not_count_as_multiple_relevant_documents`
+- `test_invalid_grade_is_rejected`
+- `test_conflicting_no_relevant_flag_rejected`
+- `test_suite_never_reports_partial_averages_as_complete`
+- `test_suite_query_mismatch_rejected`
 
 ### [backend/tests/unit/test_relevance_metrics_base.py](../../backend/tests/unit/test_relevance_metrics_base.py)
 
@@ -1076,7 +1142,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/worker/test_postgres_pipeline.py](../../crawler/tests/crawler/worker/test_postgres_pipeline.py)
 
-6 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
+9 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
 
 - `test_http_429_retry_after_persists_and_delays_reclaim`
 - `test_structured_resources_commit_documents_targets_and_attempts`
@@ -1084,6 +1150,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_removed_page_invalidates_index_and_recovers_when_restored`
 - `test_sitemap_past_link_limit_queues_every_url_and_rerun_adds_nothing`
 - `test_expiration_and_old_worker_recovery_do_not_touch_new_claims`
+- `test_nested_sitemap_children_are_scoped_and_idempotent`: Parent index -> child maps -> pages, with durable deduplication on replays.
+- `test_nested_sitemap_depth_limit_rejects_grandchild`: A sitemap index at depth one must not schedule a depth-two child.
+- `test_sitemap_overflow_replay_after_partial_commit`: A transient failure after a committed overflow batch must lose no URLs.
 
 ### [crawler/tests/crawler/worker/test_recovery.py](../../crawler/tests/crawler/worker/test_recovery.py)
 
@@ -1176,6 +1245,9 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 - [backend/tests/unit/test_ai_overview.py](../../backend/tests/unit/test_ai_overview.py)
 - [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)
+- [backend/tests/unit/test_ranking_goldens.py](../../backend/tests/unit/test_ranking_goldens.py)
+- [backend/tests/unit/test_relevance_cli.py](../../backend/tests/unit/test_relevance_cli.py)
+- [backend/tests/unit/test_relevance_metrics.py](../../backend/tests/unit/test_relevance_metrics.py)
 - [backend/tests/unit/test_relevance_metrics_base.py](../../backend/tests/unit/test_relevance_metrics_base.py)
 - [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
