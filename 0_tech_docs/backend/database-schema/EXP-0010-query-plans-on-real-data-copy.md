@@ -70,7 +70,9 @@ Indexer selection compares two tables, so an index cannot serve it. It runs once
 
 The source count in `enqueue_targets` scans because one source owns most targets, and it runs while holding the `frontier-source` advisory lock. Bounding the count by the source limit would help only partly, since a source near its limit still counts that many rows. It is recorded here and not changed.
 
-Limits: 5 hosts means the claim's host ordering was not stressed, and the data is 2% of the target size. This ran on 18.3, not the deployed 16.
+A second run on PostgreSQL 16.15, the deployed version, chose the same plans for the paths rechecked: GIN bitmap for text retrieval (68 ms), `ix_crawl_target_host_due` for the claim (3.5 ms), `ix_crawl_target_lease` for the reaper, a seq scan for indexer selection (26 ms), and the new index for the 404 lookup (0.02 ms). That copy also went from e94b530df145 to head with 42,114 rows in 33 seconds, and the indexer rebuilt its first 300 rows with real code vectors.
+
+Limits: 5 hosts means the claim's host ordering was not stressed, and the data is 2% of the target size. Query plan timings on 16 are from one run with default memory settings raised.
 
 ## Outcome
 
