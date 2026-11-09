@@ -111,10 +111,11 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/integration/test_migrations.py](../../backend/tests/integration/test_migrations.py)
 
-2 cases
+3 cases
 
 - `test_code_vector_upgrade_keeps_a_populated_index_and_requeues_it`
 - `test_code_vector_upgrade_works_on_an_empty_table`
+- `test_head_indexes_the_404_document_lookup`
 
 ### [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 
@@ -1023,8 +1024,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/worker/test_postgres_pipeline.py](../../crawler/tests/crawler/worker/test_postgres_pipeline.py)
 
-5 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
+6 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
 
+- `test_http_429_retry_after_persists_and_delays_reclaim`
 - `test_structured_resources_commit_documents_targets_and_attempts`
 - `test_concurrent_claims_atomic_writes_and_shared_source_budget`
 - `test_removed_page_invalidates_index_and_recovers_when_restored`

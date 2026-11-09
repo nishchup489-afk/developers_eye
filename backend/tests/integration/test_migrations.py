@@ -118,3 +118,12 @@ def test_code_vector_upgrade_keeps_a_populated_index_and_requeues_it(database):
 def test_code_vector_upgrade_works_on_an_empty_table(database):
     _upgrade(database, BEFORE_CODE_VECTOR)
     _upgrade(database, "head")
+
+
+def test_head_indexes_the_404_document_lookup(database):
+    _upgrade(database, "head")
+    [rows] = _sql(
+        _dsn(database, database.database),
+        "SELECT indisvalid FROM pg_index WHERE indexrelid = 'ix_document_last_crawl_target_id'::regclass",
+    )
+    assert [row["indisvalid"] for row in rows] == [True]
