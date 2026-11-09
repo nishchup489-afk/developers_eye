@@ -458,6 +458,16 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_hash_changes_when_index_version_changes`
 - `test_hash_excludes_source_timestamp`
 
+### [crawler/tests/indexer/test_concurrent_writers.py](../../crawler/tests/indexer/test_concurrent_writers.py)
+
+5 cases
+
+- `test_index_write_waiting_on_a_crawl_is_rejected_as_stale`
+- `test_crawl_after_an_index_write_makes_the_index_outdated`
+- `test_crawl_transaction_older_than_the_index_write_is_still_seen`: updated_at must be taken at the write, not when the crawl transaction began.
+- `test_recrawl_with_no_change_does_not_invalidate_an_index_write`
+- `test_two_indexers_write_once_and_count_the_vocabulary_once`
+
 ### [crawler/tests/indexer/test_indexer.py](../../crawler/tests/indexer/test_indexer.py)
 
 2 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_indexerpy)
@@ -1001,6 +1011,13 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_missing_pages_are_marked_unavailable_without_index_deletion`
 - `test_successful_observation_restores_document_availability`
 
+### [crawler/tests/crawler/worker/test_database_faults.py](../../crawler/tests/crawler/worker/test_database_faults.py)
+
+2 cases
+
+- `test_connection_lost_in_finalize_rolls_back_and_the_lease_recovers`
+- `test_pool_replaces_connections_killed_while_idle`
+
 ### [crawler/tests/crawler/worker/test_deadlock_retry.py](../../crawler/tests/crawler/worker/test_deadlock_retry.py)
 
 3 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_deadlock_retrypy)
@@ -1116,7 +1133,9 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/unit/test_relevance_metrics_base.py](../../backend/tests/unit/test_relevance_metrics_base.py)
 - [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
+- [crawler/tests/crawler/worker/test_database_faults.py](../../crawler/tests/crawler/worker/test_database_faults.py)
 - [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
+- [crawler/tests/indexer/test_concurrent_writers.py](../../crawler/tests/indexer/test_concurrent_writers.py)
 - [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
 - [crawler/tests/indexer/test_worker_recovery.py](../../crawler/tests/indexer/test_worker_recovery.py)
 <!-- test-index:end -->
