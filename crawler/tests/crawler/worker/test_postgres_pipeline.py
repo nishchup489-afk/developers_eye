@@ -421,7 +421,7 @@ def test_nested_sitemap_depth_limit_rejects_grandchild(monkeypatch):
                 }
                 assert await session.scalar(
                     select(func.count(CrawlTarget.id))
-                    .where(CrawlTarget.fetch_url == grandchild)
+                    .where(CrawlTarget.source_id == source_id, CrawlTarget.fetch_url == grandchild)
                 ) == 0
 
     asyncio.run(run())
