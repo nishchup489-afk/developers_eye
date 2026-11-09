@@ -39,7 +39,7 @@ poetry run pytest tests/indexer -v -rs
 
 `test_service_writer.py` uses mocks and does not connect to PostgreSQL. `test_indexer.py` adds an opt-in end-to-end lifecycle test against PostgreSQL TEMP tables when `TEST_DATABASE_URL` is set. See [tests/README.md](../../tests/test_case.md#indexer) for setup and [tests/test_case.md](../../tests/test_case.md#indexer) for what each test covers.
 
-Still not covered before production deployment: concurrent writers, a source update while waiting on the lock, and the `code_vector` schema migration.
+Concurrent writers, a source update while waiting on the lock, and the `code_vector` migration on a populated table are covered by `tests/indexer/test_concurrent_writers.py` and `backend/tests/integration/test_migrations.py`.
 
 ## Status and failures
 
