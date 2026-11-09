@@ -122,19 +122,19 @@ The next part is discovery: where the first sitemap URL comes from, how child si
 
 The worker distinguishes page URLs from child sitemap URLs:
 
-- A sitemap index enqueues its child files as \`kind="sitemap"\` at \`parent_depth + 1\`. Each additional nested index consumes another depth level. Children beyond the source's \`max_depth\` are rejected.
-- Page URLs found inside a sitemap are enqueued as \`kind="page"\` at depth 0, so a nested sitemap does not artificially exhaust the page link-depth budget. Page URLs still obey the source's allowed-host and allowed-path rules.
+- A sitemap index enqueues its child files as `kind="sitemap"` at `parent_depth + 1`. Each additional nested index consumes another depth level. Children beyond the source's `max_depth` are rejected.
+- Page URLs found inside a sitemap are enqueued as `kind="page"` at depth 0, so a nested sitemap does not artificially exhaust the page link-depth budget. Page URLs still obey the source's allowed-host and allowed-path rules.
 - Child sitemap URLs must pass the source host allowlist. Every later HTTP request independently enforces DNS/IP, redirect, robots and politeness policies.
-- PostgreSQL deduplicates on \`(source_id, normalized_url)\` and enforces the source's \`max_pages\` frontier budget.
+- PostgreSQL deduplicates on `(source_id, normalized_url)` and enforces the source's `max_pages` frontier budget.
 
-A sitemap may yield more URLs than the worker's \`max_links\` finalization batch. The worker enqueues overflow in separate short, idempotent transactions *before* finalizing the sitemap's crawl attempt. If a later batch fails, earlier committed rows remain; the sitemap target is retried and its XML is parsed again. Already-enqueued URLs are skipped and the remaining URLs are inserted, subject to the source's budget.
+A sitemap may yield more URLs than the worker's `max_links` finalization batch. The worker enqueues overflow in separate short, idempotent transactions *before* finalizing the sitemap's crawl attempt. If a later batch fails, earlier committed rows remain; the sitemap target is retried and its XML is parsed again. Already-enqueued URLs are skipped and the remaining URLs are inserted, subject to the source's budget.
 
 **This is restart-safe replay, not persisted cursor continuation.** There is no cursor, byte offset, or saved XML stream position. A retry downloads and parses the entire sitemap again. The parser caps inputs at 10 MiB of XML and 50,000 entries, and the HTTP fetcher applies its own response-size limit. Sitemaps exceeding those bounds are rejected, not partially resumed.
 
-PostgreSQL regression coverage in \`crawler/tests/crawler/worker/test_postgres_pipeline.py\` includes nested child discovery, cross-host and path filtering, depth cutoffs, repeated crawls without duplicate targets, and an injected failure after one overflow batch commits. The tests use a dedicated migrated database and synthetic sitemap responses; they do not issue live website requests.
+PostgreSQL regression coverage in `crawler/tests/crawler/worker/test_postgres_pipeline.py` includes nested child discovery, cross-host and path filtering, depth cutoffs, repeated crawls without duplicate targets, and an injected failure after one overflow batch commits. The tests use a dedicated migrated database and synthetic sitemap responses; they do not issue live website requests.
 
-From \`crawler/\`, with \`TEST_DATABASE_URL\` pointing to an isolated migrated test database:
+From `crawler/`, with `TEST_DATABASE_URL` pointing to an isolated migrated test database:
 
-\`\`\`powershell
+```powershell
 poetry run python -m pytest tests/crawler/worker/test_postgres_pipeline.py -v
-\`\`\`
+```
