@@ -57,7 +57,8 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0044 | backend/admin-api | [Record search outcomes per minute in PostgreSQL, and sample the corpus for statistics](backend/admin-api/ADR-0044-search-availability-telemetry.md) | accepted |
 | ADR-0045 | backend/fuzzy-correction | [Offer "Did you mean" on few results, with stems mapped back to real words](backend/fuzzy-correction/ADR-0045-did-you-mean-with-surface-word-suggestions.md) | accepted |
 | ADR-0047 | backend/database-schema | [Edit an applied revision only when it cannot run and the schema stays identical](backend/database-schema/ADR-0047-edit-applied-revision-only-when-it-cannot-run.md) | accepted |
-| ADR-0048 | frontend/search-experience | [Ground AI overviews in signed search results with bounded Groq usage](frontend/search-experience/ADR-0048-ground-ai-overviews-in-signed-results.md) | accepted |
+| ADR-0048 | frontend/search-experience | [Ground AI overviews in signed search results with bounded Groq usage](frontend/search-experience/ADR-0048-ground-ai-overviews-in-signed-results.md) | superseded |
+| ADR-0049 | backend/ai-overview | [Own AI overviews in FastAPI with shared PostgreSQL budgets](backend/ai-overview/ADR-0049-backend-owned-overviews-with-shared-postgres-budgets.md) | accepted |
 
 ## Incidents
 

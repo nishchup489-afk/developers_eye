@@ -12,6 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.db.session import DATABASE_UNAVAILABLE_ERRORS, SessionFactory
+from backend.ai_overview.context import sign_context
 from backend.schema.search import SearchFilter, SearchResponseOut
 from backend.schema.search_term import QueryCorrection
 from backend.search.query_analyzer.analyzer import QueryValidationError, analyze_query
@@ -88,7 +89,8 @@ async def search(
         raise
 
     telemetry.record("successful", (perf_counter() - started) * 1000)
-    return SearchResponseOut(query=normalized, results=results)
+    # ADR-0049: backend issues evidence; overview generation is a separate request.
+    return SearchResponseOut(query=normalized, results=results, overview_token=sign_context(normalized, results))
 
 
 @router.get("/search/suggest", response_model=QueryCorrection)

@@ -9,6 +9,13 @@ class Settings(BaseSettings):
     app_env : str = "development"
     debug: bool = False 
 
+    # AI overview is entirely backend-owned; no Groq configuration in Next.js.
+    groq_api_key: SecretStr | None = None
+    groq_model: str = "qwen/qwen3.8-27b"
+    ai_overview: bool = True
+    # Only trust a header overwritten by the ingress and preserved by the UI proxy.
+    ai_overview_client_ip_header: str = ""
+
     database_url : str  
     # Per process. Keep (pool_size + max_overflow) * processes under Postgres max_connections.
     db_pool_size: int = 5

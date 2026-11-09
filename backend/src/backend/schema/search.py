@@ -2,7 +2,7 @@
 
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 SearchCategory = Literal[
     "docs", "github", "stackoverflow", "reddit", "articles", "events", "practice"
@@ -25,3 +25,4 @@ class SearchResultOut(BaseModel):
 class SearchResponseOut(BaseModel):
     query: str
     results: list[SearchResultOut]
+    overview_token: str | None = Field(default=None, exclude_if=lambda value: value is None)

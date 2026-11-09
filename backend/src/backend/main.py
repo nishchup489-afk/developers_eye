@@ -13,6 +13,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from backend.api.crawler_report import router as crawler_report_router
 from backend.api.indexer_report import router as indexer_report_router
 from backend.api.search import router as search_router
+from backend.api.ai_overview import router as ai_overview_router
 from backend.api.system_report import router as system_report_router
 from backend.core.config import settings
 from backend.db.session import SessionFactory, engine
@@ -74,6 +75,7 @@ app.include_router(crawler_report_router)
 app.include_router(indexer_report_router)
 app.include_router(system_report_router)
 app.include_router(search_router)
+app.include_router(ai_overview_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
