@@ -13,6 +13,8 @@ Configure `DATABASE_URL` and a random `CRAWLER_REPORT_API_KEY` of at least 32 ch
 
 Public search is `GET /search?q=...&source=docs` (no key). It reads `search_index` and `document`, so results appear once the crawler and indexer have run. Point the frontend at it with `BACKEND_URL=http://127.0.0.1:8000` in `frontend/.env.local`.
 
+AI overview is optional and backend-owned. Configure `GROQ_API_KEY` in `backend/.env`, apply migrations, and restart FastAPI. `POST /search/overview` summarizes the existing signed search results with shared PostgreSQL quotas/cache. The frontend only displays it. See [setup, API contract and verification](docs/ai_overview.md) and the [feature document](../0_tech_docs/backend/ai-overview/overview.md).
+
 In another terminal, from the repository root:
 
 ```powershell

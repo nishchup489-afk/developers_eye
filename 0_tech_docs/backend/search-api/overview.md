@@ -16,6 +16,8 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 
 ## How-it-works docs
 
+- [Backend-owned AI overview feature](../ai-overview/overview.md) — optional cited summary of existing results, issued separately from search.
+
 - [`backend/README.md`](../../../backend/README.md)
 - [`frontend/public/api-reference.md`](../../../frontend/public/api-reference.md)
 

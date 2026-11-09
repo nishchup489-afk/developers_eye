@@ -56,6 +56,7 @@ Use the existing [decision](_templates/decision.md), [incident](_templates/incid
 | backend/database-schema | active | [Database schema and migrations](backend/database-schema/overview.md) |
 | backend/package-boundary | active | [Backend and worker package boundary](backend/package-boundary/overview.md) |
 | backend/search-api | active | [Public search API and integration boundary](backend/search-api/overview.md) |
+| backend/ai-overview | active | [Backend-owned AI search overview](backend/ai-overview/overview.md) |
 | backend/admin-api | active | [Read-only admin API](backend/admin-api/overview.md) |
 | backend/query-planning | active | [Query analysis and explicit retrieval planning](backend/query-planning/overview.md) |
 | backend/retrieval | active | [Text and code candidate retrieval](backend/retrieval/overview.md) |
