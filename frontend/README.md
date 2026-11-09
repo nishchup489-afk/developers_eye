@@ -15,13 +15,11 @@ To connect public search to FastAPI, set `BACKEND_URL=http://127.0.0.1:8000` in 
 
 ## AI overview (Groq)
 
-Add `GROQ_API_KEY=...` from [Groq Console](https://console.groq.com/keys) to `frontend/.env.local`, keep `BACKEND_URL` connected, and restart Next.js. `GROQ_MODEL` defaults to `llama-3.1-8b-instant`; `AI_OVERVIEW=off` disables the feature. The key stays server-side. In Compose, add these settings to `deploy/.env` and recreate the web container.
+AI overview is owned by FastAPI. The frontend needs only `BACKEND_URL`; configure the Groq key in **`backend/.env`**, apply backend migrations, and restart the API. See [backend setup and API contract](../backend/docs/ai_overview.md). No Groq key, system prompt, signing logic, cache, or rate limiter belongs in this frontend.
 
-Live searches include a signed, ten-minute `overviewToken` containing up to four existing result excerpts. The browser posts it to `/api/search/overview` after displaying results. There is no second search or page fetch. Demo and saved results never invoke Groq. The system prompt is in `lib/ai-overview-server.ts`: evidence-only answers, per-paragraph citations, uncertainty, injection resistance, and no answer when the excerpts are insufficient. Output stays plain text; citation URLs are taken from verified results. The prompt reduces unsupported claims but cannot guarantee factual correctness.
+The search proxy passes the backend's opaque `overview_token` to the UI as `overviewToken`. The overview proxy forwards `{ token }` to FastAPI `POST /search/overview` and preserves its response status and `Retry-After`. The card displays plain-text paragraphs, source links, loading and retry states. Demo and saved-result views do not request overviews.
 
-Generation uses conservative sliding budgets: **20 requests/minute, 1,000/day, 5,000 reserved tokens/minute, and 400,000/day** across the server, plus **3 generations/minute and 30/day per client**. Reservations use UTF-8 bytes as a conservative Llama token bound, message overhead, and the full 600-token output cap. Large excerpts are shortened to fit. Failed calls count; no automatic retries. Groq `429` pauses all new generations for its `Retry-After` period. Successful answers cache for 30 minutes (insufficient evidence for five); identical concurrent searches share one call. Cache hits don't consume generation budgets. These are application caps, not a promise of account quota: check your [Groq organization limits](https://console.groq.com/docs/rate-limits), especially if other apps share the key or you change models.
-
-**Deployment boundary:** budgets and cache are process-local and reset on restart. This matches the single `next start` web process in Compose. Before horizontal/serverless deployment, replace state with an atomic shared store; do not treat these as organization-wide persistent accounting. With no trusted client-IP header configured, all users share the anonymous client bucket. Compose's Caddy overwrites `X-Eye-Client-IP`; set `AI_OVERVIEW_CLIENT_IP_HEADER=X-Eye-Client-IP` there. Elsewhere, only set this variable for a header your trusted ingress overwrites, with direct public access to Next blocked. Never trust a raw client `X-Forwarded-For`.
+The proxy preserves the ingress-overwritten `X-Eye-Client-IP` and browser `Sec-Fetch-Site` headers; the backend decides whether to trust/use them. The backend stores generation budgets, cooldowns, cache entries and leases in PostgreSQL so API workers share them across restarts.
 
 ## Checks
 
@@ -29,7 +27,6 @@ Generation uses conservative sliding budgets: **20 requests/minute, 1,000/day, 5
 npm run lint
 npm run build
 npm run test:integration
-npm run test:overview:unit
 npm run test:overview:routes
 ```
 

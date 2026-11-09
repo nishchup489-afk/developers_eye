@@ -89,10 +89,20 @@ services:
   web:
     build: ../frontend
     restart: unless-stopped
-    env_file: .env
     environment:
       BACKEND_URL: http://api:8000
       CRAWLER_REPORT_API_URL: http://api:8000
+      CRAWLER_REPORT_API_KEY: ${CRAWLER_REPORT_API_KEY:-}
+      ADMIN_APP_URL: ${ADMIN_APP_URL:-}
+      ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET:-}
+      ADMIN_GITHUB_IDS: ${ADMIN_GITHUB_IDS:-}
+      ADMIN_VIEWER_ACCESS: ${ADMIN_VIEWER_ACCESS:-off}
+      ADMIN_VIEWER_GITHUB_IDS: ${ADMIN_VIEWER_GITHUB_IDS:-}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      KNOWLEDGE_PANEL: ${KNOWLEDGE_PANEL:-on}
+      WIKIPEDIA_API_URL: ${WIKIPEDIA_API_URL:-}
+      WIKIPEDIA_USER_AGENT: ${WIKIPEDIA_USER_AGENT:-}
     depends_on:
       api:
         condition: service_healthy

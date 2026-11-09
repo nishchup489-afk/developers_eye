@@ -17,7 +17,7 @@ export default function AIOverviewCard({ token }: { token: string }) {
 
   useEffect(() => {
     const controller = new AbortController();
-    void api.post("/search/overview", { token }, { signal: controller.signal, timeout: 16_000 })
+    void api.post("/search/overview", { token }, { signal: controller.signal, timeout: 20_000 })
       .then((response) => {
         if (controller.signal.aborted) return;
         if (response.status === 200) {
