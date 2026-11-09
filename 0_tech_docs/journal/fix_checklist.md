@@ -1,7 +1,7 @@
 # Fix checklist
 
 Audited 2026-11-04, updated after the 2M scaling work. Audit ran against real runs on a disposable database (`developers_eye_audit_test`, Postgres 18, migrated from empty).
-Now: backend 390 passed, crawler and indexer 720 passed, DNS runner 73/73, frontend lint, typecheck, build, integration and admin tests pass, npm audit clean. Real browser tests were not run.
+Now: backend 537 passed, crawler and indexer 720 passed, DNS runner 73/73, frontend lint, typecheck, build, integration and admin tests pass, npm audit clean. Real browser tests were not run.
 
 Ticked items with no automated test behind them (keep ticked, but know the evidence is manual):
 - Key rotation, old-key 401/403 and deployment checks: one-off local checks recorded in INC-0006.
