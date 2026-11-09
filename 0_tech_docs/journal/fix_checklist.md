@@ -58,8 +58,15 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [x] Define combined Discussions category and its source/type mapping. (stackoverflow + reddit in backend.search.categories, integration tested)
 - [x] Connect spelling/fuzzy suggestions through the API and UI. (partial: GET /search/suggest tested, UI does not call it)
 - [x] Validate invalid filters, empty queries, deep paging and no-result responses. (tests: api/test_search (422 cases), test_invalid_pagination_rejected_without_db_access, test_no_match_returns_empty)
-- [ ] Add API request limits, query-size limits, deadlines and cancellation handling. (partial: size and limit bounds tested, no deadlines, rate limits or concurrency cap)
-- [ ] Run fresh frontend-to-backend integration tests.
+- [x] Add API request limits, query-size limits, deadlines and cancellation handling. (ADR-0046)
+- [x] Implement public API rate limiting with HTTP 429. (per client, per process; Next.js forwards the client address, compose sets FORWARDED_ALLOW_IPS)
+- [x] Implement total search deadline using asyncio.timeout(). (4 s, /search and /search/suggest)
+- [x] Map database timeout errors to HTTP 504. (statement_timeout and connection pool timeout; tested against real PostgreSQL)
+- [x] Propagate client cancellation through Next.js. (request.signal on the upstream call)
+- [x] Handle backend client disconnects safely. (cancels the query in PostgreSQL, frees the slot only after unwinding)
+- [x] Align frontend/backend query-length constraints. (256 normalized, 1024 raw, counted the same way; test_frontend_query_limits_match_the_backend)
+- [x] Add overload, timeout and cancellation tests. (test_search_limits, test_search_deadlines, frontend integration.mjs)
+- [x] Run fresh frontend-to-backend integration tests. (backend/scripts/e2e_search_stack.py: real Next.js and FastAPI on a newly migrated database, passed 2026-11-08)
 
 ## P1 · Crawler discovery and correctness
 - [x] Fix the 1,000-URL sitemap cap with resumable continuation. (all entries queue in short idempotent transactions)

@@ -1,16 +1,26 @@
 import { backend, isOk, isTimeout } from "@/lib/axios";
 import { searchDemo } from "@/lib/demo";
-import { isSearchResult, sources } from "@/lib/search";
+import {
+  forwardedFor,
+  isSearchableLength,
+  isSearchResult,
+  queryLengthError,
+  sources,
+  upstreamFailure,
+} from "@/lib/search";
+
+// Above FastAPI's total search deadline (SEARCH_TOTAL_DEADLINE_MS, 4 s), so a slow
+// search comes back as FastAPI's 504 rather than as this proxy giving up.
+const backendTimeoutMs = 6000;
 
 export async function GET(request: Request) {
   const started = performance.now();
   const params = new URL(request.url).searchParams;
   const query = params.get("q")?.trim() ?? "";
   const source = params.get("source") ?? "";
-  const json = (body: unknown, status = 200) =>
-    Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
-  if (!query || query.length > 300)
-    return json({ error: "Enter a query between 1 and 300 characters." }, 400);
+  const json = (body: unknown, status = 200, headers: Record<string, string> = {}) =>
+    Response.json(body, { status, headers: { "Cache-Control": "no-store", ...headers } });
+  if (!isSearchableLength(query)) return json({ error: queryLengthError }, 400);
   if (source && ![...sources, "discussions"].includes(source))
     return json({ error: "Unknown source filter." }, 400);
   const page = params.get("page") ?? "";
@@ -35,12 +45,21 @@ export async function GET(request: Request) {
     if (source) url.searchParams.set("source", source);
     if (page) url.searchParams.set("page", page);
     if (mode) url.searchParams.set("mode", mode);
-    const response = await backend.get(url.toString(), { timeout: 10000 });
-    if (!isOk(response.status))
+    // request.signal aborts when the browser goes away (a newer search, a closed tab);
+    // aborting the upstream request makes FastAPI cancel the database work too.
+    const response = await backend.get(url.toString(), {
+      timeout: backendTimeoutMs,
+      signal: request.signal,
+      headers: forwardedFor(request),
+    });
+    if (!isOk(response.status)) {
+      const failure = upstreamFailure(response.status, response.headers["retry-after"]);
       return json(
-        { error: "The search service is unavailable. Please try again." },
-        502,
+        { error: failure.error },
+        failure.status,
+        failure.retryAfter ? { "Retry-After": failure.retryAfter } : {},
       );
+    }
     const data = response.data;
     if (
       !data ||
@@ -59,6 +78,8 @@ export async function GET(request: Request) {
       mode: "live",
     });
   } catch (error) {
+    // Nobody is listening; 499 only shows up in logs.
+    if (request.signal.aborted) return new Response(null, { status: 499 });
     const timeout = isTimeout(error);
     return json(
       {

@@ -28,6 +28,33 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_suggest_rejects_invalid_query`
 - `test_suggest_database_error_is_503`
 
+### [backend/tests/api/test_search_limits.py](../../backend/tests/api/test_search_limits.py)
+
+22 cases · write-up: [test_case.md](../../backend/tests/test_case.md#public-search-limits-adr-0046)
+
+- `test_frontend_query_limits_match_the_backend`: lib/search.ts cannot import SearchConfig, so a change on one side must fail here.
+- `test_bucket_allows_burst_then_reports_wait_and_refills`
+- `test_buckets_are_per_client_and_bounded`
+- `test_zero_rate_disables_the_limit`
+- `test_search_rate_limit_is_429_with_retry_after`
+- `test_suggest_rate_limit_is_separate_from_search`
+- `test_forwarded_clients_get_their_own_buckets`: Behind Next.js, uvicorn's proxy headers make each browser its own client.
+- `test_full_concurrency_cap_is_503_with_retry_after`
+- `test_concurrent_burst_admits_only_the_cap`: Requests arriving in the same event-loop turn cannot overshoot the cap.
+- `test_suggestions_share_the_concurrency_cap`
+- `test_failed_requests_release_their_slot`
+- `test_validation_failure_does_not_take_a_slot`
+- `test_total_deadline_is_504_and_cancels_the_search`
+- `test_statement_timeout_is_504`
+- `test_connection_pool_timeout_is_504`
+- `test_other_database_errors_stay_503`
+- `test_suggest_deadline_and_statement_timeout_are_504`
+- `test_disconnect_cancels_search_and_frees_its_slot`
+- `test_disconnect_cancels_suggestion`
+- `test_finished_work_wins_over_a_later_disconnect`
+- `test_deadline_waits_for_cancelled_work_to_unwind`: A deadline that fires mid-search still lets the search close its session first.
+- `test_disconnect_raises_client_disconnected`
+
 ### [backend/tests/api/test_search_route.py](../../backend/tests/api/test_search_route.py)
 
 3 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-http-api)
@@ -150,6 +177,14 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_category_filter_and_limit`
 - `test_no_match_returns_empty`
 - `test_categorize`
+
+### [backend/tests/integration/test_search_deadlines.py](../../backend/tests/integration/test_search_deadlines.py)
+
+3 cases · write-up: [test_case.md](../../backend/tests/test_case.md#public-search-limits-adr-0046)
+
+- `test_real_statement_timeout_is_504`
+- `test_total_deadline_stops_the_postgres_query`
+- `test_client_disconnect_stops_the_postgres_query`
 
 ### [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 
@@ -655,7 +690,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/ingestion/test_json_api.py](../../crawler/tests/crawler/ingestion/test_json_api.py)
 
-8 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_json_apipy)
+11 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_json_apipy)
 
 - `test_default_array_single_object_and_items_container`
 - `test_custom_nested_fields_html_and_body_pagination`
@@ -665,6 +700,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_invalid_json_and_ambiguous_objects_are_rejected`
 - `test_json_limits_apply_before_filtering`
 - `test_path_lookup_can_select_array_element_and_empty_collection_is_valid`
+- `test_stack_exchange_record_keeps_license_metadata_and_unix_date`
+- `test_invalid_metadata_fields_are_rejected`
+- `test_boolean_is_not_a_unix_date`
 
 ### [crawler/tests/crawler/ingestion/test_sitemap.py](../../crawler/tests/crawler/ingestion/test_sitemap.py)
 
@@ -789,7 +827,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/policy_and_politeness/test_politeness_policy.py](../../crawler/tests/crawler/policy_and_politeness/test_politeness_policy.py)
 
-37 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_politeness_policypy)
+40 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_politeness_policypy)
 
 - `TestHostKey.test_extract_hostname`
 - `TestHostKey.test_same_host_different_paths`
@@ -815,6 +853,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `TestPolitenessManager.test_peak_concurrency_never_exceeds_limit`
 - `TestPolitenessManager.test_different_hosts_run_independently`
 - `TestPolitenessManager.test_minimum_interval`
+- `TestPolitenessManager.test_host_override_lengthens_interval`
+- `TestPolitenessManager.test_aws_docs_default_gap_is_five_seconds`
+- `TestPolitenessManager.test_invalid_host_override_is_rejected`
 - `TestPolitenessManager.test_zero_interval`
 - `TestPolitenessManager.test_apply_backoff`
 - `TestPolitenessManager.test_backoff_does_not_shorten`

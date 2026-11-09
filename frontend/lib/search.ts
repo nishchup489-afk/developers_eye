@@ -1,3 +1,73 @@
+/**
+ * Longest query the backend searches: SearchConfig.max_query_length (SEARCH_MAX_QUERY_LENGTH),
+ * measured after normalizing. The UI, every /api/search route and FastAPI agree on it.
+ */
+export const maxQueryLength = 256;
+/** FastAPI refuses a longer `q` before normalizing it: SearchConfig.max_raw_query_length. */
+export const maxRawQueryLength = 1024;
+export const queryLengthError = `Enter a query between 1 and ${maxQueryLength} characters.`;
+
+/**
+ * A query's length as FastAPI's analyzer counts it (`_normalize_whitespace` in analyzer.py):
+ * NFC code points, with whitespace runs collapsed outside double quotes.
+ */
+export function normalizedQueryLength(query: string): number {
+  let length = 0;
+  let inQuotes = false;
+  let pendingSpace = false;
+  for (const char of query.normalize("NFC")) {
+    if (char !== '"' && /\s/.test(char)) {
+      if (inQuotes) length += 1;
+      else pendingSpace = true;
+      continue;
+    }
+    if (pendingSpace && length > 0) length += 1;
+    pendingSpace = false;
+    length += 1;
+    if (char === '"') inQuotes = !inQuotes;
+  }
+  return length;
+}
+
+/** Whether FastAPI's length limits accept this (already trimmed) query. */
+export function isSearchableLength(query: string): boolean {
+  if (!query || query.length > maxRawQueryLength) return false;
+  const length = normalizedQueryLength(query);
+  return length > 0 && length <= maxQueryLength;
+}
+
+/** The error this app returns for a failed FastAPI search or suggestion request. */
+export type UpstreamFailure = { status: number; error: string; retryAfter?: string };
+
+/**
+ * Map a FastAPI failure status to this app's response. Overload and timeouts keep their
+ * meaning (and Retry-After) so the browser can tell "slow down" from "broken".
+ */
+export function upstreamFailure(
+  status: number,
+  retryAfter?: unknown,
+  what: "Search" | "Suggestions" = "Search",
+): UpstreamFailure {
+  const wait =
+    typeof retryAfter === "string" && /^[0-9]{1,4}$/.test(retryAfter) ? retryAfter : undefined;
+  if (status === 429)
+    return { status, error: "Too many searches. Wait a moment and try again.", retryAfter: wait ?? "1" };
+  if (status === 503)
+    return { status, error: `${what} is busy right now. Please try again shortly.`, retryAfter: wait };
+  if (status === 504) return { status, error: `${what} timed out. Please try again.` };
+  if (status === 422) return { status: 400, error: "The search service cannot search this query." };
+  return { status: 502, error: "The search service is unavailable. Please try again." };
+}
+
+/**
+ * The browser's address to forward to FastAPI for per-client rate limiting: the last
+ * X-Forwarded-For entry, which the nearest proxy (Caddy in production) wrote.
+ */
+export function forwardedFor(request: Request): Record<string, string> {
+  const last = request.headers.get("x-forwarded-for")?.split(",").at(-1)?.trim() ?? "";
+  return /^[0-9A-Fa-f:.]{2,45}$/.test(last) ? { "X-Forwarded-For": last } : {};
+}
+
 export const sources = [
   "docs",
   "github",
@@ -66,7 +136,7 @@ export function isSearchResult(value: unknown): value is SearchResult {
 /** Fewer results than this make the results page ask for a spelling suggestion. */
 export const suggestBelowResults = 3;
 /** The backend corrects at most this many characters. */
-export const maxSuggestQueryLength = 256;
+export const maxSuggestQueryLength = maxQueryLength;
 
 export type SearchCorrection = { original: string; replacement: string };
 export type SearchSuggestion = {

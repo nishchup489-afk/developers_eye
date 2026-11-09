@@ -21,7 +21,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 import backend.models  # noqa: F401  registers every table on Base.metadata
 from backend.admin_services import corpus_reporting, search_reporting
 from backend.admin_services.system_reporting import build_problems
-from backend.api.search import _failure_outcome
+from backend.api.search import _is_database_timeout
 from backend.db.base import Base
 from backend.models.documents import Document
 from backend.models.search_index import SearchIndex
@@ -202,4 +202,4 @@ async def test_statement_timeout_is_classified_as_a_timeout(session):
     await session.execute(text("SET LOCAL statement_timeout = 10"))
     with pytest.raises(Exception) as caught:
         await session.execute(text("SELECT pg_sleep(1)"))
-    assert _failure_outcome(caught.value) == "timed_out"
+    assert _is_database_timeout(caught.value)
