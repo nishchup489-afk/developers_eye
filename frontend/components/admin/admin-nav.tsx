@@ -8,7 +8,7 @@ const links = [["/admin/crawler", "Crawler", Radar], ["/admin/indexer", "Indexer
 
 export default function AdminNav() {
   const pathname = usePathname();
-  return <nav className="admin-nav" aria-label="Administration">{links.map(([href, label, Icon]) => {
+  return <nav className="admin-nav" aria-label="Administration"><Link href="/admin/ai-usage" className={pathname.startsWith("/admin/ai-usage") ? "active" : undefined} aria-current={pathname.startsWith("/admin/ai-usage") ? "page" : undefined}><Activity size={17} /> AI token usage</Link>{links.map(([href, label, Icon]) => {
     const active = pathname.startsWith(href);
     return <Link key={href} href={href} className={active ? "active" : undefined} aria-current={active ? "page" : undefined}><Icon size={17} /> {label} {active && <span className="admin-nav-dot" />}</Link>;
   })}</nav>;
