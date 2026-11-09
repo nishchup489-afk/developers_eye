@@ -14,7 +14,7 @@ from crawler.processing.processing import process_document
 
 
 @pytest.mark.parametrize('status', [404, 410])
-def test_missing_pages_are_retained_as_unavailable_and_removed_from_search(monkeypatch, status):
+def test_missing_pages_are_marked_unavailable_without_index_deletion(monkeypatch, status):
     now = datetime.now(timezone.utc)
     lease = now + timedelta(minutes=5)
     target = SimpleNamespace(source_id=1, state='leased', lease_until=lease)
@@ -41,9 +41,14 @@ def test_missing_pages_are_retained_as_unavailable_and_removed_from_search(monke
         http_status=status, body_bytes=0, retry_after_seconds=None, interval_seconds=86400,
         parsed=None, processed=None, targets=[], elapsed=.1))
     sql = [str(query.compile(dialect=postgresql.dialect())) for query in session.statements]
-    assert any('UPDATE document SET' in query and 'last_crawl_target_id =' in query for query in sql)
-    assert any('DELETE FROM search_index' in query for query in sql)
-    assert not any('DELETE FROM document' in query for query in sql)
+    assert any(
+        "UPDATE document SET" in query
+        and "last_crawl_target_id =" in query
+        for query in sql
+    )
+
+    assert not any("DELETE FROM search_index" in query for query in sql)
+    assert not any("DELETE FROM document" in query for query in sql)
     complete.assert_awaited_once()
 
 

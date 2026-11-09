@@ -29,7 +29,7 @@ from backend.api.request_limits import (
     client_key,
     run_unless_disconnected,
 )
-from backend.db.session import SessionFactory
+from backend.db.session import DATABASE_UNAVAILABLE_ERRORS, SessionFactory
 from backend.schema.search import SearchFilter, SearchResponseOut
 from backend.schema.search_term import QueryCorrection
 from backend.search.query_analyzer.analyzer import QueryValidationError, analyze_query
@@ -140,7 +140,7 @@ async def search(
     except (ValueError, QueryValidationError) as exc:
         telemetry.record("invalid")
         raise HTTPException(422, str(exc)) from exc
-    except SQLAlchemyError as exc:
+    except (SQLAlchemyError, *DATABASE_UNAVAILABLE_ERRORS) as exc:
         if _is_database_timeout(exc):
             telemetry.record("timed_out")
             raise HTTPException(504, "Search timed out") from exc
@@ -191,7 +191,7 @@ async def suggest_search_query(
         raise HTTPException(504, "Search suggestions timed out") from exc
     except (ValueError, QueryValidationError) as exc:
         raise HTTPException(422, str(exc)) from exc
-    except SQLAlchemyError as exc:
+    except (SQLAlchemyError, *DATABASE_UNAVAILABLE_ERRORS) as exc:
         if _is_database_timeout(exc):
             raise HTTPException(504, "Search suggestions timed out") from exc
         logger.exception("Vocabulary suggestion query failed")

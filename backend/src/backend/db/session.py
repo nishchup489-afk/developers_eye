@@ -1,4 +1,6 @@
-from collections.abc import AsyncGenerator 
+from collections.abc import AsyncGenerator
+
+from sqlalchemy.exc import DBAPIError, TimeoutError as PoolTimeoutError
 
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -7,6 +9,11 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from backend.core.config import settings 
+
+
+# What a lost or restarting database looks like to a caller: a driver error, no
+# free pooled connection, or a refused socket.
+DATABASE_UNAVAILABLE_ERRORS = (DBAPIError, PoolTimeoutError, OSError)
 
 
 engine = create_async_engine(

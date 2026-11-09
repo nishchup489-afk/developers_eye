@@ -3,7 +3,7 @@ import asyncio
 from types import SimpleNamespace
 
 import pytest
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, TimeoutError as PoolTimeoutError
 
 from crawler.worker import runner
 
@@ -16,12 +16,12 @@ def target(number):
 @pytest.fixture
 def worker(monkeypatch):
     """A fake frontier; `limits` records the size of each claim."""
-    state = SimpleNamespace(queue=[], limits=[], fail_next=0)
+    state = SimpleNamespace(queue=[], limits=[], fail_next=0, error=OperationalError("claim", {}, Exception("database down")))
 
     async def claim_slots(config, limit):
         if state.fail_next:
             state.fail_next -= 1
-            raise OperationalError("claim", {}, Exception("database down"))
+            raise state.error
         state.limits.append(limit)
         taken, state.queue[:limit] = state.queue[:limit], []
         return taken
@@ -86,6 +86,22 @@ async def test_never_claims_more_than_free_slots(worker):
 
 async def test_claim_database_failure_retries_instead_of_stopping(worker):
     worker.fail_next = 2
+    worker.queue = [target(1)]
+    finished = []
+
+    async def handler(job):
+        finished.append(job.id)
+        return SimpleNamespace(outcome="success")
+
+    await run_until(lambda: finished == [1], CONFIG, handler)
+
+
+@pytest.mark.parametrize("error", [
+    PoolTimeoutError("QueuePool limit reached"),
+    ConnectionRefusedError("connection refused"),
+])
+async def test_claim_retries_for_every_way_the_database_can_be_unavailable(worker, error):
+    worker.fail_next, worker.error = 2, error
     worker.queue = [target(1)]
     finished = []
 

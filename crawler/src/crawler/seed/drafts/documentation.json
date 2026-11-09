@@ -82,7 +82,7 @@
       "allowed_path_prefixes": [
         "/Style/CSS/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Web platform",
@@ -123,7 +123,7 @@
         "/rfc/rfc8446.html",
         "/rfc/rfc3986.html"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Web platform",
@@ -284,7 +284,7 @@
       "allowed_path_prefixes": [
         "/book/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -316,7 +316,7 @@
       "allowed_path_prefixes": [
         "/std/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -348,7 +348,7 @@
       "allowed_path_prefixes": [
         "/reference/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -380,7 +380,7 @@
       "allowed_path_prefixes": [
         "/rust-by-example/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -408,24 +408,23 @@
     "config": {
       "priority": 100,
       "max_depth": 8,
-      "max_pages": 1500,
+      "max_pages": 1200,
       "allowed_path_prefixes": [
         "/doc/",
-        "/ref/",
-        "/blog/"
+        "/ref/"
       ],
       "discover_sitemaps": true,
       "registry": {
         "tier": "1",
         "category": "Languages",
         "version_pin": "latest",
-        "est_docs": 500,
+        "est_docs": 400,
         "language_policy": "en_only_by_path",
         "status": "candidate_disabled",
         "suggested_mvp": true,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "Added /ref/ (spec, memory model) and /blog/ (official blog)"
+        "notes": "Added /ref/ (spec, memory model). /blog/ belongs to the go-blog feed only, so the two sources never write the same URL"
       }
     }
   },
@@ -495,7 +494,7 @@
         "/unsafe",
         "/weak"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -527,7 +526,7 @@
       "allowed_path_prefixes": [
         "/en/java/javase/25/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -597,13 +596,13 @@
         "tier": "1",
         "category": "Languages",
         "version_pin": "Swift 6.x",
-        "est_docs": 60,
+        "est_docs": 0,
         "language_policy": "en_only_by_path",
-        "status": "candidate_disabled",
-        "suggested_mvp": true,
+        "status": "blocked_empty_body",
+        "suggested_mvp": false,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "Swift Programming Language book"
+        "notes": "Blocked: the Swift book is a DocC app and the HTML parser extracts an empty body. Workable input: the book's markdown in github.com/swiftlang/swift-book"
       }
     }
   },
@@ -611,7 +610,7 @@
     "slug": "cpp-reference",
     "name": "C++ reference",
     "kind": "website",
-    "base_url": "https://en.cppreference.com/w/cpp",
+    "base_url": "https://en.cppreference.com/cpp",
     "allowed_hosts": [
       "en.cppreference.com"
     ],
@@ -622,9 +621,10 @@
       "max_depth": 8,
       "max_pages": 8000,
       "allowed_path_prefixes": [
+        "/cpp",
         "/w/cpp"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -635,7 +635,7 @@
         "suggested_mvp": true,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "Scoped to /w/cpp so it doesn't overlap c-reference. robots.txt: Content-Signal search=yes, ai-train=no; blocks ~35 named AI bots. Search indexing is allowed, model training is not"
+        "notes": "/w/cpp now redirects to /cpp, so the seed is /cpp and both prefixes are allowed (old links still redirect in). Doesn't overlap c-reference. robots.txt: Content-Signal search=yes, ai-train=no; blocks ~35 named AI bots. Search indexing is allowed, model training is not"
       }
     }
   },
@@ -643,7 +643,7 @@
     "slug": "c-reference",
     "name": "C reference",
     "kind": "website",
-    "base_url": "https://en.cppreference.com/w/c",
+    "base_url": "https://en.cppreference.com/c",
     "allowed_hosts": [
       "en.cppreference.com"
     ],
@@ -654,9 +654,10 @@
       "max_depth": 8,
       "max_pages": 2000,
       "allowed_path_prefixes": [
+        "/c",
         "/w/c"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -667,7 +668,7 @@
         "suggested_mvp": true,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "Prefix /w/c matches /w/c/... only (segment match), so no collision with /w/cpp"
+        "notes": "/w/c now redirects to /c. Prefix /c matches /c/... only (segment match), so no collision with /cpp"
       }
     }
   },
@@ -688,7 +689,7 @@
       "allowed_path_prefixes": [
         "/en-us/dotnet/csharp/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -725,7 +726,7 @@
         "/en-us/aspnet/core/",
         "/en-us/ef/core/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -861,7 +862,7 @@
       "allowed_path_prefixes": [
         "/software/bash/manual/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -893,7 +894,7 @@
       "allowed_path_prefixes": [
         "/software/coreutils/manual/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -1018,24 +1019,23 @@
     "config": {
       "priority": 90,
       "max_depth": 8,
-      "max_pages": 800,
+      "max_pages": 700,
       "allowed_path_prefixes": [
         "/learn",
-        "/reference",
-        "/blog"
+        "/reference"
       ],
       "discover_sitemaps": true,
       "registry": {
         "tier": "2",
         "category": "Frontend frameworks",
         "version_pin": "19.x",
-        "est_docs": 300,
+        "est_docs": 250,
         "language_policy": "en_only_by_path",
         "status": "candidate_disabled",
         "suggested_mvp": true,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "Allowlist /learn and /reference"
+        "notes": "/blog belongs to the react-blog feed"
       }
     }
   },
@@ -1052,24 +1052,23 @@
     "config": {
       "priority": 90,
       "max_depth": 8,
-      "max_pages": 2000,
+      "max_pages": 1800,
       "allowed_path_prefixes": [
         "/docs",
-        "/learn",
-        "/blog"
+        "/learn"
       ],
       "discover_sitemaps": true,
       "registry": {
         "tier": "2",
         "category": "Frontend frameworks",
         "version_pin": "latest (App Router)",
-        "est_docs": 700,
+        "est_docs": 600,
         "language_policy": "en_only_by_path",
         "status": "candidate_disabled",
         "suggested_mvp": true,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "/docs/pages/ is the legacy router; keep or drop"
+        "notes": "/docs/pages/ is the legacy router; keep or drop. /blog belongs to the nextjs-blog feed"
       }
     }
   },
@@ -1165,7 +1164,7 @@
       "allowed_path_prefixes": [
         "/docs/svelte/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Frontend frameworks",
@@ -1197,7 +1196,7 @@
       "allowed_path_prefixes": [
         "/docs/kit/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Frontend frameworks",
@@ -1464,9 +1463,9 @@
     "slug": "redux-toolkit-docs",
     "name": "Redux Toolkit",
     "kind": "website",
-    "base_url": "https://redux-toolkit.js.org/introduction/getting-started",
+    "base_url": "https://redux.js.org/toolkit/introduction/getting-started",
     "allowed_hosts": [
-      "redux-toolkit.js.org"
+      "redux.js.org"
     ],
     "crawl_interval_seconds": 1814400,
     "is_enabled": false,
@@ -1475,11 +1474,7 @@
       "max_depth": 8,
       "max_pages": 400,
       "allowed_path_prefixes": [
-        "/introduction",
-        "/tutorials",
-        "/usage",
-        "/api",
-        "/rtk-query"
+        "/toolkit/"
       ],
       "discover_sitemaps": true,
       "registry": {
@@ -1492,7 +1487,7 @@
         "suggested_mvp": true,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "Docs only"
+        "notes": "redux-toolkit.js.org now 302s to redux.js.org/toolkit/"
       }
     }
   },
@@ -1553,7 +1548,7 @@
         "est_docs": 0,
         "language_policy": "en_only_by_path",
         "status": "duplicate_disabled",
-        "suggested_mvp": true,
+        "suggested_mvp": false,
         "robots_reviewed": false,
         "terms_reviewed": false,
         "notes": "Disabled: Remix v2 merged into React Router 7, covered by react-router-docs"
@@ -1823,7 +1818,7 @@
     "slug": "django",
     "name": "Django",
     "kind": "website",
-    "base_url": "https://docs.djangoproject.com/en/stable/",
+    "base_url": "https://docs.djangoproject.com/en/6.1/",
     "allowed_hosts": [
       "docs.djangoproject.com"
     ],
@@ -1834,20 +1829,21 @@
       "max_depth": 8,
       "max_pages": 2000,
       "allowed_path_prefixes": [
+        "/en/6.1/",
         "/en/stable/"
       ],
       "discover_sitemaps": true,
       "registry": {
         "tier": "2",
         "category": "Python frameworks and libraries",
-        "version_pin": "stable (5.2/6.0)",
+        "version_pin": "6.1",
         "est_docs": 800,
         "language_policy": "en_only_by_path",
         "status": "already_in_seed_file",
         "suggested_mvp": true,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "Already seeded with no path prefix; seed.py skips existing slugs, so this prefix only takes effect via update_source"
+        "notes": "/en/stable/ redirects to /en/6.1/, so the seed is the pinned version; bump both when 6.2 ships. Already seeded with no path prefix; seed.py skips existing slugs, so this only takes effect via update_source"
       }
     }
   },
@@ -1966,9 +1962,9 @@
     "slug": "pydantic-docs",
     "name": "Pydantic",
     "kind": "website",
-    "base_url": "https://docs.pydantic.dev/latest/",
+    "base_url": "https://pydantic.dev/docs/validation/latest/get-started/",
     "allowed_hosts": [
-      "docs.pydantic.dev"
+      "pydantic.dev"
     ],
     "crawl_interval_seconds": 2592000,
     "is_enabled": false,
@@ -1977,7 +1973,7 @@
       "max_depth": 8,
       "max_pages": 600,
       "allowed_path_prefixes": [
-        "/latest/"
+        "/docs/validation/latest/"
       ],
       "discover_sitemaps": true,
       "registry": {
@@ -1990,7 +1986,7 @@
         "suggested_mvp": true,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "Current docs"
+        "notes": "docs.pydantic.dev/latest/ now 302s to pydantic.dev/docs/validation/latest/"
       }
     }
   },
@@ -2853,7 +2849,7 @@
       "allowed_path_prefixes": [
         "/spring-framework/reference/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "JVM and server",
@@ -2885,7 +2881,7 @@
       "allowed_path_prefixes": [
         "/spring-boot/reference/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "JVM and server",
@@ -3142,7 +3138,7 @@
       "allowed_path_prefixes": [
         "/tokio/latest/tokio/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust ecosystem and mobile",
@@ -3174,7 +3170,7 @@
       "allowed_path_prefixes": [
         "/serde/latest/serde/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust ecosystem and mobile",
@@ -3206,7 +3202,7 @@
       "allowed_path_prefixes": [
         "/axum/latest/axum/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust ecosystem and mobile",
@@ -3238,7 +3234,7 @@
       "allowed_path_prefixes": [
         "/clap/latest/clap/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust ecosystem and mobile",
@@ -3306,7 +3302,7 @@
         "/training",
         "/kotlin"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust ecosystem and mobile",
@@ -3470,7 +3466,7 @@
       "allowed_path_prefixes": [
         "/docs/transformers/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "AI ML and data science",
@@ -3502,7 +3498,7 @@
       "allowed_path_prefixes": [
         "/docs/datasets/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "AI ML and data science",
@@ -3534,7 +3530,7 @@
       "allowed_path_prefixes": [
         "/docs/tokenizers/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "AI ML and data science",
@@ -3869,7 +3865,7 @@
         "/terraform/tutorials",
         "/terraform/cloud-docs"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "Infra as code and servers",
@@ -4194,7 +4190,7 @@
         "/docs/deploy-manage",
         "/docs/explore-analyze"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "Datastores and messaging",
@@ -4386,7 +4382,10 @@
       "allowed_path_prefixes": [
         "/AWSEC2/latest/UserGuide/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
+      "sitemap_urls": [
+        "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/sitemap.xml"
+      ],
       "registry": {
         "tier": "3",
         "category": "Cloud AWS selected",
@@ -4418,7 +4417,10 @@
       "allowed_path_prefixes": [
         "/AmazonS3/latest/userguide/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
+      "sitemap_urls": [
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/sitemap.xml"
+      ],
       "registry": {
         "tier": "3",
         "category": "Cloud AWS selected",
@@ -4450,7 +4452,10 @@
       "allowed_path_prefixes": [
         "/lambda/latest/dg/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
+      "sitemap_urls": [
+        "https://docs.aws.amazon.com/lambda/latest/dg/sitemap.xml"
+      ],
       "registry": {
         "tier": "3",
         "category": "Cloud AWS selected",
@@ -4482,7 +4487,10 @@
       "allowed_path_prefixes": [
         "/AmazonRDS/latest/UserGuide/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
+      "sitemap_urls": [
+        "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/sitemap.xml"
+      ],
       "registry": {
         "tier": "3",
         "category": "Cloud AWS selected",
@@ -4514,7 +4522,10 @@
       "allowed_path_prefixes": [
         "/IAM/latest/UserGuide/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
+      "sitemap_urls": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/sitemap.xml"
+      ],
       "registry": {
         "tier": "3",
         "category": "Cloud AWS selected",
@@ -4546,7 +4557,10 @@
       "allowed_path_prefixes": [
         "/AmazonCloudWatch/latest/monitoring/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
+      "sitemap_urls": [
+        "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/sitemap.xml"
+      ],
       "registry": {
         "tier": "3",
         "category": "Cloud AWS selected",
@@ -4557,7 +4571,7 @@
         "suggested_mvp": false,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "docs.aws.amazon.com robots: Crawl-delay 5. Host shared by all aws-* sources; politeness must be per host, not per source"
+        "notes": "docs.aws.amazon.com robots: Crawl-delay 5, now enforced by HOST_MIN_INTERVAL_SECONDS in politeness_policy.py. Each aws-* row uses its own guide sitemap; host-wide discovery is off because the index lists ~13,900 child sitemaps"
       }
     }
   },
@@ -4579,7 +4593,7 @@
       "allowed_path_prefixes": [
         "/run/docs"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "Cloud GCP selected",
@@ -4612,7 +4626,7 @@
       "allowed_path_prefixes": [
         "/storage/docs"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "Cloud GCP selected",
@@ -4645,7 +4659,7 @@
       "allowed_path_prefixes": [
         "/compute/docs"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "Cloud GCP selected",
@@ -4678,7 +4692,7 @@
       "allowed_path_prefixes": [
         "/pubsub/docs"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "Cloud GCP selected",
@@ -4711,7 +4725,7 @@
       "allowed_path_prefixes": [
         "/bigquery/docs"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "Cloud GCP selected",
@@ -4743,7 +4757,7 @@
       "allowed_path_prefixes": [
         "/en-us/azure/azure-functions/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "Cloud Azure selected",
@@ -4775,7 +4789,7 @@
       "allowed_path_prefixes": [
         "/en-us/azure/storage/blobs/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "Cloud Azure selected",
@@ -4807,7 +4821,7 @@
       "allowed_path_prefixes": [
         "/en-us/azure/virtual-machines/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "Cloud Azure selected",
@@ -5063,7 +5077,7 @@
       "allowed_path_prefixes": [
         "/en/actions"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "CI/CD and developer tooling",
@@ -5288,7 +5302,7 @@
       "allowed_path_prefixes": [
         "/uv/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "CI/CD and developer tooling",
@@ -5320,7 +5334,7 @@
       "allowed_path_prefixes": [
         "/cargo/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "CI/CD and developer tooling",
@@ -5514,7 +5528,7 @@
       "allowed_path_prefixes": [
         "/nomicon/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -5610,7 +5624,7 @@
       "allowed_path_prefixes": [
         "/software/make/manual/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -5642,7 +5656,7 @@
       "allowed_path_prefixes": [
         "/software/gawk/manual/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -5706,7 +5720,7 @@
       "allowed_path_prefixes": [
         "/elixir/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "1",
         "category": "Languages",
@@ -5802,7 +5816,7 @@
       "allowed_path_prefixes": [
         "/anyhow/latest/anyhow/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust crates",
@@ -5834,7 +5848,7 @@
       "allowed_path_prefixes": [
         "/thiserror/latest/thiserror/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust crates",
@@ -5866,7 +5880,7 @@
       "allowed_path_prefixes": [
         "/reqwest/latest/reqwest/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust crates",
@@ -5898,7 +5912,7 @@
       "allowed_path_prefixes": [
         "/serde_json/latest/serde_json/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust crates",
@@ -5930,7 +5944,7 @@
       "allowed_path_prefixes": [
         "/sqlx/latest/sqlx/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust crates",
@@ -5962,7 +5976,7 @@
       "allowed_path_prefixes": [
         "/tracing/latest/tracing/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust crates",
@@ -5994,7 +6008,7 @@
       "allowed_path_prefixes": [
         "/hyper/latest/hyper/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust crates",
@@ -6026,7 +6040,7 @@
       "allowed_path_prefixes": [
         "/rand/latest/rand/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust crates",
@@ -6058,7 +6072,7 @@
       "allowed_path_prefixes": [
         "/regex/latest/regex/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust crates",
@@ -6090,7 +6104,7 @@
       "allowed_path_prefixes": [
         "/chrono/latest/chrono/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Rust crates",
@@ -6347,7 +6361,7 @@
       "allowed_path_prefixes": [
         "/ruff/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Python libraries",
@@ -6541,7 +6555,7 @@
       "allowed_path_prefixes": [
         "/phoenix/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "2",
         "category": "Backend frameworks",
@@ -6605,7 +6619,7 @@
       "allowed_path_prefixes": [
         "/vault/docs"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "Infrastructure",
@@ -7193,7 +7207,7 @@
       "allowed_path_prefixes": [
         "/en-us/powershell/"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "Editors and shells",
@@ -7225,7 +7239,7 @@
       "allowed_path_prefixes": [
         "/community/tutorials"
       ],
-      "discover_sitemaps": true,
+      "discover_sitemaps": false,
       "registry": {
         "tier": "3",
         "category": "Tutorials",

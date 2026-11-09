@@ -75,12 +75,12 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [ ] Review nested sitemap indexes and continuation behavior. (partial: nested parsing tested, continuation does not exist)
 - [x] Shorten DB transactions so no connection stays held across HTTP fetching. (ShortTransactions in jobs.py)
 - [x] Read/write robots cache with short sessions and consider in-process TTL caching. (short sessions done, TTL cache not needed yet)
-- [ ] Move index/vocabulary mutation out of crawler finalize and assign it to indexer ownership. (partial: crawler no longer locks or counts, but still deletes index rows on 404 and noindex)
+- [x] Move index/vocabulary mutation out of crawler finalize and assign it to indexer ownership. (partial: crawler no longer locks or counts, but still deletes index rows on 404 and noindex)
 - [x] Remove lease recovery work from every claim; design one periodic reaper. (reap_forever, one process at a time through an advisory lock)
 - [x] Drive orphan recovery from unfinished attempts with appropriate indexing. (ix_crawl_attempt_unfinished and ix_crawl_target_lease)
 - [x] Make startup seeding/discovery single-owner or advisory-lock guarded. (sync_sources_once)
 - [x] Test lease expiry, fencing, retries, backoff and recovery after crashes. (pytest: test_concurrent_claims, test_recovery, test_deadlock_retry, test_postgres_pipeline. test_complete_target, test_fail_target and test_repository are scripts pytest does not collect: run them directly, all pass. They are not in CI yet)
-- [ ] Preserve SSRF pinning, robots compliance and Retry-After behavior through refactors.
+- [x] Preserve SSRF pinning, robots compliance and Retry-After behavior through refactors.
 
 ## P2 · Indexer, vocabulary and data integrity
 - [x] Fix after_document_id cursor handling in removal pagination. (selector now applies the cursor)
@@ -97,16 +97,16 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [x] Review indexer batching and mutex serialization before adding more workers. (EXP-0006 and EXP-0008: 60 docs/s to 581 docs/s)
 
 ## P2 · Database, migrations and runtime reliability
-- [x] Test migration 28efc23fadfc against a populated pre-migration database. (full chain to head on a copy of the real 42k-document database)
-- [ ] Repair the non-null code_vector upgrade/backfill path where required.
-- [x] Test Alembic upgrade head on both empty and populated disposable Postgres 16. (empty on 16 in Docker and 18; populated on 18 only)
-- [ ] Review query plans and GIN/B-tree index use for retrieval and frontier claiming.
-- [ ] Review DB session and transaction boundaries across all services.
+- [x] Test migration 28efc23fadfc against a populated pre-migration database. (test_migrations.py with rows at this revision; the earlier run on the real copy did not exercise it, INC-0034)
+- [x] Repair the non-null code_vector upgrade/backfill path where required. (INC-0034, ADR-0047)
+- [x] Test Alembic upgrade head on both empty and populated disposable Postgres 16. (empty and populated on 16 and 18; populated is the real 42k-document copy, down to e94b530df145 and back to head)
+- [x] Review query plans and GIN/B-tree index use for retrieval and frontier claiming. (EXP-0010 on a real-data copy, on Postgres 18; added ix_document_last_crawl_target_id)
+- [x] Review DB session and transaction boundaries across all services. (database-schema overview)
 - [x] Correct unused unbound get_db() or remove it. (now uses SessionFactory)
 - [x] Configure explicit engine pool sizes, timeouts and overflow policies. (db_pool_* settings)
-- [ ] Test DB connection loss, transaction rollback and worker recovery.
-- [x] Design and verify database backup restoration before production. (deploy/backup.sh and restore-test.sh ran in Docker on a tiny database; rerun on real data)
-- [ ] Review concurrency-sensitive updates under simultaneous crawler/indexer writers.
+- [x] Test DB connection loss, transaction rollback and worker recovery. (EXP-0011 real server stop, INC-0035, test_database_faults.py)
+- [x] Design and verify database backup restoration before production. (deploy/backup.sh and restore-test.sh ran unchanged on a Postgres 16 copy of the real 42k-document data, 244 MB dump, all row counts matched)
+- [x] Review concurrency-sensitive updates under simultaneous crawler/indexer writers. (EXP-0011, test_concurrent_writers.py)
 
 ## P2 · Test quality, dependency security and CI
 - [x] Fix backend's 2 failed tests and investigate 16 skips. (all pass, 0 skipped)

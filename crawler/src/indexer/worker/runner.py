@@ -20,9 +20,9 @@ from dataclasses import dataclass, field, replace
 from time import perf_counter
 
 from rich.logging import RichHandler
-from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from backend.db.session import DATABASE_UNAVAILABLE_ERRORS
 from indexer.config import IndexerConfig
 from indexer.vocabulary import drain_vocabulary_changes
 from indexer.schemas import IndexCandidate, IndexResult, IndexStatus
@@ -30,6 +30,8 @@ from indexer.selector import select_index_candidates, select_removal_candidates
 from indexer.service import index_candidate, remove_candidate
 
 logger = logging.getLogger("indexer.worker.runner")
+
+DATABASE_RETRY_SECONDS = 5.0
 
 _STATUS_COLORS = {
     IndexStatus.INDEXED: "bold green",
@@ -221,12 +223,22 @@ async def run_worker(
     )
     try:
         while True:
-            report = await run_batch(
-                session_factory,
-                config=config,
-                index_cursor=index_cursor,
-                removal_cursor=removal_cursor,
-            )
+            try:
+                report = await run_batch(
+                    session_factory,
+                    config=config,
+                    index_cursor=index_cursor,
+                    removal_cursor=removal_cursor,
+                )
+            except DATABASE_UNAVAILABLE_ERRORS:
+                if not forever:
+                    raise
+                # Selection failed, so nothing was attempted. Keep the cursors.
+                logger.exception(
+                    "[bold red]DATABASE UNAVAILABLE[/] retrying in %.0fs", DATABASE_RETRY_SECONDS
+                )
+                await asyncio.sleep(DATABASE_RETRY_SECONDS)
+                continue
             cycles += 1
             failures += report.failed
             if monitor is not None:
@@ -235,7 +247,7 @@ async def run_worker(
             removal_cursor = report.next_removal_cursor
             try:
                 await drain_vocabulary_changes(session_factory)
-            except (DBAPIError, OSError):
+            except DATABASE_UNAVAILABLE_ERRORS:
                 # Queued changes wait safely; indexing should not stop for this.
                 logger.exception("[bold red]VOCABULARY DRAIN FAILED[/]")
             if not forever:

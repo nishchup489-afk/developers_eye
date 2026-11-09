@@ -162,6 +162,8 @@ async def test_search_report_flags_pending_migration_and_missing_table(session, 
     await session.execute(text("CREATE TABLE alembic_version (version_num text)"))
     await session.execute(text("INSERT INTO alembic_version VALUES ('old')"))
     await session.execute(text("DROP TABLE search_minute"))
+    # On a migrated database the table also exists in public, which would hide the drop.
+    await session.execute(text("SELECT set_config('search_path', current_schema(), true)"))
     report = await search_reporting.build_search_report(session)
 
     assert report["recording"] is False

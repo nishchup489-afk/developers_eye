@@ -6,5 +6,7 @@
 		Referrer-Policy "strict-origin-when-cross-origin"
 		-Server
 	}
-	reverse_proxy web:3000
+	reverse_proxy web:3000 {
+		header_up X-Eye-Client-IP {remote_host}
+	}
 }

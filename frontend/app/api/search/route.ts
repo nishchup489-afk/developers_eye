@@ -8,6 +8,7 @@ import {
   sources,
   upstreamFailure,
 } from "@/lib/search";
+import { signOverviewContext } from "@/lib/ai-overview-context";
 
 // Above FastAPI's total search deadline (SEARCH_TOTAL_DEADLINE_MS, 4 s), so a slow
 // search comes back as FastAPI's 504 rather than as this proxy giving up.
@@ -76,6 +77,7 @@ export async function GET(request: Request) {
       results: data.results,
       took_ms: Math.round(performance.now() - started),
       mode: "live",
+      overviewToken: signOverviewContext(query, data.results),
     });
   } catch (error) {
     // Nobody is listening; 499 only shows up in logs.

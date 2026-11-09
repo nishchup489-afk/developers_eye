@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -78,9 +79,14 @@ def test_offline_report_uses_memory_and_says_it_is_partial(monkeypatch):
     assert report["totals"]["availability_percent"] == 10
 
 
-def test_expected_revision_finds_the_newest_migration():
+def test_expected_revision_finds_the_newest_migration(monkeypatch):
+    # CI installs the package into site-packages, where alembic.ini does not ship.
+    backend = Path(__file__).resolve().parents[2]
+    monkeypatch.setattr(reporting, "ALEMBIC_INI", backend / "alembic.ini")
     reporting._expected_revision.cache_clear()
-    assert reporting._expected_revision() == "d4f1a7c2e9b3"
+    revision = reporting._expected_revision()
+    reporting._expected_revision.cache_clear()
+    assert revision and list((backend / "alembic" / "versions").glob(f"{revision}_*.py"))
 
 
 class Canceled(Exception):

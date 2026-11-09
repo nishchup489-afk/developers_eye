@@ -59,6 +59,16 @@ def test_rejects_invalid_input(stub, params):
     assert stub == []
 
 
+def test_failed_database_connection_is_503(monkeypatch, stub):
+    async def broken(*args, **kwargs):
+        raise ConnectionRefusedError("refused")
+
+    monkeypatch.setattr(search_api, "search_documents", broken)
+    response = client.get("/search", params={"q": "async"})
+    assert response.status_code == 503
+    assert "refused" not in response.text
+
+
 def test_database_error_is_503(monkeypatch, stub):
     async def broken(*args, **kwargs):
         raise OperationalError("SELECT", {}, Exception("down"))

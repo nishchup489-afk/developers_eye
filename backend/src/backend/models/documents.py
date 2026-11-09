@@ -60,6 +60,7 @@ class Document(Base):
             ondelete="SET NULL",
         ),
         nullable=True,
+        index=True,
     )
 
     # Canonical document URL

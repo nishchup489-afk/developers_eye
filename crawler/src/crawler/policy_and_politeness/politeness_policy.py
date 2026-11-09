@@ -27,6 +27,12 @@ from crawler.policy_and_politeness.host_policy import normalize_hostname
 
 DEFAULT_MAX_CONCURRENT_PER_HOST = 2
 DEFAULT_MIN_INTERVAL_SECONDS = 2.0
+
+# Hosts that ask for a longer gap than the default in robots.txt. The robots
+# parser ignores Crawl-delay, so the gaps are listed here instead.
+HOST_MIN_INTERVAL_SECONDS: dict[str, float] = {
+    "docs.aws.amazon.com": 5.0,
+}
 DEFAULT_BACKOFF_SECONDS = 60.0
 MAX_BACKOFF_SECONDS = 3_600.0
 
@@ -81,6 +87,7 @@ class PolitenessManager:
         min_interval_seconds: float = DEFAULT_MIN_INTERVAL_SECONDS,
         default_backoff_seconds: float = DEFAULT_BACKOFF_SECONDS,
         max_backoff_seconds: float = MAX_BACKOFF_SECONDS,
+        host_min_intervals: dict[str, float] | None = None,
     ) -> None:
         if (isinstance(max_concurrent_per_host, bool)
                 or not isinstance(max_concurrent_per_host, int)
@@ -102,6 +109,16 @@ class PolitenessManager:
         self.min_interval_seconds = float(min_interval_seconds)
         self.default_backoff_seconds = float(default_backoff_seconds)
         self.max_backoff_seconds = float(max_backoff_seconds)
+        overrides = HOST_MIN_INTERVAL_SECONDS if host_min_intervals is None else host_min_intervals
+        if not isinstance(overrides, dict):
+            raise ValueError("host_min_intervals must be a dict of host -> seconds")
+        self.host_min_intervals: dict[str, float] = {}
+        for host, seconds in overrides.items():
+            if (not isinstance(host, str) or isinstance(seconds, bool)
+                    or not isinstance(seconds, (int, float))
+                    or not math.isfinite(seconds) or seconds < 0):
+                raise ValueError("host_min_intervals must map hostnames to finite non-negative seconds")
+            self.host_min_intervals[normalize_hostname(host)] = float(seconds)
         self._states: dict[str, _HostState] = {}
 
     def _get_host_state(self, host: str) -> _HostState:
@@ -115,14 +132,18 @@ class PolitenessManager:
             self._states[host] = state
         return state
 
-    async def _wait_for_turn(self, state: _HostState) -> None:
+    def interval_for(self, host: str) -> float:
+        """Minimum gap between request starts for one host key."""
+        return max(self.min_interval_seconds, self.host_min_intervals.get(host, 0.0))
+
+    async def _wait_for_turn(self, state: _HostState, interval: float) -> None:
         """Reserve a request start; sleep outside the timing lock."""
         while True:
             async with state.timing_lock:
                 now = time.monotonic()
                 wait = max(state.next_allowed_at, state.backoff_until) - now
                 if wait <= 0:
-                    state.next_allowed_at = now + self.min_interval_seconds
+                    state.next_allowed_at = now + interval
                     return
             await asyncio.sleep(wait)
 
@@ -132,7 +153,7 @@ class PolitenessManager:
         state = self._get_host_state(host)
         await state.semaphore.acquire()
         try:
-            await self._wait_for_turn(state)
+            await self._wait_for_turn(state, self.interval_for(host))
         except BaseException:
             state.semaphore.release()
             raise

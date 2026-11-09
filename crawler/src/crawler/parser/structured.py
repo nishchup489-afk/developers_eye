@@ -30,6 +30,12 @@ def readable_markup(value: str) -> str:
 
 
 def parse_record_date(value: object) -> datetime | None:
+    # APIs such as Stack Exchange send Unix seconds.
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        try:
+            return datetime.fromtimestamp(value, timezone.utc)
+        except (ValueError, OverflowError, OSError):
+            return None
     if not isinstance(value, str) or not value.strip():
         return None
     try:

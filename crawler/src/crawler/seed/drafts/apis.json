@@ -64,15 +64,24 @@
           "author": "owner.display_name",
           "published_at": "creation_date"
         },
-        "body_format": "html"
+        "body_format": "html",
+        "metadata_fields": {
+          "license": "content_license",
+          "score": "score",
+          "tags": "tags",
+          "question_id": "question_id",
+          "is_answered": "is_answered",
+          "author_profile": "owner.link"
+        }
       },
       "registry": {
         "tier": "S",
         "category": "Discussions",
-        "est_docs": 10000,
+        "est_docs": 100,
+        "est_docs_when_paginated": 10000,
         "status": "candidate_disabled",
-        "license": "CC BY-SA 4.0 (attribution required)",
-        "notes": "Small live sample only; the bulk path is the offline dump (offline_datasets.json). Quota: 300 req/day without a key, 10K with one. Pagination uses page=N + has_more, which next_path can't express yet. Answers need /questions/{ids}/answers. creation_date is a unix timestamp: check parse_record_date handles ints."
+        "license": "per post: CC BY-SA 2.5, 3.0 or 4.0, read from each item's content_license (stored in document metadata as license)",
+        "notes": "Small live sample only; the bulk path is the offline dump (offline_datasets.json). Counted as 100 docs: the first page is the only one reachable, because pagination uses page=N + has_more, which next_path can't express yet. creation_date is Unix seconds (parse_record_date now accepts them). Quota: 300 req/day without a key, 10K with one. Answers need /questions/{ids}/answers."
       }
     }
   }

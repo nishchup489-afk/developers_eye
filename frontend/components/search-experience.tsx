@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
 import BrandEye from "./brand-eye";
 import CodePreview from "./code-preview";
+import AIOverviewCard from "./ai-overview";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -832,6 +833,9 @@ export default function SearchExperience({
               )}
             <div className={`results-body${panel ? " has-panel" : ""}`}>
               <div className="results-main">
+                {!loading && !error && !showSaved && response?.overviewToken && visible.length > 0 && (
+                  <AIOverviewCard key={response.overviewToken} token={response.overviewToken} />
+                )}
                 {loading ? (
                   <div className="loading-state">
                     <p>

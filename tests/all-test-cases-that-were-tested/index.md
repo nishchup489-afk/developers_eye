@@ -57,10 +57,11 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/api/test_search_route.py](../../backend/tests/api/test_search_route.py)
 
-3 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-http-api)
+4 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-http-api)
 
 - `test_returns_results`
 - `test_rejects_invalid_input`
+- `test_failed_database_connection_is_503`
 - `test_database_error_is_503`
 
 ### [backend/tests/golden/test_bm25_golden.py](../../backend/tests/golden/test_bm25_golden.py)
@@ -134,6 +135,14 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_english_stems_matches_the_index`
 - `test_typo_suggests_a_real_word`
 - `test_correct_words_are_left_alone`
+
+### [backend/tests/integration/test_migrations.py](../../backend/tests/integration/test_migrations.py)
+
+3 cases
+
+- `test_code_vector_upgrade_keeps_a_populated_index_and_requeues_it`
+- `test_code_vector_upgrade_works_on_an_empty_table`
+- `test_head_indexes_the_404_document_lookup`
 
 ### [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 
@@ -484,6 +493,16 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_hash_changes_when_index_version_changes`
 - `test_hash_excludes_source_timestamp`
 
+### [crawler/tests/indexer/test_concurrent_writers.py](../../crawler/tests/indexer/test_concurrent_writers.py)
+
+5 cases
+
+- `test_index_write_waiting_on_a_crawl_is_rejected_as_stale`
+- `test_crawl_after_an_index_write_makes_the_index_outdated`
+- `test_crawl_transaction_older_than_the_index_write_is_still_seen`: updated_at must be taken at the write, not when the crawl transaction began.
+- `test_recrawl_with_no_change_does_not_invalidate_an_index_write`
+- `test_two_indexers_write_once_and_count_the_vocabulary_once`
+
 ### [crawler/tests/indexer/test_indexer.py](../../crawler/tests/indexer/test_indexer.py)
 
 2 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_indexerpy)
@@ -603,6 +622,15 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_cli_runs_and_logs_success`
 - `test_cli_returns_nonzero_when_rebuild_fails`
 - `test_rebuild_validates_limits_before_connecting`
+
+### [crawler/tests/indexer/test_worker_recovery.py](../../crawler/tests/indexer/test_worker_recovery.py)
+
+4 cases
+
+- `test_forever_mode_retries_when_selection_loses_the_database`
+- `test_cursors_are_kept_across_an_outage`
+- `test_one_shot_mode_reports_the_outage`
+- `test_vocabulary_drain_outage_does_not_stop_indexing`
 
 ## Crawler
 
@@ -1015,8 +1043,15 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 2 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_availabilitypy)
 
-- `test_missing_pages_are_retained_as_unavailable_and_removed_from_search`
+- `test_missing_pages_are_marked_unavailable_without_index_deletion`
 - `test_successful_observation_restores_document_availability`
+
+### [crawler/tests/crawler/worker/test_database_faults.py](../../crawler/tests/crawler/worker/test_database_faults.py)
+
+2 cases
+
+- `test_connection_lost_in_finalize_rolls_back_and_the_lease_recovers`
+- `test_pool_replaces_connections_killed_while_idle`
 
 ### [crawler/tests/crawler/worker/test_deadlock_retry.py](../../crawler/tests/crawler/worker/test_deadlock_retry.py)
 
@@ -1041,13 +1076,17 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/worker/test_postgres_pipeline.py](../../crawler/tests/crawler/worker/test_postgres_pipeline.py)
 
-5 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
+9 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
 
+- `test_http_429_retry_after_persists_and_delays_reclaim`
 - `test_structured_resources_commit_documents_targets_and_attempts`
 - `test_concurrent_claims_atomic_writes_and_shared_source_budget`
 - `test_removed_page_invalidates_index_and_recovers_when_restored`
 - `test_sitemap_past_link_limit_queues_every_url_and_rerun_adds_nothing`
 - `test_expiration_and_old_worker_recovery_do_not_touch_new_claims`
+- `test_nested_sitemap_children_are_scoped_and_idempotent`: Parent index -> child maps -> pages, with durable deduplication on replays.
+- `test_nested_sitemap_depth_limit_rejects_grandchild`: A sitemap index at depth one must not schedule a depth-two child.
+- `test_sitemap_overflow_replay_after_partial_commit`: A transient failure after a committed overflow batch must lose no URLs.
 
 ### [crawler/tests/crawler/worker/test_recovery.py](../../crawler/tests/crawler/worker/test_recovery.py)
 
@@ -1061,11 +1100,12 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
 
-4 cases
+5 cases
 
 - `test_slow_job_does_not_hold_up_a_free_slot`
 - `test_never_claims_more_than_free_slots`
 - `test_claim_database_failure_retries_instead_of_stopping`
+- `test_claim_retries_for_every_way_the_database_can_be_unavailable`
 - `test_shutdown_cancels_running_jobs_and_leaves_them_to_lease_expiry`
 
 ### [crawler/tests/crawler/writer/test_database_writer.py](../../crawler/tests/crawler/writer/test_database_writer.py)
@@ -1110,9 +1150,21 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#knowledge-unitmjs)
 
+### [frontend/tests/overview-routes.mjs](../../frontend/tests/overview-routes.mjs)
+
+Script-style file, run as a whole
+
+### [frontend/tests/overview-unit.mjs](../../frontend/tests/overview-unit.mjs)
+
+Script-style file, run as a whole
+
 ### [frontend/tests/preview-crawler.mjs](../../frontend/tests/preview-crawler.mjs)
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#preview-crawlermjs)
+
+### [frontend/tests/preview-overview.mjs](../../frontend/tests/preview-overview.mjs)
+
+Script-style file, run as a whole
 
 ### [frontend/tests/search-unit.mjs](../../frontend/tests/search-unit.mjs)
 
@@ -1124,12 +1176,19 @@ These test files have no matching heading in a `test_case.md`.
 
 - [backend/tests/golden/test_bm25_golden.py](../../backend/tests/golden/test_bm25_golden.py)
 - [backend/tests/integration/test_corpus_mutation_search.py](../../backend/tests/integration/test_corpus_mutation_search.py)
+- [backend/tests/integration/test_migrations.py](../../backend/tests/integration/test_migrations.py)
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 - [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 - [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)
 - [backend/tests/unit/test_relevance_metrics_base.py](../../backend/tests/unit/test_relevance_metrics_base.py)
 - [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
+- [crawler/tests/crawler/worker/test_database_faults.py](../../crawler/tests/crawler/worker/test_database_faults.py)
 - [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
+- [crawler/tests/indexer/test_concurrent_writers.py](../../crawler/tests/indexer/test_concurrent_writers.py)
 - [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
+- [crawler/tests/indexer/test_worker_recovery.py](../../crawler/tests/indexer/test_worker_recovery.py)
+- [frontend/tests/overview-routes.mjs](../../frontend/tests/overview-routes.mjs)
+- [frontend/tests/overview-unit.mjs](../../frontend/tests/overview-unit.mjs)
+- [frontend/tests/preview-overview.mjs](../../frontend/tests/preview-overview.mjs)
 <!-- test-index:end -->

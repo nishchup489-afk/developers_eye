@@ -43,14 +43,13 @@ from typing import Any
 from crawler.worker.logging_config import setup_logging
 from crawler.policy_and_politeness.politeness_policy import DEFAULT_MIN_INTERVAL_SECONDS
 from crawler.policy_and_politeness.shared_politeness import SharedPolitenessManager
-from backend.db.session import SessionFactory, engine
+from backend.db.session import DATABASE_UNAVAILABLE_ERRORS, SessionFactory, engine
 from backend.schema.crawler_frontier import CrawlTargetRead
 from crawler.scheduler.repository import claim_targets, recover_expired_leases
 from crawler.worker.telemetry import WorkerMonitor, active_targets, checkpoint
 from crawler.worker.recovery import recover_failed_claim
 from backend.models.crawl_attempt import CrawlAttempt
 from sqlalchemy import func, select
-from sqlalchemy.exc import DBAPIError, OperationalError
 
 logger = logging.getLogger("crawler.worker.runner")
 
@@ -146,7 +145,7 @@ async def reap_forever(interval: float = REAP_INTERVAL_SECONDS) -> None:
             recovered = await reap_expired_leases()
             if recovered:
                 logger.info("REAPER recovered=%s", recovered)
-        except (DBAPIError, OperationalError, OSError):
+        except DATABASE_UNAVAILABLE_ERRORS:
             logger.warning("Lease reaper skipped a cycle", exc_info=True)
 
 
@@ -309,7 +308,7 @@ async def run_continuous(*, config: RunnerConfig, job_handler: JobHandler) -> in
             if free > 0:
                 try:
                     targets = await claim_slots(config, min(free, config.batch_size))
-                except (DBAPIError, OperationalError, OSError):
+                except DATABASE_UNAVAILABLE_ERRORS:
                     logger.exception("Claim failed; retrying in %.0fs", DATABASE_RETRY_SECONDS)
                     await asyncio.sleep(DATABASE_RETRY_SECONDS)
                     continue
