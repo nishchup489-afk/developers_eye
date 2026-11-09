@@ -80,7 +80,7 @@ def test_offline_report_uses_memory_and_says_it_is_partial(monkeypatch):
 
 def test_expected_revision_finds_the_newest_migration():
     reporting._expected_revision.cache_clear()
-    assert reporting._expected_revision() == "d4f1a7c2e9b3"
+    assert reporting._expected_revision() == "e5a9c3d1f7b2"
 
 
 class Canceled(Exception):
