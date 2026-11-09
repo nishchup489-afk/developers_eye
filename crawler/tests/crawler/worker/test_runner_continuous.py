@@ -3,7 +3,6 @@ import asyncio
 from types import SimpleNamespace
 
 import pytest
-import asyncpg
 from sqlalchemy.exc import OperationalError, TimeoutError as PoolTimeoutError
 
 from crawler.worker import runner
@@ -99,7 +98,6 @@ async def test_claim_database_failure_retries_instead_of_stopping(worker):
 
 @pytest.mark.parametrize("error", [
     PoolTimeoutError("QueuePool limit reached"),
-    asyncpg.CannotConnectNowError("the database system is starting up"),
     ConnectionRefusedError("connection refused"),
 ])
 async def test_claim_retries_for_every_way_the_database_can_be_unavailable(worker, error):

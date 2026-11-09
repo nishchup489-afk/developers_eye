@@ -34,7 +34,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 - `test_returns_results`
 - `test_rejects_invalid_input`
-- `test_failed_database_connection_is_503`: asyncpg raises these while connecting, and SQLAlchemy does not wrap them.
+- `test_failed_database_connection_is_503`
 - `test_database_error_is_503`
 
 ### [backend/tests/golden/test_bm25_golden.py](../../backend/tests/golden/test_bm25_golden.py)

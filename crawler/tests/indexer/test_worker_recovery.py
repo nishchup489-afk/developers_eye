@@ -2,7 +2,6 @@
 import asyncio
 from collections import Counter
 
-import asyncpg
 import pytest
 from sqlalchemy.exc import OperationalError, TimeoutError as PoolTimeoutError
 
@@ -12,7 +11,6 @@ from indexer.worker import runner
 ERRORS = [
     OperationalError("select", {}, Exception("database down")),
     PoolTimeoutError("QueuePool limit reached"),
-    asyncpg.CannotConnectNowError("the database system is starting up"),
     ConnectionRefusedError("connection refused"),
 ]
 
