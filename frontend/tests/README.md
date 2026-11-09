@@ -12,7 +12,7 @@ npm run test:admin:unit
 
 Runs `admin-unit.mjs` and `crawler-monitor-unit.mjs` with `--experimental-strip-types`, so Node imports the `lib/*.ts` files directly.
 
-For AI overview, `npm run test:overview:unit` checks signed evidence, expiration, citations, and sliding request/token budgets. After building, `npm run test:overview:routes` exercises the compiled search and overview handlers with a mocked provider, including cache/coalescing, tampering, provider cooldown, failures, and disabled/demo behavior. Set `NEXT_BUILD_DIR` when using an isolated build. No real Groq credentials or calls are used.
+For AI overview, `npm run test:overview:routes` exercises the compiled UI proxies against mocked FastAPI responses: opaque token passthrough, status/Retry-After forwarding, ingress headers and demo behavior. Backend tests own signing, citations, provider behavior and PostgreSQL quota/cache coordination; see [backend verification](../../backend/docs/ai_overview.md#verification). Set `NEXT_BUILD_DIR` when using an isolated build. No real Groq credentials or calls are used.
 
 For browser inspection, build with `NEXT_BUILD_DIR=.next-ai-overview` and run `node tests/preview-overview.mjs`; open `http://127.0.0.1:3456/search?q=python+async`. This preview intercepts fixture upstreams inside its child process. Set `EYE_OVERVIEW_PREVIEW_ERROR=1` before launching to preview the rate-limit state. Stop with Ctrl+C.
 

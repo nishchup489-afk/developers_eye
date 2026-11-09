@@ -5,7 +5,7 @@
 This document describes the repository as inspected on October 5, 2026.
 
 - `backend/` is a FastAPI app. `GET /search` is implemented (October 30, 2026) over the PostgreSQL full-text index, and `GET /search/suggest` (spelling suggestions, wired to the UI on November 7, 2026) and `GET /health` exist too; the other public routes below are still proposals.
-- **Implemented:** Next.js `GET /api/search` and `GET /api/search/suggest`, frontend runtime validation, curated demo search, browser-local saved results, and `/docs`.
+- **Implemented:** Next.js `GET /api/search`, `GET /api/search/suggest` and the transport-only `POST /api/search/overview` proxy; FastAPI `POST /search/overview` owns optional Groq generation. Frontend runtime validation, curated demo search, browser-local saved results, and `/docs` are implemented too.
 - **Not implemented:** every FastAPI route and external connector below. Their contracts are proposals based on README.md and system_design.md. They are a backend implementation handoff, not claims that those services exist.
 - No backend files were changed to implement the frontend.
 
@@ -85,11 +85,11 @@ If the browser disconnects, the upstream request is cancelled and the database w
 
 ### POST /api/search/overview
 
-Optional Groq-powered overview of existing live search results. When `GROQ_API_KEY` is configured, live `/api/search` responses may include `overviewToken`, a signed ten-minute evidence snapshot. Post JSON `{ "token": "<overviewToken>" }` to this endpoint. Arbitrary client-supplied queries, snippets and URLs are not accepted. No additional search or page fetch occurs.
+Transport-only proxy to FastAPI `POST /search/overview`. The backend owns the Groq key, prompt, signed evidence, citation validation, PostgreSQL quotas, cache and leases. Live `/api/search` responses pass FastAPI's `overview_token` through as `overviewToken`; post JSON `{ "token": "<overviewToken>" }` to request the overview. No additional search or page fetch occurs.
 
 Success returns `{ "overview": { "paragraphs": [{ "text": "Plain-text answer", "sources": [1] }], "sources": [{ "id": 1, "title": "...", "url": "https://...", "snippet": "...", "kind": "docs" }] } }`. Insufficient evidence or a disabled feature returns `{ "overview": null }`. Demo searches never issue a token. Every paragraph requires valid source IDs; generated HTML/Markdown is rendered as plain text.
 
-Errors: 400 invalid/expired context, 403 cross-origin browser request, 413 body over 25 KB, 415 non-JSON content type, 429 application/provider limit (`Retry-After` seconds), 502 invalid/unavailable provider response, 504 provider timeout. All responses are `no-store`. Requests time out after 12 seconds and are never automatically retried. See [frontend setup and quota boundaries](../README.md#ai-overview-groq) for the server-wide and client budgets, caching, trusted proxy configuration, and single-process deployment requirement.
+The proxy preserves backend statuses and `Retry-After`: 400 invalid/expired context, 403 cross-site browser request, 413 body over 25 KB, 415 non-JSON content type, 429 shared application/provider limit, 502 invalid/unavailable provider response, 503 unavailable state store, and 504 timeout. Responses are `no-store`; no automatic retries. FastAPI has a 12-second provider deadline and a 16-second service deadline; the UI proxy waits up to 18 seconds. Configure the feature in backend/.env, not the frontend. See backend/docs/ai_overview.md for setup and persistent quota semantics.
 
 ### GET /api/search/suggest
 

@@ -13,6 +13,13 @@ from backend.db.session import SessionFactory
 
 router = APIRouter(prefix="/admin/system", tags=["system reporting"])
 logger = logging.getLogger(__name__)
+
+
+@router.get("/ai-usage", dependencies=[Depends(require_report_key)])
+async def ai_usage_report(response: Response):
+    from backend.admin_services.ai_usage import build_ai_usage
+    return await monitor_query(response, build_ai_usage)
+
 # Below the frontend's 15 s proxy timeout, so a hung database still gets an answer.
 SEARCH_REPORT_SECONDS = 5.0
 

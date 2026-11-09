@@ -7,7 +7,7 @@ from dataclasses import dataclass, replace
 from datetime import datetime
 from typing import Literal
 
-from sqlalchemy import func, select, update
+from sqlalchemy import and_, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from backend.models.search_index import SearchIndex
@@ -37,7 +37,7 @@ from crawler.scheduler.repository import complete_target, fail_target
 from crawler.worker.jobs.schemas import JobOutcome, JobResult, TargetAction
 from crawler.worker.jobs.constants import _AGENT_SCOPE, _DIRECTIVE_SPLIT, _RETRY_AFTER_CAP_SECONDS
 from crawler.writer.attempts import finish_attempt, start_attempt
-from crawler.writer.documents import upsert_document
+from crawler.writer.documents import is_structured_record, page_owned, upsert_document
 from backend.models.crawl_attempt import CrawlAttempt
 from crawler.worker.telemetry import event
 
@@ -170,7 +170,10 @@ def _noindex_urls(parsed: ParseResult, processed: ProcessingResult) -> set[str]:
     rejected = {s.url for s in processed.skipped if s.reason == SkipReason.NOINDEX}
     urls: set[str] = set()
     for document in parsed.documents:
-        if document.url not in rejected:
+        # A noindex header on a feed or API response covers that response, so its
+        # records are not stored, but the pages they point to stay as they are.
+        # WordPress sends noindex on every feed.
+        if document.url not in rejected or is_structured_record(document.metadata):
             continue
         try:
             normalized = normalize_document(document)
@@ -318,7 +321,12 @@ async def _finalize(
                 unavailable_ids = (
                     await session.scalars(
                         update(Document)
-                        .where(Document.last_crawl_target_id == target_id)
+                        .where(or_(
+                            # A missing feed says nothing about its articles,
+                            # and a missing article is gone even if a feed wrote it.
+                            Document.canonical_url == row.normalized_url,
+                            and_(Document.last_crawl_target_id == target_id, page_owned()),
+                        ))
                         .values(
                             is_available=False,
                             unavailable_http_status=http_status,
@@ -378,16 +386,31 @@ async def _finalize(
                         Document.content_hash == document.content_hash,
                         Document.canonical_url != document.canonical_url).limit(1))
                     decision = "unchanged" if previous and previous.content_hash == document.content_hash else "updated" if previous else "new"
-                    event(session, attempt_id, "DEDUP", "duplicate" if duplicate else decision,
-                          {"canonical_url": document.canonical_url, "matching_document_id": duplicate,
-                           "decision": decision, "content_hash": document.content_hash,
-                           "reason": "Matching content at another canonical URL; retained by current writer" if duplicate else "Canonical URL content hash comparison"})
                     document_id = await upsert_document(
                         session, document,
                         source_id=source_id,
                         crawl_target_id=target_id,
                     )
-                    documents_saved += 1
+                    kept = False
+                    if previous is not None and is_structured_record(document.metadata):
+                        # The writer decides; a replaced row always ends up
+                        # owned by this target and available.
+                        stored = (await session.execute(
+                            select(Document.last_crawl_target_id, Document.is_available)
+                            .where(Document.id == document_id))).one()
+                        kept = stored.last_crawl_target_id != target_id or not stored.is_available
+                    if kept:
+                        decision = "kept_existing"
+                    event(session, attempt_id, "DEDUP", "duplicate" if duplicate and not kept else decision,
+                          {"canonical_url": document.canonical_url, "matching_document_id": duplicate,
+                           "decision": decision, "content_hash": document.content_hash,
+                           "reason": "Feed or API record may not replace the stored document" if kept
+                           else "Matching content at another canonical URL; retained by current writer" if duplicate
+                           else "Canonical URL content hash comparison"})
+                    if kept:
+                        skipped += 1
+                    else:
+                        documents_saved += 1
                     measurements["documents"].append({"id": document_id, "decision": decision,
                                                        "duplicate_of": duplicate, "canonical_url": document.canonical_url})
                 if targets:

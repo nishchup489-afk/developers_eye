@@ -846,3 +846,190 @@ def test_sitemap_overflow_replay_after_partial_commit(monkeypatch):
                 assert attempts == 3
 
     asyncio.run(run())
+
+
+ARTICLE = 'https://example.com/docs/article'
+FEED = 'https://example.com/docs/feed'
+OTHER_FEED = 'https://example.com/docs/other-feed'
+PAGE_TEXT = 'Full article text about Python generators with many worked examples. ' * 20
+SUMMARY = 'Short summary of the Python generators article.'
+
+
+def _feed(body=SUMMARY):
+    return (f'<rss><channel><item><link>{ARTICLE}</link><title>Python generators</title>'
+            f'<description>{body}</description></item></channel></rss>').encode()
+
+
+def _page(url=ARTICLE):
+    return f'<html><head><title>Python generators</title></head><body><main><p>{PAGE_TEXT}</p></main></body></html>'.encode()
+
+
+def serve(monkeypatch, responses):
+    """responses maps a URL to (status, content type, body) or adds headers as a fourth item."""
+    async def fetch(self, session, url):
+        status, content_type, body, *rest = responses[url]
+        return FetchResult(RobotsDecision.ALLOW, f'Fetched HTTP {status}', url, url, status_code=status,
+            headers={'content-type': content_type, **(rest[0] if rest else {})}, body=body)
+    monkeypatch.setattr(PolicyCoordinator, 'fetch', fetch)
+
+
+async def add_targets(factory, source_id, *targets):
+    async with factory() as session, session.begin():
+        await enqueue_targets(session, [CrawlTargetCreate(source_id=source_id, kind=kind, fetch_url=url, normalized_url=url)
+                                        for url, kind in targets])
+
+
+async def crawl_url(factory, source_id, url):
+    target = await _claim_specific_url(factory, source_id, url)
+    return await process_job(target, session_factory=factory, politeness_manager=PolitenessManager(min_interval_seconds=0))
+
+
+async def article(factory):
+    async with factory() as session:
+        return await session.scalar(select(Document).where(Document.canonical_url == ARTICLE))
+
+
+async def drop_article(factory):
+    """example.com is shared across tests, so no earlier row may hold this URL."""
+    async with factory() as session, session.begin():
+        await session.execute(delete(Document).where(Document.canonical_url == ARTICLE))
+
+
+def test_feed_summary_never_replaces_a_fetched_page(monkeypatch):
+    serve(monkeypatch, {ARTICLE: (200, 'text/html', _page()), FEED: (200, 'application/xml', _feed())})
+    async def run():
+        async with database() as (factory, source_id):
+            await drop_article(factory)
+            await add_targets(factory, source_id, (ARTICLE, 'page'), (FEED, 'rss'))
+            await crawl_url(factory, source_id, ARTICLE)
+            page = await article(factory)
+            assert 'worked examples' in page.body
+            result = await crawl_url(factory, source_id, FEED)
+            assert result.outcome == 'success' and result.documents_saved == 0
+            kept = await article(factory)
+            assert kept.body == page.body and kept.content_hash == page.content_hash
+            assert kept.last_crawl_target_id == page.last_crawl_target_id
+            assert kept.updated_at == page.updated_at  # the indexer has nothing to redo
+            assert kept.last_seen_at > page.last_seen_at
+            assert 'ingestion_format' not in kept.metadata_
+            async with factory() as session:
+                attempt = await session.get(CrawlAttempt, result.attempt_id)
+            assert attempt.telemetry['documents'][0]['decision'] == 'kept_existing'
+    asyncio.run(run())
+
+
+def test_fetched_page_replaces_an_earlier_feed_summary(monkeypatch):
+    serve(monkeypatch, {ARTICLE: (200, 'text/html', _page()), FEED: (200, 'application/xml', _feed())})
+    async def run():
+        async with database() as (factory, source_id):
+            await drop_article(factory)
+            await add_targets(factory, source_id, (ARTICLE, 'page'), (FEED, 'rss'))
+            await crawl_url(factory, source_id, FEED)
+            summary = await article(factory)
+            assert summary.metadata_['ingestion_format'] == 'rss' and summary.metadata_['feed_url'] == FEED
+            await crawl_url(factory, source_id, ARTICLE)
+            page = await article(factory)
+            assert 'worked examples' in page.body and page.id == summary.id
+            assert page.last_crawl_target_id != summary.last_crawl_target_id
+            assert 'ingestion_format' not in page.metadata_
+    asyncio.run(run())
+
+
+def test_feed_updates_its_own_entry_but_another_feed_needs_more_text(monkeypatch):
+    responses = {FEED: (200, 'application/xml', _feed('First version of a reasonably long Python summary here.')),
+                 OTHER_FEED: (200, 'application/xml', _feed('Tiny Python note.'))}
+    serve(monkeypatch, responses)
+    async def run():
+        async with database() as (factory, source_id):
+            await drop_article(factory)
+            await add_targets(factory, source_id, (FEED, 'rss'), (OTHER_FEED, 'rss'))
+            await crawl_url(factory, source_id, FEED)
+            first = await article(factory)
+            result = await crawl_url(factory, source_id, OTHER_FEED)
+            assert result.documents_saved == 0 and (await article(factory)).body == first.body
+            responses[FEED] = (200, 'application/xml', _feed('Edited Python summary.'))
+            result = await crawl_url(factory, source_id, FEED)
+            assert result.documents_saved == 1 and (await article(factory)).body == 'Edited Python summary.'
+            responses[OTHER_FEED] = (200, 'application/xml', _feed('A longer Python note from the second feed, with more detail.'))
+            result = await crawl_url(factory, source_id, OTHER_FEED)
+            stored = await article(factory)
+            assert result.documents_saved == 1 and stored.metadata_['feed_url'] == OTHER_FEED
+    asyncio.run(run())
+
+
+def test_stale_feed_entry_does_not_bring_back_a_removed_page(monkeypatch):
+    responses = {ARTICLE: (200, 'text/html', _page()), FEED: (200, 'application/xml', _feed())}
+    serve(monkeypatch, responses)
+    async def run():
+        async with database() as (factory, source_id):
+            await drop_article(factory)
+            await add_targets(factory, source_id, (ARTICLE, 'page'), (FEED, 'rss'))
+            await crawl_url(factory, source_id, ARTICLE)
+            responses[ARTICLE] = (404, 'text/html', b'')
+            await crawl_url(factory, source_id, ARTICLE)
+            removed = await article(factory)
+            assert removed.is_available is False and removed.unavailable_http_status == 404
+            await crawl_url(factory, source_id, FEED)
+            still = await article(factory)
+            assert still.is_available is False and still.body == removed.body
+            assert still.last_seen_at == removed.last_seen_at
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize('status', [404, 410])
+def test_missing_feed_leaves_its_articles_available(monkeypatch, status):
+    responses = {FEED: (200, 'application/xml', _feed())}
+    serve(monkeypatch, responses)
+    async def run():
+        async with database() as (factory, source_id):
+            await drop_article(factory)
+            await add_targets(factory, source_id, (FEED, 'rss'))
+            await crawl_url(factory, source_id, FEED)
+            responses[FEED] = (status, 'application/xml', b'')
+            await crawl_url(factory, source_id, FEED)
+            stored = await article(factory)
+            assert stored.is_available is True and stored.unavailable_at is None
+    asyncio.run(run())
+
+
+def test_missing_page_removes_a_document_a_feed_wrote(monkeypatch):
+    serve(monkeypatch, {ARTICLE: (404, 'text/html', b''), FEED: (200, 'application/xml', _feed())})
+    async def run():
+        async with database() as (factory, source_id):
+            await drop_article(factory)
+            await add_targets(factory, source_id, (ARTICLE, 'page'), (FEED, 'rss'))
+            await crawl_url(factory, source_id, FEED)
+            await crawl_url(factory, source_id, ARTICLE)
+            stored = await article(factory)
+            assert stored.is_available is False and stored.unavailable_http_status == 404
+    asyncio.run(run())
+
+
+def test_noindex_header_on_a_feed_does_not_touch_its_articles(monkeypatch):
+    serve(monkeypatch, {ARTICLE: (200, 'text/html', _page()),
+                        FEED: (200, 'application/xml', _feed(), {'X-Robots-Tag': 'noindex, follow'})})
+    async def run():
+        async with database() as (factory, source_id):
+            await drop_article(factory)
+            await add_targets(factory, source_id, (ARTICLE, 'page'), (FEED, 'rss'))
+            await crawl_url(factory, source_id, ARTICLE)
+            await crawl_url(factory, source_id, FEED)
+            assert (await article(factory)).is_available is True
+    asyncio.run(run())
+
+
+def test_noindex_page_is_removed_and_a_feed_cannot_bring_it_back(monkeypatch):
+    responses = {ARTICLE: (200, 'text/html', _page()), FEED: (200, 'application/xml', _feed())}
+    serve(monkeypatch, responses)
+    async def run():
+        async with database() as (factory, source_id):
+            await drop_article(factory)
+            await add_targets(factory, source_id, (ARTICLE, 'page'), (FEED, 'rss'))
+            await crawl_url(factory, source_id, ARTICLE)
+            responses[ARTICLE] = (200, 'text/html', _page(), {'X-Robots-Tag': 'noindex'})
+            await crawl_url(factory, source_id, ARTICLE)
+            removed = await article(factory)
+            assert removed.is_available is False and removed.unavailable_http_status is None
+            await crawl_url(factory, source_id, FEED)
+            assert (await article(factory)).is_available is False
+    asyncio.run(run())

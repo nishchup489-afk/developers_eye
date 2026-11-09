@@ -1,7 +1,7 @@
 ---
 id: ADR-0048
 title: Ground AI overviews in signed search results with bounded Groq usage
-status: accepted
+status: superseded
 date: '2026-11-08'
 area: frontend
 feature: search-experience
@@ -14,7 +14,7 @@ code:
 - frontend/lib/ai-overview.ts
 - frontend/components/ai-overview.tsx
 supersedes: null
-superseded_by: null
+superseded_by: ADR-0049
 related:
 - ADR-0031
 ---
@@ -22,6 +22,8 @@ related:
 # ADR-0048: Ground AI overviews in signed search results with bounded Groq usage
 
 ## TL;DR
+
+Superseded by [ADR-0049](../../backend/ai-overview/ADR-0049-backend-owned-overviews-with-shared-postgres-budgets.md): FastAPI now owns generation and evidence; PostgreSQL owns shared quotas/cache/leases. The original decision below is retained as history.
 
 Generate an optional Groq overview after live results arrive. Sign the existing evidence server-side, require valid paragraph citations, and reserve request/token budgets before generation to protect a free-tier account.
 

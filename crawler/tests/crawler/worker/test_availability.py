@@ -17,7 +17,7 @@ from crawler.processing.processing import process_document
 def test_missing_pages_are_marked_unavailable_without_index_deletion(monkeypatch, status):
     now = datetime.now(timezone.utc)
     lease = now + timedelta(minutes=5)
-    target = SimpleNamespace(source_id=1, state='leased', lease_until=lease)
+    target = SimpleNamespace(source_id=1, state='leased', lease_until=lease, normalized_url='https://example.com/gone')
     class Session:
         def __init__(self): self.values = iter([target, now, True]); self.statements = []
         async def __aenter__(self): return self

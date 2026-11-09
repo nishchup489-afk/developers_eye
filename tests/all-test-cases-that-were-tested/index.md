@@ -15,6 +15,16 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ## Backend (FastAPI, search)
 
+### [backend/tests/api/test_ai_overview.py](../../backend/tests/api/test_ai_overview.py)
+
+5 cases
+
+- `test_backend_endpoint_owns_validation_and_retry_after`
+- `test_invalid_evidence_never_generates`
+- `test_disabled_and_non_json`
+- `test_untrusted_client_headers_cannot_change_identity`
+- `test_search_issues_backend_evidence`
+
 ### [backend/tests/api/test_search.py](../../backend/tests/api/test_search.py)
 
 8 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-http-api)
@@ -76,6 +86,16 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_golden_all_mode_fusion_is_exact`
 - `test_golden_weighted_ts_rank_candidate_cutoff`: Golden contract for the new weighted ts_rank, normalization=1 retriever.
 - `test_golden_mutations_recalculate_tf_df_dl_and_order`: Independent transaction-local insert/update/delete coverage.
+
+### [backend/tests/integration/test_ai_overview.py](../../backend/tests/integration/test_ai_overview.py)
+
+5 cases
+
+- `test_workers_share_generation_and_restart_persistent_cache`
+- `test_provider_cooldown_is_shared_and_durable`
+- `test_expired_lease_recovers_and_stale_worker_cannot_overwrite`
+- `test_failures_stay_reserved_and_cache_cleanup_is_bounded`
+- `test_backend_http_flow_uses_shared_state_and_existing_results`
 
 ### [backend/tests/integration/test_code.py](../../backend/tests/integration/test_code.py)
 
@@ -226,6 +246,21 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 1 cases · write-up: [test_case.md](../../backend/tests/test_case.md#package-boundary)
 
 - `test_backend_import_and_routes_do_not_require_crawler`
+
+### [backend/tests/unit/test_ai_overview.py](../../backend/tests/unit/test_ai_overview.py)
+
+10 cases
+
+- `test_signed_evidence`
+- `test_context_skips_unsafe_or_oversized_urls`
+- `test_prompt_and_output_validation`
+- `test_multilingual_evidence_stays_bounded`
+- `test_sliding_budgets_are_global_and_failed_reservations_are_not_added`
+- `test_client_daily_and_global_daily_limits`
+- `test_provider_contract`
+- `test_service_cache_and_fail_closed`
+- `test_transport_never_redirects_and_handles_retry_dates`
+- `test_transport_keeps_key_backend_only_and_bounds_response`
 
 ### [backend/tests/unit/test_analyzer.py](../../backend/tests/unit/test_analyzer.py)
 
@@ -533,6 +568,12 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_crawl_transaction_older_than_the_index_write_is_still_seen`: updated_at must be taken at the write, not when the crawl transaction began.
 - `test_recrawl_with_no_change_does_not_invalidate_an_index_write`
 - `test_two_indexers_write_once_and_count_the_vocabulary_once`
+
+### [crawler/tests/indexer/test_index_lifecycle.py](../../crawler/tests/indexer/test_index_lifecycle.py)
+
+1 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_index_lifecyclepy)
+
+- `test_unchanged_update_removal_and_rebuild_keep_index_and_vocabulary_true`
 
 ### [crawler/tests/indexer/test_indexer.py](../../crawler/tests/indexer/test_indexer.py)
 
@@ -1107,7 +1148,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/worker/test_postgres_pipeline.py](../../crawler/tests/crawler/worker/test_postgres_pipeline.py)
 
-9 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
+17 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
 
 - `test_http_429_retry_after_persists_and_delays_reclaim`
 - `test_structured_resources_commit_documents_targets_and_attempts`
@@ -1118,6 +1159,14 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_nested_sitemap_children_are_scoped_and_idempotent`: Parent index -> child maps -> pages, with durable deduplication on replays.
 - `test_nested_sitemap_depth_limit_rejects_grandchild`: A sitemap index at depth one must not schedule a depth-two child.
 - `test_sitemap_overflow_replay_after_partial_commit`: A transient failure after a committed overflow batch must lose no URLs.
+- `test_feed_summary_never_replaces_a_fetched_page`
+- `test_fetched_page_replaces_an_earlier_feed_summary`
+- `test_feed_updates_its_own_entry_but_another_feed_needs_more_text`
+- `test_stale_feed_entry_does_not_bring_back_a_removed_page`
+- `test_missing_feed_leaves_its_articles_available`
+- `test_missing_page_removes_a_document_a_feed_wrote`
+- `test_noindex_header_on_a_feed_does_not_touch_its_articles`
+- `test_noindex_page_is_removed_and_a_feed_cannot_bring_it_back`
 
 ### [crawler/tests/crawler/worker/test_recovery.py](../../crawler/tests/crawler/worker/test_recovery.py)
 
@@ -1185,10 +1234,6 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 
 Script-style file, run as a whole
 
-### [frontend/tests/overview-unit.mjs](../../frontend/tests/overview-unit.mjs)
-
-Script-style file, run as a whole
-
 ### [frontend/tests/preview-crawler.mjs](../../frontend/tests/preview-crawler.mjs)
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#preview-crawlermjs)
@@ -1205,11 +1250,14 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 
 These test files have no matching heading in a `test_case.md`.
 
+- [backend/tests/api/test_ai_overview.py](../../backend/tests/api/test_ai_overview.py)
 - [backend/tests/golden/test_bm25_golden.py](../../backend/tests/golden/test_bm25_golden.py)
+- [backend/tests/integration/test_ai_overview.py](../../backend/tests/integration/test_ai_overview.py)
 - [backend/tests/integration/test_corpus_mutation_search.py](../../backend/tests/integration/test_corpus_mutation_search.py)
 - [backend/tests/integration/test_migrations.py](../../backend/tests/integration/test_migrations.py)
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 - [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
+- [backend/tests/unit/test_ai_overview.py](../../backend/tests/unit/test_ai_overview.py)
 - [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)
 - [backend/tests/unit/test_ranking_goldens.py](../../backend/tests/unit/test_ranking_goldens.py)
 - [backend/tests/unit/test_relevance_cli.py](../../backend/tests/unit/test_relevance_cli.py)
@@ -1223,6 +1271,5 @@ These test files have no matching heading in a `test_case.md`.
 - [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
 - [crawler/tests/indexer/test_worker_recovery.py](../../crawler/tests/indexer/test_worker_recovery.py)
 - [frontend/tests/overview-routes.mjs](../../frontend/tests/overview-routes.mjs)
-- [frontend/tests/overview-unit.mjs](../../frontend/tests/overview-unit.mjs)
 - [frontend/tests/preview-overview.mjs](../../frontend/tests/preview-overview.mjs)
 <!-- test-index:end -->

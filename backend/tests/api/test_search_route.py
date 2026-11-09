@@ -11,6 +11,7 @@ from sqlalchemy.exc import OperationalError
 import backend.api.search as search_api
 from backend.main import app
 from backend.schema.search import SearchResultOut
+from backend.core.config import settings
 
 client = TestClient(app)
 
@@ -37,7 +38,8 @@ def stub(monkeypatch):
     return calls
 
 
-def test_returns_results(stub):
+def test_returns_results(stub, monkeypatch):
+    monkeypatch.setattr(settings, "ai_overview", False)
     response = client.get("/search", params={"q": "  fastapi   async ", "source": "docs"})
     assert response.status_code == 200
     assert response.headers["cache-control"] == "no-store"

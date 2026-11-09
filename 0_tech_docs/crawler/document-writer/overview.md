@@ -24,6 +24,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | [ADR-0011](ADR-0011-soft-availability-for-removed-pages.md) | decision | A 404 or 410 marks stored documents unavailable instead of deleting them, and they can come back | accepted |
 | [ADR-0021](ADR-0021-extracted-content-and-writer-ownership.md) | decision | Persist extracted documents rather than raw HTML in the primary store | accepted |
 | [ADR-0036](../../indexer/vocubulary/ADR-0036-vocabulary-maintenance-and-lock-boundary.md) | decision | Keep vocabulary maintenance transactional and rebuild it with a one-shot CLI | accepted |
+| [ADR-0050](ADR-0050-feed-records-never-replace-fetched-pages.md) | decision | A feed or API record never replaces a fetched page, and only a page can remove or revive one | accepted |
 
 ## Decisions to record
 
@@ -33,7 +34,8 @@ The identified decisions for this feature are indexed above. Record new decision
 
 - Never hard-delete a document because of a 404/410; mark it unavailable (ADR-0011).
 - Remove index rows in the same transaction through `remove_indexed_documents()` (ADR-0011, ADR-0002).
-- Every successful store resets `is_available`, `unavailable_at`, `unavailable_http_status` (ADR-0011).
+- Every successful page store resets `is_available`, `unavailable_at`, `unavailable_http_status` (ADR-0011). A feed or API record never does (ADR-0050).
+- A feed or API record must not replace a fetched page (ADR-0050).
 - Do not add raw-body persistence without retention, size and replay contracts.
 - Keep removal and revival semantics covered by persistence tests.
 - Fix incremental correctness before recounting and resuming writers.
