@@ -569,6 +569,12 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_recrawl_with_no_change_does_not_invalidate_an_index_write`
 - `test_two_indexers_write_once_and_count_the_vocabulary_once`
 
+### [crawler/tests/indexer/test_index_lifecycle.py](../../crawler/tests/indexer/test_index_lifecycle.py)
+
+1 cases
+
+- `test_unchanged_update_removal_and_rebuild_keep_index_and_vocabulary_true`
+
 ### [crawler/tests/indexer/test_indexer.py](../../crawler/tests/indexer/test_indexer.py)
 
 2 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_indexerpy)
@@ -1142,7 +1148,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/worker/test_postgres_pipeline.py](../../crawler/tests/crawler/worker/test_postgres_pipeline.py)
 
-9 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
+17 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
 
 - `test_http_429_retry_after_persists_and_delays_reclaim`
 - `test_structured_resources_commit_documents_targets_and_attempts`
@@ -1153,6 +1159,14 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_nested_sitemap_children_are_scoped_and_idempotent`: Parent index -> child maps -> pages, with durable deduplication on replays.
 - `test_nested_sitemap_depth_limit_rejects_grandchild`: A sitemap index at depth one must not schedule a depth-two child.
 - `test_sitemap_overflow_replay_after_partial_commit`: A transient failure after a committed overflow batch must lose no URLs.
+- `test_feed_summary_never_replaces_a_fetched_page`
+- `test_fetched_page_replaces_an_earlier_feed_summary`
+- `test_feed_updates_its_own_entry_but_another_feed_needs_more_text`
+- `test_stale_feed_entry_does_not_bring_back_a_removed_page`
+- `test_missing_feed_leaves_its_articles_available`
+- `test_missing_page_removes_a_document_a_feed_wrote`
+- `test_noindex_header_on_a_feed_does_not_touch_its_articles`
+- `test_noindex_page_is_removed_and_a_feed_cannot_bring_it_back`
 
 ### [crawler/tests/crawler/worker/test_recovery.py](../../crawler/tests/crawler/worker/test_recovery.py)
 
@@ -1254,6 +1268,7 @@ These test files have no matching heading in a `test_case.md`.
 - [crawler/tests/crawler/worker/test_database_faults.py](../../crawler/tests/crawler/worker/test_database_faults.py)
 - [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
 - [crawler/tests/indexer/test_concurrent_writers.py](../../crawler/tests/indexer/test_concurrent_writers.py)
+- [crawler/tests/indexer/test_index_lifecycle.py](../../crawler/tests/indexer/test_index_lifecycle.py)
 - [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
 - [crawler/tests/indexer/test_worker_recovery.py](../../crawler/tests/indexer/test_worker_recovery.py)
 - [frontend/tests/overview-routes.mjs](../../frontend/tests/overview-routes.mjs)
