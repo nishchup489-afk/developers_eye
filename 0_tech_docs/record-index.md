@@ -56,6 +56,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0043 | indexer/vocubulary | [Update vocabulary counts through a transactional outbox, not a global lock](indexer/vocubulary/ADR-0043-vocabulary-outbox.md) | accepted |
 | ADR-0044 | backend/admin-api | [Record search outcomes per minute in PostgreSQL, and sample the corpus for statistics](backend/admin-api/ADR-0044-search-availability-telemetry.md) | accepted |
 | ADR-0045 | backend/fuzzy-correction | [Offer "Did you mean" on few results, with stems mapped back to real words](backend/fuzzy-correction/ADR-0045-did-you-mean-with-surface-word-suggestions.md) | accepted |
+| ADR-0047 | backend/database-schema | [Edit an applied revision only when it cannot run and the schema stays identical](backend/database-schema/ADR-0047-edit-applied-revision-only-when-it-cannot-run.md) | accepted |
 
 ## Incidents
 
@@ -76,6 +77,8 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | INC-0013 | backend/bm25-statistics | [BM25 ranking corruption caused by double-stemming](backend/bm25-statistics/INC-0013-BM25-ranking-corruption-caused-by-double-stemming.md) | resolved |
 | INC-0032 | crawler/scheduler-and-leases | [Crawler Pipeline Stalled by PostgreSQL Advisory-Lock Contention](crawler/scheduler-and-leases/INC-0032-crawler-pipeline-stalled-by-postgres-advisory-lock-contention.md) |  |
 | INC-0033 | frontend/search-experience | [Upstream timeout ignored on a Next.js server's first hung request](frontend/search-experience/INC-0033-upstream-timeout-ignored-on-first-hung-request.md) | resolved |
+| INC-0034 | backend/database-schema | [code_vector migration failed on a populated search_index](backend/database-schema/INC-0034-code-vector-migration-failed-on-populated-index.md) | resolved |
+| INC-0035 | crawler/worker-runtime | [Indexer worker exited for good when the database restarted](crawler/worker-runtime/INC-0035-indexer-worker-exited-on-database-outage.md) | resolved |
 
 ## Experiments
 
@@ -90,4 +93,5 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | EXP-0007 | backend/bm25-statistics | [Validate BM25 statistics, exact-lexeme document frequency, and developer-query scoring](backend/bm25-statistics/EXP-0007-bm25-statistics-and-developer-query-regression.md) | done |
 | EXP-0008 | infra/performance-and-scaling | [Measure crawl, index and search capacity for a 2M document target](infra/performance-and-scaling/EXP-0008-crawl-index-search-at-2m.md) | done |
 | EXP-0009 | backend/ranking | [Human-judged lexical search relevance — BM25 versus PostgreSQL](backend/ranking/EXP-0009-search-relevance-metrics.md) | running         # planned \| running \| done |
+| EXP-0010 | backend/database-schema | [Query plans for retrieval, frontier claiming and indexing on a copy of the real data](backend/database-schema/EXP-0010-query-plans-on-real-data-copy.md) | done |
 <!-- record-index:end -->
