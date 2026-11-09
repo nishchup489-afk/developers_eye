@@ -57,6 +57,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0044 | backend/admin-api | [Record search outcomes per minute in PostgreSQL, and sample the corpus for statistics](backend/admin-api/ADR-0044-search-availability-telemetry.md) | accepted |
 | ADR-0045 | backend/fuzzy-correction | [Offer "Did you mean" on few results, with stems mapped back to real words](backend/fuzzy-correction/ADR-0045-did-you-mean-with-surface-word-suggestions.md) | accepted |
 | ADR-0047 | backend/database-schema | [Edit an applied revision only when it cannot run and the schema stays identical](backend/database-schema/ADR-0047-edit-applied-revision-only-when-it-cannot-run.md) | accepted |
+| ADR-0048 | frontend/search-experience | [Ground AI overviews in signed search results with bounded Groq usage](frontend/search-experience/ADR-0048-ground-ai-overviews-in-signed-results.md) | accepted |
 
 ## Incidents
 
@@ -94,4 +95,5 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | EXP-0008 | infra/performance-and-scaling | [Measure crawl, index and search capacity for a 2M document target](infra/performance-and-scaling/EXP-0008-crawl-index-search-at-2m.md) | done |
 | EXP-0009 | backend/ranking | [Human-judged lexical search relevance — BM25 versus PostgreSQL](backend/ranking/EXP-0009-search-relevance-metrics.md) | running         # planned \| running \| done |
 | EXP-0010 | backend/database-schema | [Query plans for retrieval, frontier claiming and indexing on a copy of the real data](backend/database-schema/EXP-0010-query-plans-on-real-data-copy.md) | done |
+| EXP-0011 | crawler/worker-runtime | [Worker recovery from a real database restart, and crawler and indexer writers racing](crawler/worker-runtime/EXP-0011-database-outage-and-concurrent-writers.md) | done |
 <!-- record-index:end -->

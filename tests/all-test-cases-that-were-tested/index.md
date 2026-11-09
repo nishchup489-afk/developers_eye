@@ -1112,9 +1112,21 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#knowledge-unitmjs)
 
+### [frontend/tests/overview-routes.mjs](../../frontend/tests/overview-routes.mjs)
+
+Script-style file, run as a whole
+
+### [frontend/tests/overview-unit.mjs](../../frontend/tests/overview-unit.mjs)
+
+Script-style file, run as a whole
+
 ### [frontend/tests/preview-crawler.mjs](../../frontend/tests/preview-crawler.mjs)
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#preview-crawlermjs)
+
+### [frontend/tests/preview-overview.mjs](../../frontend/tests/preview-overview.mjs)
+
+Script-style file, run as a whole
 
 ### [frontend/tests/search-unit.mjs](../../frontend/tests/search-unit.mjs)
 
@@ -1138,4 +1150,7 @@ These test files have no matching heading in a `test_case.md`.
 - [crawler/tests/indexer/test_concurrent_writers.py](../../crawler/tests/indexer/test_concurrent_writers.py)
 - [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
 - [crawler/tests/indexer/test_worker_recovery.py](../../crawler/tests/indexer/test_worker_recovery.py)
+- [frontend/tests/overview-routes.mjs](../../frontend/tests/overview-routes.mjs)
+- [frontend/tests/overview-unit.mjs](../../frontend/tests/overview-unit.mjs)
+- [frontend/tests/preview-overview.mjs](../../frontend/tests/preview-overview.mjs)
 <!-- test-index:end -->

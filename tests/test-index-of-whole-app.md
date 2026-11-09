@@ -26,7 +26,7 @@ indexes refresh on every commit. `--check` exits 1 when they are stale.
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**84 test files, 696 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**87 test files, 696 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
@@ -34,7 +34,7 @@ Everything between the markers is generated. Write notes above them.
 | [Backend (FastAPI, search)](#backend-fastapi-search) | 28 | 267 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 13 | 108 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 34 | 321 | `cd crawler && poetry run pytest tests/crawler` |
-| [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 9 | 0 | npm scripts in `frontend/package.json` (see below) |
+| [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 12 | 0 | npm scripts in `frontend/package.json` (see below) |
 
 ### End-to-end (full app)
 
@@ -152,6 +152,8 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 - `npm run test:admin:unit` runs `node --experimental-strip-types tests/admin-unit.mjs && node --experimental-strip-types tests/crawler-monitor-unit.mjs && node --experimental-strip-types tests/indexer-report-unit.mjs`
 - `npm run test:admin:routes` runs `node --experimental-strip-types tests/admin-routes.mjs`
 - `npm run test:search:unit` runs `node --experimental-strip-types tests/search-unit.mjs && node --experimental-strip-types tests/knowledge-unit.mjs`
+- `npm run test:overview:unit` runs `node --experimental-strip-types tests/overview-unit.mjs`
+- `npm run test:overview:routes` runs `node tests/overview-routes.mjs`
 
 | File | Kind | Cases | Write-up |
 |---|---|---:|---|
@@ -166,7 +168,10 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [indexer-report-unit.mjs](../frontend/tests/indexer-report-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#indexer-report-unitmjs) |
 | [integration.mjs](../frontend/tests/integration.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#integrationmjs) |
 | [knowledge-unit.mjs](../frontend/tests/knowledge-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#knowledge-unitmjs) |
+| [overview-routes.mjs](../frontend/tests/overview-routes.mjs) | tests | script |  |
+| [overview-unit.mjs](../frontend/tests/overview-unit.mjs) | tests | script |  |
 | [preview-crawler.mjs](../frontend/tests/preview-crawler.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#preview-crawlermjs) |
+| [preview-overview.mjs](../frontend/tests/preview-overview.mjs) | tests | script |  |
 | [search-unit.mjs](../frontend/tests/search-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#search-unitmjs) |
 | [test_case.md](../frontend/tests/test_case.md) | write-up |  |  |
 <!-- test-index:end -->
