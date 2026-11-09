@@ -97,4 +97,5 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | EXP-0009 | backend/ranking | [Human-judged lexical search relevance — BM25 versus PostgreSQL](backend/ranking/EXP-0009-search-relevance-metrics.md) | running         # planned \| running \| done |
 | EXP-0010 | backend/database-schema | [Query plans for retrieval, frontier claiming and indexing on a copy of the real data](backend/database-schema/EXP-0010-query-plans-on-real-data-copy.md) | done |
 | EXP-0011 | crawler/worker-runtime | [Worker recovery from a real database restart, and crawler and indexer writers racing](crawler/worker-runtime/EXP-0011-database-outage-and-concurrent-writers.md) | done |
+| EXP-0012 | backend/ranking | [Evaluate judged candidate recall and BM25 relevance against PostgreSQL FTS](backend/ranking/EXP-0012-judged-lexical-relevance-evaluation.md) | running |
 <!-- record-index:end -->

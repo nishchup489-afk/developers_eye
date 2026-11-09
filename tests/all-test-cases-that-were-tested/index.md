@@ -328,6 +328,15 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_empty_snapshot_with_live_documents_gets_a_usable_average`
 - `test_df_cache_expires_and_never_mixes_channels`
 
+### [backend/tests/unit/test_ranking_goldens.py](../../backend/tests/unit/test_ranking_goldens.py)
+
+4 cases
+
+- `test_golden_scores_and_exact_order`
+- `test_duplicate_query_term_does_not_change_golden`
+- `test_single_term_golden_ties_use_document_id`
+- `test_zero_term_frequency_gives_exact_zero`
+
 ### [backend/tests/unit/test_ranking_orchestrator.py](../../backend/tests/unit/test_ranking_orchestrator.py)
 
 14 cases · write-up: [test_case.md](../../backend/tests/test_case.md#ranking-orchestrator)
@@ -346,6 +355,28 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_excess_candidates_fail_before_database_work`
 - `test_loader_error_propagates`
 - `test_nonfinite_combined_score_is_rejected`
+
+### [backend/tests/unit/test_relevance_cli.py](../../backend/tests/unit/test_relevance_cli.py)
+
+3 cases
+
+- `test_manifest_has_at_least_30_unique_stratified_queries`
+- `test_judgment_template_is_blinded_and_carries_titles`
+- `test_write_json_never_overwrites_human_judgments`
+
+### [backend/tests/unit/test_relevance_metrics.py](../../backend/tests/unit/test_relevance_metrics.py)
+
+9 cases
+
+- `test_exact_precision_mrr_ndcg_and_candidate_recall`: Known-relevant c is absent from retrieval and lowers recall.
+- `test_missing_top_ten_judgments_prevent_a_published_score`
+- `test_ungraded_template_cannot_pass_as_irrelevant`
+- `test_no_positive_requires_an_explicit_no_relevant_decision`
+- `test_duplicate_urls_do_not_count_as_multiple_relevant_documents`
+- `test_invalid_grade_is_rejected`
+- `test_conflicting_no_relevant_flag_rejected`
+- `test_suite_never_reports_partial_averages_as_complete`
+- `test_suite_query_mismatch_rejected`
 
 ### [backend/tests/unit/test_relevance_metrics_base.py](../../backend/tests/unit/test_relevance_metrics_base.py)
 
@@ -1180,6 +1211,9 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 - [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 - [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)
+- [backend/tests/unit/test_ranking_goldens.py](../../backend/tests/unit/test_ranking_goldens.py)
+- [backend/tests/unit/test_relevance_cli.py](../../backend/tests/unit/test_relevance_cli.py)
+- [backend/tests/unit/test_relevance_metrics.py](../../backend/tests/unit/test_relevance_metrics.py)
 - [backend/tests/unit/test_relevance_metrics_base.py](../../backend/tests/unit/test_relevance_metrics_base.py)
 - [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)

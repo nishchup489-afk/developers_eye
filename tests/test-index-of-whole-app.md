@@ -26,12 +26,12 @@ indexes refresh on every commit. `--check` exits 1 when they are stale.
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**89 test files, 724 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**92 test files, 740 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 30 | 292 | `cd backend && poetry run pytest` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 33 | 308 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 13 | 108 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 34 | 324 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 12 | 0 | npm scripts in `frontend/package.json` (see below) |
@@ -71,12 +71,15 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [unit/test_pagination.py](../backend/tests/unit/test_pagination.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#pagination) |
 | [unit/test_planner.py](../backend/tests/unit/test_planner.py) | tests | 11 | [test_case.md](../backend/tests/test_case.md#query-planner) |
 | [unit/test_ranking.py](../backend/tests/unit/test_ranking.py) | tests | 26 | [test_case.md](../backend/tests/test_case.md#bm25-formula-and-ranking-types) |
+| [unit/test_ranking_goldens.py](../backend/tests/unit/test_ranking_goldens.py) | tests | 4 |  |
 | [unit/test_ranking_orchestrator.py](../backend/tests/unit/test_ranking_orchestrator.py) | tests | 14 | [test_case.md](../backend/tests/test_case.md#ranking-orchestrator) |
 | [unit/test_relavance_matrics/mrr@10.py](../backend/tests/unit/test_relavance_matrics/mrr@10.py) | helper |  |  |
 | [unit/test_relavance_matrics/nDCG@10.py](../backend/tests/unit/test_relavance_matrics/nDCG@10.py) | helper |  |  |
 | [unit/test_relavance_matrics/precision@10.py](../backend/tests/unit/test_relavance_matrics/precision@10.py) | helper |  |  |
 | [unit/test_relavance_matrics/recall@100.py](../backend/tests/unit/test_relavance_matrics/recall@100.py) | helper |  |  |
 | [unit/test_relavance_matrics/relavance_runner.py](../backend/tests/unit/test_relavance_matrics/relavance_runner.py) | helper |  |  |
+| [unit/test_relevance_cli.py](../backend/tests/unit/test_relevance_cli.py) | tests | 3 |  |
+| [unit/test_relevance_metrics.py](../backend/tests/unit/test_relevance_metrics.py) | tests | 9 |  |
 | [unit/test_relevance_metrics_base.py](../backend/tests/unit/test_relevance_metrics_base.py) | tests | 7 |  |
 | [unit/test_search_pipeline.py](../backend/tests/unit/test_search_pipeline.py) | tests | 10 | [test_case.md](../backend/tests/test_case.md#search-service-pipeline) |
 | [unit/test_search_telemetry.py](../backend/tests/unit/test_search_telemetry.py) | tests | 8 |  |
