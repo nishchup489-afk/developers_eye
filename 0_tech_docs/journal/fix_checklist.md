@@ -92,13 +92,13 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 ## P2 · Database, migrations and runtime reliability
 - [x] Test migration 28efc23fadfc against a populated pre-migration database. (test_migrations.py with rows at this revision; the earlier run on the real copy did not exercise it, INC-0034)
 - [x] Repair the non-null code_vector upgrade/backfill path where required. (INC-0034, ADR-0047)
-- [x] Test Alembic upgrade head on both empty and populated disposable Postgres 16. (empty on 16 in Docker and 18; populated on 18 only)
+- [x] Test Alembic upgrade head on both empty and populated disposable Postgres 16. (empty and populated on 16 and 18; populated is the real 42k-document copy, down to e94b530df145 and back to head)
 - [x] Review query plans and GIN/B-tree index use for retrieval and frontier claiming. (EXP-0010 on a real-data copy, on Postgres 18; added ix_document_last_crawl_target_id)
 - [x] Review DB session and transaction boundaries across all services. (database-schema overview)
 - [x] Correct unused unbound get_db() or remove it. (now uses SessionFactory)
 - [x] Configure explicit engine pool sizes, timeouts and overflow policies. (db_pool_* settings)
 - [x] Test DB connection loss, transaction rollback and worker recovery. (EXP-0011 real server stop, INC-0035, test_database_faults.py)
-- [x] Design and verify database backup restoration before production. (deploy/backup.sh and restore-test.sh ran in Docker on a tiny database; rerun on real data)
+- [x] Design and verify database backup restoration before production. (deploy/backup.sh and restore-test.sh ran unchanged on a Postgres 16 copy of the real 42k-document data, 244 MB dump, all row counts matched)
 - [x] Review concurrency-sensitive updates under simultaneous crawler/indexer writers. (EXP-0011, test_concurrent_writers.py)
 
 ## P2 · Test quality, dependency security and CI
