@@ -1,6 +1,7 @@
 import { backend, isOk, isTimeout } from "@/lib/axios";
 import { searchDemo } from "@/lib/demo";
 import { isSearchResult, sources } from "@/lib/search";
+import { signOverviewContext } from "@/lib/ai-overview-context";
 
 export async function GET(request: Request) {
   const started = performance.now();
@@ -57,6 +58,7 @@ export async function GET(request: Request) {
       results: data.results,
       took_ms: Math.round(performance.now() - started),
       mode: "live",
+      overviewToken: signOverviewContext(query, data.results),
     });
   } catch (error) {
     const timeout = isTimeout(error);

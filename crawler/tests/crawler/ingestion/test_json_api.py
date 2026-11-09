@@ -70,3 +70,29 @@ def test_json_limits_apply_before_filtering(monkeypatch):
 def test_path_lookup_can_select_array_element_and_empty_collection_is_valid():
     assert parse({"data": [[]]}, {"items_path": "data.0"}).documents == ()
     assert parse({"url": "/docs/a", "body": "Text"}, {"items_path": ""}).documents[0].body == "Text"
+
+
+def test_stack_exchange_record_keeps_license_metadata_and_unix_date():
+    result = parse({"items": [{"link": "https://stackoverflow.com/q/1", "title": "Q", "body": "<p>Body</p>",
+        "owner": {"display_name": "Ann"}, "creation_date": 1700000000, "content_license": "CC BY-SA 3.0",
+        "score": 12, "tags": ["python", "asyncio"], "question_id": 1}], "has_more": True},
+        {"items_path": "items", "body_format": "html",
+         "fields": {"url": "link", "author": "owner.display_name", "published_at": "creation_date"},
+         "metadata_fields": {"license": "content_license", "score": "score", "tags": "tags", "question_id": "question_id", "missing": "nope"}})
+    document, = result.documents
+    assert document.published_at.isoformat() == "2023-11-14T22:13:20+00:00"
+    assert document.metadata["license"] == "CC BY-SA 3.0"
+    assert document.metadata["score"] == 12 and document.metadata["tags"] == ["python", "asyncio"]
+    assert "missing" not in document.metadata
+    assert document.metadata["ingestion_format"] == "json_api"
+
+
+@pytest.mark.parametrize("extra", [[], {"ingestion_format": "x"}, {"": "a"}, {"license": ""}])
+def test_invalid_metadata_fields_are_rejected(extra):
+    with pytest.raises(ValueError): parse([], {"metadata_fields": extra})
+
+
+def test_boolean_is_not_a_unix_date():
+    from crawler.parser.structured import parse_record_date
+    assert parse_record_date(True) is None
+    assert parse_record_date(10**20) is None

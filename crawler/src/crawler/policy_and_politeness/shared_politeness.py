@@ -121,7 +121,7 @@ class SharedPolitenessManager(PolitenessManager):
     async def _finish(self, host: str) -> None:
         try:
             async with self.session_factory() as session, session.begin():
-                await session.execute(_FINISH, {"host": host, "gap": self.min_interval_seconds})
+                await session.execute(_FINISH, {"host": host, "gap": self.interval_for(host)})
         except Exception:
             # The hold expires on its own, so this only slows the host briefly.
             logger.warning("Could not release host %s", host, exc_info=True)

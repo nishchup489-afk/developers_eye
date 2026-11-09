@@ -39,12 +39,13 @@ class ApiMapping:
     next_path: str | None = None
     fields: dict[str, str] = field(default_factory=lambda: dict(DEFAULT_FIELDS))
     body_format: str = "text"
+    metadata_fields: dict[str, str] = field(default_factory=dict)
 
     @classmethod
     def from_config(cls, options: dict | None) -> "ApiMapping":
         options = {} if options is None else options
-        if not isinstance(options, dict) or set(options) - {"items_path", "next_path", "fields", "body_format"}:
-            raise ValueError("API config supports items_path, next_path, fields and body_format")
+        if not isinstance(options, dict) or set(options) - {"items_path", "next_path", "fields", "body_format", "metadata_fields"}:
+            raise ValueError("API config supports items_path, next_path, fields, body_format and metadata_fields")
         items = _path(options["items_path"], empty=True) if "items_path" in options else None
         next_path = _path(options["next_path"]) if "next_path" in options else None
         fields = options.get("fields", {})
@@ -54,7 +55,26 @@ class ApiMapping:
         body_format = options.get("body_format", "text")
         if not isinstance(body_format, str) or body_format not in {"text", "html"}:
             raise ValueError("API body_format must be text or html")
-        return cls(items, next_path, fields, body_format)
+        extra = options.get("metadata_fields", {})
+        if (not isinstance(extra, dict) or len(extra) > 20
+                or any(not isinstance(k, str) or not k or len(k) > 64 or k in {"ingestion_format", "api_url"} for k in extra)):
+            raise ValueError("API metadata_fields must map up to 20 names to field paths")
+        extra = {name: _path(value) for name, value in extra.items()}
+        return cls(items, next_path, fields, body_format, extra)
+
+
+def _record_metadata(record: dict, paths: dict[str, str]) -> dict[str, Any]:
+    """Copy small scalar values (license, score, ids, tags) into metadata."""
+    result = {}
+    for name, path in paths.items():
+        value = _lookup(record, path)
+        if isinstance(value, str) and len(value) <= 1000:
+            result[name] = value
+        elif isinstance(value, (bool, int, float)) and not (isinstance(value, float) and not math.isfinite(value)):
+            result[name] = value
+        elif isinstance(value, list) and len(value) <= 50 and all(isinstance(v, str) and len(v) <= 200 for v in value):
+            result[name] = list(value)
+    return result
 
 
 def _unique_object(pairs):
@@ -120,7 +140,8 @@ def parse_json_api(*, url: str, content: bytes, content_type: str,
         documents.append(ParsedDocument(url=record_url, title=text("title") or None,
             body=body, description=description or None, author=text("author") or None,
             published_at=parse_record_date(values["published_at"]),
-            metadata={"ingestion_format": "json_api", "api_url": url}))
+            metadata={**_record_metadata(record, mapping.metadata_fields),
+                      "ingestion_format": "json_api", "api_url": url}))
         links.append(DiscoveredLink(url=record_url))
     next_url = resolve_record_url(_lookup(payload, mapping.next_path), url) if mapping.next_path else None
     if next_url:

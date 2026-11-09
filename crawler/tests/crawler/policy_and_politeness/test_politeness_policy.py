@@ -329,6 +329,35 @@ class TestPolitenessManager(
 
         self.assertGreaterEqual(elapsed, 0.04)
 
+    async def test_host_override_lengthens_interval(self):
+        manager = PolitenessManager(
+            min_interval_seconds=0,
+            host_min_intervals={"Docs.Example.com": 0.1},
+        )
+        self.assertEqual(manager.interval_for("docs.example.com"), 0.1)
+        self.assertEqual(manager.interval_for("other.example.com"), 0)
+
+        host = await manager.acquire("https://docs.example.com/a")
+        manager.release(host)
+        start = time.monotonic()
+        host = await manager.acquire("https://docs.example.com/b")
+        elapsed = time.monotonic() - start
+        manager.release(host)
+        self.assertGreaterEqual(elapsed, 0.09)
+
+    def test_aws_docs_default_gap_is_five_seconds(self):
+        # docs.aws.amazon.com robots.txt sets Crawl-delay: 5.
+        self.assertEqual(PolitenessManager().interval_for("docs.aws.amazon.com"), 5.0)
+        # An override never shortens the global minimum.
+        manager = PolitenessManager(min_interval_seconds=8, host_min_intervals={"docs.aws.amazon.com": 5})
+        self.assertEqual(manager.interval_for("docs.aws.amazon.com"), 8)
+
+    def test_invalid_host_override_is_rejected(self):
+        for value in ({"x.example.com": -1}, {"x.example.com": math.nan}, {"x.example.com": True}, [("x", 1)]):
+            with self.subTest(value=value):
+                with self.assertRaises(ValueError):
+                    PolitenessManager(host_min_intervals=value)
+
     async def test_zero_interval(self):
         manager = PolitenessManager(
             min_interval_seconds=0,

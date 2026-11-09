@@ -27,7 +27,235 @@ from crawler.scheduler.repository import claim_targets, recover_expired_leases
 from crawler.worker.jobs.jobs import process_job
 from crawler.worker.recovery import recover_failed_claim
 from crawler.writer.attempts import start_attempt
+from indexer.config import IndexerConfig
+from indexer.selector import (
+    select_index_candidates,
+    select_removal_candidates,
+)
+from indexer.service import remove_candidate
+from indexer.schemas import IndexStatus
+from sqlalchemy import text
 
+import crawler.policy_and_politeness.policy_coordinator as policy_module
+
+from crawler.fetcher.schemas import OneHopResponse
+from crawler.policy_and_politeness.robots_policy import RobotsPolicyResult
+from crawler.policy_and_politeness.shared_politeness import SharedPolitenessManager
+
+
+
+def test_http_429_retry_after_persists_and_delays_reclaim(monkeypatch):
+    retry_after_seconds = 180
+    host = "example.com"
+
+    html = (
+        b"<html><head><title>Python Documentation</title></head>"
+        b"<body><main>Useful Python documentation with code "
+        b"examples and programming guides.</main></body></html>"
+    )
+
+    class ScriptedFetcher:
+        def __init__(self):
+            self.calls = []
+
+        async def fetch_once(
+            self,
+            *,
+            url,
+            approved_ips,
+            max_body_bytes,
+            timeout_seconds,
+            user_agent,
+        ):
+            self.calls.append(url)
+
+            if len(self.calls) == 1:
+                return OneHopResponse(
+                    429,
+                    {"Retry-After": str(retry_after_seconds)},
+                )
+
+            return OneHopResponse(
+                200,
+                {"Content-Type": "text/html"},
+                html,
+            )
+
+    async def resolve_dns(hostname):
+        assert hostname == host
+        return ["93.184.215.14"]
+
+    async def allow_robots(session, url, fetcher, *, user_agent):
+        return RobotsPolicyResult(
+            RobotsDecision.ALLOW,
+            "Allowed by test policy",
+            f"https://{host}",
+        )
+
+    monkeypatch.setattr(
+        policy_module,
+        "resolve_safe_destination",
+        resolve_dns,
+    )
+    monkeypatch.setattr(
+        policy_module,
+        "evaluate_robots_policy",
+        allow_robots,
+    )
+
+    async def run():
+        async with database() as (factory, source_id):
+            fetcher = ScriptedFetcher()
+
+            manager = SharedPolitenessManager(
+                factory,
+                min_interval_seconds=0,
+                max_concurrent_per_host=1,
+                max_backoff_seconds=300,
+                max_wait_seconds=2,
+                hold_seconds=5,
+            )
+
+            async def try_claim():
+                async with factory() as session:
+                    async with session.begin():
+                        rows = await claim_targets(
+                            session,
+                            limit=1,
+                            source_id=source_id,
+                            host_hold_seconds=0,
+                        )
+                        return [
+                            CrawlTargetRead.model_validate(row)
+                            for row in rows
+                        ]
+
+            try:
+                await seed(factory, source_id, 1)
+
+                # Isolate this test from existing host backoff.
+                async with factory() as session, session.begin():
+                    await session.execute(
+                        update(CrawlHost)
+                        .where(CrawlHost.host == host)
+                        .values(
+                            next_allowed_at=func.clock_timestamp(),
+                            backoff_until=None,
+                        )
+                    )
+
+                # 1. First request receives HTTP 429.
+                claimed = await try_claim()
+                assert len(claimed) == 1
+                target_id = claimed[0].id
+
+                result = await process_job(
+                    claimed[0],
+                    session_factory=factory,
+                    politeness_manager=manager,
+                    fetcher=fetcher,
+                )
+
+                assert result.outcome == "failed"
+                assert result.http_status == 429
+                assert len(fetcher.calls) == 1
+
+                # 2. Verify persisted retry scheduling.
+                async with factory() as session:
+                    target = await session.get(CrawlTarget, target_id)
+                    host_state = await session.get(CrawlHost, host)
+                    now = await session.scalar(
+                        select(func.clock_timestamp())
+                    )
+
+                    assert target.state == "queued"
+                    assert target.lease_until is None
+                    assert target.failure_count == 1
+
+                    target_wait = (
+                        target.next_fetch_at - now
+                    ).total_seconds()
+
+                    host_wait = (
+                        host_state.backoff_until - now
+                    ).total_seconds()
+
+                    # 180-second Retry-After overrides
+                    # the default 60-second failure delay.
+                    assert 170 <= target_wait <= 180
+                    assert 170 <= host_wait <= 180
+
+                # 3. The scheduler must refuse early reclaim.
+                assert await try_claim() == []
+                assert len(fetcher.calls) == 1
+
+                # 4. Simulate passage of the retry period.
+                # No need to sleep for three minutes.
+                async with factory() as session, session.begin():
+                    past = (
+                        func.clock_timestamp()
+                        - text("interval '1 second'")
+                    )
+
+                    await session.execute(
+                        update(CrawlTarget)
+                        .where(CrawlTarget.id == target_id)
+                        .values(next_fetch_at=past)
+                    )
+
+                    await session.execute(
+                        update(CrawlHost)
+                        .where(CrawlHost.host == host)
+                        .values(
+                            next_allowed_at=past,
+                            backoff_until=past,
+                        )
+                    )
+
+                # 5. The same target becomes claimable again.
+                claimed = await try_claim()
+                assert len(claimed) == 1
+                assert claimed[0].id == target_id
+
+                # Second request returns HTTP 200.
+                result = await process_job(
+                    claimed[0],
+                    session_factory=factory,
+                    politeness_manager=manager,
+                    fetcher=fetcher,
+                )
+
+                assert result.outcome == "success"
+                assert result.http_status == 200
+                assert len(fetcher.calls) == 2
+
+                # 6. Successful retry resets failure state.
+                async with factory() as session:
+                    target = await session.get(CrawlTarget, target_id)
+
+                    assert target.state == "queued"
+                    assert target.lease_until is None
+                    assert target.failure_count == 0
+
+                    attempts = await session.scalar(
+                        select(func.count(CrawlAttempt.id))
+                        .where(CrawlAttempt.crawl_target_id == target_id)
+                    )
+                    assert attempts == 2
+
+            finally:
+                # Leave the shared test host ready for other tests.
+                async with factory() as session, session.begin():
+                    await session.execute(
+                        update(CrawlHost)
+                        .where(CrawlHost.host == host)
+                        .values(
+                            next_allowed_at=func.clock_timestamp(),
+                            backoff_until=None,
+                        )
+                    )
+
+    asyncio.run(run())
 
 @asynccontextmanager
 async def database():
@@ -151,30 +379,127 @@ def test_concurrent_claims_atomic_writes_and_shared_source_budget(monkeypatch):
     asyncio.run(run())
 
 
+
 def test_removed_page_invalidates_index_and_recovers_when_restored(monkeypatch):
     install_fetch(monkeypatch, [200, 404, 200])
+
     async def run():
         async with database() as (factory, source_id):
             await seed(factory, source_id, 1)
             manager = PolitenessManager(min_interval_seconds=0)
+            config = IndexerConfig()
+
+            # 1. Initial crawl: HTTP 200
             target = (await claim(factory, source_id))[0]
-            await process_job(target, session_factory=factory, politeness_manager=manager)
+            await process_job(
+                target,
+                session_factory=factory,
+                politeness_manager=manager,
+            )
+
+            # Simulate an already-indexed document.
             async with factory() as session, session.begin():
-                document = await session.scalar(select(Document).where(Document.source_id == source_id))
-                session.add(SearchIndex(document_id=document.id, search_vector=func.to_tsvector('english', document.body),
-                    code_vector=func.to_tsvector('simple', ''), indexed_hash=document.content_hash))
-            for status in [404, 200]:
-                async with factory() as session, session.begin():
-                    await session.execute(update(CrawlTarget).where(CrawlTarget.source_id == source_id,
-                        CrawlTarget.id != target.id).values(next_fetch_at=func.now() + timedelta(days=1)))
-                    await session.execute(update(CrawlTarget).where(CrawlTarget.id == target.id).values(next_fetch_at=func.now()))
-                target = (await claim(factory, source_id))[0]
-                await process_job(target, session_factory=factory, politeness_manager=manager)
-                async with factory() as session:
-                    document = await session.scalar(select(Document).where(Document.source_id == source_id))
-                    assert document.is_available is (status == 200)
-                    assert document.unavailable_http_status == (404 if status == 404 else None)
-                    assert await session.scalar(select(func.count(SearchIndex.document_id)).where(SearchIndex.document_id == document.id)) == 0
+                document = await session.scalar(
+                    select(Document).where(Document.source_id == source_id)
+                )
+                assert document is not None
+                document_id = document.id
+
+                session.add(
+                    SearchIndex(
+                        document_id=document_id,
+                        search_vector=func.to_tsvector("english", document.body),
+                        code_vector=func.to_tsvector("simple", ""),
+                        indexed_hash=document.content_hash,
+                    )
+                )
+
+            # 2. Recrawl: HTTP 404
+            async with factory() as session, session.begin():
+                await session.execute(
+                    update(CrawlTarget)
+                    .where(CrawlTarget.source_id == source_id)
+                    .where(CrawlTarget.id != target.id)
+                    .values(next_fetch_at=func.now() + timedelta(days=1))
+                )
+                await session.execute(
+                    update(CrawlTarget)
+                    .where(CrawlTarget.id == target.id)
+                    .values(next_fetch_at=func.now())
+                )
+
+            target = (await claim(factory, source_id))[0]
+            await process_job(
+                target,
+                session_factory=factory,
+                politeness_manager=manager,
+            )
+
+            # Crawler owns availability, NOT index deletion.
+            async with factory() as session:
+                document = await session.get(Document, document_id)
+                assert document.is_available is False
+                assert document.unavailable_http_status == 404
+
+                index = await session.get(SearchIndex, document_id)
+                assert index is not None
+
+                candidates = await select_removal_candidates(
+                    session,
+                    config=config,
+                )
+                assert document_id in candidates
+
+            # 3. Indexer owns index removal.
+            result = await remove_candidate(factory, document_id)
+            assert result.status is IndexStatus.REMOVED
+
+            async with factory() as session:
+                assert await session.get(SearchIndex, document_id) is None
+
+            # 4. Recrawl: HTTP 200 (recovery)
+            async with factory() as session, session.begin():
+                await session.execute(
+                    update(CrawlTarget)
+                    .where(CrawlTarget.source_id == source_id)
+                    .where(CrawlTarget.id != target.id)
+                    .values(next_fetch_at=func.now() + timedelta(days=1))
+                )
+                await session.execute(
+                    update(CrawlTarget)
+                    .where(CrawlTarget.id == target.id)
+                    .values(next_fetch_at=func.now())
+                )
+
+            target = (await claim(factory, source_id))[0]
+            await process_job(
+                target,
+                session_factory=factory,
+                politeness_manager=manager,
+            )
+
+            async with factory() as session:
+                document = await session.get(Document, document_id)
+                assert document is not None
+                assert document.is_available is True
+                assert document.unavailable_http_status is None
+
+                # Recovered document needs indexing again.
+                candidates = await select_index_candidates(
+                    session,
+                    config=config,
+                )
+                assert document_id in {
+                    candidate.document_id for candidate in candidates
+                }
+
+                # It must no longer be a removal candidate.
+                removal_candidates = await select_removal_candidates(
+                    session,
+                    config=config,
+                )
+                assert document_id not in removal_candidates
+
     asyncio.run(run())
 
 

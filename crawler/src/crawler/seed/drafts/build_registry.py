@@ -1,5 +1,15 @@
 """Build the draft source registry from nish's TSV draft plus fixes and additions.
 
+Usage (from this folder, no arguments needed):
+    python build_registry.py
+    python build_registry.py --draft inputs/nish_registry_draft.tsv --github inputs/github_top_repos.tsv --out .
+
+Inputs are checked in under inputs/:
+  nish_registry_draft.tsv  -> nish's original 197-row draft (the base list)
+  github_top_repos.tsv     -> GitHub search snapshot, top 1,000 repos by stars (2026-11-07)
+Every row is validated first. If anything fails, the script prints the errors,
+exits with status 1 and writes nothing.
+
 Outputs (into OUT dir):
   documentation.json, blogs.json, apis.json   -> seedable SourceCreate rows (website/rss/api)
   offline_datasets.json                        -> not seedable (Stack Overflow dump)
@@ -7,12 +17,21 @@ Outputs (into OUT dir):
   source_registry_draft.tsv                    -> nish's columns + max_docs, est_docs, version_pin
   REGISTRY_SUMMARY.md                          -> readable table + totals + review notes
 """
-import csv, json, re, sys
+import argparse, csv, json, math, os, re, sys
 from collections import Counter, defaultdict
 from posixpath import normpath
 from urllib.parse import urlsplit, unquote
 
-DRAFT, GH, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+HERE = os.path.dirname(os.path.abspath(__file__))
+_cli = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+_cli.add_argument("--draft", default=os.path.join(HERE, "inputs", "nish_registry_draft.tsv"))
+_cli.add_argument("--github", default=os.path.join(HERE, "inputs", "github_top_repos.tsv"))
+_cli.add_argument("--out", default=HERE)
+_args = _cli.parse_args()
+DRAFT, GH, OUT = _args.draft, _args.github, _args.out
+for _required in (DRAFT, GH):
+    if not os.path.isfile(_required):
+        sys.exit(f"Missing input file: {_required}")
 SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 DAY = 86400
 PRIORITY = {"1": 100, "2": 90, "3": 80, "4": 70, "S": 60}
@@ -23,6 +42,10 @@ rows = {}
 order = []
 with open(DRAFT, encoding="utf-8") as f:
     reader = csv.DictReader(f, delimiter="\t")
+    _need = {"tier", "category", "slug", "name", "base_url", "allowed_hosts", "allowed_path_scope", "proposed_status", "notes"}
+    if "version_pin" in (reader.fieldnames or []) or _need - set(reader.fieldnames or []):
+        sys.exit(f"{DRAFT} is not the base draft. Pass inputs/nish_registry_draft.tsv; "
+                 "source_registry_draft.tsv is this script's output, not its input.")
     for r in reader:
         if not r.get("slug"):
             continue
@@ -49,13 +72,13 @@ FIX = {
  "rust-std": dict(est=25000, cap=30000, ver="stable", note="/std/ only; /stable/std/ and /nightly/ are duplicates, out of scope. Host doc.rust-lang.org shared by 5 sources, host cap 40K"),
  "rust-reference": dict(est=150, cap=400, ver="stable"),
  "rust-by-example": dict(est=200, cap=400, ver="stable"),
- "go-docs": dict(prefixes=P("/doc/", "/ref/", "/blog/"), est=500, cap=1500, ver="latest", note="Added /ref/ (spec, memory model) and /blog/ (official blog)"),
+ "go-docs": dict(prefixes=P("/doc/", "/ref/"), est=400, cap=1200, ver="latest", note="Added /ref/ (spec, memory model). /blog/ belongs to the go-blog feed only, so the two sources never write the same URL"),
  "go-stdlib": dict(prefixes=P("/std", "/archive", "/bufio", "/builtin", "/bytes", "/cmp", "/compress", "/container", "/context", "/crypto", "/database", "/debug", "/embed", "/encoding", "/errors", "/expvar", "/flag", "/fmt", "/go", "/hash", "/html", "/image", "/index", "/io", "/iter", "/log", "/maps", "/math", "/mime", "/net", "/os", "/path", "/plugin", "/reflect", "/regexp", "/runtime", "/slices", "/sort", "/strconv", "/strings", "/structs", "/sync", "/syscall", "/testing", "/text", "/time", "/unicode", "/unique", "/unsafe", "/weak"), est=300, cap=600, ver="latest Go release", note="Top-level std package names as exact path prefixes, so third-party module paths (/github.com/...) stay out"),
  "java-docs": dict(base="https://docs.oracle.com/en/java/javase/25/", prefixes=P("/en/java/javase/25/"), est=6000, cap=10000, ver="JDK 25 LTS", note="Pinned to 25 LTS. robots.txt is 59 KB and was only partly readable; re-check /en/java/javase/25/ before enabling"),
  "kotlin-docs": dict(prefixes=P("/docs/", "/api/core/kotlin-stdlib/"), est=3000, cap=6000, ver="latest", note="Added stdlib API reference"),
- "swift-docs": dict(est=60, cap=200, ver="Swift 6.x"),
- "cpp-reference": dict(base="https://en.cppreference.com/w/cpp", prefixes=P("/w/cpp"), est=5000, cap=8000, ver="living", note="Scoped to /w/cpp so it doesn't overlap c-reference. robots.txt: Content-Signal search=yes, ai-train=no; blocks ~35 named AI bots. Search indexing is allowed, model training is not"),
- "c-reference": dict(base="https://en.cppreference.com/w/c", prefixes=P("/w/c"), est=1200, cap=2000, ver="living", note="Prefix /w/c matches /w/c/... only (segment match), so no collision with /w/cpp"),
+ "swift-docs": dict(status="blocked_empty_body", est=0, cap=200, ver="Swift 6.x", note="Blocked: the Swift book is a DocC app and the HTML parser extracts an empty body. Workable input: the book's markdown in github.com/swiftlang/swift-book"),
+ "cpp-reference": dict(base="https://en.cppreference.com/cpp", prefixes=P("/cpp", "/w/cpp"), est=5000, cap=8000, ver="living", note="/w/cpp now redirects to /cpp, so the seed is /cpp and both prefixes are allowed (old links still redirect in). Doesn't overlap c-reference. robots.txt: Content-Signal search=yes, ai-train=no; blocks ~35 named AI bots. Search indexing is allowed, model training is not"),
+ "c-reference": dict(base="https://en.cppreference.com/c", prefixes=P("/c", "/w/c"), est=1200, cap=2000, ver="living", note="/w/c now redirects to /c. Prefix /c matches /c/... only (segment match), so no collision with /cpp"),
  "csharp-docs": dict(est=1500, cap=3000, ver="C# 14 / .NET 10"),
  "net-docs": dict(base="https://learn.microsoft.com/en-us/dotnet/fundamentals/", prefixes=P("/en-us/dotnet/fundamentals/", "/en-us/dotnet/core/", "/en-us/dotnet/standard/", "/en-us/dotnet/fsharp/", "/en-us/aspnet/core/", "/en-us/ef/core/"), est=8000, cap=12000, ver=".NET 10 LTS", note="Excludes /en-us/dotnet/csharp/ (own source) and /en-us/dotnet/api/ (200K+ API pages; add later with its own cap). learn.microsoft.com host shared with azure-*, host cap 40K"),
  "php-docs": dict(est=12000, cap=15000, ver="8.x"),
@@ -67,8 +90,8 @@ FIX = {
  "sqlite-docs": dict(depth=2, est=500, cap=1200, ver="3.x", note="Kept '/' on purpose: SQLite docs are flat files (/lang_*.html, /c3ref/*). The scope only matches whole path segments, so '/lang_' can't work; depth 2 from docs.html plus the cap keeps it tight. robots blocks /src, /cgi, /cvstrac"),
  "git-docs": dict(prefixes=P("/docs", "/book/en/v2"), est=800, cap=1500, ver="latest", note="Added English Pro Git book"),
  # tier 2
- "react-docs": dict(prefixes=P("/learn", "/reference", "/blog"), est=300, cap=800, ver="19.x"),
- "nextjs-docs": dict(prefixes=P("/docs", "/learn", "/blog"), est=700, cap=2000, ver="latest (App Router)", note="/docs/pages/ is the legacy router; keep or drop"),
+ "react-docs": dict(prefixes=P("/learn", "/reference"), est=250, cap=700, ver="19.x", note="/blog belongs to the react-blog feed"),
+ "nextjs-docs": dict(prefixes=P("/docs", "/learn"), est=600, cap=1800, ver="latest (App Router)", note="/docs/pages/ is the legacy router; keep or drop. /blog belongs to the nextjs-blog feed"),
  "vue-docs": dict(prefixes=P("/guide/", "/api/", "/tutorial/", "/examples/"), est=200, cap=500, ver="3.x"),
  "angular-docs": dict(prefixes=P("/overview", "/guide", "/api", "/tutorials", "/reference", "/tools", "/best-practices", "/cli", "/ecosystem"), est=1500, cap=3000, ver="latest"),
  "svelte-docs": dict(prefixes=P("/docs/svelte/"), est=150, cap=400, ver="5.x", note="Narrowed to /docs/svelte/ so it doesn't overlap sveltekit-docs"),
@@ -80,7 +103,7 @@ FIX = {
  "nuxt-docs": dict(est=400, cap=1000, ver="4.x", note="nuxt.com/docs is current; /docs/3.x/ duplicates if present"),
  "react-router-docs": dict(base="https://reactrouter.com/home", prefixes=P("/home", "/start", "/api", "/tutorials", "/explanation", "/how-to", "/community", "/upgrading"), est=300, cap=800, ver="7.x", note="RR7 is where Remix v2 went; this replaces remix-docs"),
  "solid-docs": dict(base="https://docs.solidjs.com/quick-start", prefixes=P("/quick-start", "/concepts", "/reference", "/guides", "/configuration", "/advanced-concepts", "/solid-router", "/solid-start", "/solid-meta"), est=300, cap=600, ver="1.x"),
- "redux-toolkit-docs": dict(prefixes=P("/introduction", "/tutorials", "/usage", "/api", "/rtk-query"), est=150, cap=400, ver="2.x"),
+ "redux-toolkit-docs": dict(base="https://redux.js.org/toolkit/introduction/getting-started", hosts=P("redux.js.org"), prefixes=P("/toolkit/"), est=150, cap=400, ver="2.x", note="redux-toolkit.js.org now 302s to redux.js.org/toolkit/"),
  "tanstack-query-docs": dict(est=300, cap=600, ver="v5 (latest)", note="All frameworks under /latest/docs/; restrict to /framework/react/ if dupes hurt"),
  "remix-docs": dict(status="duplicate_disabled", est=0, cap=200, ver="v2 (legacy)", note="Disabled: Remix v2 merged into React Router 7, covered by react-router-docs"),
  "playwright-docs": dict(est=400, cap=800, ver="latest"),
@@ -91,11 +114,11 @@ FIX = {
  "storybook-docs": dict(est=400, cap=800, ver="latest"),
  "eslint-docs": dict(est=600, cap=1000, ver="9.x"),
  "prettier-docs": dict(est=40, cap=100, ver="3.x"),
- "django": dict(est=800, cap=2000, ver="stable (5.2/6.0)", note="Already seeded with no path prefix; seed.py skips existing slugs, so this prefix only takes effect via update_source"),
+ "django": dict(base="https://docs.djangoproject.com/en/6.1/", prefixes=P("/en/6.1/", "/en/stable/"), est=800, cap=2000, ver="6.1", note="/en/stable/ redirects to /en/6.1/, so the seed is the pinned version; bump both when 6.2 ships. Already seeded with no path prefix; seed.py skips existing slugs, so this only takes effect via update_source"),
  "flask-docs": dict(est=150, cap=300, ver="stable"),
  "fastapi": dict(base="https://fastapi.tiangolo.com/learn/", prefixes=P("/learn/", "/tutorial/", "/advanced/", "/reference/", "/how-to/", "/deployment/", "/fastapi-cli/", "/features/", "/async/", "/python-types/", "/virtual-environments/", "/environment-variables/", "/alternatives/", "/history-design-future/", "/project-generation/", "/release-notes/"), est=300, cap=600, ver="latest", note="English prefixes only (translations live under /es/, /zh/, /ja/ ...). Already seeded; apply via update_source"),
  "sqlalchemy-docs": dict(est=600, cap=1500, ver="2.0"),
- "pydantic-docs": dict(est=300, cap=600, ver="2.x latest"),
+ "pydantic-docs": dict(base="https://pydantic.dev/docs/validation/latest/get-started/", hosts=P("pydantic.dev"), prefixes=P("/docs/validation/latest/"), est=300, cap=600, ver="2.x latest", note="docs.pydantic.dev/latest/ now 302s to pydantic.dev/docs/validation/latest/"),
  "pandas-docs": dict(est=4000, cap=6000, ver="stable"),
  "numpy-docs": dict(est=3500, cap=5000, ver="stable"),
  "scipy-docs": dict(est=3000, cap=4500, ver="stable"),
@@ -170,12 +193,12 @@ FIX = {
  "rabbitmq-docs": dict(est=300, cap=600, ver="4.x"),
  "nats-docs": dict(est=400, cap=800, ver="latest", note="'/' is fine: docs-only host"),
  "clickhouse-docs": dict(est=3000, cap=5000, ver="latest", note="Translations live under /docs/zh/, /docs/ru/, /docs/jp/, which /docs admits; the cap bounds them until a deny list exists"),
- "aws-ec2": dict(est=1500, cap=3000, ver="latest"),
- "aws-s3": dict(est=1200, cap=2500, ver="latest"),
- "aws-lambda": dict(est=800, cap=1500, ver="latest"),
- "aws-rds": dict(est=1500, cap=2500, ver="latest"),
- "aws-iam": dict(est=1000, cap=2000, ver="latest"),
- "aws-cloudwatch": dict(est=800, cap=1500, ver="latest", note="docs.aws.amazon.com robots: Crawl-delay 5. Host shared by all aws-* sources; politeness must be per host, not per source"),
+ "aws-ec2": dict(sitemaps=P("https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/sitemap.xml"), est=1500, cap=3000, ver="latest"),
+ "aws-s3": dict(sitemaps=P("https://docs.aws.amazon.com/AmazonS3/latest/userguide/sitemap.xml"), est=1200, cap=2500, ver="latest"),
+ "aws-lambda": dict(sitemaps=P("https://docs.aws.amazon.com/lambda/latest/dg/sitemap.xml"), est=800, cap=1500, ver="latest"),
+ "aws-rds": dict(sitemaps=P("https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/sitemap.xml"), est=1500, cap=2500, ver="latest"),
+ "aws-iam": dict(sitemaps=P("https://docs.aws.amazon.com/IAM/latest/UserGuide/sitemap.xml"), est=1000, cap=2000, ver="latest"),
+ "aws-cloudwatch": dict(sitemaps=P("https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/sitemap.xml"), est=800, cap=1500, ver="latest", note="docs.aws.amazon.com robots: Crawl-delay 5, now enforced by HOST_MIN_INTERVAL_SECONDS in politeness_policy.py. Each aws-* row uses its own guide sitemap; host-wide discovery is off because the index lists ~13,900 child sitemaps"),
  "gcp-cloudrun": dict(hosts=P("cloud.google.com", "docs.cloud.google.com"), est=600, cap=1200, ver="latest"),
  "gcp-gcs": dict(hosts=P("cloud.google.com", "docs.cloud.google.com"), est=600, cap=1200, ver="latest"),
  "gcp-compute": dict(hosts=P("cloud.google.com", "docs.cloud.google.com"), est=1500, cap=2500, ver="latest"),
@@ -338,10 +361,9 @@ NEW_FEEDS = [
  ("postman-blog", "Postman Blog", "Company engineering", "https://blog.postman.com/feed/", P("blog.postman.com"), P("/")),
  ("percona-blog", "Percona Blog", "Databases", "https://www.percona.com/blog/feed/", P("www.percona.com"), P("/blog/")),
  ("planet-postgresql", "Planet PostgreSQL", "Databases", "https://planet.postgresql.org/rss20.xml", P("planet.postgresql.org"), P("/")),
- ("duckdb-blog", "DuckDB Blog", "Databases", "https://duckdb.org/feed.xml", P("duckdb.org"), P("/")),
+ ("duckdb-blog", "DuckDB Blog", "Databases", "https://duckdb.org/feed.xml", P("duckdb.org"), P(*[f"/{y}" for y in range(2019, 2028)])),
  ("opensource-connections", "OpenSource Connections (search relevance)", "Databases", "https://opensourceconnections.com/feed/", P("opensourceconnections.com"), P("/blog/")),
  # language / framework official blogs
- ("inside-rust", "Inside Rust", "Official language blogs", "https://blog.rust-lang.org/inside-rust/feed.xml", P("blog.rust-lang.org"), P("/inside-rust/")),
  ("this-week-in-rust", "This Week in Rust", "Official language blogs", "https://this-week-in-rust.org/rss.xml", P("this-week-in-rust.org"), P("/")),
  ("go-blog", "The Go Blog", "Official language blogs", "https://go.dev/blog/feed.atom", P("go.dev"), P("/blog/")),
  ("python-insider", "Python Insider", "Official language blogs", "https://blog.python.org/feeds/posts/default", P("blog.python.org", "pyfound.blogspot.com"), P("/")),
@@ -357,7 +379,7 @@ NEW_FEEDS = [
  ("spring-blog", "Spring Blog", "Official language blogs", "https://spring.io/blog.atom", P("spring.io"), P("/blog/")),
  ("swift-blog", "Swift.org Blog", "Official language blogs", "https://www.swift.org/atom.xml", P("www.swift.org"), P("/blog/")),
  ("android-dev-blog", "Android Developers Blog", "Official language blogs", "https://android-developers.googleblog.com/feeds/posts/default", P("android-developers.googleblog.com"), P("/")),
- ("flutter-blog", "Flutter Blog", "Official language blogs", "https://medium.com/feed/flutter", P("medium.com", "blog.flutter.dev"), P("/")),
+ ("flutter-blog", "Flutter Blog", "Official language blogs", "https://blog.flutter.dev/feed", P("blog.flutter.dev"), P("/")),
  ("ruby-news", "Ruby News", "Official language blogs", "https://www.ruby-lang.org/en/feeds/news.rss", P("www.ruby-lang.org"), P("/en/news/")),
  ("rails-blog", "Ruby on Rails Blog", "Official language blogs", "https://rubyonrails.org/feed.xml", P("rubyonrails.org"), P("/")),
  ("elixir-blog", "Elixir Blog", "Official language blogs", "https://elixir-lang.org/atom.xml", P("elixir-lang.org"), P("/blog/")),
@@ -443,15 +465,30 @@ NEW_FEEDS = [
  ("lwn", "LWN.net", "Publications", "https://lwn.net/headlines/rss", P("lwn.net"), P("/Articles/")),
  ("infoq", "InfoQ", "Publications", "https://feed.infoq.com/", P("www.infoq.com"), P("/articles/", "/news/", "/presentations/")),
  ("freecodecamp-news", "freeCodeCamp News", "Publications", "https://www.freecodecamp.org/news/rss/", P("www.freecodecamp.org"), P("/news/")),
- ("baeldung-feed", "Baeldung feed", "Publications", "https://www.baeldung.com/feed", P("www.baeldung.com"), P("/")),
  ("pragmatic-engineer", "The Pragmatic Engineer", "Publications", "https://newsletter.pragmaticengineer.com/feed", P("newsletter.pragmaticengineer.com"), P("/p/")),
  ("bytebytego", "ByteByteGo", "Publications", "https://blog.bytebytego.com/feed", P("blog.bytebytego.com"), P("/p/")),
  ("devto", "DEV Community", "Publications", "https://dev.to/feed", P("dev.to"), P("/")),
 ]
+BLOCKED_FEEDS = {
+    "dan-luu": ("blocked_feed_over_2mb", "Blocked: the feed is 6.66 MB, above the parser's 2 MB limit (it carries full post bodies). Needs a bigger limit for feeds or a sitemap crawl of danluu.com"),
+    "vercel-blog": ("blocked_feed_over_2mb", "Blocked: the feed is 4.75 MB, above the parser's 2 MB limit"),
+    "planet-python": ("blocked_aggregator_offhost", "Blocked: every entry links to the original author's blog, so the host allowlist admits 0 of 25 entries. Use it to discover feeds to add, not as a source"),
+    "microsoft-devblogs": ("duplicate_disabled", "Disabled: this is the all-products feed, and its '/' scope swallows the typescript-blog, dotnet-blog and oldnewthing rows. Add other product feeds (/python/, /commandline/) one by one instead"),
+    "planet-postgresql": ("blocked_aggregator_offhost", "Blocked: every entry links to the original author's blog, so the host allowlist admits 0 of 30 entries. Use it to discover feeds to add, not as a source"),
+}
 MEDIUM_NOTE = "medium.com allows generic crawlers but blocks named AI bots; use our own UA and keep the rate low"
 PAYWALL = {"pragmatic-engineer", "bytebytego", "lwn"}
-AGGREGATOR = {"planet-python", "planet-postgresql", "this-week-in-rust", "devto"}
-MVP_FEEDS = {"cloudflare-blog", "netflix-techblog", "github-engineering", "julia-evans", "martin-fowler", "dan-luu", "rust-blog", "go-blog", "simon-willison", "realpython", "meta-engineering", "stripe-engineering"}
+AGGREGATOR = {"this-week-in-rust", "devto"}
+MVP_FEEDS = {"cloudflare-blog", "netflix-techblog", "github-engineering", "julia-evans", "martin-fowler", "rust-blog", "go-blog", "simon-willison", "realpython", "meta-engineering", "stripe-engineering"}
+
+# Hosts serving many products or several of our sources: no host-wide sitemap discovery.
+SHARED_HOSTS = {
+    "docs.aws.amazon.com", "learn.microsoft.com", "cloud.google.com", "docs.cloud.google.com",
+    "docs.rs", "doc.rust-lang.org", "developer.hashicorp.com", "huggingface.co", "pkg.go.dev",
+    "www.gnu.org", "hexdocs.pm", "docs.spring.io", "svelte.dev", "en.cppreference.com",
+    "docs.astral.sh", "www.w3.org", "www.rfc-editor.org", "docs.oracle.com", "developer.android.com",
+    "www.elastic.co", "aws.amazon.com", "docs.github.com", "www.digitalocean.com",
+}
 
 # ---------------------------------------------------------------- helpers
 def _path(v):
@@ -492,10 +529,20 @@ def add_table(tier, cat, slug, name, kind, base, hosts, prefixes, est, cap, ver,
         version_pin=ver, est_docs=est, max_docs=cap, recrawl_interval_days=interval_days,
         suggested_mvp=mvp, proposed_status=status, notes=note))
 
-def website(tier, cat, slug, name, base, hosts, prefixes, est, cap, ver, status, mvp, note, interval_days, depth=None):
+def website(tier, cat, slug, name, base, hosts, prefixes, est, cap, ver, status, mvp, note, interval_days, depth=None, sitemaps=None):
     cap = min(cap, TIER_CAP[tier])
+    if status.startswith(("blocked", "duplicate")):
+        mvp = "no"
+    # Host-wide sitemap discovery is only safe when the host is ours alone. On a
+    # shared or very large host the sitemap index lists thousands of child
+    # sitemaps for other products, and each one takes a frontier slot. Those
+    # rows use a service-specific sitemap (when one exists) or link discovery.
+    discover = hosts[0] not in SHARED_HOSTS
+    if sitemaps:
+        discover = False
     cfg = {"priority": PRIORITY[tier], "max_depth": depth if depth is not None else 8, "max_pages": cap,
-           "allowed_path_prefixes": prefixes, "discover_sitemaps": True,
+           "allowed_path_prefixes": prefixes, "discover_sitemaps": discover,
+           **({"sitemap_urls": sitemaps} if sitemaps else {}),
            "registry": {"tier": tier, "category": cat, "version_pin": ver, "est_docs": est,
                         "language_policy": "en_only_by_path", "status": status, "suggested_mvp": mvp == "yes",
                         "robots_reviewed": False, "terms_reviewed": False, "notes": note}}
@@ -522,12 +569,16 @@ for slug in order:
     if slug not in FIX:
         errors.append(f"{slug}: no fix entry (defaults used)")
     website(tier, r["category"], new_slug, r["name"], base, hosts, prefixes, est, cap, f.get("ver", "latest"), status,
-            r["suggested_mvp"] or "no", note, r["recrawl_interval_days"] or 30, depth=f.get("depth"))
+            r["suggested_mvp"] or "no", note, r["recrawl_interval_days"] or 30, depth=f.get("depth"), sitemaps=f.get("sitemaps"))
 
 for (tier, cat, slug, name, base, hosts, prefixes, est, cap, ver, note, mvp) in NEW:
     website(tier, cat, slug, name, base, hosts, prefixes, est, cap, ver, "new_candidate_disabled", mvp, note, 30)
 
 def feed(slug, name, cat, url, hosts, prefixes, note, status, mvp):
+    est = 30
+    if slug in BLOCKED_FEEDS:
+        status, note = BLOCKED_FEEDS[slug]
+        mvp, est = "no", 0
     fh = urlsplit(url).hostname
     allh = [fh] + [h for h in hosts if h != fh]
     if "medium.com" in allh: note = (note + "; " if note else "") + MEDIUM_NOTE
@@ -536,7 +587,7 @@ def feed(slug, name, cat, url, hosts, prefixes, note, status, mvp):
     cap = 1000 if slug not in AGGREGATOR else 300
     cfg = {"priority": PRIORITY["4"], "max_depth": 1, "max_pages": cap, "allowed_path_prefixes": prefixes,
            "follow_entry_links": True, "discover_sitemaps": False,
-           "registry": {"tier": "4", "category": cat, "version_pin": "n/a", "est_docs": 30,
+           "registry": {"tier": "4", "category": cat, "version_pin": "n/a", "est_docs": est,
                         "est_docs_with_sitemap_backfill": 300, "language_policy": "en_feed",
                         "status": status, "suggested_mvp": mvp == "yes", "feed_url_verified": False,
                         "robots_reviewed": False, "terms_reviewed": False, "notes": note}}
@@ -544,7 +595,7 @@ def feed(slug, name, cat, url, hosts, prefixes, note, status, mvp):
          "crawl_interval_seconds": DAY, "is_enabled": False, "config": cfg}
     if not allows(prefixes, url) and False: pass
     check_entry(e); blogs.append(e)
-    add_table("4", cat, slug, name, "rss", url, allh, prefixes, 30, cap, "n/a", status, mvp,
+    add_table("4", cat, slug, name, "rss", url, allh, prefixes, est, cap, "n/a", status, mvp,
               "rss_then_entry_fetch", note, 1)
 
 for slug in order:
@@ -581,9 +632,11 @@ apis.append({"slug": "stackoverflow-api-sample", "name": "Stack Overflow top-vot
   "base_url": "https://api.stackexchange.com/2.3/questions?order=desc&sort=votes&tagged=python&site=stackoverflow&filter=withbody&pagesize=100",
   "allowed_hosts": ["api.stackexchange.com", "stackoverflow.com"], "crawl_interval_seconds": 30 * DAY, "is_enabled": False,
   "config": {"priority": PRIORITY["S"], "max_depth": 0, "max_pages": 10_000, "discover_sitemaps": False,
-    "api": {"items_path": "items", "fields": {"url": "link", "title": "title", "body": "body", "author": "owner.display_name", "published_at": "creation_date"}, "body_format": "html"},
-    "registry": {"tier": "S", "category": "Discussions", "est_docs": 10_000, "status": "candidate_disabled", "license": "CC BY-SA 4.0 (attribution required)",
-      "notes": "Small live sample only; the bulk path is the offline dump (offline_datasets.json). Quota: 300 req/day without a key, 10K with one. Pagination uses page=N + has_more, which next_path can't express yet. Answers need /questions/{ids}/answers. creation_date is a unix timestamp: check parse_record_date handles ints."}}})
+    "api": {"items_path": "items", "fields": {"url": "link", "title": "title", "body": "body", "author": "owner.display_name", "published_at": "creation_date"}, "body_format": "html",
+            "metadata_fields": {"license": "content_license", "score": "score", "tags": "tags", "question_id": "question_id", "is_answered": "is_answered", "author_profile": "owner.link"}},
+    "registry": {"tier": "S", "category": "Discussions", "est_docs": 100, "est_docs_when_paginated": 10_000, "status": "candidate_disabled",
+      "license": "per post: CC BY-SA 2.5, 3.0 or 4.0, read from each item's content_license (stored in document metadata as license)",
+      "notes": "Small live sample only; the bulk path is the offline dump (offline_datasets.json). Counted as 100 docs: the first page is the only one reachable, because pagination uses page=N + has_more, which next_path can't express yet. creation_date is Unix seconds (parse_record_date now accepts them). Quota: 300 req/day without a key, 10K with one. Answers need /questions/{ids}/answers."}}})
 for e in apis: check_entry(e)
 
 offline = [{"slug": "stack-overflow-dump", "name": "Stack Overflow data dump", "kind": "dataset",
@@ -597,8 +650,29 @@ offline = [{"slug": "stack-overflow-dump", "name": "Stack Overflow data dump", "
   "status": "needs_terms_review",
   "notes": "The archive.org mirror stopped updating in 2024; newer dumps are distributed by Stack Exchange directly behind an account and their own terms. Read those terms before importing. Not a crawl seed: this needs an importer that writes straight to documents."}]
 
-# ---------------------------------------------------------------- write
-import os
+# ---------------------------------------------------------------- validate, then write
+_seedable = docs + blogs + apis
+_dupes = sorted(s for s, n in Counter(e["slug"] for e in _seedable + offline).items() if n > 1)
+if _dupes:
+    errors.append(f"duplicate slugs: {_dupes}")
+_owners = defaultdict(list)  # (host, prefix) -> slugs; two sources must never admit the same URLs
+for e in docs + blogs:
+    if e["config"]["registry"]["status"].startswith(("blocked", "duplicate")):
+        continue
+    for h in e["allowed_hosts"]:
+        for p in e["config"].get("allowed_path_prefixes", ["/"]):
+            _owners[(h, _path(p))].append(e["slug"])
+for (h, p), owners in sorted(_owners.items()):
+    for (h2, p2), owners2 in _owners.items():
+        if h2 == h and p2 != p and (p == "/" or p2.startswith(p.rstrip("/") + "/")) and set(owners2) - set(owners):
+            errors.append(f"overlapping scopes on {h}: {p} ({owners}) contains {p2} ({owners2})")
+    if len(set(owners)) > 1:
+        errors.append(f"same scope on {h}{p}: {sorted(set(owners))}")
+if errors:
+    print("Validation failed, nothing written:", file=sys.stderr)
+    for problem in errors:
+        print(" -", problem, file=sys.stderr)
+    sys.exit(1)
 os.makedirs(OUT, exist_ok=True)
 def dump(name, obj):
     with open(os.path.join(OUT, name), "w", encoding="utf-8", newline="\n") as f:
@@ -620,10 +694,6 @@ with open(os.path.join(OUT, "source_registry_draft.tsv"), "w", encoding="utf-8",
     for t in table:
         f.write("\t".join(str(t[c]).replace("\t", " ") for c in cols) + "\n")
 
-# slugs unique
-slugs = [t["slug"] for t in table]
-dupes = [s for s, n in Counter(slugs).items() if n > 1]
-if dupes: errors.append(f"duplicate slugs: {dupes}")
 
 # summary numbers
 def tot(pred, key):
@@ -636,6 +706,91 @@ for tier in ["1", "2", "3", "4", "S"]:
         cap=sum(int(t["max_docs"]) for t in ts if enabled_like(t)),
         mvp_n=sum(1 for t in ts if t["suggested_mvp"] == "yes"),
         mvp_est=sum(int(t["est_docs"]) for t in ts if t["suggested_mvp"] == "yes" and enabled_like(t)))
+# ---------------------------------------------------------------- readable summary
+rows=list(csv.DictReader(open(os.path.join(OUT,'source_registry_draft.tsv'),encoding='utf-8'),delimiter='\t'))
+ok=lambda r: not r['proposed_status'].startswith(('duplicate','blocked'))
+names={'1':'Tier 1: core language and platform docs','2':'Tier 2: frameworks and libraries','3':'Tier 3: infrastructure and tools','4':'Tier 4: engineering blogs (RSS)','S':'Special sources: discussions'}
+def n(x): return f"{int(x):,}"
+out=[]
+w=out.append
+w("# Source registry draft\n")
+w("Built from nish's 197-row draft (2026-11-07), with fixes and additions. Nothing here is enabled: every row has `is_enabled: false` so you can turn sources on in batches.\n")
+w("Files in this folder:\n")
+w("- `documentation.json`, `blogs.json`, `apis.json`: seedable rows in the exact `SourceCreate` shape (`kind` is website / rss / api). Copy into `../sources/` when you want them seeded. They sit in `drafts/` because `seed.py` loads every `*.json` in `sources/`.")
+w("- `offline_datasets.json`: the Stack Overflow dump. Not seedable; it needs an importer.")
+w("- `github_issue_repos.json`: 500 repo allowlist for the GitHub issues source (from GitHub search, top by stars, filtered).")
+w("- `source_registry_draft.tsv`: your column layout plus `version_pin`, `est_docs`, `max_docs`.")
+w("- `build_registry.py`: the generator. Edit the tables in it and run `python build_registry.py` (no arguments) instead of hand-editing JSON. It validates every row first and writes nothing if any check fails.")
+w("- `inputs/`: the generator's checked-in inputs (nish's original draft and the GitHub repo snapshot), so a clean checkout rebuilds the same files.\n")
+w("## Totals\n")
+w("| Tier | Sources | Est. docs | Sum of caps (max_docs) | MVP sources | MVP est. docs |")
+w("|---|---:|---:|---:|---:|---:|")
+T=[0,0,0,0,0]
+for t in ['1','2','3','4','S']:
+    rs=[r for r in rows if r['tier']==t]
+    a=[len(rs),sum(int(r['est_docs']) for r in rs if ok(r)),sum(int(r['max_docs']) for r in rs if ok(r)),sum(r['suggested_mvp']=='yes' for r in rs),sum(int(r['est_docs']) for r in rs if ok(r) and r['suggested_mvp']=='yes')]
+    T=[x+y for x,y in zip(T,a)]
+    w(f"| {names[t]} | {a[0]} | {n(a[1])} | {n(a[2])} | {a[3]} | {n(a[4])} |")
+w(f"| **All** | **{T[0]}** | **{n(T[1])}** | **{n(T[2])}** | **{T[3]}** | **{n(T[4])}** |\n")
+w("Reading the numbers: est. docs are my rough page counts, not measured. Blogs show ~30 docs each because an RSS feed only lists recent posts; turning on sitemap backfill per blog would add roughly 300 each (~50K total). Special sources count the Stack Overflow dump at the local-corpus size (500K) and GitHub issues at 100K.\n")
+w("- **Prototype (cloud seed):** the `suggested_mvp = yes` rows come to about **"+n(T[4])+" docs**, inside the 100-200K target.")
+w("- **Local corpus:** all tiers 1-3 are ~270K docs; add blogs with backfill (~50K), GitHub issues (~100K) and the filtered Stack Overflow dump (~500K) for roughly **900K**, inside the 500K-1M target.\n")
+w("## What I changed in your draft\n")
+for line in [
+"Hostnames: the markdown-link-mangled hosts (`[www.w3.org](...)`) are plain hostnames now.",
+"Real path scopes instead of `/` for react, angular, webpack, dart, docker, pkg.go.dev, fastapi, typer, polars, solid, redux-toolkit, react-router, elasticsearch (was all of `/docs/`), net-docs.",
+"Kept `/` where the host only serves docs (nestjs, zod, httpx, nats, flutter, homebrew, rails guides) and for SQLite. SQLite's docs are flat files like `/lang_select.html`, and `allowed_path_prefixes` matches whole path segments, so `/lang_` can't work. It uses depth 2 from docs.html plus a cap instead.",
+"Where I narrowed a scope I also moved `base_url` inside it (fastapi to /learn/, docker to /get-started/, typer, polars, solid). `discovery.py` silently drops a seed that falls outside its own prefixes, so the generator now checks this for every row.",
+"Overlaps removed: net-docs excludes `/dotnet/csharp/` (own source) and `/dotnet/api/`; cpp-reference is `/w/cpp` and c-reference is `/w/c` (no collision, prefix match is per segment); svelte-docs is `/docs/svelte/` so it doesn't swallow sveltekit; remix-docs disabled as a duplicate of React Router 7; rust-std is `/std/` only (not `/stable/std/`).",
+"Renamed `version-typescript` to `typescript-docs`.",
+"Version pins: Java 25 LTS, .NET 10 LTS, MySQL 8.4 LTS, OpenSSL 3.5 LTS (was `/master/`), Hibernate `/current/` (was every version), systemd `/latest/`, JUnit moved to docs.junit.org, PyTorch moved to docs.pytorch.org, bun.sh to bun.com (old hosts kept in `allowed_hosts` so redirects pass).",
+"http-rfcs now lists exact RFC files (9110-9114 plus WebSocket, OAuth 2, JWT, TLS 1.3, URI) instead of all of `/rfc/`.",
+"apple-swiftui-docs disabled: developer.apple.com/documentation is a JavaScript app and returns an empty page to an HTML fetch.",
+"Blog rows now point `base_url` at the real feed URL (the RSS parser needs the feed, not the homepage), with `follow_entry_links: true` and `max_depth: 1`.",
+"The `stack-overflow-dump` and `curated-engineering-rss` rows didn't fit the schema (`dataset` and `manifest` aren't valid kinds). The dump moved to `offline_datasets.json`; the manifest is replaced by the 168 real feed rows.",
+"Added 56 docs sources (web.dev, dev.java, more docs.rs crates, React Native, Expo, Electron, Ruff, mypy, Keras, JAX, Vault, Istio, Argo CD, Cloudflare, Supabase, Firebase, DuckDB, gRPC, OWASP cheat sheets, DigitalOcean tutorials and others) and 138 blog feeds.",
+]: w("- "+line)
+w("\n## Review fixes (2026-11-08)\n")
+for line in [
+"**Seeds that redirected out of scope:** C and C++ now seed `/c` and `/cpp` (cppreference moved off `/w/`; the old prefixes stay allowed so redirects land in scope). Django seeds `/en/6.1/` because `/en/stable/` redirects there. Redux Toolkit moved to `redux.js.org/toolkit/` and Pydantic to `pydantic.dev/docs/validation/latest/`; their hosts, seeds and scopes changed together.",
+"**AWS:** each aws-* row lists its own guide sitemap in `sitemap_urls` and has `discover_sitemaps: false`. The host-wide index lists ~13,900 child sitemaps and would eat each source's budget. The same switch-off now applies to every shared or very large host (learn.microsoft.com, cloud.google.com, docs.rs, doc.rust-lang.org, developer.hashicorp.com, huggingface.co, pkg.go.dev and others; see `SHARED_HOSTS`).",
+"**AWS crawl delay:** `politeness_policy.py` now has `HOST_MIN_INTERVAL_SECONDS` with `docs.aws.amazon.com: 5.0`. Both the in-memory limiter and the shared PostgreSQL limiter use it. The robots parser still ignores `Crawl-delay`, so hosts that ask for one are listed there by hand.",
+"**Blocked (excluded from counts):** swift-docs (DocC page, empty body), dan-luu and vercel-blog (feeds over the 2 MB parser limit), planet-python and planet-postgresql (every entry is on another host). microsoft-devblogs is disabled because its `/` scope swallowed three product feeds.",
+"**Stack Overflow sample:** the mapping now keeps `content_license` (posts carry CC BY-SA 2.5, 3.0 or 4.0), score, tags and ids in document metadata, via a new `metadata_fields` option in the JSON API parser. `parse_record_date` now reads Unix seconds. The estimate is 100 docs, the one page reachable until pagination works.",
+"**One owner per URL:** go.dev/blog/, react.dev/blog and nextjs.org/blog now belong only to their feeds. inside-rust and the Baeldung feed were dropped because other rows already cover them. DuckDB's blog is scoped to its year paths, and the Flutter feed moved to blog.flutter.dev. The generator now fails when two live rows can admit the same host and path.",
+]: w("- "+line)
+w("\n## robots.txt spot check (20 hosts)\n")
+for line in [
+"Allowed for a generic crawler: MDN, docs.python.org (blocks only EOL `/3.x/` trees), learn.microsoft.com, php.net, pkg.go.dev, docs.rs, sqlite.org, docs.github.com (no rules at all), docs.aws.amazon.com, cloud.google.com, huggingface.co, digitalocean.com, man7.org, kubernetes.io, medium.com.",
+"**docs.aws.amazon.com sets `Crawl-delay: 5`.** Six aws-* sources share that host. The 5-second gap is now enforced per host in the crawler (see Review fixes).",
+"**en.cppreference.com** allows crawling but says `Content-Signal: search=yes, ai-train=no` and blocks ~35 named AI bots. Search indexing is fine; don't let the corpus feed model training.",
+"**medium.com** allows generic crawlers but blocks named AI bots. Use your own user agent and a low rate.",
+"Couldn't verify: docs.oracle.com (59 KB file, only partly readable), www.gnu.org (refused the checker), stackoverflow.com (blocked the checker), wiki.archlinux.org (bot wall, so I left the Arch wiki out).",
+"The other ~370 hosts are unchecked. Every row has `robots_reviewed: false` and every feed has `feed_url_verified: false`. Feed URLs are from memory, so expect a few to 404 on first run.",
+]: w("- "+line)
+w("\n## Crawler gaps this list runs into\n")
+for line in [
+"**No deny list.** Hugging Face, ClickHouse, Scala docs and TensorFlow mix versioned or translated trees under the same prefix. Their caps bound the damage, but an `excluded_path_prefixes` key (plus stripping `?hl=` and `?view=` in the URL normalizer) would fix it properly.",
+"**One base_url per source.** That is why AWS, GCP, Azure and docs.rs are split into many rows. A `seed_urls` list in config would let them collapse.",
+"**Shared hosts.** doc.rust-lang.org (~32K of caps), learn.microsoft.com (~23K), docs.rs (~13K) and docs.aws.amazon.com (~13K) each serve several sources. `max_pages` is per source, so a per-host cap still needs adding.",
+"**GitHub issues API:** no auth header support (60 requests/hour without a token), pagination is in the `Link` header which `next_path` can't read, and one source can only hold one repo URL. Details are in `apis.json`.",
+"**Stack Overflow:** the archive.org mirror stopped updating in 2024. Newer dumps come from Stack Exchange behind an account and their own terms, so read those before importing. The content license is still CC BY-SA, which means keeping author, link and license on every document.",
+"Existing seeded slugs (mdn, python-docs, fastapi, django, rust-book) keep their names. `seed.py` skips slugs that already exist, so new scopes for those five only take effect through `update_source`.",
+]: w("- "+line)
+for t in ['1','2','3','4','S']:
+    rs=[r for r in rows if r['tier']==t]
+    w(f"\n## {names[t]} ({len(rs)})\n")
+    if t=='4':
+        w("| Slug | Name | Category | Feed URL | MVP | Notes |"); w("|---|---|---|---|---|---|")
+        for r in rs: w(f"| `{r['slug']}` | {r['name']} | {r['category']} | {r['base_url']} | {r['suggested_mvp']} | {r['notes'][:120]} |")
+    else:
+        w("| Slug | Name | Host | Path scope | Version | Est. docs | Max docs | MVP | Notes |"); w("|---|---|---|---|---|---:|---:|---|---|")
+        for r in rs:
+            sc=r['allowed_path_scope']; sc=(sc[:70]+' …') if len(sc)>70 else sc
+            st='' if ok(r) else f"**{r['proposed_status']}**. "
+            w(f"| `{r['slug']}` | {r['name']} | {r['allowed_hosts'].split(',')[0]} | `{sc}` | {r['version_pin']} | {n(r['est_docs'])} | {n(r['max_docs'])} | {r['suggested_mvp']} | {st}{r['notes'][:140]} |")
+open(os.path.join(OUT,'REGISTRY_SUMMARY.md'),'w',encoding='utf-8',newline='\n').write("\n".join(out)+"\n")
+
 json.dump({"stats": stats, "errors": errors, "repos": len(repos),
            "top_hosts": sorted(host_load.items(), key=lambda x: -x[1])[:12],
            "counts": {"docs": len(docs), "blogs": len(blogs), "apis": len(apis)}}, sys.stdout, indent=1)

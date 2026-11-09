@@ -25,6 +25,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
 | [ADR-0031](ADR-0031-same-origin-search-and-explicit-demo.md) | decision | Use a validated same-origin search bridge with explicit demo mode | accepted |
+| [ADR-0048](ADR-0048-ground-ai-overviews-in-signed-results.md) | decision | Ground AI overviews in signed search results with bounded Groq usage | accepted |
 | [INC-0033](INC-0033-upstream-timeout-ignored-on-first-hung-request.md) | incident | Upstream timeout ignored on a Next.js server's first hung request | resolved |
 
 ## Decisions to record
@@ -37,3 +38,5 @@ The identified decisions for this feature are indexed above. Record new decision
 - Keep timeout, no-store and redirect behavior when changing the HTTP abstraction.
 - Do not remove `abortableFetch` in `lib/axios.js` or call FastAPI with bare `fetch`; re-run `npm run test:integration` (cold-start timeout case) after Next.js upgrades (INC-0033).
 - Only offer spelling suggestions; never rewrite the user's query (ADR-0045).
+- AI overviews use server-signed live result excerpts and valid citations; render model text as plain text (ADR-0048).
+- Move overview reservations/cooldowns/cache to an atomic shared store before running more than one web process. Only trust proxy-overwritten client-IP headers.

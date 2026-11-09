@@ -81,6 +81,14 @@ Errors:
 
 Upstream requests have a 10-second deadline, `Accept: application/json`, no cache, and no automatic retries. Provider errors or credentials are not forwarded to clients. A configured but broken backend never falls back to fixtures.
 
+### POST /api/search/overview
+
+Optional Groq-powered overview of existing live search results. When `GROQ_API_KEY` is configured, live `/api/search` responses may include `overviewToken`, a signed ten-minute evidence snapshot. Post JSON `{ "token": "<overviewToken>" }` to this endpoint. Arbitrary client-supplied queries, snippets and URLs are not accepted. No additional search or page fetch occurs.
+
+Success returns `{ "overview": { "paragraphs": [{ "text": "Plain-text answer", "sources": [1] }], "sources": [{ "id": 1, "title": "...", "url": "https://...", "snippet": "...", "kind": "docs" }] } }`. Insufficient evidence or a disabled feature returns `{ "overview": null }`. Demo searches never issue a token. Every paragraph requires valid source IDs; generated HTML/Markdown is rendered as plain text.
+
+Errors: 400 invalid/expired context, 403 cross-origin browser request, 413 body over 25 KB, 415 non-JSON content type, 429 application/provider limit (`Retry-After` seconds), 502 invalid/unavailable provider response, 504 provider timeout. All responses are `no-store`. Requests time out after 12 seconds and are never automatically retried. See [frontend setup and quota boundaries](../README.md#ai-overview-groq) for the server-wide and client budgets, caching, trusted proxy configuration, and single-process deployment requirement.
+
 ### GET /api/search/suggest
 
 "Did you mean" for the results page. Forwards `q` to FastAPI `GET /search/suggest` and returns the corrected query, or `suggestion: null` when there is nothing to suggest. It never changes what `/api/search` returns.

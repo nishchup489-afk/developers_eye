@@ -739,7 +739,7 @@ Network-free pytest tests for how missing pages are handled.
 
 | Test | What it checks |
 | --- | --- |
-| `test_missing_pages_are_retained_as_unavailable_and_removed_from_search` (404, 410) | When `_finalize` handles a 404 or 410, it issues an `UPDATE document` (keeping the row and linking `last_crawl_target_id`), deletes the document's `search_index` row, never runs `DELETE FROM document`, and still completes the target. |
+| `test_missing_pages_are_marked_unavailable_without_index_deletion` (404, 410) | When `_finalize` handles a 404 or 410, it issues an `UPDATE document` (keeping the row and linking `last_crawl_target_id`), deletes the document's `search_index` row, never runs `DELETE FROM document`, and still completes the target. |
 | `test_successful_observation_restores_document_availability` | `upsert_document` returns the document ID and its SQL resets `is_available`, `unavailable_at`, and `unavailable_http_status`, so a page that comes back becomes available again. |
 
 #### test_deadlock_retry.py

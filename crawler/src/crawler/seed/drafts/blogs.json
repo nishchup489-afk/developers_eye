@@ -372,15 +372,15 @@
         "tier": "4",
         "category": "Engineering blogs",
         "version_pin": "n/a",
-        "est_docs": 30,
+        "est_docs": 0,
         "est_docs_with_sitemap_backfill": 300,
         "language_policy": "en_feed",
-        "status": "candidate_disabled",
+        "status": "blocked_feed_over_2mb",
         "suggested_mvp": false,
         "feed_url_verified": false,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "Technical docs and engineering posts"
+        "notes": "Blocked: the feed is 4.75 MB, above the parser's 2 MB limit"
       }
     }
   },
@@ -478,15 +478,15 @@
         "tier": "4",
         "category": "Engineering blogs",
         "version_pin": "n/a",
-        "est_docs": 30,
+        "est_docs": 0,
         "est_docs_with_sitemap_backfill": 300,
         "language_policy": "en_feed",
-        "status": "candidate_disabled",
+        "status": "duplicate_disabled",
         "suggested_mvp": false,
         "feed_url_verified": false,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "Product-specific technical posts only"
+        "notes": "Disabled: this is the all-products feed, and its '/' scope swallows the typescript-blog, dotnet-blog and oldnewthing rows. Add other product feeds (/python/, /commandline/) one by one instead"
       }
     }
   },
@@ -828,15 +828,15 @@
         "tier": "4",
         "category": "Engineering blogs",
         "version_pin": "n/a",
-        "est_docs": 30,
+        "est_docs": 0,
         "est_docs_with_sitemap_backfill": 300,
         "language_policy": "en_feed",
-        "status": "candidate_disabled",
-        "suggested_mvp": true,
+        "status": "blocked_feed_over_2mb",
+        "suggested_mvp": false,
         "feed_url_verified": false,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "Long-form engineering essays"
+        "notes": "Blocked: the feed is 6.66 MB, above the parser's 2 MB limit (it carries full post bodies). Needs a bigger limit for feeds or a sitemap crawl of danluu.com"
       }
     }
   },
@@ -923,7 +923,7 @@
     "config": {
       "priority": 70,
       "max_depth": 1,
-      "max_pages": 300,
+      "max_pages": 1000,
       "allowed_path_prefixes": [
         "/"
       ],
@@ -933,15 +933,15 @@
         "tier": "4",
         "category": "Engineering blogs",
         "version_pin": "n/a",
-        "est_docs": 30,
+        "est_docs": 0,
         "est_docs_with_sitemap_backfill": 300,
         "language_policy": "en_feed",
-        "status": "candidate_disabled",
+        "status": "blocked_aggregator_offhost",
         "suggested_mvp": false,
         "feed_url_verified": false,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "Aggregator: index links only; avoid duplicate content; aggregator: entries link to other hosts, so follow_entry_links only fetches same-host pages"
+        "notes": "Blocked: every entry links to the original author's blog, so the host allowlist admits 0 of 25 entries. Use it to discover feeds to add, not as a source"
       }
     }
   },
@@ -2219,7 +2219,7 @@
     "config": {
       "priority": 70,
       "max_depth": 1,
-      "max_pages": 300,
+      "max_pages": 1000,
       "allowed_path_prefixes": [
         "/"
       ],
@@ -2229,15 +2229,15 @@
         "tier": "4",
         "category": "Databases",
         "version_pin": "n/a",
-        "est_docs": 30,
+        "est_docs": 0,
         "est_docs_with_sitemap_backfill": 300,
         "language_policy": "en_feed",
-        "status": "new_candidate_disabled",
+        "status": "blocked_aggregator_offhost",
         "suggested_mvp": false,
         "feed_url_verified": false,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "aggregator: entries link to other hosts, so follow_entry_links only fetches same-host pages"
+        "notes": "Blocked: every entry links to the original author's blog, so the host allowlist admits 0 of 30 entries. Use it to discover feeds to add, not as a source"
       }
     }
   },
@@ -2256,7 +2256,15 @@
       "max_depth": 1,
       "max_pages": 1000,
       "allowed_path_prefixes": [
-        "/"
+        "/2019",
+        "/2020",
+        "/2021",
+        "/2022",
+        "/2023",
+        "/2024",
+        "/2025",
+        "/2026",
+        "/2027"
       ],
       "follow_entry_links": true,
       "discover_sitemaps": false,
@@ -2298,41 +2306,6 @@
       "registry": {
         "tier": "4",
         "category": "Databases",
-        "version_pin": "n/a",
-        "est_docs": 30,
-        "est_docs_with_sitemap_backfill": 300,
-        "language_policy": "en_feed",
-        "status": "new_candidate_disabled",
-        "suggested_mvp": false,
-        "feed_url_verified": false,
-        "robots_reviewed": false,
-        "terms_reviewed": false,
-        "notes": ""
-      }
-    }
-  },
-  {
-    "slug": "inside-rust",
-    "name": "Inside Rust",
-    "kind": "rss",
-    "base_url": "https://blog.rust-lang.org/inside-rust/feed.xml",
-    "allowed_hosts": [
-      "blog.rust-lang.org"
-    ],
-    "crawl_interval_seconds": 86400,
-    "is_enabled": false,
-    "config": {
-      "priority": 70,
-      "max_depth": 1,
-      "max_pages": 1000,
-      "allowed_path_prefixes": [
-        "/inside-rust/"
-      ],
-      "follow_entry_links": true,
-      "discover_sitemaps": false,
-      "registry": {
-        "tier": "4",
-        "category": "Official language blogs",
         "version_pin": "n/a",
         "est_docs": 30,
         "est_docs_with_sitemap_backfill": 300,
@@ -2877,9 +2850,8 @@
     "slug": "flutter-blog",
     "name": "Flutter Blog",
     "kind": "rss",
-    "base_url": "https://medium.com/feed/flutter",
+    "base_url": "https://blog.flutter.dev/feed",
     "allowed_hosts": [
-      "medium.com",
       "blog.flutter.dev"
     ],
     "crawl_interval_seconds": 86400,
@@ -2905,7 +2877,7 @@
         "feed_url_verified": false,
         "robots_reviewed": false,
         "terms_reviewed": false,
-        "notes": "medium.com allows generic crawlers but blocks named AI bots; use our own UA and keep the rate low"
+        "notes": ""
       }
     }
   },
@@ -5732,41 +5704,6 @@
       "max_pages": 1000,
       "allowed_path_prefixes": [
         "/news/"
-      ],
-      "follow_entry_links": true,
-      "discover_sitemaps": false,
-      "registry": {
-        "tier": "4",
-        "category": "Publications",
-        "version_pin": "n/a",
-        "est_docs": 30,
-        "est_docs_with_sitemap_backfill": 300,
-        "language_policy": "en_feed",
-        "status": "new_candidate_disabled",
-        "suggested_mvp": false,
-        "feed_url_verified": false,
-        "robots_reviewed": false,
-        "terms_reviewed": false,
-        "notes": ""
-      }
-    }
-  },
-  {
-    "slug": "baeldung-feed",
-    "name": "Baeldung feed",
-    "kind": "rss",
-    "base_url": "https://www.baeldung.com/feed",
-    "allowed_hosts": [
-      "www.baeldung.com"
-    ],
-    "crawl_interval_seconds": 86400,
-    "is_enabled": false,
-    "config": {
-      "priority": 70,
-      "max_depth": 1,
-      "max_pages": 1000,
-      "allowed_path_prefixes": [
-        "/"
       ],
       "follow_entry_links": true,
       "discover_sitemaps": false,

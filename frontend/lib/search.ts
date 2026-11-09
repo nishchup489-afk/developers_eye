@@ -26,6 +26,7 @@ export type SearchResponse = {
   results: SearchResult[];
   took_ms: number;
   mode: "demo" | "live";
+  overviewToken?: string;
 };
 export const sourceNames: Record<Source, string> = {
   docs: "Documentation",

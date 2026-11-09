@@ -8,22 +8,23 @@ Files in this folder:
 - `offline_datasets.json`: the Stack Overflow dump. Not seedable; it needs an importer.
 - `github_issue_repos.json`: 500 repo allowlist for the GitHub issues source (from GitHub search, top by stars, filtered).
 - `source_registry_draft.tsv`: your column layout plus `version_pin`, `est_docs`, `max_docs`.
-- `build_registry.py`: the generator. Edit the tables in it and rerun instead of hand-editing JSON.
+- `build_registry.py`: the generator. Edit the tables in it and run `python build_registry.py` (no arguments) instead of hand-editing JSON. It validates every row first and writes nothing if any check fails.
+- `inputs/`: the generator's checked-in inputs (nish's original draft and the GitHub repo snapshot), so a clean checkout rebuilds the same files.
 
 ## Totals
 
 | Tier | Sources | Est. docs | Sum of caps (max_docs) | MVP sources | MVP est. docs |
 |---|---:|---:|---:|---:|---:|
-| Tier 1: core language and platform docs | 39 | 94,360 | 143,470 | 31 | 88,160 |
-| Tier 2: frameworks and libraries | 107 | 75,415 | 128,970 | 37 | 23,925 |
+| Tier 1: core language and platform docs | 39 | 94,200 | 142,970 | 30 | 88,000 |
+| Tier 2: frameworks and libraries | 107 | 75,265 | 128,670 | 36 | 23,775 |
 | Tier 3: infrastructure and tools | 75 | 99,481 | 157,005 | 5 | 4,520 |
-| Tier 4: engineering blogs (RSS) | 168 | 5,040 | 165,200 | 12 | 360 |
-| Special sources: discussions | 3 | 510,000 | 510,000 | 0 | 0 |
-| **All** | **392** | **784,296** | **1,104,645** | **85** | **116,965** |
+| Tier 4: engineering blogs (RSS) | 166 | 4,830 | 159,600 | 11 | 330 |
+| Special sources: discussions | 3 | 500,100 | 510,000 | 0 | 0 |
+| **All** | **390** | **773,876** | **1,098,245** | **82** | **116,625** |
 
 Reading the numbers: est. docs are my rough page counts, not measured. Blogs show ~30 docs each because an RSS feed only lists recent posts; turning on sitemap backfill per blog would add roughly 300 each (~50K total). Special sources count the Stack Overflow dump at the local-corpus size (500K) and GitHub issues at 100K.
 
-- **Prototype (cloud seed):** the `suggested_mvp = yes` rows come to about **116,965 docs**, inside the 100-200K target.
+- **Prototype (cloud seed):** the `suggested_mvp = yes` rows come to about **116,625 docs**, inside the 100-200K target.
 - **Local corpus:** all tiers 1-3 are ~270K docs; add blogs with backfill (~50K), GitHub issues (~100K) and the filtered Stack Overflow dump (~500K) for roughly **900K**, inside the 500K-1M target.
 
 ## What I changed in your draft
@@ -39,12 +40,21 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 - apple-swiftui-docs disabled: developer.apple.com/documentation is a JavaScript app and returns an empty page to an HTML fetch.
 - Blog rows now point `base_url` at the real feed URL (the RSS parser needs the feed, not the homepage), with `follow_entry_links: true` and `max_depth: 1`.
 - The `stack-overflow-dump` and `curated-engineering-rss` rows didn't fit the schema (`dataset` and `manifest` aren't valid kinds). The dump moved to `offline_datasets.json`; the manifest is replaced by the 168 real feed rows.
-- Added 56 docs sources (web.dev, dev.java, more docs.rs crates, React Native, Expo, Electron, Ruff, mypy, Keras, JAX, Vault, Istio, Argo CD, Cloudflare, Supabase, Firebase, DuckDB, gRPC, OWASP cheat sheets, DigitalOcean tutorials and others) and 140 blog feeds.
+- Added 56 docs sources (web.dev, dev.java, more docs.rs crates, React Native, Expo, Electron, Ruff, mypy, Keras, JAX, Vault, Istio, Argo CD, Cloudflare, Supabase, Firebase, DuckDB, gRPC, OWASP cheat sheets, DigitalOcean tutorials and others) and 138 blog feeds.
+
+## Review fixes (2026-11-08)
+
+- **Seeds that redirected out of scope:** C and C++ now seed `/c` and `/cpp` (cppreference moved off `/w/`; the old prefixes stay allowed so redirects land in scope). Django seeds `/en/6.1/` because `/en/stable/` redirects there. Redux Toolkit moved to `redux.js.org/toolkit/` and Pydantic to `pydantic.dev/docs/validation/latest/`; their hosts, seeds and scopes changed together.
+- **AWS:** each aws-* row lists its own guide sitemap in `sitemap_urls` and has `discover_sitemaps: false`. The host-wide index lists ~13,900 child sitemaps and would eat each source's budget. The same switch-off now applies to every shared or very large host (learn.microsoft.com, cloud.google.com, docs.rs, doc.rust-lang.org, developer.hashicorp.com, huggingface.co, pkg.go.dev and others; see `SHARED_HOSTS`).
+- **AWS crawl delay:** `politeness_policy.py` now has `HOST_MIN_INTERVAL_SECONDS` with `docs.aws.amazon.com: 5.0`. Both the in-memory limiter and the shared PostgreSQL limiter use it. The robots parser still ignores `Crawl-delay`, so hosts that ask for one are listed there by hand.
+- **Blocked (excluded from counts):** swift-docs (DocC page, empty body), dan-luu and vercel-blog (feeds over the 2 MB parser limit), planet-python and planet-postgresql (every entry is on another host). microsoft-devblogs is disabled because its `/` scope swallowed three product feeds.
+- **Stack Overflow sample:** the mapping now keeps `content_license` (posts carry CC BY-SA 2.5, 3.0 or 4.0), score, tags and ids in document metadata, via a new `metadata_fields` option in the JSON API parser. `parse_record_date` now reads Unix seconds. The estimate is 100 docs, the one page reachable until pagination works.
+- **One owner per URL:** go.dev/blog/, react.dev/blog and nextjs.org/blog now belong only to their feeds. inside-rust and the Baeldung feed were dropped because other rows already cover them. DuckDB's blog is scoped to its year paths, and the Flutter feed moved to blog.flutter.dev. The generator now fails when two live rows can admit the same host and path.
 
 ## robots.txt spot check (20 hosts)
 
 - Allowed for a generic crawler: MDN, docs.python.org (blocks only EOL `/3.x/` trees), learn.microsoft.com, php.net, pkg.go.dev, docs.rs, sqlite.org, docs.github.com (no rules at all), docs.aws.amazon.com, cloud.google.com, huggingface.co, digitalocean.com, man7.org, kubernetes.io, medium.com.
-- **docs.aws.amazon.com sets `Crawl-delay: 5`.** Six aws-* sources share that host, so politeness has to be per host, not per source.
+- **docs.aws.amazon.com sets `Crawl-delay: 5`.** Six aws-* sources share that host. The 5-second gap is now enforced per host in the crawler (see Review fixes).
 - **en.cppreference.com** allows crawling but says `Content-Signal: search=yes, ai-train=no` and blocks ~35 named AI bots. Search indexing is fine; don't let the corpus feed model training.
 - **medium.com** allows generic crawlers but blocks named AI bots. Use your own user agent and a low rate.
 - Couldn't verify: docs.oracle.com (59 KB file, only partly readable), www.gnu.org (refused the checker), stackoverflow.com (blocked the checker), wiki.archlinux.org (bot wall, so I left the Arch wiki out).
@@ -75,13 +85,13 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 | `rust-std` | Rust standard library | doc.rust-lang.org | `/std/` | stable | 25,000 | 30,000 | yes | /std/ only; /stable/std/ and /nightly/ are duplicates, out of scope. Host doc.rust-lang.org shared by 5 sources, host cap 40K |
 | `rust-reference` | Rust Reference | doc.rust-lang.org | `/reference/` | stable | 150 | 400 | yes | Language reference |
 | `rust-by-example` | Rust By Example | doc.rust-lang.org | `/rust-by-example/` | stable | 200 | 400 | yes | Example-driven pages |
-| `go-docs` | Go documentation | go.dev | `/doc/ /ref/ /blog/` | latest | 500 | 1,500 | yes | Added /ref/ (spec, memory model) and /blog/ (official blog) |
+| `go-docs` | Go documentation | go.dev | `/doc/ /ref/` | latest | 400 | 1,200 | yes | Added /ref/ (spec, memory model). /blog/ belongs to the go-blog feed only, so the two sources never write the same URL |
 | `go-stdlib` | Go standard library package docs | pkg.go.dev | `/std /archive /bufio /builtin /bytes /cmp /compress /container /contex …` | latest Go release | 300 | 600 | yes | Top-level std package names as exact path prefixes, so third-party module paths (/github.com/...) stay out |
 | `java-docs` | Java SE Documentation | docs.oracle.com | `/en/java/javase/25/` | JDK 25 LTS | 6,000 | 10,000 | yes | Pinned to 25 LTS. robots.txt is 59 KB and was only partly readable; re-check /en/java/javase/25/ before enabling |
 | `kotlin-docs` | Kotlin documentation | kotlinlang.org | `/docs/ /api/core/kotlin-stdlib/` | latest | 3,000 | 6,000 | yes | Added stdlib API reference |
-| `swift-docs` | Swift documentation | docs.swift.org | `/swift-book/` | Swift 6.x | 60 | 200 | yes | Swift Programming Language book |
-| `cpp-reference` | C++ reference | en.cppreference.com | `/w/cpp` | living | 5,000 | 8,000 | yes | Scoped to /w/cpp so it doesn't overlap c-reference. robots.txt: Content-Signal search=yes, ai-train=no; blocks ~35 named AI bots. Search ind |
-| `c-reference` | C reference | en.cppreference.com | `/w/c` | living | 1,200 | 2,000 | yes | Prefix /w/c matches /w/c/... only (segment match), so no collision with /w/cpp |
+| `swift-docs` | Swift documentation | docs.swift.org | `/swift-book/` | Swift 6.x | 0 | 200 | no | **blocked_empty_body**. Blocked: the Swift book is a DocC app and the HTML parser extracts an empty body. Workable input: the book's markdown in github.com/swiftlan |
+| `cpp-reference` | C++ reference | en.cppreference.com | `/cpp /w/cpp` | living | 5,000 | 8,000 | yes | /w/cpp now redirects to /cpp, so the seed is /cpp and both prefixes are allowed (old links still redirect in). Doesn't overlap c-reference.  |
+| `c-reference` | C reference | en.cppreference.com | `/c /w/c` | living | 1,200 | 2,000 | yes | /w/c now redirects to /c. Prefix /c matches /c/... only (segment match), so no collision with /cpp |
 | `csharp-docs` | C# language docs | learn.microsoft.com | `/en-us/dotnet/csharp/` | C# 14 / .NET 10 | 1,500 | 3,000 | yes | C# only |
 | `net-docs` | .NET APIs and fundamentals | learn.microsoft.com | `/en-us/dotnet/fundamentals/ /en-us/dotnet/core/ /en-us/dotnet/standard …` | .NET 10 LTS | 8,000 | 12,000 | yes | Excludes /en-us/dotnet/csharp/ (own source) and /en-us/dotnet/api/ (200K+ API pages; add later with its own cap). learn.microsoft.com host s |
 | `php-docs` | PHP Manual | www.php.net | `/manual/en/` | 8.x | 12,000 | 15,000 | yes | English manual only |
@@ -107,8 +117,8 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 
 | Slug | Name | Host | Path scope | Version | Est. docs | Max docs | MVP | Notes |
 |---|---|---|---|---|---:|---:|---|---|
-| `react-docs` | React | react.dev | `/learn /reference /blog` | 19.x | 300 | 800 | yes | Allowlist /learn and /reference |
-| `nextjs-docs` | Next.js | nextjs.org | `/docs /learn /blog` | latest (App Router) | 700 | 2,000 | yes | /docs/pages/ is the legacy router; keep or drop |
+| `react-docs` | React | react.dev | `/learn /reference` | 19.x | 250 | 700 | yes | /blog belongs to the react-blog feed |
+| `nextjs-docs` | Next.js | nextjs.org | `/docs /learn` | latest (App Router) | 600 | 1,800 | yes | /docs/pages/ is the legacy router; keep or drop. /blog belongs to the nextjs-blog feed |
 | `vue-docs` | Vue | vuejs.org | `/guide/ /api/ /tutorial/ /examples/` | 3.x | 200 | 500 | yes | Official guide |
 | `angular-docs` | Angular | angular.dev | `/overview /guide /api /tutorials /reference /tools /best-practices /cl …` | latest | 1,500 | 3,000 | yes | Allowlist /guide and /api |
 | `svelte-docs` | Svelte | svelte.dev | `/docs/svelte/` | 5.x | 150 | 400 | yes | Narrowed to /docs/svelte/ so it doesn't overlap sveltekit-docs |
@@ -120,9 +130,9 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 | `nuxt-docs` | Nuxt | nuxt.com | `/docs` | 4.x | 400 | 1,000 | yes | nuxt.com/docs is current; /docs/3.x/ duplicates if present |
 | `react-router-docs` | React Router | reactrouter.com | `/home /start /api /tutorials /explanation /how-to /community /upgradin …` | 7.x | 300 | 800 | yes | RR7 is where Remix v2 went; this replaces remix-docs |
 | `solid-docs` | SolidJS | docs.solidjs.com | `/quick-start /concepts /reference /guides /configuration /advanced-con …` | 1.x | 300 | 600 | yes | Docs only |
-| `redux-toolkit-docs` | Redux Toolkit | redux-toolkit.js.org | `/introduction /tutorials /usage /api /rtk-query` | 2.x | 150 | 400 | yes | Docs only |
+| `redux-toolkit-docs` | Redux Toolkit | redux.js.org | `/toolkit/` | 2.x | 150 | 400 | yes | redux-toolkit.js.org now 302s to redux.js.org/toolkit/ |
 | `tanstack-query-docs` | TanStack Query | tanstack.com | `/query/latest/docs/` | v5 (latest) | 300 | 600 | yes | All frameworks under /latest/docs/; restrict to /framework/react/ if dupes hurt |
-| `remix-docs` | Remix | remix.run | `/docs/en/main` | v2 (legacy) | 0 | 200 | yes | **duplicate_disabled**. Disabled: Remix v2 merged into React Router 7, covered by react-router-docs |
+| `remix-docs` | Remix | remix.run | `/docs/en/main` | v2 (legacy) | 0 | 200 | no | **duplicate_disabled**. Disabled: Remix v2 merged into React Router 7, covered by react-router-docs |
 | `playwright-docs` | Playwright | playwright.dev | `/docs/` | latest | 400 | 800 | later | English test docs |
 | `vitest-docs` | Vitest | vitest.dev | `/guide/ /api/ /config/` | latest | 150 | 400 | later | Guides and API |
 | `jest-docs` | Jest | jestjs.io | `/docs/` | current | 150 | 300 | later | /docs/next/ and /docs/29.x/ are versioned dupes; jestjs.io/docs/ is current |
@@ -131,11 +141,11 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 | `storybook-docs` | Storybook | storybook.js.org | `/docs` | latest | 400 | 800 | later | Component-development docs |
 | `eslint-docs` | ESLint | eslint.org | `/docs/latest/` | 9.x | 600 | 1,000 | later | Current rules and guides |
 | `prettier-docs` | Prettier | prettier.io | `/docs/` | 3.x | 40 | 100 | later | Official docs |
-| `django` | Django | docs.djangoproject.com | `/en/stable/` | stable (5.2/6.0) | 800 | 2,000 | yes | Already seeded with no path prefix; seed.py skips existing slugs, so this prefix only takes effect via update_source |
+| `django` | Django | docs.djangoproject.com | `/en/6.1/ /en/stable/` | 6.1 | 800 | 2,000 | yes | /en/stable/ redirects to /en/6.1/, so the seed is the pinned version; bump both when 6.2 ships. Already seeded with no path prefix; seed.py  |
 | `flask-docs` | Flask | flask.palletsprojects.com | `/en/stable/` | stable | 150 | 300 | yes | Stable docs |
 | `fastapi` | FastAPI | fastapi.tiangolo.com | `/learn/ /tutorial/ /advanced/ /reference/ /how-to/ /deployment/ /fasta …` | latest | 300 | 600 | yes | English prefixes only (translations live under /es/, /zh/, /ja/ ...). Already seeded; apply via update_source |
 | `sqlalchemy-docs` | SQLAlchemy | docs.sqlalchemy.org | `/en/20/` | 2.0 | 600 | 1,500 | yes | SQLAlchemy 2.x docs |
-| `pydantic-docs` | Pydantic | docs.pydantic.dev | `/latest/` | 2.x latest | 300 | 600 | yes | Current docs |
+| `pydantic-docs` | Pydantic | pydantic.dev | `/docs/validation/latest/` | 2.x latest | 300 | 600 | yes | docs.pydantic.dev/latest/ now 302s to pydantic.dev/docs/validation/latest/ |
 | `pandas-docs` | pandas | pandas.pydata.org | `/docs/` | stable | 4,000 | 6,000 | yes | Guide and reference |
 | `numpy-docs` | NumPy | numpy.org | `/doc/stable/` | stable | 3,500 | 5,000 | yes | Stable reference |
 | `scipy-docs` | SciPy | docs.scipy.org | `/doc/scipy/` | stable | 3,000 | 4,500 | yes | Stable SciPy docs |
@@ -177,7 +187,7 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 | `clap-docs` | clap | docs.rs | `/clap/latest/clap/` | latest | 800 | 1,500 | later | docs.rs allowlist specific crate only |
 | `flutter-docs` | Flutter | docs.flutter.dev | `/` | stable | 1,000 | 2,000 | later | '/' is fine: docs-only host |
 | `android-docs` | Android Developers | developer.android.com | `/develop /guide /topic /training /kotlin` | latest | 6,000 | 10,000 | later | Curated Android SDK docs only |
-| `apple-swiftui-docs` | SwiftUI | developer.apple.com | `/documentation/swiftui` | n/a | 0 | 1 | later | **blocked_js_rendered**. Disabled: developer.apple.com/documentation is a JS app, HTML fetch returns an empty shell. Alternative: its JSON at /tutorials/data/documen |
+| `apple-swiftui-docs` | SwiftUI | developer.apple.com | `/documentation/swiftui` | n/a | 0 | 1 | no | **blocked_js_rendered**. Disabled: developer.apple.com/documentation is a JS app, HTML fetch returns an empty shell. Alternative: its JSON at /tutorials/data/documen |
 | `pytorch-docs` | PyTorch | docs.pytorch.org | `/docs/stable/ /tutorials/` | stable | 3,800 | 5,000 | later | pytorch.org/docs redirects to docs.pytorch.org; added /tutorials/ |
 | `tensorflow-docs` | TensorFlow | www.tensorflow.org | `/api_docs/python/ /guide/ /tutorials/` | 2.x stable | 8,000 | 10,000 | later | Locales use ?hl= query, so the path scope can't drop them; normalizer should strip hl= |
 | `sklearn-docs` | scikit-learn | scikit-learn.org | `/stable/` | stable | 2,500 | 4,000 | later | Current stable docs |
@@ -244,7 +254,7 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 | `aws-lambda` | AWS Lambda Documentation | docs.aws.amazon.com | `/lambda/latest/dg/` | latest | 800 | 1,500 | later | Lambda only |
 | `aws-rds` | AWS RDS Documentation | docs.aws.amazon.com | `/AmazonRDS/latest/UserGuide/` | latest | 1,500 | 2,500 | later | RDS only |
 | `aws-iam` | AWS IAM Documentation | docs.aws.amazon.com | `/IAM/latest/UserGuide/` | latest | 1,000 | 2,000 | later | IAM only |
-| `aws-cloudwatch` | AWS CloudWatch Documentation | docs.aws.amazon.com | `/AmazonCloudWatch/latest/monitoring/` | latest | 800 | 1,500 | later | docs.aws.amazon.com robots: Crawl-delay 5. Host shared by all aws-* sources; politeness must be per host, not per source |
+| `aws-cloudwatch` | AWS CloudWatch Documentation | docs.aws.amazon.com | `/AmazonCloudWatch/latest/monitoring/` | latest | 800 | 1,500 | later | docs.aws.amazon.com robots: Crawl-delay 5, now enforced by HOST_MIN_INTERVAL_SECONDS in politeness_policy.py. Each aws-* row uses its own gu |
 | `gcp-cloudrun` | Google Cloud Run | cloud.google.com | `/run/docs` | latest | 600 | 1,200 | later | Cloud Run docs only |
 | `gcp-gcs` | Google Cloud Storage | cloud.google.com | `/storage/docs` | latest | 600 | 1,200 | later | Storage docs |
 | `gcp-compute` | Google Compute Engine | cloud.google.com | `/compute/docs` | latest | 1,500 | 2,500 | later | Compute docs |
@@ -295,7 +305,7 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 | `digitalocean-tutorials` | DigitalOcean community tutorials | www.digitalocean.com | `/community/tutorials` | n/a | 8,000 | 10,000 | no | robots allows /community/tutorials; sitemap.xml listed. Excellent English tutorials, content license: check per page |
 | `baeldung` | Baeldung (Java/Spring) | www.baeldung.com | `/` | n/a | 6,000 | 8,000 | no | Commercial site: check terms before enabling |
 
-## Tier 4: engineering blogs (RSS) (168)
+## Tier 4: engineering blogs (RSS) (166)
 
 | Slug | Name | Category | Feed URL | MVP | Notes |
 |---|---|---|---|---|---|
@@ -309,10 +319,10 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 | `github-engineering` | GitHub Blog Engineering | Engineering blogs | https://github.blog/engineering/feed/ | yes | Engineering topics only |
 | `gitlab-blog` | GitLab Blog Engineering | Engineering blogs | https://about.gitlab.com/atom.xml | no | Technical posts by curated topic |
 | `mozilla-hacks` | Mozilla Hacks | Engineering blogs | https://hacks.mozilla.org/feed/ | no | Web engineering tutorials |
-| `vercel-blog` | Vercel Blog | Engineering blogs | https://vercel.com/atom | no | Technical docs and engineering posts |
+| `vercel-blog` | Vercel Blog | Engineering blogs | https://vercel.com/atom | no | Blocked: the feed is 4.75 MB, above the parser's 2 MB limit |
 | `aws-architecture-blog` | AWS Architecture Blog | Engineering blogs | https://aws.amazon.com/blogs/architecture/feed/ | no | Architecture posts only |
 | `google-cloud-blog` | Google Cloud Blog | Engineering blogs | https://cloudblog.withgoogle.com/rss/ | no | Engineering articles by curated topic |
-| `microsoft-devblogs` | Microsoft DevBlogs | Engineering blogs | https://devblogs.microsoft.com/feed/ | no | Product-specific technical posts only |
+| `microsoft-devblogs` | Microsoft DevBlogs | Engineering blogs | https://devblogs.microsoft.com/feed/ | no | Disabled: this is the all-products feed, and its '/' scope swallows the typescript-blog, dotnet-blog and oldnewthing row |
 | `dropbox-techblog` | Dropbox Tech Blog | Engineering blogs | https://dropbox.tech/feed | no | Engineering articles |
 | `slack-engineering` | Slack Engineering | Engineering blogs | https://slack.engineering/feed/ | no | Engineering articles |
 | `figma-engineering` | Figma Engineering | Engineering blogs | https://www.figma.com/blog/feed/atom.xml | no | Technical posts only |
@@ -322,10 +332,10 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 | `css-tricks` | CSS-Tricks | Engineering blogs | https://css-tricks.com/feed/ | no | Curated CSS learning articles |
 | `julia-evans` | Julia Evans | Engineering blogs | https://jvns.ca/atom.xml | yes | Technical blog; do not redistribute original illustrations without permission |
 | `martin-fowler` | Martin Fowler | Engineering blogs | https://martinfowler.com/feed.atom | yes | Architecture and engineering essays |
-| `dan-luu` | Dan Luu | Engineering blogs | https://danluu.com/atom.xml | yes | Long-form engineering essays |
+| `dan-luu` | Dan Luu | Engineering blogs | https://danluu.com/atom.xml | no | Blocked: the feed is 6.66 MB, above the parser's 2 MB limit (it carries full post bodies). Needs a bigger limit for feed |
 | `brendan-gregg` | Brendan Gregg | Engineering blogs | https://www.brendangregg.com/blog/rss.xml | no | Performance articles; avoid bulk media |
 | `highscalability` | High Scalability | Engineering blogs | https://highscalability.com/rss/ | no | Curated systems architecture articles |
-| `planet-python` | Planet Python | Engineering blogs | https://planetpython.org/rss20.xml | no | Aggregator: index links only; avoid duplicate content; aggregator: entries link to other hosts, so follow_entry_links on |
+| `planet-python` | Planet Python | Engineering blogs | https://planetpython.org/rss20.xml | no | Blocked: every entry links to the original author's blog, so the host allowlist admits 0 of 25 entries. Use it to discov |
 | `rust-blog` | Rust Blog | Engineering blogs | https://blog.rust-lang.org/feed.xml | yes | Official Rust development articles |
 | `meta-engineering` | Engineering at Meta | Company engineering | https://engineering.fb.com/feed/ | yes |  |
 | `google-developers-blog` | Google Developers Blog | Company engineering | https://developers.googleblog.com/rss/ | no |  |
@@ -362,10 +372,9 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 | `ubuntu-blog` | Ubuntu Blog | Company engineering | https://ubuntu.com/blog/feed | no |  |
 | `postman-blog` | Postman Blog | Company engineering | https://blog.postman.com/feed/ | no |  |
 | `percona-blog` | Percona Blog | Databases | https://www.percona.com/blog/feed/ | no |  |
-| `planet-postgresql` | Planet PostgreSQL | Databases | https://planet.postgresql.org/rss20.xml | no | aggregator: entries link to other hosts, so follow_entry_links only fetches same-host pages |
+| `planet-postgresql` | Planet PostgreSQL | Databases | https://planet.postgresql.org/rss20.xml | no | Blocked: every entry links to the original author's blog, so the host allowlist admits 0 of 30 entries. Use it to discov |
 | `duckdb-blog` | DuckDB Blog | Databases | https://duckdb.org/feed.xml | no |  |
 | `opensource-connections` | OpenSource Connections (search relevance) | Databases | https://opensourceconnections.com/feed/ | no |  |
-| `inside-rust` | Inside Rust | Official language blogs | https://blog.rust-lang.org/inside-rust/feed.xml | no |  |
 | `this-week-in-rust` | This Week in Rust | Official language blogs | https://this-week-in-rust.org/rss.xml | no | aggregator: entries link to other hosts, so follow_entry_links only fetches same-host pages |
 | `go-blog` | The Go Blog | Official language blogs | https://go.dev/blog/feed.atom | yes |  |
 | `python-insider` | Python Insider | Official language blogs | https://blog.python.org/feeds/posts/default | no |  |
@@ -381,7 +390,7 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 | `spring-blog` | Spring Blog | Official language blogs | https://spring.io/blog.atom | no |  |
 | `swift-blog` | Swift.org Blog | Official language blogs | https://www.swift.org/atom.xml | no |  |
 | `android-dev-blog` | Android Developers Blog | Official language blogs | https://android-developers.googleblog.com/feeds/posts/default | no |  |
-| `flutter-blog` | Flutter Blog | Official language blogs | https://medium.com/feed/flutter | no | medium.com allows generic crawlers but blocks named AI bots; use our own UA and keep the rate low |
+| `flutter-blog` | Flutter Blog | Official language blogs | https://blog.flutter.dev/feed | no |  |
 | `ruby-news` | Ruby News | Official language blogs | https://www.ruby-lang.org/en/feeds/news.rss | no |  |
 | `rails-blog` | Ruby on Rails Blog | Official language blogs | https://rubyonrails.org/feed.xml | no |  |
 | `elixir-blog` | Elixir Blog | Official language blogs | https://elixir-lang.org/atom.xml | no |  |
@@ -463,7 +472,6 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 | `lwn` | LWN.net | Publications | https://lwn.net/headlines/rss | no | partly paywalled: index only the free text the page serves |
 | `infoq` | InfoQ | Publications | https://feed.infoq.com/ | no |  |
 | `freecodecamp-news` | freeCodeCamp News | Publications | https://www.freecodecamp.org/news/rss/ | no |  |
-| `baeldung-feed` | Baeldung feed | Publications | https://www.baeldung.com/feed | no |  |
 | `pragmatic-engineer` | The Pragmatic Engineer | Publications | https://newsletter.pragmaticengineer.com/feed | no | partly paywalled: index only the free text the page serves |
 | `bytebytego` | ByteByteGo | Publications | https://blog.bytebytego.com/feed | no | partly paywalled: index only the free text the page serves |
 | `devto` | DEV Community | Publications | https://dev.to/feed | no | aggregator: entries link to other hosts, so follow_entry_links only fetches same-host pages |
@@ -473,5 +481,5 @@ Reading the numbers: est. docs are my rough page counts, not measured. Blogs sho
 | Slug | Name | Host | Path scope | Version | Est. docs | Max docs | MVP | Notes |
 |---|---|---|---|---|---:|---:|---|---|
 | `github-curated-issues` | GitHub issues (curated repos) | api.github.com | `` | n/a | 100,000 | 100,000 | no | **blocked_needs_crawler_work**. Blocked on 3 crawler gaps: (1) no auth header support, unauthenticated limit is 60 req/h; needs GITHUB_TOKEN from env (5000 req/h). (2) pagi |
-| `stackoverflow-api-sample` | Stack Overflow top-voted Q&A (API sample) | api.stackexchange.com | `` | n/a | 10,000 | 10,000 | no | Small live sample only; the bulk path is the offline dump (offline_datasets.json). Quota: 300 req/day without a key, 10K with one. Paginatio |
+| `stackoverflow-api-sample` | Stack Overflow top-voted Q&A (API sample) | api.stackexchange.com | `` | n/a | 100 | 10,000 | no | Small live sample only; the bulk path is the offline dump (offline_datasets.json). Counted as 100 docs: the first page is the only one reach |
 | `stack-overflow-dump` | Stack Overflow data dump | (offline) | `` | latest dump | 500,000 | 500,000 | no | Offline importer; archive.org mirror frozen in 2024 |

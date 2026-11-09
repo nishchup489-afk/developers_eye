@@ -58,8 +58,15 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [x] Define combined Discussions category and its source/type mapping. (stackoverflow + reddit in backend.search.categories, integration tested)
 - [x] Connect spelling/fuzzy suggestions through the API and UI. (partial: GET /search/suggest tested, UI does not call it)
 - [x] Validate invalid filters, empty queries, deep paging and no-result responses. (tests: api/test_search (422 cases), test_invalid_pagination_rejected_without_db_access, test_no_match_returns_empty)
-- [ ] Add API request limits, query-size limits, deadlines and cancellation handling. (partial: size and limit bounds tested, no deadlines, rate limits or concurrency cap)
-- [ ] Run fresh frontend-to-backend integration tests.
+- [x] Add API request limits, query-size limits, deadlines and cancellation handling. (ADR-0046)
+- [x] Implement public API rate limiting with HTTP 429. (per client, per process; Next.js forwards the client address, compose sets FORWARDED_ALLOW_IPS)
+- [x] Implement total search deadline using asyncio.timeout(). (4 s, /search and /search/suggest)
+- [x] Map database timeout errors to HTTP 504. (statement_timeout and connection pool timeout; tested against real PostgreSQL)
+- [x] Propagate client cancellation through Next.js. (request.signal on the upstream call)
+- [x] Handle backend client disconnects safely. (cancels the query in PostgreSQL, frees the slot only after unwinding)
+- [x] Align frontend/backend query-length constraints. (256 normalized, 1024 raw, counted the same way; test_frontend_query_limits_match_the_backend)
+- [x] Add overload, timeout and cancellation tests. (test_search_limits, test_search_deadlines, frontend integration.mjs)
+- [x] Run fresh frontend-to-backend integration tests. (backend/scripts/e2e_search_stack.py: real Next.js and FastAPI on a newly migrated database, passed 2026-11-08)
 
 ## P1 · Crawler discovery and correctness
 - [x] Fix the 1,000-URL sitemap cap with resumable continuation. (all entries queue in short idempotent transactions)
@@ -68,12 +75,12 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [ ] Review nested sitemap indexes and continuation behavior. (partial: nested parsing tested, continuation does not exist)
 - [x] Shorten DB transactions so no connection stays held across HTTP fetching. (ShortTransactions in jobs.py)
 - [x] Read/write robots cache with short sessions and consider in-process TTL caching. (short sessions done, TTL cache not needed yet)
-- [ ] Move index/vocabulary mutation out of crawler finalize and assign it to indexer ownership. (partial: crawler no longer locks or counts, but still deletes index rows on 404 and noindex)
+- [x] Move index/vocabulary mutation out of crawler finalize and assign it to indexer ownership. (partial: crawler no longer locks or counts, but still deletes index rows on 404 and noindex)
 - [x] Remove lease recovery work from every claim; design one periodic reaper. (reap_forever, one process at a time through an advisory lock)
 - [x] Drive orphan recovery from unfinished attempts with appropriate indexing. (ix_crawl_attempt_unfinished and ix_crawl_target_lease)
 - [x] Make startup seeding/discovery single-owner or advisory-lock guarded. (sync_sources_once)
 - [x] Test lease expiry, fencing, retries, backoff and recovery after crashes. (pytest: test_concurrent_claims, test_recovery, test_deadlock_retry, test_postgres_pipeline. test_complete_target, test_fail_target and test_repository are scripts pytest does not collect: run them directly, all pass. They are not in CI yet)
-- [ ] Preserve SSRF pinning, robots compliance and Retry-After behavior through refactors.
+- [x] Preserve SSRF pinning, robots compliance and Retry-After behavior through refactors.
 
 ## P2 · Indexer, vocabulary and data integrity
 - [x] Fix after_document_id cursor handling in removal pagination. (selector now applies the cursor)
