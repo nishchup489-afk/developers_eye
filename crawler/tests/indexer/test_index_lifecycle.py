@@ -28,8 +28,9 @@ CONFIG = IndexerConfig()
 
 
 def word():
-    # Letters only, so the vocabulary filter keeps it as a term.
-    return "".join(chr(97 + int(c, 16)) for c in uuid4().hex[:14])
+    # Letters only, so the vocabulary filter keeps it as a term. Ending in x
+    # keeps the English stemmer from changing it into a different lexeme.
+    return "".join(chr(97 + int(c, 16)) for c in uuid4().hex[:14]) + "x"
 
 
 @pytest_asyncio.fixture
