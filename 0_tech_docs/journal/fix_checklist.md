@@ -90,16 +90,16 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [x] Review indexer batching and mutex serialization before adding more workers. (EXP-0006 and EXP-0008: 60 docs/s to 581 docs/s)
 
 ## P2 · Database, migrations and runtime reliability
-- [x] Test migration 28efc23fadfc against a populated pre-migration database. (full chain to head on a copy of the real 42k-document database)
-- [ ] Repair the non-null code_vector upgrade/backfill path where required.
+- [x] Test migration 28efc23fadfc against a populated pre-migration database. (test_migrations.py with rows at this revision; the earlier run on the real copy did not exercise it, INC-0034)
+- [x] Repair the non-null code_vector upgrade/backfill path where required. (INC-0034, ADR-0047)
 - [x] Test Alembic upgrade head on both empty and populated disposable Postgres 16. (empty on 16 in Docker and 18; populated on 18 only)
-- [ ] Review query plans and GIN/B-tree index use for retrieval and frontier claiming.
-- [ ] Review DB session and transaction boundaries across all services.
+- [x] Review query plans and GIN/B-tree index use for retrieval and frontier claiming. (EXP-0010 on a real-data copy, on Postgres 18; added ix_document_last_crawl_target_id)
+- [x] Review DB session and transaction boundaries across all services. (database-schema overview)
 - [x] Correct unused unbound get_db() or remove it. (now uses SessionFactory)
 - [x] Configure explicit engine pool sizes, timeouts and overflow policies. (db_pool_* settings)
-- [ ] Test DB connection loss, transaction rollback and worker recovery.
+- [x] Test DB connection loss, transaction rollback and worker recovery. (EXP-0011 real server stop, INC-0035, test_database_faults.py)
 - [x] Design and verify database backup restoration before production. (deploy/backup.sh and restore-test.sh ran in Docker on a tiny database; rerun on real data)
-- [ ] Review concurrency-sensitive updates under simultaneous crawler/indexer writers.
+- [x] Review concurrency-sensitive updates under simultaneous crawler/indexer writers. (EXP-0011, test_concurrent_writers.py)
 
 ## P2 · Test quality, dependency security and CI
 - [x] Fix backend's 2 failed tests and investigate 16 skips. (all pass, 0 skipped)
