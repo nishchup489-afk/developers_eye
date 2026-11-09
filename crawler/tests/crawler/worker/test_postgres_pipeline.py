@@ -237,3 +237,287 @@ def test_expiration_and_old_worker_recovery_do_not_touch_new_claims():
                 assert recovered.failure_count == 1 and recovered.next_fetch_at > datetime.now(timezone.utc)
                 assert (await session.get(CrawlTarget, targets[1].id)).lease_until == targets[1].lease_until
     asyncio.run(run())
+
+
+def _sitemap_index_xml(*urls: str) -> bytes:
+    entries = "".join(f"<sitemap><loc>{url}</loc></sitemap>" for url in urls)
+    return f"<sitemapindex>{entries}</sitemapindex>".encode()
+
+
+def _sitemap_urlset_xml(*urls: str) -> bytes:
+    entries = "".join(f"<url><loc>{url}</loc></url>" for url in urls)
+    return f"<urlset>{entries}</urlset>".encode()
+
+
+async def _claim_specific_url(factory, source_id: int, url: str) -> CrawlTargetRead:
+    """Make one target due without accidentally claiming discovered page targets."""
+    async with factory() as session, session.begin():
+        await session.execute(
+            update(CrawlTarget)
+            .where(CrawlTarget.source_id == source_id, CrawlTarget.fetch_url != url)
+            .values(next_fetch_at=func.clock_timestamp() + timedelta(days=1))
+        )
+        await session.execute(
+            update(CrawlTarget)
+            .where(CrawlTarget.source_id == source_id, CrawlTarget.fetch_url == url)
+            .values(next_fetch_at=func.clock_timestamp())
+        )
+    targets = await claim(factory, source_id)
+    assert len(targets) == 1
+    assert targets[0].fetch_url == url
+    return targets[0]
+
+
+def test_nested_sitemap_children_are_scoped_and_idempotent(monkeypatch):
+    """Parent index -> child maps -> pages, with durable deduplication on replays."""
+    root = "https://example.com/sitemap.xml"
+    first = "https://example.com/maps/first.xml"
+    second = "https://example.com/maps/second.xml"
+    documents = {
+        root: _sitemap_index_xml(
+            first, second, first, "https://unapproved.invalid/external.xml"
+        ),
+        first: _sitemap_urlset_xml(
+            "https://example.com/docs/a",
+            "https://example.com/docs/shared",
+            "https://example.com/private",
+            "https://unapproved.invalid/docs/unsafe",
+        ),
+        second: _sitemap_urlset_xml(
+            "https://example.com/docs/b",
+            "https://example.com/docs/shared",
+        ),
+    }
+
+    async def fetch(self, session, url):
+        assert url in documents, f"Unexpected sitemap fetch: {url}"
+        return FetchResult(
+            RobotsDecision.ALLOW, "Fetched", url, url,
+            status_code=200, headers={"content-type": "application/xml"},
+            body=documents[url],
+        )
+
+    monkeypatch.setattr(PolicyCoordinator, "fetch", fetch)
+
+    async def run():
+        async with database() as (factory, source_id):
+            async with factory() as session, session.begin():
+                await session.execute(
+                    update(Source).where(Source.id == source_id).values(
+                        config={
+                            "max_depth": 1,
+                            "max_pages": 32,
+                            "allowed_path_prefixes": ["/docs"],
+                        }
+                    )
+                )
+                session.add(
+                    CrawlTarget(
+                        source_id=source_id,
+                        fetch_url=root,
+                        normalized_url=root,
+                        kind="sitemap",
+                        depth=0,
+                    )
+                )
+
+            manager = PolitenessManager(min_interval_seconds=0)
+            for url in (root, first, second):
+                target = await _claim_specific_url(factory, source_id, url)
+                result = await process_job(
+                    target, session_factory=factory,
+                    politeness_manager=manager, max_links=2,
+                )
+                assert result.outcome == "success"
+
+            expected = {
+                (root, "sitemap", 0),
+                (first, "sitemap", 1),
+                (second, "sitemap", 1),
+                ("https://example.com/docs/a", "page", 0),
+                ("https://example.com/docs/b", "page", 0),
+                ("https://example.com/docs/shared", "page", 0),
+            }
+
+            async def observed():
+                async with factory() as session:
+                    rows = (
+                        await session.execute(
+                            select(
+                                CrawlTarget.fetch_url,
+                                CrawlTarget.kind,
+                                CrawlTarget.depth,
+                            ).where(CrawlTarget.source_id == source_id)
+                        )
+                    ).all()
+                    return {tuple(row) for row in rows}
+
+            assert await observed() == expected
+
+            # Parent and child recrawls must not introduce duplicate rows.
+            for url in (root, first, second):
+                target = await _claim_specific_url(factory, source_id, url)
+                result = await process_job(
+                    target, session_factory=factory,
+                    politeness_manager=manager, max_links=2,
+                )
+                assert result.outcome == "success"
+            assert await observed() == expected
+
+    asyncio.run(run())
+
+
+def test_nested_sitemap_depth_limit_rejects_grandchild(monkeypatch):
+    """A sitemap index at depth one must not schedule a depth-two child."""
+    root = "https://example.com/sitemap.xml"
+    child = "https://example.com/maps/child.xml"
+    grandchild = "https://example.com/maps/grandchild.xml"
+    responses = {
+        root: _sitemap_index_xml(child),
+        child: _sitemap_index_xml(grandchild),
+    }
+
+    async def fetch(self, session, url):
+        assert url in responses, f"Unexpected fetch beyond sitemap depth limit: {url}"
+        return FetchResult(
+            RobotsDecision.ALLOW, "Fetched", url, url,
+            status_code=200, headers={"content-type": "application/xml"},
+            body=responses[url],
+        )
+
+    monkeypatch.setattr(PolicyCoordinator, "fetch", fetch)
+
+    async def run():
+        async with database() as (factory, source_id):
+            async with factory() as session, session.begin():
+                await session.execute(
+                    update(Source).where(Source.id == source_id).values(
+                        config={"max_depth": 1, "max_pages": 16}
+                    )
+                )
+                session.add(CrawlTarget(
+                    source_id=source_id, fetch_url=root,
+                    normalized_url=root, kind="sitemap", depth=0,
+                ))
+
+            manager = PolitenessManager(min_interval_seconds=0)
+            for url in (root, child):
+                target = await _claim_specific_url(factory, source_id, url)
+                result = await process_job(
+                    target, session_factory=factory,
+                    politeness_manager=manager,
+                )
+                assert result.outcome == "success"
+
+            async with factory() as session:
+                rows = (
+                    await session.execute(
+                        select(CrawlTarget.fetch_url, CrawlTarget.depth)
+                        .where(CrawlTarget.source_id == source_id)
+                    )
+                ).all()
+                assert {tuple(row) for row in rows} == {
+                    (root, 0), (child, 1),
+                }
+                assert await session.scalar(
+                    select(func.count(CrawlTarget.id))
+                    .where(CrawlTarget.source_id == source_id, CrawlTarget.fetch_url == grandchild)
+                ) == 0
+
+    asyncio.run(run())
+
+
+def test_sitemap_overflow_replay_after_partial_commit(monkeypatch):
+    """A transient failure after a committed overflow batch must lose no URLs."""
+    from crawler.worker.jobs import jobs as jobs_module
+
+    root = "https://example.com/sitemap.xml"
+    total = 550
+    xml = _sitemap_urlset_xml(
+        *(f"https://example.com/docs/p{i}" for i in range(total))
+    )
+
+    async def fetch(self, session, url):
+        assert url == root
+        return FetchResult(
+            RobotsDecision.ALLOW, "Fetched", url, url,
+            status_code=200, headers={"content-type": "application/xml"},
+            body=xml,
+        )
+
+    monkeypatch.setattr(PolicyCoordinator, "fetch", fetch)
+
+    async def run():
+        async with database() as (factory, source_id):
+            async with factory() as session, session.begin():
+                await session.execute(
+                    update(Source).where(Source.id == source_id).values(
+                        config={"max_depth": 3, "max_pages": 1_000}
+                    )
+                )
+                session.add(CrawlTarget(
+                    source_id=source_id, fetch_url=root,
+                    normalized_url=root, kind="sitemap", depth=0,
+                ))
+
+            manager = PolitenessManager(min_interval_seconds=0)
+            original_enqueue = jobs_module.enqueue_targets
+            calls = 0
+
+            async def interrupted_enqueue(session, targets, *, max_pages):
+                nonlocal calls
+                calls += 1
+                if calls == 2:
+                    raise RuntimeError("Injected failure after committed overflow batch")
+                return await original_enqueue(
+                    session, targets, max_pages=max_pages
+                )
+
+            # First batch of overflow targets commits, then the next batch fails.
+            with monkeypatch.context() as patch:
+                patch.setattr(jobs_module, "enqueue_targets", interrupted_enqueue)
+                target = await _claim_specific_url(factory, source_id, root)
+                first = await process_job(
+                    target, session_factory=factory,
+                    politeness_manager=manager, max_links=100,
+                )
+            assert first.outcome == "failed"
+            assert calls == 2
+
+            async def page_count():
+                async with factory() as session:
+                    return await session.scalar(
+                        select(func.count(CrawlTarget.id)).where(
+                            CrawlTarget.source_id == source_id,
+                            CrawlTarget.kind == "page",
+                        )
+                    )
+
+            assert await page_count() == 100
+            async with factory() as session:
+                failed_target = await session.get(CrawlTarget, target.id)
+                assert failed_target.state == "queued"
+                assert failed_target.failure_count == 1
+
+            # A later attempt rereads the sitemap rather than using a cursor.
+            # The frontier unique constraint ignores the already-committed URLs.
+            for _ in range(2):
+                target = await _claim_specific_url(factory, source_id, root)
+                result = await process_job(
+                    target, session_factory=factory,
+                    politeness_manager=manager, max_links=100,
+                )
+                assert result.outcome == "success"
+                assert await page_count() == total
+
+            async with factory() as session:
+                target = await session.get(CrawlTarget, target.id)
+                assert target.failure_count == 0
+                attempts = await session.scalar(
+                    select(func.count(CrawlAttempt.id)).where(
+                        CrawlAttempt.crawl_target_id == target.id
+                    )
+                )
+                assert attempts == 3
+
+    asyncio.run(run())
