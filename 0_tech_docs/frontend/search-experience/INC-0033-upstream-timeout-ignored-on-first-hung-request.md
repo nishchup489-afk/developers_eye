@@ -73,6 +73,11 @@ Verified: the probe returns 504 at 10 s (search) and 5 s (suggest) on a cold ser
 
 ## Rules for future changes
 
+2026-11-09 follow-up: [INC-0040](INC-0040-aborted-search-left-postgres-waiting.md)
+reproduced the remaining socket risk on Linux. Search and suggestion requests
+now use the Node HTTP options in ADR-0056. Other fetch-based calls retain this
+incident's promise-settlement workaround.
+
 - Every server-side HTTP call goes through the `backend` client in `frontend/lib/axios.js`; do not call `fetch` to FastAPI directly.
 - Do not remove `abortableFetch` or switch the `env.fetch` without re-running the cold-start timeout test (a fresh `next start`, then a hung upstream first).
 - When upgrading Next.js, re-run `npm run test:integration`; it covers this case.

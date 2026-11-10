@@ -51,6 +51,16 @@ export const backend = createHttpClient({
   fetchOptions: { cache: "no-store", redirect: "error" },
 });
 
+// Search cancellation must close the socket, not merely reject a fetch promise.
+// Node's HTTP adapter bypasses Next's patched fetch and its abort/socket leak.
+// Node HTTP has no Next data cache; redirects and environment proxies are disabled.
+/** @type {import("axios").AxiosRequestConfig} */
+export const searchRequestOptions = Object.freeze({
+  adapter: "http",
+  maxRedirects: 0,
+  proxy: false,
+});
+
 /** @param {number} status */
 export const isOk = (status) => status >= 200 && status < 300;
 

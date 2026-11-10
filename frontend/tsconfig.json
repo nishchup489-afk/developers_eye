@@ -36,7 +36,9 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     ".next-crawler-monitor/types/**/*.ts",
-    ".next-crawler-monitor/dev/types/**/*.ts"
+    ".next-crawler-monitor/dev/types/**/*.ts",
+    ".next-test-runner/types/**/*.ts",
+    ".next-test-runner/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

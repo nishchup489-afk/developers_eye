@@ -44,7 +44,7 @@ Visit `/docs` for the API overview or read [the full API and connector reference
 
 `app/page.tsx` passes server configuration mode to the interactive search component. The browser calls same-origin `/api/search`; the route reads BACKEND_URL and forwards validated searches server-side. No provider credentials are exposed. Failed live requests return errors rather than demo results.
 
-All HTTP calls use axios. Every axios instance lives in `lib/axios.js`: browser components call the same-origin routes through `api`, and server routes call FastAPI and GitHub through `backend`, which uses axios's fetch adapter so `cache: "no-store"`, `redirect: "error"` and request timeouts behave as before. Both clients return every status instead of throwing, so each caller maps upstream failures to its own message.
+All HTTP calls use axios. Every instance lives in `lib/axios.js`: browser components call same-origin routes through `api`, and server routes call FastAPI and GitHub through `backend`. Search and suggestions apply the shared `searchRequestOptions` to use Node HTTP, close upstream sockets on cancellation, and disable redirects/environment proxies. Other server calls retain the fetch adapter with no-store and redirect refusal. Both clients return every status so each caller maps upstream failures to its own message. See [ADR-0056](../0_tech_docs/frontend/search-experience/ADR-0056-close-search-sockets-on-cancellation.md).
 
 Public search does not require an account. Saved items live in this browser's localStorage. Query suggestions are static shortcuts. Source tabs filter the received result collection. The separate `/admin` workspace requires GitHub authentication and an explicit administrator allowlist.
 

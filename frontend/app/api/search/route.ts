@@ -1,4 +1,4 @@
-import { backend, isOk, isTimeout } from "@/lib/axios";
+import { backend, isOk, isTimeout, searchRequestOptions } from "@/lib/axios";
 import { searchDemo } from "@/lib/demo";
 import {
   forwardedFor,
@@ -58,6 +58,7 @@ export async function GET(request: Request) {
     // request.signal aborts when the browser goes away (a newer search, a closed tab);
     // aborting the upstream request makes FastAPI cancel the database work too.
     const response = await backend.get(url.toString(), {
+      ...searchRequestOptions,
       timeout: backendTimeoutMs,
       signal: request.signal,
       headers: forwardedFor(request),

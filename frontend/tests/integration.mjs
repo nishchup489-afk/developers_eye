@@ -61,6 +61,11 @@ const mock = createServer((req, res) => {
   res.setHeader("Content-Type", "application/json");
   if (url.pathname === "/w/api.php") return wiki(url, res);
   if (q === "timeout") return;
+  if (q === "redirect") {
+    res.writeHead(302, { Location: "/must-not-follow" });
+    return res.end();
+  }
+  assert.notEqual(url.pathname, "/must-not-follow", "search transport followed an upstream redirect");
   if (q === "hang") {
     res.on("close", () => abandonedUpstream.push(url.pathname));
     return;
@@ -317,7 +322,9 @@ try {
     assert.equal(seenForwardedFor.at(-1), expected);
   }
   console.log("PASS browser address forwarded to FastAPI for rate limiting");
-  for (const path of ["/api/search", "/api/search/suggest"]) {
+  await get(live, { q: "redirect" }, 502);
+  await suggest(live, { q: "redirect" }, 502);
+  for (const path of Array(6).fill(["/api/search", "/api/search/suggest"]).flat()) {
     const before = abandonedUpstream.length;
     const controller = new AbortController();
     const pending = fetch(`${live}${path}?q=hang`, { signal: controller.signal }).catch((error) => error);

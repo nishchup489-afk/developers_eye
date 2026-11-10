@@ -1,4 +1,4 @@
-import { backend, isOk, isTimeout } from "@/lib/axios";
+import { backend, isOk, isTimeout, searchRequestOptions } from "@/lib/axios";
 import {
   forwardedFor,
   isSearchableLength,
@@ -29,6 +29,7 @@ export async function GET(request: Request) {
     url.searchParams.set("q", query);
     // Above FastAPI's 4 s deadline; request.signal cancels when the browser goes away.
     const response = await backend.get(url.toString(), {
+      ...searchRequestOptions,
       timeout: 5000,
       signal: request.signal,
       headers: forwardedFor(request),

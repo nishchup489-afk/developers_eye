@@ -140,7 +140,7 @@ async def check_under_lock(web: httpx.AsyncClient, db_url: str) -> None:
     transaction = lock.transaction()
     await transaction.start()
     try:
-        await lock.execute("LOCK TABLE search_index IN ACCESS EXCLUSIVE MODE")
+        await lock.execute("LOCK TABLE search_index, search_terms IN ACCESS EXCLUSIVE MODE")
 
         started = perf_counter()
         timed_out = await web.get("/api/search", params=Q)
@@ -156,9 +156,9 @@ async def check_under_lock(web: httpx.AsyncClient, db_url: str) -> None:
         assert busy.headers["retry-after"] == "1"
         passed("concurrency cap: 2 admitted, 3 rejected with 503 and Retry-After")
 
-        for _ in range(3):
+        for path in ["/api/search", "/api/search/suggest"] * 6:
             started = perf_counter()
-            request = asyncio.create_task(web.get("/api/search", params=Q))
+            request = asyncio.create_task(web.get(path, params=Q))
             while await waiting_searches(watch) == 0:
                 assert perf_counter() - started < 2, "the search never reached PostgreSQL"
                 await asyncio.sleep(0.02)
@@ -167,7 +167,7 @@ async def check_under_lock(web: httpx.AsyncClient, db_url: str) -> None:
             while await waiting_searches(watch) > 0:
                 assert perf_counter() - started < 2.5, "the cancelled query kept running"
                 await asyncio.sleep(0.02)
-        passed("closing the browser request stops the PostgreSQL query")
+        passed("12 repeated browser disconnects stop search/suggestion PostgreSQL queries")
     finally:
         await transaction.rollback()
         await lock.close()

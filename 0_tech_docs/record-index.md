@@ -66,6 +66,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0053 | frontend/search-experience | [Explicit language preference and transparent result provenance](frontend/search-experience/ADR-0053-language-preferences-and-result-provenance.md) | accepted |
 | ADR-0054 | backend/package-boundary | [Retain backend as the shared schema package instead of introducing de_core](backend/package-boundary/ADR-0054-retain-backend-as-the-shared-schema-package.md) | accepted |
 | ADR-0055 | crawler/monitoring-and-telemetry | [Batch adjacent CPU checkpoints and write full attempt summaries at completion](crawler/monitoring-and-telemetry/ADR-0055-batched-cpu-checkpoints-and-terminal-attempt-summaries.md) | accepted |
+| ADR-0056 | frontend/search-experience | [Use Axios Node HTTP transport for cancellable search requests](frontend/search-experience/ADR-0056-close-search-sockets-on-cancellation.md) | accepted |
 
 ## Incidents
 
@@ -92,6 +93,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | INC-0037 | crawler/document-writer | [Thin pages and competing sources replaced richer content and ownership](crawler/document-writer/INC-0037-thin-pages-and-competing-sources-replaced-content.md) | resolved |
 | INC-0038 | crawler/content-processing | [FastAPI documentation fell through to article and event categories](crawler/content-processing/INC-0038-fastapi-documents-mapped-to-articles.md) | resolved |
 | INC-0039 | infra/local-dev-and-testing | [Fresh backend Poetry environment could not collect HTTP tests](infra/local-dev-and-testing/INC-0039-fresh-clone-test-dependencies.md) | resolved |
+| INC-0040 | frontend/search-experience | [Aborted Linux search left its PostgreSQL query waiting](frontend/search-experience/INC-0040-aborted-search-left-postgres-waiting.md) | resolved |
 
 ## Experiments
 
