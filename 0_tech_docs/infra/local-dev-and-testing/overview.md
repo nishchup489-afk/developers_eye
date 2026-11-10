@@ -35,6 +35,10 @@ The identified decisions for this feature are indexed above. Record new decision
 ## Rules for future changes
 
 - Keep redirected runner output UTF-8 compatible; see INC-0036.
+- The orchestrated production build defaults to `.next-test-runner` so active
+  development caches are preserved; explicit `NEXT_BUILD_DIR` takes precedence.
+  The fresh-stack script uses that same setting and parses database URLs rather
+  than splitting strings, preserving socket paths and encoded credentials.
 
 - Report exactly which checks ran, which skipped and which need PostgreSQL.
 - Add a new suite to `SUITES` in `scripts/run_all_tests.py` as well as to its own runner (ADR-0051).

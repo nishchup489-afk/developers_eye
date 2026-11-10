@@ -1125,6 +1125,9 @@ def main(argv: list[str] | None = None) -> int:
     elif not os.environ.get("TEST_DATABASE_URL"):
         db_source = "nowhere"
     db_url = os.environ.get("TEST_DATABASE_URL") or extra_env.get("TEST_DATABASE_URL")
+    if any(s.name == "fe-build" for s in selected):
+        # A verification build must not replace a running `next dev` cache.
+        extra_env["NEXT_BUILD_DIR"] = os.environ.get("NEXT_BUILD_DIR") or ".next-test-runner"
     env = build_env(extra_env)
 
     pythons: dict[str, PyInfo] = {}

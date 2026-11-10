@@ -24,6 +24,8 @@ from uuid import uuid4
 import asyncpg
 import httpx
 from dotenv import dotenv_values
+from sqlalchemy.engine import make_url
+from backend.core.local_env import load_local_env
 
 BACKEND = Path(__file__).resolve().parents[1]
 FRONTEND = BACKEND.parent / "frontend"
@@ -178,17 +180,18 @@ async def check_under_lock(web: httpx.AsyncClient, db_url: str) -> None:
 
 
 async def main() -> None:
-    if not (FRONTEND / ".next" / "BUILD_ID").exists():
+    load_local_env(__file__)
+    if not (FRONTEND / os.environ.get("NEXT_BUILD_DIR", ".next") / "BUILD_ID").exists():
         sys.exit("Run `npm run build` in frontend/ first")
     configured = os.environ.get("TEST_DATABASE_URL") or dotenv_values(BACKEND / ".env").get("TEST_DATABASE_URL")
     if not configured or not configured.startswith("postgresql+asyncpg://"):
         sys.exit("Set TEST_DATABASE_URL to a postgresql+asyncpg:// URL")
-    server = configured.replace("postgresql+asyncpg://", "postgresql://").rpartition("/")[0]
+    configured_url = make_url(configured)
     name = f"developers_eye_e2e_test_{uuid4().hex[:8]}"
-    db_url = f"{server}/{name}"
-    python_url = db_url.replace("postgresql://", "postgresql+asyncpg://")
+    db_url = configured_url.set(drivername="postgresql", database=name).render_as_string(hide_password=False)
+    python_url = configured_url.set(database=name).render_as_string(hide_password=False)
 
-    admin = await asyncpg.connect(f"{server}/postgres")
+    admin = await asyncpg.connect(configured_url.set(drivername="postgresql", database="postgres").render_as_string(hide_password=False))
     await admin.execute(f'CREATE DATABASE "{name}"')
     servers: list[subprocess.Popen] = []
     logs = tempfile.TemporaryFile("w+", encoding="utf-8", errors="replace")
