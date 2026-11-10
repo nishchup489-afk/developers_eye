@@ -1318,6 +1318,10 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 
 Script-style file, run as a whole
 
+### [frontend/tests/search-quality-unit.mjs](../../frontend/tests/search-quality-unit.mjs)
+
+Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#search-quality-unitmjs)
+
 ### [frontend/tests/search-unit.mjs](../../frontend/tests/search-unit.mjs)
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#search-unitmjs)

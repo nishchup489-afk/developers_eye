@@ -79,3 +79,7 @@ export function isTimeout(error) {
 // GET a FastAPI admin endpoint with the shared service key (server routes only).
 /** @param {URL} url @param {string} key */
 export const adminGet = (url, key) => backend.get(url.toString(), { headers: { Authorization: `Bearer ${key}` } });
+
+// Send a write (PUT, POST or DELETE) to a FastAPI admin endpoint with the shared service key (server routes only).
+/** @param {"PUT" | "POST" | "DELETE"} method @param {URL} url @param {string} key @param {unknown} [data] */
+export const adminWrite = (method, url, key, data) => backend.request({ method, url: url.toString(), data, headers: { Authorization: `Bearer ${key}` } });

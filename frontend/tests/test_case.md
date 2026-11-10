@@ -6,7 +6,7 @@ Node test scripts for the Next.js frontend, using `node:assert/strict` (no test 
 | --- | --- |
 | `integration.mjs` | `npm run test:integration` |
 | `admin-integration.mjs` | `npm run test:admin` |
-| `admin-unit.mjs`, `crawler-monitor-unit.mjs`, `indexer-report-unit.mjs` | `npm run test:admin:unit` |
+| `admin-unit.mjs`, `crawler-monitor-unit.mjs`, `indexer-report-unit.mjs`, `search-quality-unit.mjs` | `npm run test:admin:unit` |
 | `admin-routes.mjs` | `npm run test:admin:routes` |
 | `search-unit.mjs`, `knowledge-unit.mjs` | `npm run test:search:unit` |
 | `preview-crawler.mjs` | Run manually; it is a preview server, not a test. |
@@ -17,6 +17,7 @@ Synthetic data used only by tests:
 
 - `crawler-report.mjs`: `fixture(days)` builds a valid crawler report (sources, frontier, documents, robots cache, attempts, one row per day, top sources, recent errors) for a given day window.
 - `crawler-monitor.mjs`: `monitorFixture()`, `documentFixture()`, and `attemptFixture()` build a valid crawl monitor snapshot, document detail, and attempt detail with a full FETCH to FINALIZE event trail.
+- `search-quality.mjs`: `slowFixture()`, `evaluationFixture()`, and `judgingFixture()` build a slow-search report (one timeout in ranking), an evaluation report (one complete and one unpooled query), and a judging query with a pooled and a hand-added page.
 
 ## integration.mjs
 
@@ -57,6 +58,7 @@ Calls the compiled production route handlers directly from `.next` (or `NEXT_BUI
 | Logout handler | A cross-origin logout returns 403; same-origin returns 303 and clears every cookie. |
 
 | Read-only access | A listed viewer (`ADMIN_VIEWER_GITHUB_IDS`) signs in through the OAuth callback, is not an administrator, and reads the crawler monitor, crawler report, system report, hosts and problems routes (200, `private, no-store`). The system report's `slow_queries` is `null` for viewers and guests and present for admins. `days` outside 1–90 and `minutes` outside 5–1440 return 400; no session returns 401; a malformed upstream returns 502. With `ADMIN_VIEWER_ACCESS=public` a request with no cookie reads reports; switching back to `off` and clearing viewer ids revokes the viewer at once. |
+| Search quality routes | Slow searches show query text to admins and `(hidden)` / `Query N` to viewers; `hours` outside 1–720 and `limit` outside 1–500 return 400; evaluation `k` other than 5 or 10 returns 400; a query id that is not 1–32 letters, digits, `-` or `_` returns 400. Judgment, query, pool and import writes return 401 for viewers and guests and 403 from another origin, and a bad grade or mode returns 400, all without calling the backend. An admin write forwards the checked body with `judge` set to the session login (a client-sent `judge` is replaced); backend 422 detail is passed through and 404 stays 404. Deleting an added page forwards its URL and rejects a non-http(s) URL. |
 
 ## admin-unit.mjs
 
@@ -115,6 +117,14 @@ Unit test for the Wikipedia knowledge-panel helpers in `lib/knowledge.ts`, behin
 | No panel | A fuzzy search hit, only a disambiguation page, a "may refer to" stub, a "List of" page, a non-article namespace, a `javascript:` or non-Wikipedia URL and a malformed body return null. |
 | Thumbnails and text | Thumbnails are kept only from `upload.wikimedia.org` with positive dimensions; `trimExtract` cuts at a sentence boundary or adds an ellipsis. |
 | Browser validation | `isKnowledgeResponse` accepts `panel: null` and a valid panel and rejects malformed bodies and unsafe URLs. |
+
+## search-quality-unit.mjs
+
+| Area | What it checks |
+| --- | --- |
+| Contract | `isSlowSearchReport`, `isEvaluationReport` and `isJudgingQuery` accept the fixtures and reject a non-numeric time, a null stage mean, a missing list, `k=7`, a string metric, a grade of 4 and an unknown origin. |
+| Redaction | `redactSlowSearchReport` keeps query text for admins and hides it for viewers and guests while keeping the timings. |
+| Write bodies | `judgmentBody` keeps only `url`, `grade`, `note` and `add`, and rejects non-http(s) URLs, grades outside 0–3 or not integers, notes over 2,000 characters and URLs over 2,048. `queryBody` trims the query and rejects an empty or over 256 character query, an unknown mode and wrong field types. |
 
 ## preview-crawler.mjs
 

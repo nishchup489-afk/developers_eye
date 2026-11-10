@@ -36,7 +36,7 @@ through their `tests/conftest.py`, so nothing has to be set in the terminal. See
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**103 test files, 805 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**104 test files, 805 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
@@ -44,7 +44,7 @@ Everything between the markers is generated. Write notes above them.
 | [Backend (FastAPI, search)](#backend-fastapi-search) | 42 | 358 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 14 | 109 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 36 | 338 | `cd crawler && poetry run pytest tests/crawler` |
-| [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 11 | 0 | npm scripts in `frontend/package.json` (see below) |
+| [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 12 | 0 | npm scripts in `frontend/package.json` (see below) |
 
 ### End-to-end (full app)
 
@@ -180,7 +180,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 
 - `npm run test:integration` runs `node tests/integration.mjs`
 - `npm run test:admin` runs `node tests/admin-integration.mjs`
-- `npm run test:admin:unit` runs `node --experimental-strip-types tests/admin-unit.mjs && node --experimental-strip-types tests/crawler-monitor-unit.mjs && node --experimental-strip-types tests/indexer-report-unit.mjs`
+- `npm run test:admin:unit` runs `node --experimental-strip-types tests/admin-unit.mjs && node --experimental-strip-types tests/crawler-monitor-unit.mjs && node --experimental-strip-types tests/indexer-report-unit.mjs && node --experimental-strip-types tests/search-quality-unit.mjs`
 - `npm run test:admin:routes` runs `node --experimental-strip-types tests/admin-routes.mjs`
 - `npm run test:search:unit` runs `node --experimental-strip-types tests/search-unit.mjs && node --experimental-strip-types tests/knowledge-unit.mjs`
 - `npm run test:overview:routes` runs `node tests/overview-routes.mjs`
@@ -194,6 +194,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [crawler-monitor-unit.mjs](../frontend/tests/crawler-monitor-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#crawler-monitor-unitmjs) |
 | [fixtures/crawler-monitor.mjs](../frontend/tests/fixtures/crawler-monitor.mjs) | fixture data |  | [test_case.md](../frontend/tests/test_case.md#fixtures) |
 | [fixtures/crawler-report.mjs](../frontend/tests/fixtures/crawler-report.mjs) | fixture data |  | [test_case.md](../frontend/tests/test_case.md#fixtures) |
+| [fixtures/search-quality.mjs](../frontend/tests/fixtures/search-quality.mjs) | fixture data |  | [test_case.md](../frontend/tests/test_case.md#fixtures) |
 | [fixtures/system-report.mjs](../frontend/tests/fixtures/system-report.mjs) | fixture data |  |  |
 | [indexer-report-unit.mjs](../frontend/tests/indexer-report-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#indexer-report-unitmjs) |
 | [integration.mjs](../frontend/tests/integration.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#integrationmjs) |
@@ -201,6 +202,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [overview-routes.mjs](../frontend/tests/overview-routes.mjs) | tests | script |  |
 | [preview-crawler.mjs](../frontend/tests/preview-crawler.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#preview-crawlermjs) |
 | [preview-overview.mjs](../frontend/tests/preview-overview.mjs) | tests | script |  |
+| [search-quality-unit.mjs](../frontend/tests/search-quality-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#search-quality-unitmjs) |
 | [search-unit.mjs](../frontend/tests/search-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#search-unitmjs) |
 | [test_case.md](../frontend/tests/test_case.md) | write-up |  |  |
 <!-- test-index:end -->

@@ -10,7 +10,7 @@ These are plain Node scripts using `node:assert`. Each prints `PASS ...` lines a
 npm run test:admin:unit
 ```
 
-Runs `admin-unit.mjs` and `crawler-monitor-unit.mjs` with `--experimental-strip-types`, so Node imports the `lib/*.ts` files directly.
+Runs `admin-unit.mjs`, `crawler-monitor-unit.mjs`, `indexer-report-unit.mjs` and `search-quality-unit.mjs` with `--experimental-strip-types`, so Node imports the `lib/*.ts` files directly.
 
 For AI overview, `npm run test:overview:routes` exercises the compiled UI proxies against mocked FastAPI responses: opaque token passthrough, status/Retry-After forwarding, ingress headers and demo behavior. Backend tests own signing, citations, provider behavior and PostgreSQL quota/cache coordination; see [backend verification](../../backend/docs/ai_overview.md#verification). Set `NEXT_BUILD_DIR` when using an isolated build. No real Groq credentials or calls are used.
 

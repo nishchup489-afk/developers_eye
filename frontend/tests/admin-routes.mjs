@@ -8,6 +8,7 @@ import { seal, unseal, userFromSession } from "../lib/admin-session.ts";
 import { fixture } from "./fixtures/crawler-report.mjs";
 import { monitorFixture, documentFixture, attemptFixture } from "./fixtures/crawler-monitor.mjs";
 import { corpusFixture, hostsFixture, problemsFixture, searchFixture, systemFixture } from "./fixtures/system-report.mjs";
+import { evaluationFixture, judgingFixture, slowFixture } from "./fixtures/search-quality.mjs";
 
 const require = createRequire(import.meta.url);
 globalThis.AsyncLocalStorage = AsyncLocalStorage;
@@ -26,6 +27,12 @@ const hostsRoute = load("admin/system/hosts");
 const problemsRoute = load("admin/system/problems");
 const corpusRoute = load("admin/system/corpus");
 const searchRoute = load("admin/system/search");
+const slowRoute = load("admin/search-quality/slow");
+const evaluationRoute = load("admin/search-quality/evaluation");
+const judgingQueryRoute = load("admin/search-quality/queries/[id]");
+const judgmentsRoute = load("admin/search-quality/queries/[id]/judgments");
+const poolRoute = load("admin/search-quality/queries/[id]/pool");
+const importRoute = load("admin/search-quality/queries/import");
 const base = "http://localhost:3000";
 const serviceKey = randomBytes(32).toString("hex");
 Object.assign(process.env, { NODE_ENV: "production", ADMIN_APP_URL: base, ADMIN_SESSION_SECRET: randomBytes(32).toString("hex"), ADMIN_GITHUB_IDS: "42", GITHUB_CLIENT_ID: "test-client", GITHUB_CLIENT_SECRET: "test-secret", CRAWLER_REPORT_API_URL: "http://reporting.test/admin/crawler/report", CRAWLER_REPORT_API_KEY: serviceKey });
@@ -44,6 +51,13 @@ function monitoring(route, token, path) {
   return route.workAsyncStorage.run({ route: "/api/admin/crawler/monitor", isStaticGeneration: false }, () =>
     route.workUnitAsyncStorage.run({ type: "request", phase: "render", cookies: cookieJar }, () => route.routeModule.userland.GET(request(path))));
 }
+// Any handler and method, with dynamic route params, in request context.
+function handle(route, method, token, path, { params, body, origin = base } = {}) {
+  const cookieJar = { get: () => token ? { value: token } : undefined };
+  const init = { method, headers: { Origin: origin, ...(body === undefined ? {} : { "Content-Type": "application/json" }) }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) };
+  return route.workAsyncStorage.run({ route: path, isStaticGeneration: false }, () =>
+    route.workUnitAsyncStorage.run({ type: "request", phase: "render", cookies: cookieJar }, () => route.routeModule.userland[method](request(path, undefined, init), { params: Promise.resolve(params ?? {}) })));
+}
 let calls = [];
 let responseMode = "ok";
 let profileId = 42;
@@ -52,7 +66,8 @@ const originalFetch = globalThis.fetch;
 globalThis.fetch = async (input, init) => {
   const req = new Request(input, init);
   const url = new URL(req.url);
-  const options = { headers: Object.fromEntries([...req.headers].map(([name, value]) => [name === "authorization" ? "Authorization" : name, value])), body: req.method === "POST" ? new URLSearchParams(await req.text()) : null, redirect: req.redirect };
+  const text = req.method === "GET" ? "" : await req.text();
+  const options = { method: req.method, headers: Object.fromEntries([...req.headers].map(([name, value]) => [name === "authorization" ? "Authorization" : name, value])), body: req.method === "POST" ? new URLSearchParams(text) : null, json: text && url.hostname === "reporting.test" ? JSON.parse(text) : null, redirect: req.redirect };
   calls.push({ url, options });
   if (url.hostname === "reporting.test") {
     assert.equal(options.headers.Authorization, `Bearer ${serviceKey}`);
@@ -61,6 +76,13 @@ globalThis.fetch = async (input, init) => {
     if (responseMode === "unavailable") return Response.json({}, { status: 503 });
     if (responseMode === "malformed") return Response.json({});
     if (responseMode === "notfound") return Response.json({}, { status: 404 });
+    if (url.pathname.endsWith("/search-quality/slow")) return Response.json(slowFixture());
+    if (url.pathname.endsWith("/search-quality/evaluation")) return Response.json(evaluationFixture());
+    if (url.pathname.includes("/search-quality/queries/")) {
+      if (url.pathname.endsWith("/queries/MISSING/judgments")) return Response.json({ detail: "Judging query not found" }, { status: 404 });
+      if (options.json?.url === "https://rejected.test/") return Response.json({ detail: "This URL is not in the pool; add it as an independently found page" }, { status: 422 });
+      return Response.json(req.method === "GET" ? judgingFixture() : { ok: true });
+    }
     if (url.pathname.endsWith("/monitor")) return Response.json(monitorFixture());
     if (url.pathname.endsWith("/system/report")) return Response.json(systemFixture());
     if (url.pathname.endsWith("/system/hosts")) return Response.json(hostsFixture());
@@ -184,6 +206,58 @@ try {
   process.env.ADMIN_VIEWER_GITHUB_IDS = "";
   assert.equal((await monitoring(systemRoute, viewerToken, "/api/admin/system/report")).status, 401);
   console.log("PASS read-only access: viewer sign-in, viewer and guest report reads, admin-only slow queries, query limits, revocation");
+
+  // Search quality: slow-search text is admin-only; judging writes need an admin and this app's origin.
+  process.env.ADMIN_VIEWER_GITHUB_IDS = "77";
+  const slowAdmin = await (await monitoring(slowRoute, session, "/api/admin/search-quality/slow?hours=24&limit=50")).json();
+  assert.equal(slowAdmin.queries[0].query, "HTTP 500 internal server error");
+  assert.equal(calls.at(-1).url.pathname, "/admin/search-quality/slow");
+  assert.equal(calls.at(-1).url.searchParams.get("limit"), "50");
+  const slowViewer = await (await monitoring(slowRoute, viewerToken, "/api/admin/search-quality/slow")).json();
+  assert.ok(slowViewer.queries.every((q) => q.query === "(hidden)"));
+  for (const query of ["hours=0", "hours=721", "limit=501", "limit=1e2"]) assert.equal((await monitoring(slowRoute, session, `/api/admin/search-quality/slow?${query}`)).status, 400);
+  assert.equal((await monitoring(evaluationRoute, viewerToken, "/api/admin/search-quality/evaluation?k=5")).status, 200);
+  assert.equal(calls.at(-1).url.searchParams.get("k"), "5");
+  assert.equal((await monitoring(evaluationRoute, session, "/api/admin/search-quality/evaluation?k=7")).status, 400);
+  const judging = await handle(judgingQueryRoute, "GET", viewerToken, "/api/admin/search-quality/queries/H001", { params: { id: "H001" } });
+  assert.equal((await judging.json()).judgments.length, 2);
+  assert.equal(calls.at(-1).url.pathname, "/admin/search-quality/queries/H001");
+  assert.equal((await handle(judgingQueryRoute, "GET", session, "/api/admin/search-quality/queries/x", { params: { id: "../crawler" } })).status, 400);
+  let callsBefore = calls.length;
+  const judgment = { url: "https://docs.python.org/3/", grade: 3, note: "best", judge: "forged" };
+  const judgmentPath = "/api/admin/search-quality/queries/H001/judgments";
+  assert.equal((await handle(judgmentsRoute, "PUT", viewerToken, judgmentPath, { params: { id: "H001" }, body: judgment })).status, 401);
+  assert.equal((await handle(judgmentsRoute, "PUT", undefined, judgmentPath, { params: { id: "H001" }, body: judgment })).status, 401);
+  assert.equal((await handle(judgmentsRoute, "PUT", session, judgmentPath, { params: { id: "H001" }, body: judgment, origin: "https://other.example" })).status, 403);
+  assert.equal((await handle(judgmentsRoute, "PUT", session, judgmentPath, { params: { id: "H001" }, body: { ...judgment, grade: 5 } })).status, 400);
+  assert.equal(calls.length, callsBefore);
+  const saved = await handle(judgmentsRoute, "PUT", session, judgmentPath, { params: { id: "H001" }, body: judgment });
+  assert.equal(saved.status, 200);
+  assert.equal(calls.at(-1).options.method, "PUT");
+  assert.equal(calls.at(-1).url.pathname, "/admin/search-quality/queries/H001/judgments");
+  assert.deepEqual(calls.at(-1).options.json, { url: "https://docs.python.org/3/", grade: 3, note: "best", add: false, judge: "test-admin" });
+  const rejected = await handle(judgmentsRoute, "PUT", session, judgmentPath, { params: { id: "H001" }, body: { url: "https://rejected.test/", grade: 1 } });
+  assert.equal(rejected.status, 422);
+  assert.match((await rejected.json()).error, /not in the pool/);
+  assert.equal((await handle(judgmentsRoute, "PUT", session, "/api/admin/search-quality/queries/MISSING/judgments", { params: { id: "MISSING" }, body: judgment })).status, 404);
+  const removed = await handle(judgmentsRoute, "DELETE", session, `${judgmentPath}?url=${encodeURIComponent("https://example.com/added")}`, { params: { id: "H001" } });
+  assert.equal(removed.status, 200);
+  assert.equal(calls.at(-1).url.searchParams.get("url"), "https://example.com/added");
+  assert.equal((await handle(judgmentsRoute, "DELETE", session, `${judgmentPath}?url=javascript:alert(1)`, { params: { id: "H001" } })).status, 400);
+  const queryEdit = await handle(judgingQueryRoute, "PUT", session, "/api/admin/search-quality/queries/H001", { params: { id: "H001" }, body: { query: "python async api", mode: "text", no_relevant_documents: true } });
+  assert.equal(queryEdit.status, 200);
+  assert.equal(calls.at(-1).options.json.no_relevant_documents, true);
+  assert.equal((await handle(judgingQueryRoute, "PUT", session, "/api/admin/search-quality/queries/H001", { params: { id: "H001" }, body: { query: "x", mode: "images" } })).status, 400);
+  assert.equal((await handle(judgingQueryRoute, "DELETE", viewerToken, "/api/admin/search-quality/queries/H001", { params: { id: "H001" } })).status, 401);
+  assert.equal((await handle(poolRoute, "POST", session, "/api/admin/search-quality/queries/H001/pool", { params: { id: "H001" } })).status, 200);
+  assert.equal(calls.at(-1).url.pathname, "/admin/search-quality/queries/H001/pool");
+  assert.equal((await handle(importRoute, "POST", session, "/api/admin/search-quality/queries/import")).status, 200);
+  assert.equal(calls.at(-1).url.pathname, "/admin/search-quality/queries/import");
+  callsBefore = calls.length;
+  assert.equal((await handle(importRoute, "POST", viewerToken, "/api/admin/search-quality/queries/import")).status, 401);
+  assert.equal(calls.length, callsBefore);
+  process.env.ADMIN_VIEWER_GITHUB_IDS = "";
+  console.log("PASS search quality routes: admin-only slow query text, query limits, admin-only same-origin writes, judge from session, upstream errors");
 
   const deniedLogout = await logoutRoute.routeModule.userland.POST(request("/api/auth/logout", undefined, { method: "POST", headers: { Origin: "https://other.example" } }));
   assert.equal(deniedLogout.status, 403);
