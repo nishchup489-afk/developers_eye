@@ -20,6 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from backend.search.ranking.bm25 import apply_BM25
 from backend.search.ranking.statistics import (
     _get_candidate_documents,
+    _gin_only_plans,
     _get_document_frequencies,
     get_corpus_statistics,
     load_channel_statistics,
@@ -139,6 +140,27 @@ async def test_df_matches_exact_lexemes_not_double_stems(db_session: AsyncSessio
     )
     assert old_df == 1
     assert actual["univers"] != old_df
+
+
+@pytest.mark.asyncio
+async def test_df_counts_use_the_gin_index_not_a_detoasting_seq_scan(
+    db_session: AsyncSession,
+):
+    # EXP-0016: on a six-row table the planner picks a sequential scan, the
+    # same plan it chose for a common lexeme at 100k documents.
+    count = "EXPLAIN SELECT count(*) FROM search_index WHERE search_vector @@ 'python'::tsquery"
+    default_plan = "\n".join((await db_session.execute(text(count))).scalars())
+    assert "Seq Scan" in default_plan
+
+    async with _gin_only_plans(db_session):
+        plan = "\n".join((await db_session.execute(text(count))).scalars())
+    assert "Seq Scan" not in plan
+    assert "test_rank_text_gin" in plan
+
+    # The rest of the search transaction keeps the caller's planner settings.
+    assert await db_session.scalar(text("SHOW enable_seqscan")) == "on"
+    assert await _get_document_frequencies(db_session, ("python",), "TEXT") == {"python": 2}
+    assert await db_session.scalar(text("SHOW enable_seqscan")) == "on"
 
 
 @pytest.mark.asyncio

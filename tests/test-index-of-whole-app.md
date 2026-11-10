@@ -36,12 +36,12 @@ through their `tests/conftest.py`, so nothing has to be set in the terminal. See
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**99 test files, 785 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**99 test files, 786 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 38 | 338 | `cd backend && poetry run pytest` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 38 | 339 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 14 | 109 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 36 | 338 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 11 | 0 | npm scripts in `frontend/package.json` (see below) |
@@ -69,7 +69,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [integration/test_fuzzy_suggestions.py](../backend/tests/integration/test_fuzzy_suggestions.py) | tests | 4 | [test_case.md](../backend/tests/test_case.md#fuzzy-suggestions) |
 | [integration/test_migrations.py](../backend/tests/integration/test_migrations.py) | tests | 3 |  |
 | [integration/test_ranking_developer_queries.py](../backend/tests/integration/test_ranking_developer_queries.py) | tests | 4 |  |
-| [integration/test_ranking_statistics.py](../backend/tests/integration/test_ranking_statistics.py) | tests | 8 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
+| [integration/test_ranking_statistics.py](../backend/tests/integration/test_ranking_statistics.py) | tests | 9 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
 | [integration/test_retrieval.py](../backend/tests/integration/test_retrieval.py) | tests | 6 | [test_case.md](../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql) |
 | [integration/test_search.py](../backend/tests/integration/test_search.py) | tests | 7 | [test_case.md](../backend/tests/test_case.md#search-service-against-postgresql) |
 | [integration/test_search_deadlines.py](../backend/tests/integration/test_search_deadlines.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#public-search-limits-adr-0046) |

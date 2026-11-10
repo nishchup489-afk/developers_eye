@@ -175,10 +175,11 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/integration/test_ranking_statistics.py](../../backend/tests/integration/test_ranking_statistics.py)
 
-8 cases · write-up: [test_case.md](../../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql)
+9 cases · write-up: [test_case.md](../../backend/tests/test_case.md#ranking-statistics-retrieval-postgresql)
 
 - `test_universe_is_stemmed_once_by_postgresql`
 - `test_df_matches_exact_lexemes_not_double_stems`
+- `test_df_counts_use_the_gin_index_not_a_detoasting_seq_scan`
 - `test_text_and_code_have_independent_df`
 - `test_tf_and_dl_use_exact_indexed_positions`
 - `test_channel_corpus_counts_and_average_lengths`

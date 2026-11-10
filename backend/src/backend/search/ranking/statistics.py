@@ -16,7 +16,8 @@ Production usage:
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import AsyncIterator, Iterable
+from contextlib import asynccontextmanager
 from time import monotonic
 from typing import Literal, cast as type_cast
 
@@ -149,6 +150,27 @@ def _exact_lexeme_query(term: str):
     return cast(literal(f"'{escaped}'"), TSQUERY)
 
 
+@asynccontextmanager
+async def _gin_only_plans(session: AsyncSession) -> AsyncIterator[None]:
+    """Keep the planner on GIN bitmap scans for the statements inside.
+
+    A sequential scan evaluates @@ against every row, which detoasts every
+    TSVECTOR in the table. For a common lexeme the planner still prefers that
+    scan because it does not cost detoasting, and at 100k documents one count
+    read 340k buffers and took over a second (EXP-0016). The GIN bitmap answers
+    a single-lexeme match exactly, so the heap pages it visits are never
+    detoasted. The previous setting is restored for the rest of the transaction.
+    """
+    previous = await session.scalar(select(func.current_setting("enable_seqscan")))
+    await session.execute(select(func.set_config("enable_seqscan", "off", True)))
+    yield
+    # Not in a finally: after a failed statement the transaction is aborted,
+    # and its rollback discards this transaction-local setting anyway.
+    await session.execute(
+        select(func.set_config("enable_seqscan", str(previous or "on"), True))
+    )
+
+
 async def _get_document_frequencies(
     session: AsyncSession,
     terms: Iterable[str],
@@ -181,7 +203,8 @@ async def _get_document_frequencies(
         else union_all(*queries)
     )
 
-    rows = (await session.execute(stmt)).all()
+    async with _gin_only_plans(session):
+        rows = (await session.execute(stmt)).all()
 
     return {
         str(term): int(count)
