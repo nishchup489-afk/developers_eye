@@ -16,7 +16,6 @@ exposed through an explicit API contract before enabling that feature.
 from __future__ import annotations
 
 import re
-from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
@@ -40,7 +39,7 @@ from backend.search.retrieval.fts import search_text
 from backend.search.snippets.snippets import generate_snippet
 from backend.search.snippets.code import code_excerpt
 from backend.search.types import RankedHit, RetrievalHit
-from backend.search.presentation import prefer_language, result_identity, LANGUAGE_TAG
+from backend.search.presentation import prefer_language, result_identity, variant_counts, LANGUAGE_TAG
 
 CANDIDATES_PER_CHANNEL = 100  # ranker hard limit: 200 unique IDs
 MAX_SNIPPET_SOURCE_CHARS = 12_000
@@ -221,9 +220,7 @@ async def search_documents(
     )
     eligible, metadata = await _metadata_for_candidates(session, ranked, categories)
     eligible = prefer_language(eligible, metadata, language)
-    groups = Counter(result_identity(metadata[hit.document_id].canonical_url,
-                                     metadata[hit.document_id].metadata_)[2] for hit in eligible)
-    hashes = Counter(getattr(metadata[hit.document_id], "content_hash", None) for hit in eligible)
+    variants_by_id = variant_counts(eligible, metadata)
     page_result = paginate_hits(eligible, page=page, limit=limit, config=settings)
     if not page_result.hits:
         return []
@@ -260,9 +257,7 @@ async def search_documents(
             max_chars=settings.snippet_length,
             preserve_code=preserve_code,
         )
-        declared_language, version, group = result_identity(record.canonical_url, record.metadata_)
-        content_hash = getattr(record, "content_hash", None)
-        variants = max(groups[group], hashes[content_hash] if content_hash else 1) - 1
+        declared_language, version, _ = result_identity(record.canonical_url, record.metadata_)
         results.append(
             SearchResultOut(
                 title=record.title,
@@ -275,7 +270,7 @@ async def search_documents(
                 language=declared_language,
                 version=version,
                 last_seen_at=getattr(body_record, "last_seen_at", None),
-                related_variants=variants or None,
+                related_variants=variants_by_id[hit.document_id] or None,
                 snippet_is_code=bool(code_source),
             )
         )

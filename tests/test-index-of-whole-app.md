@@ -36,12 +36,12 @@ through their `tests/conftest.py`, so nothing has to be set in the terminal. See
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**98 test files, 783 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**98 test files, 784 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 38 | 337 | `cd backend && poetry run pytest` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 38 | 338 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 14 | 109 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 35 | 337 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 11 | 0 | npm scripts in `frontend/package.json` (see below) |
@@ -96,7 +96,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [unit/test_relevance_cli.py](../backend/tests/unit/test_relevance_cli.py) | tests | 3 |  |
 | [unit/test_relevance_metrics.py](../backend/tests/unit/test_relevance_metrics.py) | tests | 10 |  |
 | [unit/test_relevance_metrics_base.py](../backend/tests/unit/test_relevance_metrics_base.py) | tests | 7 |  |
-| [unit/test_result_presentation.py](../backend/tests/unit/test_result_presentation.py) | tests | 3 |  |
+| [unit/test_result_presentation.py](../backend/tests/unit/test_result_presentation.py) | tests | 4 |  |
 | [unit/test_search_pipeline.py](../backend/tests/unit/test_search_pipeline.py) | tests | 10 | [test_case.md](../backend/tests/test_case.md#search-service-pipeline) |
 | [unit/test_search_telemetry.py](../backend/tests/unit/test_search_telemetry.py) | tests | 8 |  |
 | [unit/test_snippet_bounds.py](../backend/tests/unit/test_snippet_bounds.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#snippets) |

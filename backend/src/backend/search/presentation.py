@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+from collections import defaultdict
 from urllib.parse import urlsplit
 
 LANGUAGE_TAG = re.compile(r"^[a-zA-Z]{2,3}(?:-[a-zA-Z0-9]{2,8}){0,2}$")
@@ -39,3 +40,18 @@ def prefer_language(hits, metadata, language: str | None):
         (result_identity(metadata[hit.document_id].canonical_url,
                          metadata[hit.document_id].metadata_)[0] or "").split("-")[0] != preferred
     ))  # stable partition: other languages remain searchable, BM25 ties unchanged.
+
+
+def variant_counts(hits, metadata) -> dict[int, int]:
+    groups, hashes = defaultdict(set), defaultdict(set)
+    identities = {}
+    for hit in hits:
+        record = metadata[hit.document_id]
+        group = result_identity(record.canonical_url, record.metadata_)[2]
+        content_hash = getattr(record, "content_hash", None)
+        identities[hit.document_id] = (group, content_hash)
+        groups[group].add(hit.document_id)
+        if content_hash:
+            hashes[content_hash].add(hit.document_id)
+    return {document_id: len(groups[group] | (hashes[content_hash] if content_hash else set())) - 1
+            for document_id, (group, content_hash) in identities.items()}

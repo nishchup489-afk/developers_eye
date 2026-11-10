@@ -438,11 +438,12 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/unit/test_result_presentation.py](../../backend/tests/unit/test_result_presentation.py)
 
-3 cases
+4 cases
 
 - `test_translations_and_versions_share_identity_without_changing_urls`
 - `test_language_preference_keeps_other_languages_and_score_order`
 - `test_bad_metadata_does_not_invent_language_or_version`
+- `test_related_counts_union_translations_and_hash_copies_without_double_counting`
 
 ### [backend/tests/unit/test_search_pipeline.py](../../backend/tests/unit/test_search_pipeline.py)
 

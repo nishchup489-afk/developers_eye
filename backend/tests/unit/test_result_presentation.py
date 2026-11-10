@@ -1,6 +1,6 @@
 from types import SimpleNamespace
 
-from backend.search.presentation import prefer_language, result_identity
+from backend.search.presentation import prefer_language, result_identity, variant_counts
 
 
 def test_translations_and_versions_share_identity_without_changing_urls():
@@ -25,3 +25,13 @@ def test_language_preference_keeps_other_languages_and_score_order():
 
 def test_bad_metadata_does_not_invent_language_or_version():
     assert result_identity("https://example.com/v99/", {"language": "<script>"})[:2] == (None, None)
+
+
+def test_related_counts_union_translations_and_hash_copies_without_double_counting():
+    hits = [SimpleNamespace(document_id=i) for i in (1, 2, 3)]
+    metadata = {
+        1: SimpleNamespace(canonical_url="https://fastapi.tiangolo.com/async/", metadata_={}, content_hash="a"),
+        2: SimpleNamespace(canonical_url="https://fastapi.tiangolo.com/pt/async/", metadata_={}, content_hash="b"),
+        3: SimpleNamespace(canonical_url="https://example.com/copy", metadata_={}, content_hash="a"),
+    }
+    assert variant_counts(hits, metadata) == {1: 2, 2: 1, 3: 1}
