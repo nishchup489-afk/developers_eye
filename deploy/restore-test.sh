@@ -4,13 +4,13 @@
 #   ./restore-test.sh [backups/some.dump]
 set -eu
 cd "$(dirname "$0")"
-. ./.env
+. "${DEPLOY_ENV_FILE:-./.env}"
 file=${1:-$(ls -t "${BACKUP_DIR:-/data/backups}"/*.dump | head -n 1)}
 [ -r "$file" ] || { echo "No readable backup found" >&2; exit 1; }
 name=developers-eye-restore-test-$(date +%s)-$$
 password=$(openssl rand -hex 16)
 
-trap 'docker rm -f "$name" >/dev/null 2>&1 || true' EXIT
+trap 'docker rm -fv "$name" >/dev/null 2>&1 || true' EXIT
 docker run -d --name "$name" -e POSTGRES_PASSWORD="$password" postgres:18-alpine >/dev/null
 ready=0
 for attempt in $(seq 1 60); do

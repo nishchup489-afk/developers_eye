@@ -3,7 +3,7 @@
 # crawl_event data is left out: it is telemetry and is the fastest-growing table.
 set -eu
 cd "$(dirname "$0")"
-. ./.env
+. "${DEPLOY_ENV_FILE:-./.env}"
 backups=${BACKUP_DIR:-/data/backups}
 keep_days=${BACKUP_KEEP_DAYS:-7}
 mkdir -p "$backups"

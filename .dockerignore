@@ -3,6 +3,7 @@
 **/__pycache__
 **/node_modules
 **/.next
+**/.next-*
 **/.env
 **/.env.*
 !**/.env.example
@@ -10,3 +11,5 @@
 crawler/logs
 crawler/tests
 backend/tests
+tests/reports
+deploy/backups
