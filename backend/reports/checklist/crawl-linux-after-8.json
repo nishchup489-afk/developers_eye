@@ -1,0 +1,90 @@
+{
+  "workers": 8,
+  "concurrency": 8,
+  "hosts": 12,
+  "gap_seconds": 0.1,
+  "latency_ms": 15.0,
+  "run_seconds": 20.9,
+  "requests": 1344,
+  "requests_per_second": 67.41,
+  "ideal_requests_per_second": 120.0,
+  "gap_violations": 0,
+  "overlapping_requests": 0,
+  "comparison_tolerance_seconds": 0.005,
+  "throttled_429": 0,
+  "median_requests_per_host": 112.0,
+  "worker_exit_codes": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "database_before": {
+    "xact_commit": 64427,
+    "xact_rollback": 53400,
+    "tup_inserted": 99062,
+    "tup_updated": 57949,
+    "attempts": 0,
+    "finished": 0,
+    "tables": [
+      {
+        "relname": "crawl_attempt",
+        "n_tup_upd": 27389,
+        "n_tup_hot_upd": 19495,
+        "n_dead_tup": 1324,
+        "bytes": 1875968
+      },
+      {
+        "relname": "crawl_event",
+        "n_tup_upd": 0,
+        "n_tup_hot_upd": 0,
+        "n_dead_tup": 9488,
+        "bytes": 6299648
+      },
+      {
+        "relname": "crawl_target",
+        "n_tup_upd": 14900,
+        "n_tup_hot_upd": 0,
+        "n_dead_tup": 3890,
+        "bytes": 4546560
+      }
+    ]
+  },
+  "database_after": {
+    "xact_commit": 75757,
+    "xact_rollback": 62945,
+    "tup_inserted": 112520,
+    "tup_updated": 64770,
+    "attempts": 1346,
+    "finished": 1342,
+    "tables": [
+      {
+        "relname": "crawl_attempt",
+        "n_tup_upd": 28731,
+        "n_tup_hot_upd": 19495,
+        "n_dead_tup": 1013,
+        "bytes": 1875968
+      },
+      {
+        "relname": "crawl_event",
+        "n_tup_upd": 0,
+        "n_tup_hot_upd": 0,
+        "n_dead_tup": 7,
+        "bytes": 6053888
+      },
+      {
+        "relname": "crawl_target",
+        "n_tup_upd": 17591,
+        "n_tup_hot_upd": 0,
+        "n_dead_tup": 2018,
+        "bytes": 4546560
+      }
+    ]
+  },
+  "committed_transactions": 11330,
+  "updated_tuples": 6821
+}

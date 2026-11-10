@@ -84,13 +84,14 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | INC-0011 | crawler/worker-runtime | [Expired jobs left unfinished attempts and bypassed failure backoff](crawler/worker-runtime/INC-0011-abandoned-attempt-accounting.md) | resolved |
 | INC-0012 | crawler/parser | [Later or bot-specific robots metadata restrictions were ignored](crawler/parser/INC-0012-robots-metadata-union.md) | resolved |
 | INC-0013 | backend/bm25-statistics | [BM25 ranking corruption caused by double-stemming](backend/bm25-statistics/INC-0013-BM25-ranking-corruption-caused-by-double-stemming.md) | resolved |
-| INC-0032 | crawler/scheduler-and-leases | [Crawler Pipeline Stalled by PostgreSQL Advisory-Lock Contention](crawler/scheduler-and-leases/INC-0032-crawler-pipeline-stalled-by-postgres-advisory-lock-contention.md) |  |
+| INC-0032 | crawler/scheduler-and-leases | [Crawler pipeline stalled by PostgreSQL advisory-lock contention](crawler/scheduler-and-leases/INC-0032-crawler-pipeline-stalled-by-postgres-advisory-lock-contention.md) | open |
 | INC-0033 | frontend/search-experience | [Upstream timeout ignored on a Next.js server's first hung request](frontend/search-experience/INC-0033-upstream-timeout-ignored-on-first-hung-request.md) | resolved |
 | INC-0034 | backend/database-schema | [code_vector migration failed on a populated search_index](backend/database-schema/INC-0034-code-vector-migration-failed-on-populated-index.md) | resolved |
 | INC-0035 | crawler/worker-runtime | [Indexer worker exited for good when the database restarted](crawler/worker-runtime/INC-0035-indexer-worker-exited-on-database-outage.md) | resolved |
 | INC-0036 | infra/local-dev-and-testing | [Redirected Windows test runner failed before executing suites](infra/local-dev-and-testing/INC-0036-redirected-windows-test-runner-encoding.md) | resolved |
 | INC-0037 | crawler/document-writer | [Thin pages and competing sources replaced richer content and ownership](crawler/document-writer/INC-0037-thin-pages-and-competing-sources-replaced-content.md) | resolved |
 | INC-0038 | crawler/content-processing | [FastAPI documentation fell through to article and event categories](crawler/content-processing/INC-0038-fastapi-documents-mapped-to-articles.md) | resolved |
+| INC-0039 | infra/local-dev-and-testing | [Fresh backend Poetry environment could not collect HTTP tests](infra/local-dev-and-testing/INC-0039-fresh-clone-test-dependencies.md) | resolved |
 
 ## Experiments
 
@@ -110,4 +111,5 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | EXP-0012 | backend/ranking | [Evaluate judged candidate recall and BM25 relevance against PostgreSQL FTS](backend/ranking/EXP-0012-judged-lexical-relevance-evaluation.md) | running |
 | EXP-0013 | infra/performance-and-scaling | [Separate cold DF cost from retrieval expansion and page hydration](infra/performance-and-scaling/EXP-0013-read-only-search-stage-profiling.md) | done |
 | EXP-0014 | backend/ranking | [Agent-reviewed 25-query real-corpus BM25 and PostgreSQL baseline](backend/ranking/EXP-0014-agent-reviewed-25-query-baseline.md) | done |
+| EXP-0015 | infra/performance-and-scaling | [Measure Linux crawl write costs and stage workers before further redesign](infra/performance-and-scaling/EXP-0015-linux-crawl-write-cost-and-staged-workers.md) | done |
 <!-- record-index:end -->

@@ -1,0 +1,178 @@
+{
+  "frontier_source_count_plan": [
+    {
+      "Plan": {
+        "Node Type": "Aggregate",
+        "Strategy": "Plain",
+        "Partial Mode": "Simple",
+        "Parallel Aware": false,
+        "Async Capable": false,
+        "Startup Cost": 7116.54,
+        "Total Cost": 7116.55,
+        "Plan Rows": 1,
+        "Plan Width": 8,
+        "Actual Startup Time": 10.682,
+        "Actual Total Time": 10.683,
+        "Actual Rows": 1.0,
+        "Actual Loops": 1,
+        "Disabled": false,
+        "Shared Hit Blocks": 43,
+        "Shared Read Blocks": 2196,
+        "Shared Dirtied Blocks": 0,
+        "Shared Written Blocks": 0,
+        "Local Hit Blocks": 0,
+        "Local Read Blocks": 0,
+        "Local Dirtied Blocks": 0,
+        "Local Written Blocks": 0,
+        "Temp Read Blocks": 0,
+        "Temp Written Blocks": 0,
+        "Plans": [
+          {
+            "Node Type": "Bitmap Heap Scan",
+            "Parent Relationship": "Outer",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Relation Name": "crawl_target",
+            "Alias": "crawl_target",
+            "Startup Cost": 173.49,
+            "Total Cost": 7086.48,
+            "Plan Rows": 12025,
+            "Plan Width": 0,
+            "Actual Startup Time": 3.777,
+            "Actual Total Time": 10.387,
+            "Actual Rows": 11385.0,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Recheck Cond": "(source_id = '169'::bigint)",
+            "Rows Removed by Index Recheck": 0,
+            "Exact Heap Blocks": 2224,
+            "Lossy Heap Blocks": 0,
+            "Shared Hit Blocks": 43,
+            "Shared Read Blocks": 2196,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Bitmap Index Scan",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Index Name": "ix_crawl_target_source_id",
+                "Startup Cost": 0.0,
+                "Total Cost": 170.48,
+                "Plan Rows": 12025,
+                "Plan Width": 0,
+                "Actual Startup Time": 3.551,
+                "Actual Total Time": 3.551,
+                "Actual Rows": 11801.0,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Index Cond": "(source_id = '169'::bigint)",
+                "Index Searches": 1,
+                "Shared Hit Blocks": 0,
+                "Shared Read Blocks": 15,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0
+              }
+            ]
+          }
+        ]
+      },
+      "Planning": {
+        "Shared Hit Blocks": 0,
+        "Shared Read Blocks": 0,
+        "Shared Dirtied Blocks": 0,
+        "Shared Written Blocks": 0,
+        "Local Hit Blocks": 0,
+        "Local Read Blocks": 0,
+        "Local Dirtied Blocks": 0,
+        "Local Written Blocks": 0,
+        "Temp Read Blocks": 0,
+        "Temp Written Blocks": 0
+      },
+      "Planning Time": 0.087,
+      "Triggers": [],
+      "Execution Time": 10.742
+    }
+  ],
+  "tables": [
+    {
+      "relname": "crawl_attempt",
+      "n_live_tup": 119556,
+      "n_dead_tup": 17464,
+      "n_tup_upd": 696061,
+      "n_tup_hot_upd": 468735,
+      "last_autovacuum": "2026-11-08 23:39:33.037147-05",
+      "bytes": 136290304
+    },
+    {
+      "relname": "crawl_event",
+      "n_live_tup": 919316,
+      "n_dead_tup": 0,
+      "n_tup_upd": 0,
+      "n_tup_hot_upd": 0,
+      "last_autovacuum": "2026-11-08 23:42:21.15578-05",
+      "bytes": 299540480
+    },
+    {
+      "relname": "crawl_target",
+      "n_live_tup": 189873,
+      "n_dead_tup": 21640,
+      "n_tup_upd": 240081,
+      "n_tup_hot_upd": 318,
+      "last_autovacuum": "2026-11-08 23:37:35.09155-05",
+      "bytes": 131842048
+    }
+  ],
+  "relation_options": [
+    {
+      "relname": "crawl_attempt",
+      "reloptions": null
+    },
+    {
+      "relname": "crawl_event",
+      "reloptions": null
+    },
+    {
+      "relname": "crawl_target",
+      "reloptions": null
+    }
+  ],
+  "database_settings": [
+    {
+      "name": "autovacuum_analyze_scale_factor",
+      "setting": "0.1",
+      "unit": null
+    },
+    {
+      "name": "autovacuum_max_workers",
+      "setting": "3",
+      "unit": null
+    },
+    {
+      "name": "autovacuum_vacuum_scale_factor",
+      "setting": "0.2",
+      "unit": null
+    },
+    {
+      "name": "max_connections",
+      "setting": "200",
+      "unit": null
+    }
+  ],
+  "retention_days": 14,
+  "events_eligible_for_retention": 0,
+  "retention_mode": "read-only count; no application events deleted"
+}

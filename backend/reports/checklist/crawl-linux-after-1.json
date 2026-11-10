@@ -1,0 +1,83 @@
+{
+  "workers": 1,
+  "concurrency": 8,
+  "hosts": 12,
+  "gap_seconds": 0.1,
+  "latency_ms": 15.0,
+  "run_seconds": 20.7,
+  "requests": 1089,
+  "requests_per_second": 54.79,
+  "ideal_requests_per_second": 120.0,
+  "gap_violations": 0,
+  "overlapping_requests": 0,
+  "comparison_tolerance_seconds": 0.005,
+  "throttled_429": 0,
+  "median_requests_per_host": 91.0,
+  "worker_exit_codes": [
+    0
+  ],
+  "database_before": {
+    "xact_commit": 36601,
+    "xact_rollback": 30780,
+    "tup_inserted": 53737,
+    "tup_updated": 40490,
+    "attempts": 0,
+    "finished": 0,
+    "tables": [
+      {
+        "relname": "crawl_attempt",
+        "n_tup_upd": 23948,
+        "n_tup_hot_upd": 19495,
+        "n_dead_tup": 1040,
+        "bytes": 1695744
+      },
+      {
+        "relname": "crawl_event",
+        "n_tup_upd": 0,
+        "n_tup_hot_upd": 0,
+        "n_dead_tup": 8277,
+        "bytes": 5472256
+      },
+      {
+        "relname": "crawl_target",
+        "n_tup_upd": 8004,
+        "n_tup_hot_upd": 0,
+        "n_dead_tup": 3600,
+        "bytes": 3760128
+      }
+    ]
+  },
+  "database_after": {
+    "xact_commit": 45215,
+    "xact_rollback": 37787,
+    "tup_inserted": 64628,
+    "tup_updated": 45939,
+    "attempts": 1089,
+    "finished": 1089,
+    "tables": [
+      {
+        "relname": "crawl_attempt",
+        "n_tup_upd": 25037,
+        "n_tup_hot_upd": 19495,
+        "n_dead_tup": 2129,
+        "bytes": 1761280
+      },
+      {
+        "relname": "crawl_event",
+        "n_tup_upd": 0,
+        "n_tup_hot_upd": 0,
+        "n_dead_tup": 8277,
+        "bytes": 5832704
+      },
+      {
+        "relname": "crawl_target",
+        "n_tup_upd": 10182,
+        "n_tup_hot_upd": 0,
+        "n_dead_tup": 5778,
+        "bytes": 3940352
+      }
+    ]
+  },
+  "committed_transactions": 8614,
+  "updated_tuples": 5449
+}

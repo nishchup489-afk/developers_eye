@@ -1,0 +1,17 @@
+{
+  "enabled_sources": 380,
+  "statically_eligible_sources": 380,
+  "distinct_eligible_base_hosts": 316,
+  "eligible_by_kind": {
+    "api": 1,
+    "rss": 161,
+    "website": 218
+  },
+  "configured_page_budgets": {
+    "api": 10000,
+    "rss": 159600,
+    "website": 428645
+  },
+  "configuration_issues": [],
+  "scope": "Configuration eligibility only. Every actual request still passes public-IP pinning, robots, redirects and shared host pacing; no public crawl was started."
+}
