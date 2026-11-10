@@ -127,3 +127,6 @@ crawler/logs/
 
 # Deployment
 deploy/backups/
+
+# Reports written by scripts/run_all_tests.py --save
+tests/reports/
