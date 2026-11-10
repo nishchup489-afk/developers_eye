@@ -59,12 +59,13 @@ def setup_session(metadata=(), bodies=()):
     return session
 
 
-def replace_dependencies(monkeypatch, *, text=(), code=(), ranked=()):
+def replace_dependencies(monkeypatch, *, text=(), code=(), ranked=(), titles=()):
     txt = AsyncMock(return_value=list(text))
     cod = AsyncMock(return_value=list(code))
     rank = AsyncMock(return_value=list(ranked))
     monkeypatch.setattr(service, "search_text", txt)
     monkeypatch.setattr(service, "search_code", cod)
+    monkeypatch.setattr(service, "search_titles", AsyncMock(return_value=list(titles)))
     monkeypatch.setattr(service, "rank_candidates", rank)
     return txt, cod, rank
 
@@ -128,6 +129,26 @@ async def test_code_mode_does_not_query_text_and_uses_code_block(monkeypatch):
     assert "async def" in result[0].snippet
     txt.assert_not_awaited()
     assert rank.await_args.kwargs["mode"] is SearchMode.CODE
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("mode", ["all", "text", "code"])
+async def test_title_candidates_join_the_pool_in_every_mode(monkeypatch, mode):
+    # EXP-0017: a page whose title is the query must reach the ranker.
+    txt, cod, rank = replace_dependencies(
+        monkeypatch,
+        text=[RetrievalHit(document_id=1, search_rank=0.6)],
+        code=[CodeRetrievalHit(document_id=1, score=0.9)],
+        titles=[RetrievalHit(document_id=7, search_rank=1.0)],
+        ranked=[RankedHit(document_id=7, score=3.0)],
+    )
+    session = setup_session(
+        metadata=[meta(7, "https://example.org/7")],
+        bodies=[SimpleNamespace(id=7, body="Optional chaining")],
+    )
+    await service.search_documents(session, "optional chaining", mode=mode)
+    assert 7 in {hit.document_id for hit in rank.await_args.args[2]}
+    service.search_titles.assert_awaited_once()
 
 
 @pytest.mark.asyncio

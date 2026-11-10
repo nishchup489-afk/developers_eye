@@ -33,7 +33,7 @@ from backend.search.ranking.types import (
 )
 
 RankMode = Literal["TEXT", "CODE"]
-MAX_CANDIDATES = 200
+MAX_CANDIDATES = 256  # 100 text + 100 code + 30 title candidates fit.
 MAX_QUERY_TERMS = 32
 CORPUS_SAMPLE_DOCUMENTS = 20_000
 MAX_TERM_LENGTH = 256

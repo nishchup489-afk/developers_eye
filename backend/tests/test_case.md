@@ -91,7 +91,7 @@ BM25 arithmetic, candidate merging, validation and ordering use the real code.
 | RO-09 | `test_all_mode_skips_zero_weight_channel` | Default (ALL) mode, `text_weight=0`, `code_weight=2` | Score = `2 · reference_bm25(2)`; loader called once, CODE only | Passed |
 | RO-10 | `test_single_mode_ignores_channel_fusion_weights` | Text mode with `text_weight=0`, `code_weight=10` | Score = unweighted `reference_bm25(2)`; loader called once | Passed |
 | RO-11 | `test_active_channel_requires_precomputed_corpus` | Text mode without `text_corpus` | `ValueError` matching "text_corpus"; no tokenizer or loader call | Passed |
-| RO-12 | `test_excess_candidates_fail_before_database_work` | Generator of `MAX_CANDIDATES + 1` (201) unique hits | `ValueError` matching "unique candidates"; no tokenizer or loader call | Passed |
+| RO-12 | `test_excess_candidates_fail_before_database_work` | Generator of `MAX_CANDIDATES + 1` (257) unique hits | `ValueError` matching "unique candidates"; no tokenizer or loader call | Passed |
 | RO-13 | `test_loader_error_propagates` | Loader raises `RuntimeError("statistics database unavailable")` | Same `RuntimeError` reaches the caller | Passed |
 | RO-14 | `test_nonfinite_combined_score_is_rejected` | `apply_BM25` patched to return `NaN` | `ValueError` matching "invalid combined score" | Passed |
 
@@ -361,7 +361,7 @@ Expected scores come from `reference()`, a textbook BM25 (`idf = ln(1 + (N − d
 | RK-19 | `test_statistics_mode_is_case_insensitive` | `text`, `TEXT`, `Code` | Upper-cased mode | Passed (local run 2026-11-04) |
 | RK-20 | `test_statistics_mode_picks_vector_and_config` | `text`, `code`, `all` | `english`, `simple`; `all` raises `ValueError` | Passed (local run 2026-11-04) |
 | RK-21 | `test_statistics_reject_non_lexeme_terms` | `""`, leading space, two words, tab, 257 chars | `ValueError` | Passed (local run 2026-11-04) |
-| RK-22 | `test_statistics_term_and_id_limits` | Duplicate terms, a bare string, 33 terms, 201 IDs, id 0, `True` | Duplicates removed; limits and bad IDs rejected | Passed (local run 2026-11-04) |
+| RK-22 | `test_statistics_term_and_id_limits` | Duplicate terms, a bare string, 33 terms, 257 IDs, id 0, `True` | Duplicates removed; limits and bad IDs rejected | Passed (local run 2026-11-04) |
 
 ---
 

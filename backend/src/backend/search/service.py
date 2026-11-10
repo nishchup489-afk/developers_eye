@@ -36,12 +36,13 @@ from backend.search.ranking.statistics import DocumentFrequencyCache
 from backend.search.ranking.types import CorpusStatistics
 from backend.search.retrieval.code import search_code
 from backend.search.retrieval.fts import search_text
+from backend.search.retrieval.titles import TITLE_CANDIDATES, search_titles
 from backend.search.snippets.snippets import generate_snippet
 from backend.search.snippets.code import code_excerpt
 from backend.search.types import RankedHit, RetrievalHit
 from backend.search.presentation import prefer_language, result_identity, variant_counts, LANGUAGE_TAG
 
-CANDIDATES_PER_CHANNEL = 100  # ranker hard limit: 200 unique IDs
+CANDIDATES_PER_CHANNEL = 100  # plus TITLE_CANDIDATES; ranker limit: 256 unique IDs
 MAX_SNIPPET_SOURCE_CHARS = 12_000
 
 # Per-worker, immutable snapshots; installed and refreshed by main.py.
@@ -132,6 +133,8 @@ async def _retrieve_candidates(
             RetrievalHit(document_id=hit.document_id, code_rank=hit.score)
             for hit in code_hits
         ])
+    # Every mode: pages whose title is the query (EXP-0017 recall misses).
+    groups.append(await search_titles(session, query, limit=TITLE_CANDIDATES, categories=categories))
     return merge_hits(*groups)
 
 
