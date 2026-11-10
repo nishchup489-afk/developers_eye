@@ -30,5 +30,10 @@ Pending implementation/evaluation choices are recorded as proposals: ADR-0039. D
 
 ## Rules for future changes
 
+- The 2026-11-09 tooling refresh resolves the Zod/minimatch audit findings without
+  changing pinned Next.js 16.4.5. The scoped typescript-estree → minimatch 11.0.5
+  override remains until an upstream compatible release includes the fix.
+  `npm ci`, full `npm audit`, lint, and TypeScript checks passed after the refresh.
+
 - Make readiness checks distinct from liveness checks.
 - Do not mark CI/container work complete until files exist and a run is verified.

@@ -1,0 +1,9 @@
+{
+  "scanned": 100141,
+  "eligible_changes": 116,
+  "transitions": {
+    "articles->docs": 115,
+    "events->docs": 1
+  },
+  "mode": "apply"
+}
