@@ -84,6 +84,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | INC-0033 | frontend/search-experience | [Upstream timeout ignored on a Next.js server's first hung request](frontend/search-experience/INC-0033-upstream-timeout-ignored-on-first-hung-request.md) | resolved |
 | INC-0034 | backend/database-schema | [code_vector migration failed on a populated search_index](backend/database-schema/INC-0034-code-vector-migration-failed-on-populated-index.md) | resolved |
 | INC-0035 | crawler/worker-runtime | [Indexer worker exited for good when the database restarted](crawler/worker-runtime/INC-0035-indexer-worker-exited-on-database-outage.md) | resolved |
+| INC-0038 | infra/local-dev-and-testing | [Stale Next.js dev chunks left pages unhydrated until a hard refresh](infra/local-dev-and-testing/INC-0038-stale-dev-chunks-block-hydration.md) | mitigated |
 
 ## Experiments
 

@@ -27,6 +27,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | --- | --- | --- | --- |
 | [ADR-0035](ADR-0035-configuration-and-validation-boundaries.md) | decision | Keep configuration explicit and distinguish test tiers from deployment evidence | accepted |
 | [ADR-0051](ADR-0051-one-runner-over-native-suite-runners.md) | decision | One test runner script orchestrates the native suite runners and reports through rich | accepted |
+| [INC-0038](INC-0038-stale-dev-chunks-block-hydration.md) | incident | Stale Next.js dev chunks left pages unhydrated until a hard refresh | mitigated |
 
 ## Decisions to record
 
@@ -38,3 +39,4 @@ The identified decisions for this feature are indexed above. Record new decision
 - Add a new suite to `SUITES` in `scripts/run_all_tests.py` as well as to its own runner (ADR-0051).
 - Do not run the suites in parallel without a per-suite test database (ADR-0051).
 - Keep the backend-to-crawler dependency direction unchanged.
+- Keep Next.js dev chunks uncacheable; a page that renders but never responds means stale dev chunks (INC-0038).
