@@ -7,6 +7,12 @@ on:
       - "backend/src/backend/api/edge_trust.py"
       - "backend/src/backend/core/**"
       - "backend/src/backend/main.py"
+      - "backend/src/backend/api/ai_overview.py"
+      - "frontend/lib/axios.js"
+      - "frontend/lib/search.ts"
+      - "frontend/app/api/search/**"
+      - "frontend/package*.json"
+      - "frontend/next.config.*"
       - ".github/workflows/oracle-readiness.yml"
   workflow_dispatch:
     inputs:
