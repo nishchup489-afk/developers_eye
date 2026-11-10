@@ -3,14 +3,23 @@ import axios, { isAxiosError } from "axios";
 // Every axios instance in the frontend lives here. Both resolve every status, so callers
 // read `response.status` and map failures to their own messages instead of catching AxiosError.
 
+/**
+ * Shared typed transport interface for browser and server callers.
+ * @param {import("axios").CreateAxiosDefaults} [options]
+ * @returns {import("axios").AxiosInstance}
+ */
+function createHttpClient(options = {}) {
+  return axios.create({
+    adapter: "fetch",
+    fetchOptions: { cache: "no-store" },
+    headers: { Accept: "application/json" },
+    validateStatus: () => true,
+    ...options,
+  });
+}
+
 // Browser client for this app's own /api routes.
-export const api = axios.create({
-  baseURL: "/api",
-  adapter: "fetch",
-  fetchOptions: { cache: "no-store" },
-  headers: { Accept: "application/json" },
-  validateStatus: () => true,
-});
+export const api = createHttpClient({ baseURL: "/api" });
 
 /**
  * fetch that always settles when its signal aborts. Next's patched fetch can ignore the
@@ -33,16 +42,13 @@ function abortableFetch(input, init) {
 // Server client for Next.js -> FastAPI and GitHub. The fetch adapter keeps Next's `no-store`
 // semantics, and `redirect: "error"` refuses to follow redirects so a bearer key is never
 // replayed to another host. Holds no secrets: keys are passed per request by server routes.
-export const backend = axios.create({
-  adapter: "fetch",
+export const backend = createHttpClient({
   timeout: 15000,
   // axios hands fetch a Request whose signal carries the timeout; Next's patched fetch only
   // honours `init.signal`, so pass it through. Resolving `fetch` per call also picks up
   // Next's patch (and test doubles) installed after this module loads.
   env: { fetch: abortableFetch },
   fetchOptions: { cache: "no-store", redirect: "error" },
-  headers: { Accept: "application/json" },
-  validateStatus: () => true,
 });
 
 /** @param {number} status */
