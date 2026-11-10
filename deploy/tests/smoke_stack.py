@@ -94,7 +94,7 @@ def main():
                 try:
                     request("/health", 200)
                     break
-                except (URLError, TimeoutError):
+                except (URLError, ConnectionError, TimeoutError):
                     time.sleep(1)
             else:
                 raise RuntimeError("Caddy did not become ready")
@@ -149,7 +149,7 @@ def main():
                             except HTTPError as exc:
                                 assert exc.code == 400  # Ready, missing query.
                                 break
-                            except URLError:
+                            except (URLError, ConnectionError, TimeoutError):
                                 time.sleep(.1)
                         else:
                             raise RuntimeError("Next.js did not become ready")
