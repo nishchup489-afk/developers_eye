@@ -30,5 +30,8 @@ The identified decisions for this feature are indexed above. Record new decision
 
 ## Rules for future changes
 
+- Use batched CPU checkpoints and terminal-only successful summaries per ADR-0055;
+  failed/blocked checkpoints retain partial diagnostics.
+
 - Separate operational write commands into a new design and permission model.
 - Keep secrets server-side and report status meanings explicit.

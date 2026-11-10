@@ -1174,7 +1174,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/worker/test_postgres_pipeline.py](../../crawler/tests/crawler/worker/test_postgres_pipeline.py)
 
-17 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
+18 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
 
 - `test_http_429_retry_after_persists_and_delays_reclaim`
 - `test_structured_resources_commit_documents_targets_and_attempts`
@@ -1193,6 +1193,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_missing_page_removes_a_document_a_feed_wrote`
 - `test_noindex_header_on_a_feed_does_not_touch_its_articles`
 - `test_noindex_page_is_removed_and_a_feed_cannot_bring_it_back`
+- `test_batched_progress_is_durable_and_terminal_summary_is_written_once`
 
 ### [crawler/tests/crawler/worker/test_recovery.py](../../crawler/tests/crawler/worker/test_recovery.py)
 

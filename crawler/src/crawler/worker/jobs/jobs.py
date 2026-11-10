@@ -45,7 +45,7 @@ from crawler.processing.schemas import ProcessingResult
 from crawler.worker.jobs.utility import _create_discovered_targets, _finalize
 from crawler.worker.jobs.resources import plan_response, parse_resource
 from crawler.writer.attempts import start_attempt
-from crawler.worker.telemetry import checkpoint
+from crawler.worker.telemetry import checkpoint, checkpoint_batch
 from crawler.worker.recovery import recover_failed_claim
 
 logger = logging.getLogger(__name__)
@@ -218,6 +218,7 @@ async def process_job(
     processed: ProcessingResult | None = None
     new_targets: list[CrawlTargetCreate] = []
     stage = "fetch"
+    pending_parse = None
 
     if type(discover_sitemaps) is not bool or type(follow_entry_links) is not bool:
         action, message = "disable", "discover_sitemaps and follow_entry_links must be booleans"
@@ -271,16 +272,18 @@ async def process_job(
                 )
                 measurements["resource_kind"] = kind
                 measurements["parsed"] = True
-                await checkpoint(session_factory, attempt_id, "PARSE", "success",
-                                 {"documents": len(parsed.documents),
-                                  "words": sum(len((d.body or "").split()) for d in parsed.documents)}, measurements)
+                pending_parse = {"documents": len(parsed.documents),
+                                 "words": sum(len((d.body or "").split()) for d in parsed.documents)}
                 stage = "process"
                 processed = await asyncio.to_thread(process, parsed)
                 measurements["accepted"] = len(processed.documents)
                 measurements["skipped"] = [{"url": s.url, "reason": str(s.reason), "details": s.details} for s in processed.skipped]
-                await checkpoint(session_factory, attempt_id, "PROCESS",
-                                 "accepted" if processed.documents else "skipped",
-                                 {"accepted": len(processed.documents), "skipped": measurements["skipped"]}, measurements)
+                await checkpoint_batch(session_factory, attempt_id, [
+                    ("PARSE", "success", pending_parse),
+                    ("PROCESS", "accepted" if processed.documents else "skipped",
+                     {"accepted": len(processed.documents), "skipped": measurements["skipped"]}),
+                ], measurements)
+                pending_parse = None
                 new_targets = _create_discovered_targets(
                     parsed,
                     target_id=target_id,
@@ -310,7 +313,12 @@ async def process_job(
             action, outcome = "retry", "failed"
             message = f"{type(exc).__name__}: {exc}"[:1000]
             measurements["error_category"] = stage
-            await checkpoint(session_factory, attempt_id, stage.upper(), "failed", {"error": message}, measurements)
+            if pending_parse is not None:
+                await checkpoint_batch(session_factory, attempt_id, [
+                    ("PARSE", "success", pending_parse), (stage.upper(), "failed", {"error": message}),
+                ], measurements)
+            else:
+                await checkpoint(session_factory, attempt_id, stage.upper(), "failed", {"error": message}, measurements)
             parsed, processed, new_targets = None, None, []
 
     async def finalize_once() -> JobResult:

@@ -47,7 +47,7 @@ class Session:
     def add(self, value): self.events.append(value)
 
 
-@pytest.mark.parametrize("scenario", ["stored", "noindex", "http404", "mime", "parse_error", "blocked", "not_modified", "store_error"])
+@pytest.mark.parametrize("scenario", ["stored", "noindex", "http404", "mime", "parse_error", "process_error", "blocked", "not_modified", "store_error"])
 def test_real_parser_pipeline_checkpoints(monkeypatch, scenario):
     async def run():
         now = datetime.now(timezone.utc)
@@ -67,7 +67,12 @@ def test_real_parser_pipeline_checkpoints(monkeypatch, scenario):
         async def capture(factory, id, stage, outcome, details=None, measurements=None):
             checkpoints.append((stage, outcome, dict(measurements or {})))
         monkeypatch.setattr(jobs, "checkpoint", capture)
+        async def capture_batch(factory, id, entries, measurements=None):
+            for stage, outcome, details in entries:
+                await capture(factory, id, stage, outcome, details, measurements)
+        monkeypatch.setattr(jobs, "checkpoint_batch", capture_batch)
         if scenario == "parse_error": monkeypatch.setattr(jobs, "parse", lambda **kwargs: (_ for _ in ()).throw(ValueError("broken markup")))
+        if scenario == "process_error": monkeypatch.setattr(jobs, "process", lambda parsed: (_ for _ in ()).throw(ValueError("processing failed")))
         final = AsyncMock(side_effect=RuntimeError("storage rejected") if scenario == "store_error" else None)
         monkeypatch.setattr(jobs, "_finalize", final)
         monkeypatch.setattr(jobs, "recover_failed_claim", AsyncMock())
@@ -89,6 +94,9 @@ def test_real_parser_pipeline_checkpoints(monkeypatch, scenario):
             assert args["measurements"]["accepted"] == 0
             assert args["measurements"]["skipped"][0]["reason"] == "noindex"
         if scenario == "parse_error": assert args["measurements"]["error_category"] == "parse"
+        if scenario == "process_error":
+            assert [(stage, outcome) for stage, outcome, _ in checkpoints][-2:] == [("PARSE", "success"), ("PROCESS", "failed")]
+            assert args["measurements"]["error_category"] == "process"
         if scenario == "mime": assert "unsupported MIME" in args["message"]
     asyncio.run(run())
 

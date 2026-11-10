@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from backend.models.crawl_attempt import CrawlAttempt
 from backend.models.crawl_host import CrawlHost
+from backend.models.crawl_monitor import CrawlEvent
 from backend.models.crawler_frontier import CrawlTarget
 from backend.models.documents import Document
 from backend.models.search_index import SearchIndex
@@ -1032,4 +1033,37 @@ def test_noindex_page_is_removed_and_a_feed_cannot_bring_it_back(monkeypatch):
             assert removed.is_available is False and removed.unavailable_http_status is None
             await crawl_url(factory, source_id, FEED)
             assert (await article(factory)).is_available is False
+    asyncio.run(run())
+
+
+def test_batched_progress_is_durable_and_terminal_summary_is_written_once():
+    from crawler.worker.telemetry import checkpoint_batch
+    from crawler.writer.attempts import finish_attempt
+
+    async def run():
+        async with database() as (factory, source_id):
+            await seed(factory, source_id, 1)
+            target = (await claim(factory, source_id))[0]
+            async with factory() as session, session.begin():
+                attempt_id = await start_attempt(session, target.id, lease_until=target.lease_until)
+            await checkpoint_batch(factory, attempt_id, [
+                ("PARSE", "success", {"documents": 1}),
+                ("PROCESS", "accepted", {"accepted": 1}),
+            ], {"parsed": True})
+            async with factory() as session:
+                attempt = await session.get(CrawlAttempt, attempt_id)
+                assert attempt.finished_at is None and attempt.telemetry is None
+                events = (await session.execute(select(CrawlEvent.stage).where(
+                    CrawlEvent.attempt_id == attempt_id).order_by(CrawlEvent.id))).scalars().all()
+                assert events == ["PARSE", "PROCESS"]
+            failure = {"parsed": True, "error_category": "process"}
+            await checkpoint_batch(factory, attempt_id, [("PROCESS", "failed", {"error": "failed"})], failure)
+            async with factory() as session:
+                assert (await session.get(CrawlAttempt, attempt_id)).telemetry == failure
+            summary = {**failure, "stored": 0, "result": "failed"}
+            async with factory() as session, session.begin():
+                assert await finish_attempt(session, attempt_id, "failed", telemetry=summary)
+            async with factory() as session:
+                attempt = await session.get(CrawlAttempt, attempt_id)
+                assert attempt.finished_at is not None and attempt.telemetry == summary
     asyncio.run(run())

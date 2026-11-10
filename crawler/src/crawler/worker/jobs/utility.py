@@ -24,7 +24,6 @@ from crawler.worker.jobs.schemas import JobOutcome, JobResult, TargetAction
 from crawler.worker.jobs.constants import _AGENT_SCOPE, _DIRECTIVE_SPLIT, _RETRY_AFTER_CAP_SECONDS
 from crawler.writer.attempts import finish_attempt
 from crawler.writer.documents import is_structured_record, page_owned, store_document
-from backend.models.crawl_attempt import CrawlAttempt
 from crawler.worker.telemetry import event
 
 
@@ -368,7 +367,6 @@ async def _finalize(
 
             if not active:
                 measurements.update(result="stale", reason="Lease lost or expired; output discarded")
-                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id, CrawlAttempt.finished_at.is_(None)).values(telemetry=measurements))
                 event(session, attempt_id, "FINALIZE", "stale", {"reason": "Lease lost or expired; output discarded"})
                 # The attempt belongs to this job, so it is safe to finish.
                 # No document/URL writes are made after losing the lease.
@@ -376,6 +374,7 @@ async def _finalize(
                     session, attempt_id, "failed", http_status=http_status,
                     bytes_received=body_bytes,
                     error_message="Lease lost or expired; discarded stale crawl result",
+                    telemetry=measurements,
                 )
                 return JobResult(
                     target_id=target_id, attempt_id=attempt_id, outcome="stale",
@@ -391,12 +390,12 @@ async def _finalize(
 
             if not transitioned:
                 measurements.update(result="stale", reason="Lease expired before target transition")
-                await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id, CrawlAttempt.finished_at.is_(None)).values(telemetry=measurements))
                 event(session, attempt_id, "FINALIZE", "stale", {"reason": "Lease expired before target transition"})
                 await finish_attempt(
                     session, attempt_id, "failed", http_status=http_status,
                     bytes_received=body_bytes,
                     error_message="Lease expired before target transition",
+                    telemetry=measurements,
                 )
                 return JobResult(
                     target_id=target_id, attempt_id=attempt_id, outcome="stale",
@@ -424,7 +423,6 @@ async def _finalize(
             measurements.update(stored=documents_saved, links_discovered=discovered,
                                 links_enqueued=links_enqueued, storage_ms=round((time.perf_counter() - storage_started) * 1000, 2),
                                 result=outcome, reason=message, target_action=action)
-            await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id).values(telemetry=measurements))
             event(session, attempt_id, "STORE", "persisted" if documents_saved else "not_stored",
                   {"documents": measurements["documents"], "duration_ms": measurements["storage_ms"], "reason": message})
             if parsed is not None:
@@ -439,6 +437,7 @@ async def _finalize(
                 http_status=http_status,
                 bytes_received=body_bytes,
                 error_message=message if outcome not in {"success", "not_modified"} else None,
+                telemetry=measurements,
             )
             if not done:
                 raise RuntimeError(f"Attempt {attempt_id} missing or already finished")

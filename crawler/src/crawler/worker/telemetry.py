@@ -27,11 +27,21 @@ def event(session, attempt_id, stage, outcome, details=None):
 
 
 async def checkpoint(factory, attempt_id, stage, outcome, details=None, measurements=None):
+    await checkpoint_batch(factory, attempt_id, [(stage, outcome, details)], measurements)
+
+
+async def checkpoint_batch(factory, attempt_id, entries, measurements=None):
+    """Commit adjacent CPU-stage events together; terminal finalize owns summaries.
+
+    Failure snapshots remain available even when final persistence fails. Successful
+    progress lives in events, avoiding repeated writes of the growing JSON summary.
+    """
     # Monitoring outages must not turn a valid fetch into a failed crawl.
     try:
         async with factory() as session, session.begin():
-            event(session, attempt_id, stage, outcome, details)
-            if measurements is not None:
+            for stage, outcome, details in entries:
+                event(session, attempt_id, stage, outcome, details)
+            if measurements is not None and any(outcome in {"failed", "blocked"} for _, outcome, _ in entries):
                 await session.execute(update(CrawlAttempt).where(CrawlAttempt.id == attempt_id, CrawlAttempt.finished_at.is_(None))
                                       .values(telemetry=dict(measurements)))
     except Exception:

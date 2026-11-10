@@ -52,6 +52,7 @@ async def finish_attempt(
     http_status: int | None = None,
     bytes_received: int | None = None,
     error_message: str | None = None,
+    telemetry: dict | None = None,
 ) -> bool:
     """Finish an attempt once; return False if missing or already finished.
 
@@ -71,6 +72,8 @@ async def finish_attempt(
         raise ValueError("bytes_received must be a non-negative integer")
     if error_message is not None and not isinstance(error_message, str):
         raise TypeError("error_message must be a string or None")
+    if telemetry is not None and not isinstance(telemetry, dict):
+        raise TypeError("telemetry must be a dict or None")
 
     statement = (
         update(CrawlAttempt)
@@ -84,6 +87,7 @@ async def finish_attempt(
             http_status=http_status,
             bytes_received=bytes_received,
             error_message=error_message,
+            **({"telemetry": dict(telemetry)} if telemetry is not None else {}),
         )
         .returning(CrawlAttempt.id)
     )
