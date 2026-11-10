@@ -90,6 +90,11 @@ export type SearchResult = {
   snippet: string;
   score: number;
   tags?: string[];
+  language?: string;
+  version?: string;
+  last_seen_at?: string;
+  related_variants?: number;
+  snippet_is_code?: boolean;
 };
 export type SearchResponse = {
   query: string;
@@ -98,6 +103,23 @@ export type SearchResponse = {
   mode: "demo" | "live";
   overviewToken?: string;
 };
+
+/** Plain-text tokens only; escaped expressions handle C++, dotted names and Unicode. */
+export function snippetParts(text: string, query: string) {
+  const terms = [...new Set(query.match(/[\p{L}\p{N}_+#.-]+/gu) ?? [])]
+    .filter((term) => term.length > 1).slice(0, 32)
+    .map((term) => term.slice(0, 128).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .sort((a, b) => b.length - a.length);
+  if (!terms.length) return [{ text, matched: false }];
+  return text.split(new RegExp(`(${terms.join("|")})`, "giu"))
+    .map((part, index) => ({ text: part, matched: index % 2 === 1 }));
+}
+
+export function breadcrumbParts(url: URL) {
+  return url.pathname.split("/").filter(Boolean).map((part) => {
+    try { return decodeURIComponent(part); } catch { return part; }
+  });
+}
 export const sourceNames: Record<Source, string> = {
   docs: "Documentation",
   github: "GitHub",
@@ -126,6 +148,11 @@ export function isSearchResult(value: unknown): value is SearchResult {
     sources.includes(r.source as Source) &&
     typeof r.score === "number" &&
     Number.isFinite(r.score) &&
+    (r.language === undefined || (typeof r.language === "string" && /^[a-z]{2,3}(?:-[a-z0-9]{2,8}){0,2}$/i.test(r.language))) &&
+    (r.version === undefined || (typeof r.version === "string" && /^\d+(?:\.\d+){0,2}$/.test(r.version))) &&
+    (r.last_seen_at === undefined || (typeof r.last_seen_at === "string" && Number.isFinite(Date.parse(r.last_seen_at)))) &&
+    (r.related_variants === undefined || (typeof r.related_variants === "number" && Number.isInteger(r.related_variants) && r.related_variants > 0)) &&
+    (r.snippet_is_code === undefined || typeof r.snippet_is_code === "boolean") &&
     (r.tags === undefined ||
       (Array.isArray(r.tags) && r.tags.every((t) => typeof t === "string")))
   );

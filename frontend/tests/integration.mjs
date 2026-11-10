@@ -271,6 +271,15 @@ try {
   await get(live, { q: "fastapi", mode: "invalid" }, 400);
   assert.equal(seenSearchRequests.length, seenBeforeInvalid, "invalid mode never reaches FastAPI");
   console.log("PASS all/text/code modes forwarded through live proxy");
+  await get(live, { q: "fastapi", source: "docs", mode: "code", page: "2", limit: "10", language: "en" });
+  const presentationParams = new URLSearchParams(seenSearchRequests.at(-1));
+  for (const [key, value] of Object.entries({ page: "2", limit: "10", language: "en" }))
+    assert.equal(presentationParams.get(key), value);
+  const beforeBadPresentation = seenSearchRequests.length;
+  for (const params of [{ language: "<en>" }, { limit: "51" }, { limit: "0" }, { page: "999", limit: "50" }])
+    await get(live, { q: "fastapi", ...params }, 400);
+  assert.equal(seenSearchRequests.length, beforeBadPresentation);
+  console.log("PASS page size and language preference forwarding and validation");
   data = await get(live, { q: "failure" }, 503);
   assert.equal(data.results, undefined);
   assert.match(data.error, /busy/);

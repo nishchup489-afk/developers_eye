@@ -1,0 +1,306 @@
+{
+  "query": "FastAPI Depends",
+  "scope": "Local read-only corpus; language preference changes order, not BM25 weights or scores.",
+  "any": [
+    {
+      "title": "fast-api-non-annotated-dependency (FAST002) | Ruff",
+      "url": "https://docs.astral.sh/ruff/rules/fast-api-non-annotated-dependency/",
+      "language": "en",
+      "score": 37.969114,
+      "related_variants": null
+    },
+    {
+      "title": "Dependencies - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/",
+      "language": "en",
+      "score": 37.331841,
+      "related_variants": null
+    },
+    {
+      "title": "Sub-dependencies - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/",
+      "language": "en",
+      "score": 37.279944,
+      "related_variants": null
+    },
+    {
+      "title": "Global Dependencies - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/global-dependencies/",
+      "language": "en",
+      "score": 37.142138,
+      "related_variants": null
+    },
+    {
+      "title": "Dependencies - Depends() and Security() - FastAPI",
+      "url": "https://fastapi.tiangolo.com/reference/dependencies/",
+      "language": "en",
+      "score": 37.032572,
+      "related_variants": null
+    },
+    {
+      "title": "Use Old 403 Authentication Error Status Codes - FastAPI",
+      "url": "https://fastapi.tiangolo.com/how-to/authentication-error-status-code/",
+      "language": "en",
+      "score": 36.552173,
+      "related_variants": null
+    },
+    {
+      "title": "Dependencies in path operation decorators - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/dependencies-in-path-operation-decorators/",
+      "language": "en",
+      "score": 36.544289,
+      "related_variants": null
+    },
+    {
+      "title": "Security - First Steps - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/security/first-steps/",
+      "language": "en",
+      "score": 36.280714,
+      "related_variants": null
+    },
+    {
+      "title": "Background Tasks - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/background-tasks/",
+      "language": "en",
+      "score": 35.942071,
+      "related_variants": null
+    },
+    {
+      "title": "FastAPI Security - OWASP Cheat Sheet Series",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/FastAPI_Security_Cheat_Sheet.html",
+      "language": "en",
+      "score": 35.71529,
+      "related_variants": null
+    },
+    {
+      "title": "Classes as Dependencies - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/classes-as-dependencies/",
+      "language": "en",
+      "score": 35.703103,
+      "related_variants": null
+    },
+    {
+      "title": "Bigger Applications - Multiple Files - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/bigger-applications/",
+      "language": "en",
+      "score": 35.516314,
+      "related_variants": null
+    },
+    {
+      "title": "Testing Dependencies with Overrides - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/testing-dependencies/",
+      "language": "en",
+      "score": 35.249522,
+      "related_variants": null
+    },
+    {
+      "title": "Get Current User - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/security/get-current-user/",
+      "language": "en",
+      "score": 34.995632,
+      "related_variants": null
+    },
+    {
+      "title": "HTTP Basic Auth - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/security/http-basic-auth/",
+      "language": "en",
+      "score": 34.973087,
+      "related_variants": null
+    },
+    {
+      "title": "WebSockets - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/websockets/",
+      "language": "en",
+      "score": 34.374348,
+      "related_variants": null
+    },
+    {
+      "title": "Settings and Environment Variables - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/settings/",
+      "language": "en",
+      "score": 34.2932,
+      "related_variants": null
+    },
+    {
+      "title": "Advanced Dependencies - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/advanced-dependencies/",
+      "language": "en",
+      "score": 33.81412,
+      "related_variants": null
+    },
+    {
+      "title": "Dependencies with yield - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/dependencies-with-yield/",
+      "language": "en",
+      "score": 32.110308,
+      "related_variants": null
+    },
+    {
+      "title": "Integrate Agent Mesh with FastAPI",
+      "url": "https://redis.io/docs/latest/develop/ai/context-engine/agent-mesh/fastapi-sse-sdk/",
+      "language": "en",
+      "score": 30.389913,
+      "related_variants": null
+    }
+  ],
+  "english_first": [
+    {
+      "title": "fast-api-non-annotated-dependency (FAST002) | Ruff",
+      "url": "https://docs.astral.sh/ruff/rules/fast-api-non-annotated-dependency/",
+      "language": "en",
+      "score": 37.969114,
+      "related_variants": null
+    },
+    {
+      "title": "Dependencies - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/",
+      "language": "en",
+      "score": 37.331841,
+      "related_variants": null
+    },
+    {
+      "title": "Sub-dependencies - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/",
+      "language": "en",
+      "score": 37.279944,
+      "related_variants": null
+    },
+    {
+      "title": "Global Dependencies - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/global-dependencies/",
+      "language": "en",
+      "score": 37.142138,
+      "related_variants": null
+    },
+    {
+      "title": "Dependencies - Depends() and Security() - FastAPI",
+      "url": "https://fastapi.tiangolo.com/reference/dependencies/",
+      "language": "en",
+      "score": 37.032572,
+      "related_variants": null
+    },
+    {
+      "title": "Use Old 403 Authentication Error Status Codes - FastAPI",
+      "url": "https://fastapi.tiangolo.com/how-to/authentication-error-status-code/",
+      "language": "en",
+      "score": 36.552173,
+      "related_variants": null
+    },
+    {
+      "title": "Dependencies in path operation decorators - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/dependencies-in-path-operation-decorators/",
+      "language": "en",
+      "score": 36.544289,
+      "related_variants": null
+    },
+    {
+      "title": "Security - First Steps - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/security/first-steps/",
+      "language": "en",
+      "score": 36.280714,
+      "related_variants": null
+    },
+    {
+      "title": "Background Tasks - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/background-tasks/",
+      "language": "en",
+      "score": 35.942071,
+      "related_variants": null
+    },
+    {
+      "title": "FastAPI Security - OWASP Cheat Sheet Series",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/FastAPI_Security_Cheat_Sheet.html",
+      "language": "en",
+      "score": 35.71529,
+      "related_variants": null
+    },
+    {
+      "title": "Classes as Dependencies - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/classes-as-dependencies/",
+      "language": "en",
+      "score": 35.703103,
+      "related_variants": null
+    },
+    {
+      "title": "Bigger Applications - Multiple Files - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/bigger-applications/",
+      "language": "en",
+      "score": 35.516314,
+      "related_variants": null
+    },
+    {
+      "title": "Testing Dependencies with Overrides - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/testing-dependencies/",
+      "language": "en",
+      "score": 35.249522,
+      "related_variants": null
+    },
+    {
+      "title": "Get Current User - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/security/get-current-user/",
+      "language": "en",
+      "score": 34.995632,
+      "related_variants": null
+    },
+    {
+      "title": "HTTP Basic Auth - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/security/http-basic-auth/",
+      "language": "en",
+      "score": 34.973087,
+      "related_variants": null
+    },
+    {
+      "title": "WebSockets - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/websockets/",
+      "language": "en",
+      "score": 34.374348,
+      "related_variants": null
+    },
+    {
+      "title": "Settings and Environment Variables - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/settings/",
+      "language": "en",
+      "score": 34.2932,
+      "related_variants": null
+    },
+    {
+      "title": "Advanced Dependencies - FastAPI",
+      "url": "https://fastapi.tiangolo.com/advanced/advanced-dependencies/",
+      "language": "en",
+      "score": 33.81412,
+      "related_variants": null
+    },
+    {
+      "title": "Dependencies with yield - FastAPI",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/dependencies-with-yield/",
+      "language": "en",
+      "score": 32.110308,
+      "related_variants": null
+    },
+    {
+      "title": "Integrate Agent Mesh with FastAPI",
+      "url": "https://redis.io/docs/latest/develop/ai/context-engine/agent-mesh/fastapi-sse-sdk/",
+      "language": "en",
+      "score": 30.389913,
+      "related_variants": null
+    }
+  ],
+  "fastapi_classification": [
+    [
+      "tutorial",
+      63
+    ],
+    [
+      "other",
+      52
+    ],
+    [
+      "documentation",
+      24
+    ],
+    [
+      "event",
+      1
+    ]
+  ]
+}

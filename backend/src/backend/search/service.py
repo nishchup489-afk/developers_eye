@@ -16,6 +16,7 @@ exposed through an explicit API contract before enabling that feature.
 from __future__ import annotations
 
 import re
+from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
@@ -39,6 +40,7 @@ from backend.search.retrieval.fts import search_text
 from backend.search.snippets.snippets import generate_snippet
 from backend.search.snippets.code import code_excerpt
 from backend.search.types import RankedHit, RetrievalHit
+from backend.search.presentation import prefer_language, result_identity, LANGUAGE_TAG
 
 CANDIDATES_PER_CHANNEL = 100  # ranker hard limit: 200 unique IDs
 MAX_SNIPPET_SOURCE_CHARS = 12_000
@@ -150,7 +152,9 @@ async def _metadata_for_candidates(
             Document.document_type,
             Document.title,
             Document.description,
-            func.jsonb_build_object("tags", Document.metadata_["tags"]).label("metadata_"),
+            func.jsonb_build_object("tags", Document.metadata_["tags"],
+                                   "language", Document.metadata_["language"]).label("metadata_"),
+            Document.content_hash,
         ).where(Document.id.in_(ids), Document.is_available.is_(True))
     )
     meta = {int(row.id): row for row in result.all()}
@@ -177,6 +181,7 @@ async def search_documents(
     limit: int = 20,
     page: int = 1,
     mode: SearchMode | str = SearchMode.ALL,
+    language: str | None = None,
 ) -> list[SearchResultOut]:
     """Return one page of BM25-ranked results with plain-text snippets.
 
@@ -184,6 +189,8 @@ async def search_documents(
     paging, and document bodies are loaded only for the selected page.
     """
     settings = SearchConfig()
+    if language is not None and not LANGUAGE_TAG.fullmatch(language):
+        raise ValueError("language must be a language tag")
     if type(limit) is not int or not 1 <= limit <= settings.max_limit:
         raise ValueError(f"limit must be between 1 and {settings.max_limit}")
     if type(page) is not int or page < 1:
@@ -213,6 +220,10 @@ async def search_documents(
         df_cache=_df_cache,
     )
     eligible, metadata = await _metadata_for_candidates(session, ranked, categories)
+    eligible = prefer_language(eligible, metadata, language)
+    groups = Counter(result_identity(metadata[hit.document_id].canonical_url,
+                                     metadata[hit.document_id].metadata_)[2] for hit in eligible)
+    hashes = Counter(getattr(metadata[hit.document_id], "content_hash", None) for hit in eligible)
     page_result = paginate_hits(eligible, page=page, limit=limit, config=settings)
     if not page_result.hits:
         return []
@@ -222,6 +233,7 @@ async def search_documents(
         Document.id,
         func.left(Document.body, MAX_SNIPPET_SOURCE_CHARS).label("body"),
         Document.metadata_["code_blocks"].label("code_blocks"),
+        Document.last_seen_at,
     ).where(Document.id.in_(ids), Document.is_available.is_(True))
     bodies = {
         int(row.id): row
@@ -237,9 +249,10 @@ async def search_documents(
         body_record = bodies[hit.document_id]
         snippet_source = body_record.body or ""
         preserve_code = plan.mode is SearchMode.CODE
+        code_source = ""
         if preserve_code:
-            snippet_source = code_excerpt(body_record.code_blocks, terms,
-                                          max_chars=MAX_SNIPPET_SOURCE_CHARS) or snippet_source
+            code_source = code_excerpt(body_record.code_blocks, terms, max_chars=MAX_SNIPPET_SOURCE_CHARS)
+            snippet_source = code_source or snippet_source
         snippet = generate_snippet(
             snippet_source,
             terms,
@@ -247,6 +260,9 @@ async def search_documents(
             max_chars=settings.snippet_length,
             preserve_code=preserve_code,
         )
+        declared_language, version, group = result_identity(record.canonical_url, record.metadata_)
+        content_hash = getattr(record, "content_hash", None)
+        variants = max(groups[group], hashes[content_hash] if content_hash else 1) - 1
         results.append(
             SearchResultOut(
                 title=record.title,
@@ -256,6 +272,11 @@ async def search_documents(
                 score=round(hit.score, 6),
                 tags=_tags(record.metadata_),
                 type=record.document_type,
+                language=declared_language,
+                version=version,
+                last_seen_at=getattr(body_record, "last_seen_at", None),
+                related_variants=variants or None,
+                snippet_is_code=bool(code_source),
             )
         )
     return results

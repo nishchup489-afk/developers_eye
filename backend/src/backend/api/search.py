@@ -102,6 +102,7 @@ async def search(
     limit: Annotated[int, Query(ge=1, le=50)] = 20,
     page: Annotated[int, Query(ge=1)] = 1,
     mode: SearchMode = SearchMode.ALL,
+    language: Annotated[str | None, Query(pattern=r"^[a-zA-Z]{2,3}(?:-[a-zA-Z0-9]{2,8}){0,2}$", max_length=35)] = None,
 ) -> SearchResponseOut | Response:
     _enforce_rate_limit(search_rate_limiter, request, "searches")
     try:
@@ -124,6 +125,8 @@ async def search(
                 extra["page"] = page
             if mode is not SearchMode.ALL:
                 extra["mode"] = mode
+            if language is not None:
+                extra["language"] = language
             return await search_documents(
                 session, normalized, category=source, limit=limit, **extra
             )

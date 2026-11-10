@@ -199,8 +199,10 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/integration/test_search.py](../../backend/tests/integration/test_search.py)
 
-5 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-service-against-postgresql)
+7 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-service-against-postgresql)
 
+- `test_language_preference_keeps_translations_and_reports_freshness`
+- `test_category_backfill_is_previewable_and_idempotent`
 - `test_returns_frontend_shaped_results`
 - `test_unavailable_documents_are_hidden`
 - `test_category_filter_and_limit`

@@ -1,5 +1,6 @@
 // Unit tests for the spelling-suggestion helpers in lib/search.ts (no build needed).
 import assert from "node:assert/strict";
+import { breadcrumbParts, isSearchResult, snippetParts } from "../lib/search.ts";
 import { forwardedFor, isSearchMode, isSearchableLength, maxQueryLength, maxRawQueryLength, maxSuggestQueryLength, normalizedQueryLength, parseCorrection, searchModes, shouldSuggest, suggestBelowResults, upstreamFailure } from "../lib/search.ts";
 
 assert.deepEqual(searchModes, ["all", "text", "code"]);
@@ -7,6 +8,16 @@ for (const mode of searchModes) assert.equal(isSearchMode(mode), true);
 for (const invalid of ["", "ALL", "javascript", null, 2, [], {}])
   assert.equal(isSearchMode(invalid), false);
 console.log("PASS search modes: all, text, code and strict validation");
+
+assert.deepEqual(snippetParts("use asyncio.create_task() with C++", "asyncio.create_task C++").filter((part) => part.matched).map((part) => part.text), ["asyncio.create_task", "C++"]);
+assert.equal(snippetParts("<script>example</script>", "example").map((part) => part.text).join(""), "<script>example</script>");
+assert.deepEqual(breadcrumbParts(new URL("https://example.com/a%20b/%zz")), ["a b", "%zz"]);
+const metadataResult = { title: "Example", source: "docs", url: "https://example.com/", snippet: "Example", score: 1,
+  language: "en-US", version: "3.14", last_seen_at: "2026-11-09T00:00:00Z", related_variants: 2, snippet_is_code: true };
+assert.equal(isSearchResult(metadataResult), true);
+for (const invalid of [{ language: "<html>" }, { version: "latest<script>" }, { last_seen_at: "invalid" }, { related_variants: -1 }, { snippet_is_code: "yes" }])
+  assert.equal(isSearchResult({ ...metadataResult, ...invalid }), false);
+console.log("PASS snippet identifiers, plain text, malformed breadcrumbs and metadata validation");
 
 const correction = (suggested_query, corrections) => ({
   original_query: "ignored",

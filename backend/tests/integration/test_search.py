@@ -65,6 +65,8 @@ async def search_session():
                         title TEXT NOT NULL,
                         description TEXT,
                         body TEXT,
+                        content_hash TEXT,
+                        last_seen_at TIMESTAMPTZ DEFAULT now(),
                         metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
                         is_available BOOLEAN NOT NULL DEFAULT true
                     ) ON COMMIT DROP
@@ -83,7 +85,7 @@ async def search_session():
                 for doc_id, url, kind, title, description, body, tags, available in DOCUMENTS:
                     await connection.execute(
                         text(
-                            "INSERT INTO document VALUES (:id, :url, :kind, :title, :description,"
+                            "INSERT INTO document (id, canonical_url, document_type, title, description, body, metadata, is_available) VALUES (:id, :url, :kind, :title, :description,"
                             " :body, CAST(:metadata AS jsonb), :available)"
                         ),
                         {"id": doc_id, "url": url, "kind": kind, "title": title,
@@ -101,6 +103,40 @@ async def search_session():
                     yield session
     finally:
         await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_language_preference_keeps_translations_and_reports_freshness(search_session):
+    await search_session.execute(text("""
+        INSERT INTO document (id, canonical_url, document_type, title, body, metadata)
+        VALUES (6, 'https://fastapi.tiangolo.com/pt/async/', 'documentation',
+                'Async FastAPI', 'async async async await Python', '{"language":"pt"}')
+    """))
+    await search_session.execute(text("""
+        INSERT INTO search_index (document_id, search_vector, code_vector, category)
+        VALUES (6, to_tsvector('english', 'async async async await Python'), ''::tsvector, 'docs')
+    """))
+    original = await search_documents(search_session, "async", mode="text")
+    preferred = await search_documents(search_session, "async", mode="text", language="en")
+    assert {row.url for row in original} == {row.url for row in preferred}
+    assert {row.url: row.score for row in original} == {row.url: row.score for row in preferred}
+    english = [i for i, row in enumerate(preferred) if row.language == 'en']
+    portuguese = [i for i, row in enumerate(preferred) if row.language == 'pt']
+    assert english and portuguese and max(english) < min(portuguese)
+    assert all(row.last_seen_at is not None for row in preferred)
+    assert any(row.related_variants for row in preferred)
+
+
+@pytest.mark.asyncio
+async def test_category_backfill_is_previewable_and_idempotent(search_session):
+    from backend.admin_services.category_maintenance import refresh_categories
+    await search_session.execute(text("UPDATE search_index SET category='articles' WHERE document_id=1"))
+    preview = await refresh_categories(search_session)
+    assert preview['eligible_changes'] == 1
+    assert await search_session.scalar(text("SELECT category FROM search_index WHERE document_id=1")) == 'articles'
+    assert (await refresh_categories(search_session, apply=True))['eligible_changes'] == 1
+    assert await search_session.scalar(text("SELECT category FROM search_index WHERE document_id=1")) == 'docs'
+    assert (await refresh_categories(search_session, apply=True))['eligible_changes'] == 0
 
 
 async def test_returns_frontend_shaped_results(search_session: AsyncSession):

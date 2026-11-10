@@ -38,6 +38,8 @@ def categorize(url: str, document_type: str) -> SearchCategory:
     for domain, category in platform_categories:
         if host == domain or host.endswith("." + domain):
             return category
+    if host == "fastapi.tiangolo.com":
+        return "docs"
     by_type: dict[str, SearchCategory] = {
         "documentation": "docs",
         "tutorial": "articles",

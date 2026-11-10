@@ -35,6 +35,9 @@ The identified decisions for this feature are indexed above. Record new decision
 
 ## Rules for future changes
 
+- Preserve explicit language preference, source/version/observation metadata,
+  and bounded shareable paging as specified in ADR-0053.
+
 - Change backend response schemas and frontend validators together.
 - Keep timeout, no-store and redirect behavior when changing the HTTP abstraction.
 - Do not remove `abortableFetch` in `lib/axios.js` or call FastAPI with bare `fetch`; re-run `npm run test:integration` (cold-start timeout case) after Next.js upgrades (INC-0033).

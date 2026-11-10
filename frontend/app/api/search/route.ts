@@ -25,6 +25,14 @@ export async function GET(request: Request) {
     return json({ error: "Unknown source filter." }, 400);
   const page = params.get("page") ?? "";
   const mode = params.get("mode") ?? "";
+  const language = params.get("language") ?? "";
+  const limit = params.get("limit") ?? "";
+  if (language && !/^[a-zA-Z]{2,3}(?:-[a-zA-Z0-9]{2,8}){0,2}$/.test(language))
+    return json({ error: "Unknown language preference." }, 400);
+  if (limit && (!/^[1-9][0-9]?$/.test(limit) || Number(limit) > 50))
+    return json({ error: "Page size must be between 1 and 50." }, 400);
+  if ((Number(page || 1) - 1) * Number(limit || 20) > 1000)
+    return json({ error: "This page is too deep." }, 400);
   if (page && !/^[1-9][0-9]{0,3}$/.test(page))
     return json({ error: "Unknown page." }, 400);
   if (mode && !["all", "text", "code"].includes(mode))
@@ -34,7 +42,7 @@ export async function GET(request: Request) {
   if (!base)
     return json({
       query,
-      results: searchDemo(query, source),
+      results: searchDemo(query, source).slice((Number(page || 1) - 1) * Number(limit || 20), Number(page || 1) * Number(limit || 20)),
       took_ms: Math.round(performance.now() - started),
       mode: "demo",
     });
@@ -45,6 +53,8 @@ export async function GET(request: Request) {
     if (source) url.searchParams.set("source", source);
     if (page) url.searchParams.set("page", page);
     if (mode) url.searchParams.set("mode", mode);
+    if (language) url.searchParams.set("language", language);
+    if (limit) url.searchParams.set("limit", limit);
     // request.signal aborts when the browser goes away (a newer search, a closed tab);
     // aborting the upstream request makes FastAPI cancel the database work too.
     const response = await backend.get(url.toString(), {

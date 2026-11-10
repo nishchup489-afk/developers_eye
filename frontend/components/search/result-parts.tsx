@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { ArrowUpRight, Bookmark, Link2, MoreHorizontal } from "lucide-react";
-import { sourceNames, type Source, type SearchResult, type SearchSuggestion } from "@/lib/search";
+import { breadcrumbParts, snippetParts, sourceNames, type Source, type SearchResult, type SearchSuggestion } from "@/lib/search";
 import type { KnowledgeResponse } from "@/lib/knowledge";
 import { icons } from "./source-icons";
 
@@ -14,19 +14,9 @@ function siteName(url: URL, source: Source) {
 }
 
 /** Bolds the words of the query wherever they appear in the snippet. */
-function Snippet({ text, query }: { text: string; query: string }) {
-  const terms = query
-    .toLowerCase()
-    .split(/\W+/)
-    .filter((term) => term.length > 1);
-  if (!terms.length) return <p>{text}</p>;
-  const escaped = terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-  const parts = text.split(new RegExp(`\\b(${escaped.join("|")})`, "gi"));
-  return (
-    <p>
-      {parts.map((part, i) => (i % 2 ? <b key={i}>{part}</b> : part))}
-    </p>
-  );
+function Snippet({ text, query, code }: { text: string; query: string; code?: boolean }) {
+  const content = snippetParts(text, query).map((part, index) => part.matched ? <b key={index}>{part.text}</b> : part.text);
+  return code ? <pre className="result-code-snippet"><code>{content}</code></pre> : <p>{content}</p>;
 }
 
 /** Google-style "about this topic" card from Wikipedia, beside the results. */
@@ -127,7 +117,7 @@ export function SearchResultRow({ result, isSaved, menuOpen, toggleSave, setMenu
   setMenuFor: (url: string | null) => void; query: string;
 }) {
   const url = new URL(result.url);
-  const crumbs = url.pathname.split("/").filter(Boolean).map((part) => decodeURIComponent(part));
+  const crumbs = breadcrumbParts(url);
   return (
                         <article className="result-row" key={result.url}>
                           <div className="result-content">
@@ -160,7 +150,14 @@ export function SearchResultRow({ result, isSaved, menuOpen, toggleSave, setMenu
                             <Snippet
                               text={result.snippet}
                               query={query}
+                              code={result.snippet_is_code}
                             />
+                            <div className="result-details">
+                              {result.language && <span title="Language declared by the page or its documentation URL">{result.language.toUpperCase()}</span>}
+                              {result.version && <span title="Documentation version from the source URL">Version {result.version}</span>}
+                              {result.last_seen_at && <time dateTime={result.last_seen_at} title="Last successful observation by this crawler">Seen {new Date(result.last_seen_at).toISOString().slice(0, 10)}</time>}
+                              {result.related_variants && <span title="Related translations, versions, or exact-content copies among matching documents">{result.related_variants} related {result.related_variants === 1 ? "variant" : "variants"}</span>}
+                            </div>
                           </div>
                           <div className="result-menu" data-result-menu>
                             <button

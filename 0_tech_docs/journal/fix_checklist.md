@@ -126,12 +126,12 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [ ] Include code identifiers, error messages, phrases, typos and multi-term queries.
 - [ ] Include source-restricted, version-specific and category-specific queries.
 - [ ] Record relevance of top-5/top-10 results and compare changes.
-- [ ] Investigate Russian/Portuguese pages outranking relevant English pages.
-- [ ] Define language preference without permanently hiding other languages.
-- [ ] Group or distinguish versions, translations and canonical duplicates.
-- [ ] Review 832 FastAPI pages classified as other and their UI article mapping.
-- [ ] Show trustworthy source, version, language and freshness metadata.
-- [ ] Improve code excerpts and highlight relevance in search snippets.
+- [x] Investigate Russian/Portuguese pages outranking relevant English pages. (historical diagnostics reviewed; current 100k FastAPI Depends query does not reproduce the old order, recorded in ADR-0053 and raw language-preference report)
+- [x] Define language preference without permanently hiding other languages. (ADR-0053: explicit stable preference preserves candidate identities and BM25 scores; real PostgreSQL regression)
+- [x] Group or distinguish versions, translations and canonical duplicates. (recognized locale/version URL families and exact content hashes labeled as related variants, no URLs hidden; bounded candidate scope)
+- [x] Review 832 FastAPI pages classified as other and their UI article mapping. (INC-0038: current snapshot has 52 other; 116 derived-category repairs identified, exact-host classification and idempotent repair implemented)
+- [x] Show trustworthy source, version, language and freshness metadata. (declared/path language, known URL versions, last observation date; no inferred publication dates)
+- [x] Improve code excerpts and highlight relevance in search snippets. (bounded query-relevant code selection; preserved code layout and escaped identifier/Unicode highlighting)
 - [ ] Evaluate ranking against a stored benchmark before adjusting weights.
 
 ## P2 · Measured performance optimization

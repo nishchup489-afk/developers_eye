@@ -7,6 +7,7 @@ import { api } from "@/lib/axios";
 import BrandEye from "./brand-eye";
 import { icons } from "./search/source-icons";
 import { KnowledgePanel, SearchResultRow, SuggestedQuery } from "./search/result-parts";
+import { SearchOptions, SearchPagination } from "./search/search-options";
 import CodePreview from "./code-preview";
 import AIOverviewCard from "./ai-overview";
 import { gsap } from "gsap";
@@ -130,6 +131,9 @@ export default function SearchExperience({
   initialQuery = "",
   initialFilter = "all",
   initialSearchMode = "all",
+  initialPage = 1,
+  initialPageSize = 20,
+  initialLanguage = "",
   savedPage = false,
 }: {
   mode: "demo" | "live";
@@ -137,6 +141,9 @@ export default function SearchExperience({
   initialQuery?: string;
   initialFilter?: SearchFilter;
   initialSearchMode?: SearchMode;
+  initialPage?: number;
+  initialPageSize?: number;
+  initialLanguage?: string;
   savedPage?: boolean;
 }) {
   const router = useRouter();
@@ -150,6 +157,7 @@ export default function SearchExperience({
   const [knowledge, setKnowledge] = useState<KnowledgeResponse | null>(null);
   const [filter, setFilter] = useState<SearchFilter>(initialFilter);
   const [selectedMode, setSelectedMode] = useState<SearchMode>(initialSearchMode);
+  const [page, setPage] = useState(initialPage);
   const [loading, setLoading] = useState(resultsPage && !savedPage && !!initialQuery);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState<SearchResult[]>([]);
@@ -181,6 +189,9 @@ export default function SearchExperience({
       updateUrl = true,
       source: SearchFilter = "all",
       searchMode: SearchMode = "all",
+      pageNumber = 1,
+      pageSize = initialPageSize,
+      language = initialLanguage,
     ) => {
       const value = text.trim();
       if (!value) {
@@ -191,6 +202,9 @@ export default function SearchExperience({
         const params = new URLSearchParams({ q: value });
         if (source !== "all") params.set("source", source);
         if (searchMode !== "all") params.set("mode", searchMode);
+        if (pageNumber !== 1) params.set("page", String(pageNumber));
+        if (pageSize !== 20) params.set("limit", String(pageSize));
+        if (language) params.set("language", language);
         const destination = `/search?${params}`;
         // Re-submitting the current query should refresh its results too.
         if (!resultsPage || window.location.search !== `?${params}`) {
@@ -208,12 +222,14 @@ export default function SearchExperience({
       setError("");
       setFilter(source);
       setSelectedMode(searchMode);
+      setPage(pageNumber);
       setResponse(null);
       setSuggestion(null);
       setKnowledge(null);
       try {
         const res = await api.get("/search", {
-          params: { q: value, ...(source !== "all" ? { source } : {}), mode: searchMode },
+          params: { q: value, ...(source !== "all" ? { source } : {}), mode: searchMode,
+            page: pageNumber, limit: pageSize, ...(language ? { language } : {}) },
           signal: active.signal,
         });
         const data = res.data;
@@ -264,7 +280,7 @@ export default function SearchExperience({
         if (!active.signal.aborted) setLoading(false);
       }
     },
-    [router, resultsPage],
+    [router, resultsPage, initialPageSize, initialLanguage],
   );
 
   useEffect(() => {
@@ -278,7 +294,7 @@ export default function SearchExperience({
         /* Session bookmarks still work. */
       }
       if (resultsPage && initialQuery && !savedPage)
-        void search(initialQuery, false, initialFilter, initialSearchMode);
+        void search(initialQuery, false, initialFilter, initialSearchMode, initialPage, initialPageSize, initialLanguage);
     }, 0);
     const onKey = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
@@ -298,7 +314,7 @@ export default function SearchExperience({
       controller.current?.abort();
       window.removeEventListener("keydown", onKey);
     };
-  }, [search, resultsPage, initialQuery, initialFilter, initialSearchMode, savedPage]);
+  }, [search, resultsPage, initialQuery, initialFilter, initialSearchMode, initialPage, initialPageSize, initialLanguage, savedPage]);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -650,6 +666,8 @@ export default function SearchExperience({
                 {storageError}
               </p>
             )}
+            {!showSaved && <SearchOptions language={initialLanguage} pageSize={initialPageSize}
+              onChange={(language, size) => void search(fullQuery, true, filter, selectedMode, 1, size, language)} />}
             {!loading && !error && (
               <div className="filter-bar" aria-label="Filter results by source">
                 <button
@@ -760,6 +778,11 @@ export default function SearchExperience({
                         setMenuFor={setMenuFor} query={showSaved ? "" : (response?.query ?? "")} />
                     ))}
                   </div>
+                )}
+                {response && !showSaved && (
+                  <SearchPagination page={page} loading={loading}
+                    canNext={response.results.length >= initialPageSize && page * initialPageSize <= 1000}
+                    onPage={(next) => void search(fullQuery, true, filter, selectedMode, next)} />
                 )}
                 {response && !showSaved && (
                   <p className="result-notice">

@@ -66,6 +66,8 @@ async def search_session():
                         title TEXT NOT NULL,
                         description TEXT,
                         body TEXT,
+                        content_hash TEXT,
+                        last_seen_at TIMESTAMPTZ DEFAULT now(),
                         metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
                         is_available BOOLEAN NOT NULL DEFAULT true
                     ) ON COMMIT DROP

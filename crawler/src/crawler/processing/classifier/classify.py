@@ -117,6 +117,7 @@ def classify_document(document: NormalizedDocument) -> ClassificationResult:
         or _on_domain(host, "developer.mozilla.org")
         or _on_domain(host, "learn.microsoft.com")
         or _on_domain(host, "docs.rs")
+        or host == "fastapi.tiangolo.com"
     )
     if documentation_host:
         return found(DocumentType.DOCUMENTATION, 0.95, "documentation_host")

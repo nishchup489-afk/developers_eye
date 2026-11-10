@@ -2638,3 +2638,23 @@ h1 .accent {
   font-size: 11px;
   color: var(--faint);
 }
+
+.search-options, .search-pagination, .result-details {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.search-options { margin-bottom: 24px; color: var(--muted); font-size: 12px; }
+.search-options label { display: flex; align-items: center; gap: 8px; }
+.search-options select, .search-pagination button {
+  border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px;
+  background: var(--bg); color: inherit; font: inherit;
+}
+.search-pagination { margin-top: 28px; font-size: 13px; }
+.search-pagination button:disabled { opacity: .4; cursor: default; }
+.result-details { margin-top: 9px; color: var(--muted); font-size: 11px; gap: 10px; }
+.result-code-snippet {
+  margin-top: 9px; padding: 12px; white-space: pre-wrap; overflow-wrap: anywhere;
+  border: 1px solid var(--line); border-radius: 8px; font-size: 12px;
+}

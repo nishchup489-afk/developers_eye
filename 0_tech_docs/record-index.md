@@ -63,6 +63,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0050 | crawler/document-writer | [A feed or API record never replaces a fetched page, and only a page can remove or revive one](crawler/document-writer/ADR-0050-feed-records-never-replace-fetched-pages.md) | superseded |
 | ADR-0051 | infra/local-dev-and-testing | [One test runner script orchestrates the native suite runners and reports through rich](infra/local-dev-and-testing/ADR-0051-one-runner-over-native-suite-runners.md) | accepted |
 | ADR-0052 | crawler/document-writer | [Preserve first acquisition ownership and reject poorer replacement content](crawler/document-writer/ADR-0052-acquisition-provenance-and-content-quality.md) | accepted |
+| ADR-0053 | frontend/search-experience | [Explicit language preference and transparent result provenance](frontend/search-experience/ADR-0053-language-preferences-and-result-provenance.md) | accepted |
 
 ## Incidents
 
@@ -87,6 +88,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | INC-0035 | crawler/worker-runtime | [Indexer worker exited for good when the database restarted](crawler/worker-runtime/INC-0035-indexer-worker-exited-on-database-outage.md) | resolved |
 | INC-0036 | infra/local-dev-and-testing | [Redirected Windows test runner failed before executing suites](infra/local-dev-and-testing/INC-0036-redirected-windows-test-runner-encoding.md) | resolved |
 | INC-0037 | crawler/document-writer | [Thin pages and competing sources replaced richer content and ownership](crawler/document-writer/INC-0037-thin-pages-and-competing-sources-replaced-content.md) | resolved |
+| INC-0038 | crawler/content-processing | [FastAPI documentation fell through to article and event categories](crawler/content-processing/INC-0038-fastapi-documents-mapped-to-articles.md) | resolved |
 
 ## Experiments
 
