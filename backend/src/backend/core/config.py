@@ -18,8 +18,8 @@ class Settings(BaseSettings):
 
     database_url : str  
     # Per process. Keep (pool_size + max_overflow) * processes under Postgres max_connections.
-    db_pool_size: int = 5
-    db_max_overflow: int = 5
+    db_pool_size: int = 2
+    db_max_overflow: int = 2
     db_pool_timeout_seconds: float = 30.0
     db_pool_recycle_seconds: int = 1800
     crawler_report_api_key: SecretStr | None = None
