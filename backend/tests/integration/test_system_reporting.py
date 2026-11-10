@@ -10,6 +10,7 @@ Requires TEST_DATABASE_URL=postgresql+asyncpg://.../developers_eye_test
 from __future__ import annotations
 
 import os
+import sys
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
@@ -21,6 +22,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 import backend.models  # noqa: F401  registers every table on Base.metadata
 from backend.admin_services import system_reporting as reporting
+from backend.admin_services import indexer_reporting
 from backend.admin_services.maintenance import purge_events
 from backend.db.base import Base
 from backend.models.crawl_attempt import CrawlAttempt
@@ -31,6 +33,23 @@ from backend.models.search_index import SearchIndex
 from backend.models.source import Source
 
 NOW = datetime.now(timezone.utc)
+
+
+@pytest.fixture(autouse=True)
+def report_clock(monkeypatch):
+    # A module-import timestamp can expire before these tests run in a full
+    # suite. Freeze each report at its own fixture time; keep the real online
+    # threshold unchanged rather than extending it to make a slow run pass.
+    instant = datetime.now(timezone.utc)
+
+    class Clock(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return instant.astimezone(tz) if tz else instant.replace(tzinfo=None)
+
+    monkeypatch.setattr(sys.modules[__name__], "NOW", instant)
+    monkeypatch.setattr(reporting, "datetime", Clock)
+    monkeypatch.setattr(indexer_reporting, "datetime", Clock)
 
 
 @pytest_asyncio.fixture
