@@ -1,0 +1,2 @@
+# Linux deployment entry points must not pick up Windows CRLF line endings.
+deploy/*.sh text eol=lf

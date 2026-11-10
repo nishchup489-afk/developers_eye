@@ -298,6 +298,7 @@ async def _main(config: IndexerConfig, forever: bool) -> int:
 
 
 def main() -> None:
+    from backend.core.shutdown import with_sigterm
     args = parse_args()
     base = IndexerConfig.from_env()
     overrides = {
@@ -316,7 +317,7 @@ def main() -> None:
     setup_logging(config.log_level)
 
     try:
-        raise SystemExit(asyncio.run(_main(config, forever=args.forever)))
+        raise SystemExit(asyncio.run(with_sigterm(_main(config, forever=args.forever))))
     except KeyboardInterrupt:
         logger.info("[yellow]Interrupted[/]")
         raise SystemExit(130) from None

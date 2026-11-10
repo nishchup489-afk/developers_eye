@@ -4,7 +4,7 @@
 set -eu
 cd "$(dirname "$0")"
 . ./.env
-backups=${BACKUP_DIR:-./backups}
+backups=${BACKUP_DIR:-/data/backups}
 keep_days=${BACKUP_KEEP_DAYS:-7}
 mkdir -p "$backups"
 file="$backups/developers_eye-$(date -u +%Y%m%dT%H%M%SZ).dump"

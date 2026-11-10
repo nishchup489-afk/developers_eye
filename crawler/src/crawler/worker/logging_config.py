@@ -1,4 +1,5 @@
 import logging
+import os
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
@@ -12,14 +13,11 @@ class ConsoleFilter(logging.Filter):
         if record.name == "crawler" or record.name.startswith("crawler."):
             return True
 
-        return record.levelno >= logging.ERROR
+        return record.levelno >= logging.WARNING
 
 
 def setup_logging(level: str = "INFO") -> None:
     log_level = getattr(logging, level.upper())
-
-    log_dir = Path.cwd() / "logs"
-    log_dir.mkdir(parents=True, exist_ok=True)
 
     # Clean, colored terminal output.
     console = RichHandler(
@@ -33,23 +31,20 @@ def setup_logging(level: str = "INFO") -> None:
     console.addFilter(ConsoleFilter())
     console.setFormatter(logging.Formatter("%(message)s"))
 
-    # Detailed persistent debugging logs.
-    file_handler = RotatingFileHandler(
-        log_dir / "crawler.log",
-        maxBytes=10 * 1024 * 1024,
-        backupCount=5,
-        encoding="utf-8",
-    )
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(
-        logging.Formatter(
-            "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
-        )
-    )
+    handlers: list[logging.Handler] = [console]
+    write_file = os.environ.get("CRAWLER_LOG_TO_FILE", "true").lower() not in {"false", "0", "off"}
+    if write_file:
+        log_dir = Path.cwd() / "logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        file_handler = RotatingFileHandler(log_dir / "crawler.log", maxBytes=10 * 1024 * 1024,
+                                           backupCount=5, encoding="utf-8")
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(logging.Formatter("%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"))
+        handlers.append(file_handler)
 
     logging.basicConfig(
         level=logging.INFO,
-        handlers=[console, file_handler],
+        handlers=handlers,
         force=True,
     )
 
@@ -57,5 +52,5 @@ def setup_logging(level: str = "INFO") -> None:
     logging.getLogger("crawler").setLevel(log_level)
 
     # Preserve SQL and HTTP request information in the log file.
-    logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
-    logging.getLogger("httpx").setLevel(logging.INFO)
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO if write_file else logging.WARNING)
+    logging.getLogger("httpx").setLevel(logging.INFO if write_file else logging.WARNING)

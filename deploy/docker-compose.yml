@@ -1,17 +1,31 @@
-# Developer's Eye on one server. Sized for Oracle Cloud Always Free ARM
-# (4 OCPU, 24 GB RAM, 200 GB block volume). See deploy/README.md.
+# API and workers on a 4 OCPU / 24 GB Oracle A1 VM; frontend on Vercel.
+# Verify your tenancy's current allowance before provisioning. See deploy/README.md.
 name: developers-eye
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "20m"
+    max-file: "3"
 
 x-python: &python
   build:
     context: ..
     dockerfile: deploy/Dockerfile.python
   restart: unless-stopped
-  env_file: .env
+  stop_grace_period: 45s
+  logging: *logging
+  env_file: ${DEPLOY_ENV_FILE:-.env}
   environment: &python-env
     DATABASE_URL: postgresql+asyncpg://developers_eye:${POSTGRES_PASSWORD:?set in deploy/.env}@db/developers_eye
     DB_POOL_SIZE: "4"
     DB_MAX_OVERFLOW: "2"
+    APP_ENV: production
+    EDGE_SHARED_SECRET: ${EDGE_SHARED_SECRET:?set a 32+ character secret in deploy/.env}
+    API_DOCS_ENABLED: "false"
+    CRAWLER_REPORT_API_KEY: ${CRAWLER_REPORT_API_KEY:?set in deploy/.env}
+    CRAWLER_LOG_TO_FILE: "false"
+    AI_OVERVIEW_CLIENT_IP_HEADER: ""
   depends_on:
     migrate:
       condition: service_completed_successfully
@@ -22,15 +36,20 @@ x-indexer: &indexer
 
 services:
   db:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     restart: unless-stopped
+    logging: *logging
     command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
     environment:
       POSTGRES_USER: developers_eye
       POSTGRES_DB: developers_eye
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in deploy/.env}
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - type: bind
+        source: ${PGDATA_HOST_PATH:-/data/pgdata}
+        target: /var/lib/postgresql
+        bind:
+          create_host_path: false
       - ./postgresql.conf:/etc/postgresql/postgresql.conf:ro
     shm_size: 6gb
     healthcheck:
@@ -49,13 +68,12 @@ services:
 
   api:
     <<: *python
-    command: ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+    command: ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1", "--no-proxy-headers"]
     environment:
       <<: *python-env
       DB_POOL_SIZE: "8"
-      # The API port is only reachable from the web container, so its X-Forwarded-For
-      # can be trusted. Without this every visitor shares one rate-limit bucket.
-      FORWARDED_ALLOW_IPS: "*"
+      # Identity comes only from the authenticated edge middleware, never XFF.
+      FORWARDED_ALLOW_IPS: ""
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8000/health')"]
       interval: 15s
@@ -69,60 +87,35 @@ services:
     <<: *python
     command: ["python", "-m", "crawler.worker.runner", "--forever", "--concurrency", "40", "--batch-size", "40"]
     deploy:
-      replicas: 2
+      replicas: 1
 
   indexer-0:
     <<: *indexer
     environment:
       <<: *python-env
-      INDEXER_SHARD_COUNT: "2"
+      INDEXER_SHARD_COUNT: "1"
       INDEXER_SHARD_INDEX: "0"
-
-  indexer-1:
-    <<: *indexer
-    environment:
-      <<: *python-env
-      INDEXER_SHARD_COUNT: "2"
-      INDEXER_SHARD_INDEX: "1"
 
   maintenance:
     <<: *python
     command: ["sh", "-c", "while true; do python -m backend.admin_services.maintenance --purge-events; sleep 86400; done"]
 
-  web:
-    build: ../frontend
-    restart: unless-stopped
-    environment:
-      BACKEND_URL: http://api:8000
-      CRAWLER_REPORT_API_URL: http://api:8000
-      CRAWLER_REPORT_API_KEY: ${CRAWLER_REPORT_API_KEY:-}
-      ADMIN_APP_URL: ${ADMIN_APP_URL:-}
-      ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET:-}
-      ADMIN_GITHUB_IDS: ${ADMIN_GITHUB_IDS:-}
-      ADMIN_VIEWER_ACCESS: ${ADMIN_VIEWER_ACCESS:-off}
-      ADMIN_VIEWER_GITHUB_IDS: ${ADMIN_VIEWER_GITHUB_IDS:-}
-      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
-      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
-      KNOWLEDGE_PANEL: ${KNOWLEDGE_PANEL:-on}
-      WIKIPEDIA_API_URL: ${WIKIPEDIA_API_URL:-}
-      WIKIPEDIA_USER_AGENT: ${WIKIPEDIA_USER_AGENT:-}
-    depends_on:
-      api:
-        condition: service_healthy
-
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
+    logging: *logging
     ports: ["80:80", "443:443"]
     environment:
       SITE_ADDRESS: ${SITE_ADDRESS:?set in deploy/.env}
+      EDGE_SHARED_SECRET: ${EDGE_SHARED_SECRET:?set in deploy/.env}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
-    depends_on: [web]
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
-  pgdata:
   caddy_data:
   caddy_config:

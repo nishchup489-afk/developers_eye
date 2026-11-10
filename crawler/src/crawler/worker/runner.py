@@ -417,6 +417,14 @@ async def sync_sources_once() -> None:
 
 
 async def main(config: RunnerConfig, *, min_interval_seconds: float = DEFAULT_MIN_INTERVAL_SECONDS) -> int:
+    from backend.core.shutdown import with_sigterm
+    try:
+        return await with_sigterm(_main(config, min_interval_seconds=min_interval_seconds))
+    finally:
+        await engine.dispose()
+
+
+async def _main(config: RunnerConfig, *, min_interval_seconds: float = DEFAULT_MIN_INTERVAL_SECONDS) -> int:
     try:
         await sync_sources_once()
     except Exception:

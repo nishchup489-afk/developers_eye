@@ -6,7 +6,17 @@
 		Referrer-Policy "strict-origin-when-cross-origin"
 		-Server
 	}
-	reverse_proxy web:3000 {
-		header_up X-Eye-Client-IP {remote_host}
+	handle /health {
+		reverse_proxy api:8000 {
+			header_up -X-Eye-Client-IP
+			header_up -X-Edge-Secret
+		}
+	}
+	@edge header X-Edge-Secret {$EDGE_SHARED_SECRET}
+	handle @edge {
+		reverse_proxy api:8000
+	}
+	handle {
+		respond "Forbidden" 403
 	}
 }

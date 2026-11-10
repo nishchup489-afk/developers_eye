@@ -4,14 +4,20 @@
 #   ./restore-test.sh [backups/some.dump]
 set -eu
 cd "$(dirname "$0")"
-file=${1:-$(ls -t backups/*.dump | head -n 1)}
-name=developers-eye-restore-test
+. ./.env
+file=${1:-$(ls -t "${BACKUP_DIR:-/data/backups}"/*.dump | head -n 1)}
+[ -r "$file" ] || { echo "No readable backup found" >&2; exit 1; }
+name=developers-eye-restore-test-$(date +%s)-$$
 password=$(openssl rand -hex 16)
 
-docker rm -f "$name" >/dev/null 2>&1 || true
 trap 'docker rm -f "$name" >/dev/null 2>&1 || true' EXIT
-docker run -d --name "$name" -e POSTGRES_PASSWORD="$password" postgres:16-alpine >/dev/null
-until docker exec "$name" pg_isready -U postgres >/dev/null 2>&1; do sleep 1; done
+docker run -d --name "$name" -e POSTGRES_PASSWORD="$password" postgres:18-alpine >/dev/null
+ready=0
+for attempt in $(seq 1 60); do
+    if docker exec "$name" pg_isready -U postgres >/dev/null 2>&1; then ready=1; break; fi
+    sleep 1
+done
+[ "$ready" -eq 1 ] || { echo "Restore-test database did not become ready" >&2; exit 1; }
 
 docker exec "$name" createdb -U postgres developers_eye
 docker exec -i "$name" pg_restore -U postgres -d developers_eye --no-owner --exit-on-error < "$file"
