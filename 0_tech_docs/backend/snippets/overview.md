@@ -29,6 +29,9 @@ The identified decisions for this feature are indexed above. Record new decision
 
 ## Rules for future changes
 
+- Select code excerpts from at most 64 bounded blocks after page selection;
+  prefer distinct query-term coverage and preserve source order on ties.
+
 - Render snippet content as text, not trusted HTML.
 - Generate snippets after final top-result selection.
 - Preserve the hard character cap when improving word/line boundaries.

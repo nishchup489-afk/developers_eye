@@ -48,6 +48,9 @@ class FakeExecuteResult:
 
 
 def setup_session(metadata=(), bodies=()):
+    by_id = {row.id: row for row in metadata}
+    for row in bodies:
+        row.code_blocks = by_id[row.id].metadata_.get("code_blocks", [])
     session = AsyncMock()
     session.execute.side_effect = [
         FakeExecuteResult(metadata),

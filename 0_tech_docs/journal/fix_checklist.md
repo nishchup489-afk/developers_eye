@@ -136,14 +136,14 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 
 ## P2 · Measured performance optimization
 - [x] Create repeatable search benchmarks under controlled ingestion. (bench_search.py; no ingestion running yet)
-- [ ] Capture p50/p95/p99 latency, SQL counts and query plans.
-- [ ] Investigate the audited 75 ms, 515 ms and 2.53 s search variation.
-- [ ] Profile live term-document-frequency counting.
-- [ ] Profile TSVECTOR expansion and candidate metadata loading.
-- [ ] Fetch complete code blocks/large metadata only after final page selection.
-- [ ] Review indexes for high-frequency terms and candidate retrieval.
+- [x] Capture p50/p95/p99 latency, SQL counts and query plans. (EXP-0013, raw per-sample JSON and ANALYZE/BUFFERS plans; five samples, tail-resolution limitation recorded)
+- [x] Investigate the audited 75 ms, 515 ms and 2.53 s search variation. (EXP-0013 separates query selectivity, DF-cache misses, vector expansion, and hydration; cold common-term cost remains explicit)
+- [x] Profile live term-document-frequency counting. (common term sequential scan 998.509 ms; rare code-term GIN 0.766 ms, EXP-0013)
+- [x] Profile TSVECTOR expansion and candidate metadata loading. (per-stage SQL timing, EXP-0013)
+- [x] Fetch complete code blocks/large metadata only after final page selection. (candidate query projects tags only; page query loads code blocks; 35 search/snippet regressions pass)
+- [x] Review indexes for high-frequency terms and candidate retrieval. (existing text/code GIN and category B-tree reviewed with real query plans, EXP-0013)
 - [x] Measure startup time and corpus-statistics refresh costs. (1.5 s at 2M, EXP-0008)
-- [ ] Persist additional ranking statistics only if measurements justify maintenance cost.
+- [x] Persist additional ranking statistics only if measurements justify maintenance cost. (evaluated and deferred: cold-read cost measured, write/backfill/reconciliation cost not justified; explicit revisit gate in EXP-0013)
 
 ## Scaling · Crawler redesign, before 30+ processes
 - [x] Build a fake-web crawl-load harness, not a benchmark against public documentation sites. (tests/benchmarks/fake_web_load.py)

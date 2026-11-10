@@ -37,6 +37,7 @@ from backend.search.ranking.types import CorpusStatistics
 from backend.search.retrieval.code import search_code
 from backend.search.retrieval.fts import search_text
 from backend.search.snippets.snippets import generate_snippet
+from backend.search.snippets.code import code_excerpt
 from backend.search.types import RankedHit, RetrievalHit
 
 CANDIDATES_PER_CHANNEL = 100  # ranker hard limit: 200 unique IDs
@@ -149,7 +150,7 @@ async def _metadata_for_candidates(
             Document.document_type,
             Document.title,
             Document.description,
-            Document.metadata_,
+            func.jsonb_build_object("tags", Document.metadata_["tags"]).label("metadata_"),
         ).where(Document.id.in_(ids), Document.is_available.is_(True))
     )
     meta = {int(row.id): row for row in result.all()}
@@ -220,9 +221,10 @@ async def search_documents(
     body_query = select(
         Document.id,
         func.left(Document.body, MAX_SNIPPET_SOURCE_CHARS).label("body"),
+        Document.metadata_["code_blocks"].label("code_blocks"),
     ).where(Document.id.in_(ids), Document.is_available.is_(True))
     bodies = {
-        int(row.id): row.body or ""
+        int(row.id): row
         for row in (await session.execute(body_query)).all()
     }
 
@@ -232,15 +234,12 @@ async def search_documents(
         record = metadata[hit.document_id]
         if hit.document_id not in bodies:
             continue  # Deleted/disabled between metadata and body queries.
-        snippet_source = bodies[hit.document_id]
+        body_record = bodies[hit.document_id]
+        snippet_source = body_record.body or ""
         preserve_code = plan.mode is SearchMode.CODE
-        if preserve_code and isinstance(record.metadata_, dict):
-            blocks = record.metadata_.get("code_blocks")
-            if isinstance(blocks, list):
-                snippet_source = "\n\n".join(
-                    block for block in blocks
-                    if isinstance(block, str)
-                )[:MAX_SNIPPET_SOURCE_CHARS] or snippet_source
+        if preserve_code:
+            snippet_source = code_excerpt(body_record.code_blocks, terms,
+                                          max_chars=MAX_SNIPPET_SOURCE_CHARS) or snippet_source
         snippet = generate_snippet(
             snippet_source,
             terms,
