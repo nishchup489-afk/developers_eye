@@ -433,6 +433,14 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_incomplete_labels_are_rejected`
 - `test_complete_queries_produce_comparable_metrics`
 
+### [backend/tests/unit/test_result_presentation.py](../../backend/tests/unit/test_result_presentation.py)
+
+3 cases
+
+- `test_translations_and_versions_share_identity_without_changing_urls`
+- `test_language_preference_keeps_other_languages_and_score_order`
+- `test_bad_metadata_does_not_invent_language_or_version`
+
 ### [backend/tests/unit/test_search_pipeline.py](../../backend/tests/unit/test_search_pipeline.py)
 
 10 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-service-pipeline)
@@ -1274,6 +1282,7 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/unit/test_relevance_cli.py](../../backend/tests/unit/test_relevance_cli.py)
 - [backend/tests/unit/test_relevance_metrics.py](../../backend/tests/unit/test_relevance_metrics.py)
 - [backend/tests/unit/test_relevance_metrics_base.py](../../backend/tests/unit/test_relevance_metrics_base.py)
+- [backend/tests/unit/test_result_presentation.py](../../backend/tests/unit/test_result_presentation.py)
 - [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
 - [crawler/tests/crawler/worker/test_database_faults.py](../../crawler/tests/crawler/worker/test_database_faults.py)

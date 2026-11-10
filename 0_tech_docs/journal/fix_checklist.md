@@ -167,7 +167,7 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 
 ## Maintenance · Code structure and architectural debt
 - [ ] Break up long process_job and _finalize logic by job type and outcome.
-- [ ] Split the 955-line search-experience.tsx into testable UI components.
+- [x] Split the 955-line search-experience.tsx into testable UI components. (result rows, snippets, favicon, knowledge panel, suggestion display, and source icons extracted into components/search; lint and TypeScript pass)
 - [ ] Consolidate frontend's two API clients into a consistent typed interface.
 - [ ] Evaluate a small shared de_core package for DB models and common runtime contracts.
 - [ ] Review ownership boundaries between crawler, indexer and API.

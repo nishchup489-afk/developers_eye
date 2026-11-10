@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
 import BrandEye from "./brand-eye";
+import { icons } from "./search/source-icons";
+import { KnowledgePanel, SearchResultRow, SuggestedQuery } from "./search/result-parts";
 import CodePreview from "./code-preview";
 import AIOverviewCard from "./ai-overview";
 import { gsap } from "gsap";
@@ -13,18 +15,10 @@ import {
   ArrowRight,
   ArrowUpRight,
   Bookmark,
-  BookOpen,
-  Code2,
-  Command,
   Eye,
   GitBranch,
-  GitFork,
-  Globe2,
-  Layers3,
-  Link2,
   LoaderCircle,
   MessageCircle,
-  MoreHorizontal,
   Search,
   X,
 } from "lucide-react";
@@ -48,15 +42,7 @@ const suggestions = [
   "redis caching",
   "binary search",
 ];
-const icons = {
-  docs: BookOpen,
-  github: GitFork,
-  stackoverflow: Layers3,
-  reddit: MessageCircle,
-  articles: Code2,
-  events: Globe2,
-  practice: Command,
-};
+
 export type SearchFilter = Source | "discussions" | "all";
 const verticals = [
   "docs",
@@ -130,122 +116,6 @@ function splitQuery(value: string): [text: string, code: string] {
   return value.includes("\n") ? ["", value] : [value, ""];
 }
 
-/** A readable site name from the hostname, e.g. "docs.python.org" → "Python". */
-function siteName(url: URL, source: Source) {
-  const parts = url.hostname.replace(/^www\./, "").split(".");
-  const name = parts.length > 1 ? parts[parts.length - 2] : parts[0];
-  if (!name) return sourceNames[source];
-  return name.charAt(0).toUpperCase() + name.slice(1);
-}
-
-/** Bolds the words of the query wherever they appear in the snippet. */
-function Snippet({ text, query }: { text: string; query: string }) {
-  const terms = query
-    .toLowerCase()
-    .split(/\W+/)
-    .filter((term) => term.length > 1);
-  if (!terms.length) return <p>{text}</p>;
-  const escaped = terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-  const parts = text.split(new RegExp(`\\b(${escaped.join("|")})`, "gi"));
-  return (
-    <p>
-      {parts.map((part, i) => (i % 2 ? <b key={i}>{part}</b> : part))}
-    </p>
-  );
-}
-
-/** Google-style "about this topic" card from Wikipedia, beside the results. */
-function KnowledgePanel({ panel }: { panel: NonNullable<KnowledgeResponse["panel"]> }) {
-  return (
-    <aside className="knowledge-panel" aria-labelledby="knowledge-panel-title">
-      {panel.thumbnail && (
-        <a
-          className="knowledge-image"
-          href={panel.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          tabIndex={-1}
-        >
-          {/* Wikimedia thumbnails are already sized; next/image would proxy them for nothing. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={panel.thumbnail.url}
-            width={panel.thumbnail.width}
-            height={panel.thumbnail.height}
-            alt=""
-            loading="lazy"
-            referrerPolicy="no-referrer"
-            // A thumbnail that fails to load hides its box instead of showing a broken image.
-            onError={(event) => {
-              const box = event.currentTarget.parentElement;
-              if (box) box.hidden = true;
-            }}
-          />
-        </a>
-      )}
-      <div className="knowledge-body">
-        <h2 id="knowledge-panel-title">{panel.title}</h2>
-        {panel.description && <p className="knowledge-description">{panel.description}</p>}
-        <p className="knowledge-extract">{panel.extract}</p>
-        <a
-          className="knowledge-link"
-          href={panel.url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Read more on Wikipedia <ArrowUpRight size={14} />
-        </a>
-        <p className="knowledge-credit">
-          Source: Wikipedia, under{" "}
-          <a
-            href="https://creativecommons.org/licenses/by-sa/4.0/"
-            target="_blank"
-            rel="noopener noreferrer license"
-          >
-            CC BY-SA 4.0
-          </a>
-        </p>
-      </div>
-    </aside>
-  );
-}
-
-/** The suggested query, with the corrected words emphasised. */
-function SuggestedQuery({ suggestion }: { suggestion: SearchSuggestion }) {
-  const corrected = new Set(
-    suggestion.corrections.map((c) => c.replacement.toLowerCase()),
-  );
-  const parts = (suggestion.suggestion ?? "").split(/(\s+)/);
-  return parts.map((part, i) =>
-    corrected.has(part.toLowerCase()) ? <b key={i}>{part}</b> : part,
-  );
-}
-
-/** The site's own favicon, falling back to the source icon if it fails to load. */
-function Favicon({ url, source }: { url: URL; source: Source }) {
-  const [failed, setFailed] = useState(false);
-  const Icon = icons[source];
-  return (
-    <span className="result-favicon" aria-hidden="true">
-      {failed ? (
-        <Icon size={14} />
-      ) : (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={`${url.origin}/favicon.ico`}
-          alt=""
-          width={18}
-          height={18}
-          loading="lazy"
-          referrerPolicy="no-referrer"
-          onError={() => setFailed(true)}
-        />
-      )}
-    </span>
-  );
-}
-
-/** Splits text into per-character spans for the headline reveal. */
 function Chars({ text }: { text: string }) {
   return Array.from(text, (char, i) => (
     <span className="char" key={i}>
@@ -883,91 +753,12 @@ export default function SearchExperience({
                   </div>
                 ) : (
                   <div className="result-list">
-                    {visible.map((result) => {
-                      const isSaved = saved.some((item) => item.url === result.url);
-                      const url = new URL(result.url);
-                      const crumbs = url.pathname
-                        .split("/")
-                        .filter(Boolean)
-                        .map((part) => decodeURIComponent(part));
-                      const menuOpen = menuFor === result.url;
-                      return (
-                        <article className="result-row" key={result.url}>
-                          <div className="result-content">
-                            <a
-                              className="result-site"
-                              href={result.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              tabIndex={-1}
-                            >
-                              <Favicon url={url} source={result.source} />
-                              <span className="result-site-text">
-                                <span className="result-site-name">
-                                  {siteName(url, result.source)}
-                                </span>
-                                <cite className="result-breadcrumb">
-                                  {url.origin}
-                                  {crumbs.length > 0 && ` › ${crumbs.join(" › ")}`}
-                                </cite>
-                              </span>
-                            </a>
-                            <a
-                              className="result-title"
-                              href={result.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {result.title}
-                            </a>
-                            <Snippet
-                              text={result.snippet}
-                              query={showSaved ? "" : (response?.query ?? "")}
-                            />
-                          </div>
-                          <div className="result-menu" data-result-menu>
-                            <button
-                              className={`result-menu-button icon-button ${isSaved ? "is-saved" : ""}`}
-                              aria-label={`More options for ${result.title}`}
-                              aria-haspopup="menu"
-                              aria-expanded={menuOpen}
-                              onClick={() => setMenuFor(menuOpen ? null : result.url)}
-                            >
-                              <MoreHorizontal size={18} />
-                            </button>
-                            {menuOpen && (
-                              <div className="result-menu-list" role="menu">
-                                <button
-                                  role="menuitem"
-                                  onClick={() => {
-                                    toggleSave(result);
-                                    setMenuFor(null);
-                                  }}
-                                >
-                                  <Bookmark
-                                    size={15}
-                                    fill={isSaved ? "currentColor" : "none"}
-                                  />
-                                  {isSaved ? "Unsave" : "Save"}
-                                </button>
-                                <button
-                                  role="menuitem"
-                                  onClick={() => {
-                                    void navigator.clipboard
-                                      ?.writeText(result.url)
-                                      .catch(() => {});
-                                    setMenuFor(null);
-                                  }}
-                                >
-                                  <Link2 size={15} />
-                                  Copy link
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </article>
-                      );
-                    })}
+                    {visible.map((result) => (
+                      <SearchResultRow key={result.url} result={result}
+                        isSaved={saved.some((item) => item.url === result.url)}
+                        menuOpen={menuFor === result.url} toggleSave={toggleSave}
+                        setMenuFor={setMenuFor} query={showSaved ? "" : (response?.query ?? "")} />
+                    ))}
                   </div>
                 )}
                 {response && !showSaved && (
