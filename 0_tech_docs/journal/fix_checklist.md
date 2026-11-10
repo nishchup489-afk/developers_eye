@@ -72,7 +72,7 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [x] Fix the 1,000-URL sitemap cap with resumable continuation. (all entries queue in short idempotent transactions)
 - [x] Add 1,001+ sitemap URL regression coverage including repeated runs. (test_sitemap_past_link_limit_queues_every_url_and_rerun_adds_nothing)
 - [x] Preserve bounded processing and crawler restart safety. (capped at 50,000 entries per sitemap, retry is idempotent)
-- [ ] Review nested sitemap indexes and continuation behavior. (partial: nested parsing tested, continuation does not exist)
+- [x] Review nested sitemap indexes and continuation behavior. (nested child scoping/depth, deduplication, and partial-commit retry/replay pass against a freshly migrated PostgreSQL database; test_postgres_pipeline.py)
 - [x] Shorten DB transactions so no connection stays held across HTTP fetching. (ShortTransactions in jobs.py)
 - [x] Read/write robots cache with short sessions and consider in-process TTL caching. (short sessions done, TTL cache not needed yet)
 - [x] Move index/vocabulary mutation out of crawler finalize and assign it to indexer ownership. (crawler only marks documents unavailable on 404, 410 and noindex; the indexer removes the index rows)
@@ -92,7 +92,7 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [x] Stop vocabulary drift from aborting crawl finalization (writers only append to the outbox)
 - [x] Validate vocabulary DF never becomes negative and matches indexed documents. (exact recount 0 wrong at 1 and 4 processes)
 - [x] Ensure feed/API summaries cannot silently overwrite fuller canonical page content. (ADR-0050, enforced in the upsert, logged as kept_existing)
-- [ ] Preserve acquisition provenance, original source ownership and content quality. (partial: feeds and APIs keep their format and origin URL and cannot take over a page, ADR-0050. Two website sources on one URL are still last-writer-wins, and a thin page can still replace a full feed entry)
+- [x] Preserve acquisition provenance, original source ownership and content quality. (ADR-0052, INC-0037: original source retained, atomic per-target provenance, selected producer recorded, thin competing pages rejected; 29 PostgreSQL writer/pipeline tests pass)
 - [x] Test hash-unchanged indexing, updates, removals and rebuild consistency. (test_index_lifecycle.py on real Postgres)
 - [x] Review indexer batching and mutex serialization before adding more workers. (EXP-0006 and EXP-0008: 60 docs/s to 581 docs/s)
 

@@ -1,7 +1,7 @@
 ---
 id: ADR-0050
 title: A feed or API record never replaces a fetched page, and only a page can remove or revive one
-status: accepted
+status: superseded
 date: 2026-11-09
 area: crawler
 feature: document-writer
@@ -10,7 +10,7 @@ code:
   - crawler/src/crawler/worker/jobs/utility.py:_finalize
   - crawler/src/crawler/worker/jobs/utility.py:_noindex_urls
 supersedes:
-superseded_by:
+superseded_by: ADR-0052
 related: [ADR-0011, ADR-0021]
 ---
 

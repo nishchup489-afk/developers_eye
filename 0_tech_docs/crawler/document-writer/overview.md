@@ -32,6 +32,9 @@ The identified decisions for this feature are indexed above. Record new decision
 
 ## Rules for future changes
 
+- Preserve first acquisition ownership and per-target provenance; use ADR-0052
+  for current producer/quality rules (supersedes ADR-0050).
+
 - Never hard-delete a document because of a 404/410; mark it unavailable (ADR-0011).
 - Remove index rows in the same transaction through `remove_indexed_documents()` (ADR-0011, ADR-0002).
 - Every successful page store resets `is_available`, `unavailable_at`, `unavailable_http_status` (ADR-0011). A feed or API record never does (ADR-0050).

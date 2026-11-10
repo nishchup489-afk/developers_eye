@@ -17,6 +17,7 @@ import asyncio
 import os
 from contextlib import asynccontextmanager
 from datetime import timezone
+from dataclasses import replace
 from uuid import uuid4
 
 import pytest
@@ -184,6 +185,72 @@ def test_attempt_starts_and_finishes():
                 assert saved.finished_at >= saved.started_at
             passed("success / 200 / 1234 bytes recorded")
 
+    asyncio.run(run())
+
+
+def test_competing_sources_preserve_owner_quality_and_observations():
+    async def run():
+        async with writer_db() as (session, source, target):
+            async with session.begin():
+                other = Source(slug="other-" + uuid4().hex, name="Other producer", kind="website",
+                               base_url="https://example.com/", allowed_hosts=["example.com"],
+                               crawl_interval_seconds=60, is_enabled=True, config={})
+                session.add(other)
+                await session.flush()
+                other_target = CrawlTarget(source_id=other.id, fetch_url=target.fetch_url,
+                                           normalized_url=target.normalized_url, kind="page")
+                session.add(other_target)
+                await session.flush()
+                original = make_document(body="Detailed Python guide with examples. " * 12)
+                doc_id = await upsert_document(session, original, source_id=source.id, crawl_target_id=target.id)
+                saved = await session.get(Document, doc_id)
+                original_updated = saved.updated_at
+                thin = make_document(body="Brief Python summary.")
+                await upsert_document(session, thin, source_id=other.id, crawl_target_id=other_target.id)
+                await session.refresh(saved)
+                assert saved.body == original.body
+                assert saved.updated_at == original_updated
+                assert saved.source_id == source.id
+                assert saved.metadata_["content_source_id"] == source.id
+                assert len(saved.metadata_["acquisition_provenance"]) == 2
+                assert {p["source_id"] for p in saved.metadata_["acquisition_provenance"].values()} == {source.id, other.id}
+
+                fuller = make_document(body="Detailed Python guide with additional worked examples. " * 20)
+                await upsert_document(session, fuller, source_id=other.id, crawl_target_id=other_target.id)
+                await session.refresh(saved)
+                assert saved.body == fuller.body
+                assert saved.source_id == source.id  # first acquisition ownership
+                assert saved.metadata_["content_source_id"] == other.id
+                assert len(saved.metadata_["acquisition_provenance"]) == 2
+
+                # The selected page producer can make legitimate shorter edits.
+                await upsert_document(session, thin, source_id=other.id, crawl_target_id=other_target.id)
+                await session.refresh(saved)
+                assert saved.body == thin.body
+    asyncio.run(run())
+
+
+def test_thin_page_keeps_full_feed_content_and_its_provenance():
+    async def run():
+        async with writer_db() as (session, source, target):
+            async with session.begin():
+                feed = replace(make_document(body="Full Python article with worked examples. " * 20),
+                               metadata={"ingestion_format": "rss", "feed_url": "https://example.com/feed.xml"})
+                doc_id = await upsert_document(session, feed, source_id=source.id, crawl_target_id=target.id)
+                saved = await session.get(Document, doc_id)
+                updated = saved.updated_at
+                page_target = CrawlTarget(source_id=source.id, fetch_url="https://example.com/page",
+                                          normalized_url="https://example.com/page", kind="page")
+                session.add(page_target)
+                await session.flush()
+                thin = make_document(body="A tiny Python preview.")
+                await upsert_document(session, thin, source_id=source.id, crawl_target_id=page_target.id)
+                await session.refresh(saved)
+                assert saved.body == feed.body and saved.updated_at == updated
+                observations = saved.metadata_["acquisition_provenance"]
+                assert {item["format"] for item in observations.values()} == {"rss", "html"}
+                assert any(item["origin_url"] == "https://example.com/feed.xml" for item in observations.values())
+                assert saved.metadata_["ingestion_format"] == "rss"
     asyncio.run(run())
 
 

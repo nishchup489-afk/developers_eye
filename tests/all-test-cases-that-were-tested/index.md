@@ -1190,9 +1190,11 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 ### [crawler/tests/crawler/writer/test_database_writer.py](../../crawler/tests/crawler/writer/test_database_writer.py)
 
-7 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_database_writerpy)
+9 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_database_writerpy)
 
 - `test_attempt_starts_and_finishes`
+- `test_competing_sources_preserve_owner_quality_and_observations`
+- `test_thin_page_keeps_full_feed_content_and_its_provenance`
 - `test_attempt_cannot_be_finished_twice`
 - `test_attempt_validates_inputs`
 - `test_document_insert_and_unchanged_recrawl`

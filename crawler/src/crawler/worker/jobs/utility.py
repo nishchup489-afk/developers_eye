@@ -392,7 +392,7 @@ async def _finalize(
                         crawl_target_id=target_id,
                     )
                     kept = False
-                    if previous is not None and is_structured_record(document.metadata):
+                    if previous is not None:
                         # The writer decides; a replaced row always ends up
                         # owned by this target and available.
                         stored = (await session.execute(
@@ -404,7 +404,7 @@ async def _finalize(
                     event(session, attempt_id, "DEDUP", "duplicate" if duplicate and not kept else decision,
                           {"canonical_url": document.canonical_url, "matching_document_id": duplicate,
                            "decision": decision, "content_hash": document.content_hash,
-                           "reason": "Feed or API record may not replace the stored document" if kept
+                           "reason": "Acquisition would replace higher-quality content or revive a removed page" if kept
                            else "Matching content at another canonical URL; retained by current writer" if duplicate
                            else "Canonical URL content hash comparison"})
                     if kept:
