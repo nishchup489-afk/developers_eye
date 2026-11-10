@@ -34,6 +34,8 @@ The identified decisions for this feature are indexed above. Record new decision
 
 ## Rules for future changes
 
+- Keep redirected runner output UTF-8 compatible; see INC-0036.
+
 - Report exactly which checks ran, which skipped and which need PostgreSQL.
 - Add a new suite to `SUITES` in `scripts/run_all_tests.py` as well as to its own runner (ADR-0051).
 - Do not run the suites in parallel without a per-suite test database (ADR-0051).

@@ -1078,6 +1078,11 @@ def save_reports(console: Console, paths: list[Path], payload: dict) -> list[Pat
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Redirected Windows output otherwise inherits cp1252 and crashes on Rich's
+    # diagnostic symbols before any suite runs. Reports and subprocesses use UTF-8.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="backslashreplace")
     args = parse_args(argv)
     console = Console(record=True, highlight=False, soft_wrap=False)
 
