@@ -13,6 +13,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 - [`backend/pyproject.toml`](../../../backend/pyproject.toml)
 - [`crawler/pyproject.toml`](../../../crawler/pyproject.toml)
 - [`frontend/package.json`](../../../frontend/package.json)
+- [`scripts/run_all_tests.py`](../../../scripts/run_all_tests.py)
 
 ## How-it-works docs
 
@@ -25,6 +26,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
 | [ADR-0035](ADR-0035-configuration-and-validation-boundaries.md) | decision | Keep configuration explicit and distinguish test tiers from deployment evidence | accepted |
+| [ADR-0051](ADR-0051-one-runner-over-native-suite-runners.md) | decision | One test runner script orchestrates the native suite runners and reports through rich | accepted |
 
 ## Decisions to record
 
@@ -33,4 +35,6 @@ The identified decisions for this feature are indexed above. Record new decision
 ## Rules for future changes
 
 - Report exactly which checks ran, which skipped and which need PostgreSQL.
+- Add a new suite to `SUITES` in `scripts/run_all_tests.py` as well as to its own runner (ADR-0051).
+- Do not run the suites in parallel without a per-suite test database (ADR-0051).
 - Keep the backend-to-crawler dependency direction unchanged.

@@ -23,6 +23,14 @@ any file under a `test/` or `tests/` folder, is picked up automatically. Run
 `python scripts/update_test_index.py --install-hook` once per clone and the
 indexes refresh on every commit. `--check` exits 1 when they are stale.
 
+**Running everything at once.** `python scripts/run_all_tests.py` runs every suite
+below with its own runner and prints one diagnostics report (environment and
+test-database checks, per-suite counts, skip reasons, slowest tests, grouped
+failures). `--with-build` adds `next build` and the frontend tests that need it,
+`--only backend indexer` narrows the run, `--save` writes HTML, text and JSON
+copies to `tests/reports/` (git-ignored). See
+[ADR-0051](../0_tech_docs/infra/local-dev-and-testing/ADR-0051-one-runner-over-native-suite-runners.md).
+
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
