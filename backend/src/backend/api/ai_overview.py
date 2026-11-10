@@ -39,7 +39,9 @@ async def search_overview(request: Request):
     if context is None:
         return _json({"error": "Refresh your search to generate an overview."}, 400)
     # Trust only a deployment-configured header overwritten by the ingress.
-    header = settings.ai_overview_client_ip_header
+    # In edge-authenticated deployments the middleware already validated and set
+    # request.client. A caller must not override that identity via another header.
+    header = "" if settings.edge_shared_secret else settings.ai_overview_client_ip_header
     identity = (request.headers.get(header) if header else None) or (request.client.host if request.client else "anonymous")
     client = hashlib.sha256(identity[:200].encode()).hexdigest()
     outcome = await service.overview(context, client)

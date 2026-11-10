@@ -115,11 +115,19 @@ console.log("PASS upstreamFailure: 429/503 keep Retry-After, 504 stays a timeout
 
 const forwarded = (value) =>
   forwardedFor(new Request("http://localhost/api/search", value === undefined ? {} : { headers: { "X-Forwarded-For": value } }));
-assert.deepEqual(forwarded("203.0.113.7"), { "X-Forwarded-For": "203.0.113.7" });
-assert.deepEqual(forwarded("198.51.100.1, 203.0.113.9"), { "X-Forwarded-For": "203.0.113.9" }, "last hop wins");
-assert.deepEqual(forwarded("2001:db8::1"), { "X-Forwarded-For": "2001:db8::1" });
+const identityHeaders = (ip) => ({ "X-Forwarded-For": ip, "X-Eye-Client-IP": ip });
+assert.deepEqual(forwarded("203.0.113.7"), identityHeaders("203.0.113.7"));
+assert.deepEqual(forwarded("198.51.100.1, 203.0.113.9"), identityHeaders("203.0.113.9"), "last hop wins");
+assert.deepEqual(forwarded("2001:db8::1"), identityHeaders("2001:db8::1"));
 assert.deepEqual(forwarded(undefined), {});
 // A real Request refuses CR/LF in a header, so this needs a stand-in.
 assert.deepEqual(forwardedFor({ headers: { get: () => "evil\r\nheader" } }), {});
 assert.deepEqual(forwarded("1.2.3.4, not-an-ip"), {});
 console.log("PASS forwardedFor: last hop only, IPv4/IPv6, rejects junk");
+process.env.VERCEL = "1";
+assert.deepEqual(forwardedFor(new Request("https://app.test/api/search", { headers: {
+  "X-Vercel-Forwarded-For": "198.51.100.12", "X-Forwarded-For": "203.0.113.99", "X-Eye-Client-IP": "203.0.113.88",
+} })), identityHeaders("198.51.100.12"));
+assert.deepEqual(forwardedFor(new Request("https://app.test/api/search", { headers: { "X-Eye-Client-IP": "203.0.113.88" } })), {});
+delete process.env.VERCEL;
+console.log("PASS Vercel platform identity takes precedence; caller identity is never preserved");

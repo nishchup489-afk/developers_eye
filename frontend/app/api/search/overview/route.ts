@@ -1,4 +1,5 @@
 import { backend, isTimeout } from "@/lib/axios";
+import { forwardedFor } from "@/lib/search";
 
 // Transport only. FastAPI owns evidence validation, Groq and all quota/cache state.
 export async function POST(request: Request) {
@@ -13,9 +14,8 @@ export async function POST(request: Request) {
   try {
     const response = await backend.post(`${base.replace(/\/$/, "")}/search/overview`, body, {
       timeout: 18000,
-      // Caddy overwrites this header. FastAPI ignores it unless explicitly trusted.
       headers: {
-        ...(request.headers.has("x-eye-client-ip") ? { "X-Eye-Client-IP": request.headers.get("x-eye-client-ip")! } : {}),
+        ...forwardedFor(request),
         ...(request.headers.has("sec-fetch-site") ? { "Sec-Fetch-Site": request.headers.get("sec-fetch-site")! } : {}),
       },
     });

@@ -16,6 +16,7 @@ from backend.api.search import router as search_router
 from backend.api.ai_overview import router as ai_overview_router
 from backend.api.system_report import router as system_report_router
 from backend.api.search_quality import router as search_quality_router
+from backend.api.edge_trust import EdgeTrustMiddleware
 from backend.core.config import settings
 from backend.db.session import SessionFactory, engine
 from backend.search.ranking.statistics import get_corpus_statistics
@@ -70,7 +71,10 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         await engine.dispose()
 
 
-app = FastAPI(title=settings.app_name, version="1.0.0", lifespan=lifespan)
+app = FastAPI(title=settings.app_name, version="1.0.0", lifespan=lifespan,
+              docs_url="/docs" if settings.api_docs_enabled else None,
+              redoc_url="/redoc" if settings.api_docs_enabled else None,
+              openapi_url="/openapi.json" if settings.api_docs_enabled else None)
 
 app.include_router(crawler_report_router)
 app.include_router(indexer_report_router)
@@ -90,6 +94,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(EdgeTrustMiddleware, secret=settings.edge_shared_secret.get_secret_value()
+                   if settings.edge_shared_secret else None)
 
 
 @app.get("/")

@@ -1,13 +1,31 @@
 from functools import lru_cache 
 from pydantic_settings import SettingsConfigDict , BaseSettings 
 from pathlib import Path
-from pydantic import SecretStr
+from pydantic import SecretStr, field_validator, model_validator
 
 
 class Settings(BaseSettings):
     app_name : str  = "Developers Eye"
     app_env : str = "development"
     debug: bool = False 
+    edge_shared_secret: SecretStr | None = None
+    api_docs_enabled: bool = True
+
+    @field_validator("edge_shared_secret", mode="before")
+    @classmethod
+    def validate_edge_secret(cls, value):
+        if value is None or value == "":
+            return None
+        raw = value.get_secret_value() if isinstance(value, SecretStr) else value
+        if len(raw) < 32 or not raw.isascii() or any(ch.isspace() for ch in raw):
+            raise ValueError("EDGE_SHARED_SECRET must be 32+ ASCII characters without whitespace")
+        return value
+
+    @model_validator(mode="after")
+    def require_production_edge_secret(self):
+        if self.app_env.lower() in {"production", "prod"} and self.edge_shared_secret is None:
+            raise ValueError("EDGE_SHARED_SECRET is required in production")
+        return self
 
     # AI overview is entirely backend-owned; no Groq configuration in Next.js.
     groq_api_key: SecretStr | None = None

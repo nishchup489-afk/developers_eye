@@ -32,7 +32,7 @@ globalThis.fetch = async (input, init) => {
     { status, headers: status === 429 ? { "Retry-After": "120" } : {} });
 };
 const request = () => new Request("http://localhost:3000/api/search/overview", { method: "POST", headers: {
-  "Content-Type": "application/json", "X-Eye-Client-IP": "198.51.100.12" }, body: JSON.stringify({ token }) });
+  "Content-Type": "application/json", "X-Forwarded-For": "198.51.100.12", "X-Eye-Client-IP": "203.0.113.99" }, body: JSON.stringify({ token }) });
 try {
   const data = await (await search.GET(new Request("http://localhost:3000/api/search?q=python"))).json();
   assert.equal(data.overviewToken, token);

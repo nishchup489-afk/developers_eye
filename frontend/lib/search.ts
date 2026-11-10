@@ -64,8 +64,14 @@ export function upstreamFailure(
  * X-Forwarded-For entry, which the nearest proxy (Caddy in production) wrote.
  */
 export function forwardedFor(request: Request): Record<string, string> {
-  const last = request.headers.get("x-forwarded-for")?.split(",").at(-1)?.trim() ?? "";
-  return /^[0-9A-Fa-f:.]{2,45}$/.test(last) ? { "X-Forwarded-For": last } : {};
+  // Vercel overwrites these platform headers. Never preserve a browser-supplied
+  // X-Eye-Client-IP across the authenticated edge hop.
+  const forwarded = process.env.VERCEL === "1"
+    ? request.headers.get("x-vercel-forwarded-for") ?? request.headers.get("x-forwarded-for")
+    : request.headers.get("x-forwarded-for");
+  const last = forwarded?.split(",").at(-1)?.trim() ?? "";
+  return /^[0-9A-Fa-f:.]{2,45}$/.test(last)
+    ? { "X-Forwarded-For": last, "X-Eye-Client-IP": last } : {};
 }
 
 export const sources = [

@@ -25,6 +25,17 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_untrusted_client_headers_cannot_change_identity`
 - `test_search_issues_backend_evidence`
 
+### [backend/tests/api/test_edge_trust.py](../../backend/tests/api/test_edge_trust.py)
+
+6 cases
+
+- `test_edge_rejects_direct_calls`
+- `test_authenticated_visitors_get_separate_rate_limit_buckets`
+- `test_authenticated_invalid_identity_is_rejected`
+- `test_duplicate_credentials_or_identity_are_rejected`
+- `test_health_and_local_development_never_import_spoofed_identity`
+- `test_production_requires_a_valid_edge_secret`
+
 ### [backend/tests/api/test_search.py](../../backend/tests/api/test_search.py)
 
 8 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-http-api)
@@ -512,6 +523,13 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_stage_is_a_no_op_outside_a_request`
 - `test_trace_records_finished_stages_and_where_a_search_stopped`
 - `test_only_slow_or_timed_out_searches_keep_query_text`
+
+### [backend/tests/unit/test_shutdown.py](../../backend/tests/unit/test_shutdown.py)
+
+2 cases
+
+- `test_sigterm_cancels_work_once_and_waits_for_cleanup`
+- `test_unsignalled_cancellation_and_errors_are_not_suppressed`
 
 ### [backend/tests/unit/test_snippet_bounds.py](../../backend/tests/unit/test_snippet_bounds.py)
 
@@ -1210,6 +1228,12 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_live_pipelinepy)
 
+### [crawler/tests/crawler/worker/test_logging_config.py](../../crawler/tests/crawler/worker/test_logging_config.py)
+
+1 cases
+
+- `test_production_logging_creates_no_file_and_quiets_sql`
+
 ### [crawler/tests/crawler/worker/test_monitoring.py](../../crawler/tests/crawler/worker/test_monitoring.py)
 
 4 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_monitoringpy)
@@ -1294,6 +1318,10 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#crawler-monitor-unitmjs)
 
+### [frontend/tests/edge-transport-unit.mjs](../../frontend/tests/edge-transport-unit.mjs)
+
+Script-style file, run as a whole
+
 ### [frontend/tests/indexer-report-unit.mjs](../../frontend/tests/indexer-report-unit.mjs)
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#indexer-report-unitmjs)
@@ -1331,6 +1359,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 These test files have no matching heading in a `test_case.md`.
 
 - [backend/tests/api/test_ai_overview.py](../../backend/tests/api/test_ai_overview.py)
+- [backend/tests/api/test_edge_trust.py](../../backend/tests/api/test_edge_trust.py)
 - [backend/tests/api/test_search_quality_routes.py](../../backend/tests/api/test_search_quality_routes.py)
 - [backend/tests/golden/test_bm25_golden.py](../../backend/tests/golden/test_bm25_golden.py)
 - [backend/tests/integration/test_ai_overview.py](../../backend/tests/integration/test_ai_overview.py)
@@ -1350,14 +1379,17 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/unit/test_result_presentation.py](../../backend/tests/unit/test_result_presentation.py)
 - [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
 - [backend/tests/unit/test_search_trace.py](../../backend/tests/unit/test_search_trace.py)
+- [backend/tests/unit/test_shutdown.py](../../backend/tests/unit/test_shutdown.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
 - [crawler/tests/crawler/scheduler/test_legacy_contracts.py](../../crawler/tests/crawler/scheduler/test_legacy_contracts.py)
 - [crawler/tests/crawler/worker/test_benchmark_safety.py](../../crawler/tests/crawler/worker/test_benchmark_safety.py)
 - [crawler/tests/crawler/worker/test_database_faults.py](../../crawler/tests/crawler/worker/test_database_faults.py)
+- [crawler/tests/crawler/worker/test_logging_config.py](../../crawler/tests/crawler/worker/test_logging_config.py)
 - [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
 - [crawler/tests/indexer/test_concurrent_writers.py](../../crawler/tests/indexer/test_concurrent_writers.py)
 - [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
 - [crawler/tests/indexer/test_worker_recovery.py](../../crawler/tests/indexer/test_worker_recovery.py)
+- [frontend/tests/edge-transport-unit.mjs](../../frontend/tests/edge-transport-unit.mjs)
 - [frontend/tests/overview-routes.mjs](../../frontend/tests/overview-routes.mjs)
 - [frontend/tests/preview-overview.mjs](../../frontend/tests/preview-overview.mjs)
 <!-- test-index:end -->

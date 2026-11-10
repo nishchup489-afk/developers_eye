@@ -51,6 +51,23 @@ export const backend = createHttpClient({
   fetchOptions: { cache: "no-store", redirect: "error" },
 });
 
+// This client also calls GitHub/Wikipedia, so never set the edge secret as a
+// default header. Attach it at request time only to configured backend origins.
+backend.interceptors.request.use((config) => {
+  config.headers.delete("X-Edge-Secret");
+  const secret = typeof window === "undefined" ? process.env.EDGE_SHARED_SECRET : undefined;
+  if (!secret) return config;
+  const target = new URL(backend.getUri(config));
+  const origins = [process.env.BACKEND_URL, process.env.CRAWLER_REPORT_API_URL]
+    .filter(Boolean).map((value) => new URL(value).origin);
+  if (origins.includes(target.origin)) {
+    if (target.protocol !== "https:" && !["localhost", "127.0.0.1", "[::1]"].includes(target.hostname))
+      throw new Error("The authenticated backend origin must use HTTPS");
+    config.headers.set("X-Edge-Secret", secret);
+  }
+  return config;
+});
+
 // Search cancellation must close the socket, not merely reject a fetch promise.
 // Node's HTTP adapter bypasses Next's patched fetch and its abort/socket leak.
 // Node HTTP has no Next data cache; redirects and environment proxies are disabled.
