@@ -20,6 +20,7 @@ import statistics
 import sys
 import time
 from pathlib import Path
+from bench_safety import benchmark_database_url
 
 WORDS = ("python rust kernel socket buffer thread module package index query vector cache schema "
          "lexer parser token stream router client server deploy async await function class method "
@@ -134,8 +135,10 @@ if __name__ == "__main__":
     parser.add_argument("--reuse", action="store_true")
     arguments = parser.parse_args()
     url = os.environ.get("BENCH_DATABASE_URL", "")
-    if "test" not in url.rsplit("/", 1)[-1].lower():
-        raise SystemExit("BENCH_DATABASE_URL must point at a database with test in its name")
+    try:
+        url = benchmark_database_url(url)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from None
     os.environ["DATABASE_URL"] = url
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
     if sys.platform == "win32":

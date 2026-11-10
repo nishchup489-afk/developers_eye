@@ -22,6 +22,7 @@ import selectors
 import sys
 import time
 from pathlib import Path
+from bench_safety import benchmark_database_url
 
 ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
@@ -146,8 +147,10 @@ if __name__ == "__main__":
     parser.add_argument("--levels", type=lambda value: [int(item) for item in value.split(",")], default=[1, 2, 4, 8])
     arguments = parser.parse_args()
     url = os.environ.get("BENCH_DATABASE_URL", "")
-    if "test" not in url.rsplit("/", 1)[-1].lower():
-        raise SystemExit("BENCH_DATABASE_URL must point at a database with test in its name")
+    try:
+        url = benchmark_database_url(url)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from None
     os.environ["DATABASE_URL"] = url
     os.environ.setdefault("DB_POOL_SIZE", "20")
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))

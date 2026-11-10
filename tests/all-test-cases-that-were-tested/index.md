@@ -1137,6 +1137,13 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_missing_pages_are_marked_unavailable_without_index_deletion`
 - `test_successful_observation_restores_document_availability`
 
+### [crawler/tests/crawler/worker/test_benchmark_safety.py](../../crawler/tests/crawler/worker/test_benchmark_safety.py)
+
+2 cases
+
+- `test_socket_and_tcp_test_databases_are_accepted`
+- `test_host_password_or_query_cannot_make_a_production_database_disposable`
+
 ### [crawler/tests/crawler/worker/test_database_faults.py](../../crawler/tests/crawler/worker/test_database_faults.py)
 
 2 cases
@@ -1288,6 +1295,7 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/unit/test_result_presentation.py](../../backend/tests/unit/test_result_presentation.py)
 - [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
+- [crawler/tests/crawler/worker/test_benchmark_safety.py](../../crawler/tests/crawler/worker/test_benchmark_safety.py)
 - [crawler/tests/crawler/worker/test_database_faults.py](../../crawler/tests/crawler/worker/test_database_faults.py)
 - [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
 - [crawler/tests/indexer/test_concurrent_writers.py](../../crawler/tests/indexer/test_concurrent_writers.py)

@@ -30,6 +30,7 @@ from collections import defaultdict
 from functools import partial
 from pathlib import Path
 from urllib.parse import urlsplit
+from bench_safety import benchmark_database_url
 
 WORDS = ("async await python rust kernel socket buffer thread module package index query "
          "vector cache schema lexer parser token stream router client server deploy").split()
@@ -130,6 +131,10 @@ async def worker(args) -> int:
         await asyncio.wait_for(runner.run_worker(config=config, job_handler=handler), args.seconds)
     except TimeoutError:
         pass
+    finally:
+        from backend.db.session import engine
+        await engine.dispose()
+        fetcher.log.close()
     return 0
 
 
@@ -140,7 +145,7 @@ def summarize(log_path: str, args, seconds: float) -> dict:
     for row in rows:
         by_host[row["host"]].append(row)
     gap_violations = overlaps = 0
-    tolerance = 0.05
+    tolerance = min(0.005, args.gap * 0.05)
     for host_rows in by_host.values():
         host_rows.sort(key=lambda row: row["start"])
         for earlier, later in zip(host_rows, host_rows[1:]):
@@ -156,9 +161,23 @@ def summarize(log_path: str, args, seconds: float) -> dict:
         "requests": len(rows), "requests_per_second": round(len(rows) / active, 2) if active else 0,
         "ideal_requests_per_second": round(args.hosts / args.gap, 2),
         "gap_violations": gap_violations, "overlapping_requests": overlaps,
+        "comparison_tolerance_seconds": tolerance,
         "throttled_429": sum(row["status"] == 429 for row in rows),
         "median_requests_per_host": statistics.median(len(v) for v in by_host.values()) if by_host else 0,
     }
+
+
+async def database_snapshot():
+    from sqlalchemy import text
+    from backend.db.session import SessionFactory, engine
+    try:
+        async with SessionFactory() as session:
+            stats = (await session.execute(text("SELECT xact_commit, xact_rollback, tup_inserted, tup_updated FROM pg_stat_database WHERE datname=current_database()"))).mappings().one()
+            summary = (await session.execute(text("SELECT count(*) AS attempts, count(*) FILTER (WHERE finished_at IS NOT NULL) AS finished FROM crawl_attempt"))).mappings().one()
+            tables = (await session.execute(text("SELECT relname,n_tup_upd,n_tup_hot_upd,n_dead_tup,pg_total_relation_size(relid) AS bytes FROM pg_stat_user_tables WHERE relname IN ('crawl_target','crawl_event','crawl_attempt') ORDER BY relname"))).mappings().all()
+            return {**dict(stats), **dict(summary), "tables": [dict(row) for row in tables]}
+    finally:
+        await engine.dispose()
 
 
 def main() -> int:
@@ -176,8 +195,10 @@ def main() -> int:
     args = parser.parse_args()
 
     url = os.environ.get("BENCH_DATABASE_URL", "")
-    if not url.startswith("postgresql+asyncpg://") or "test" not in url.rsplit("/", 1)[-1].lower():
-        raise SystemExit("BENCH_DATABASE_URL must be an asyncpg URL to a database with test in its name")
+    try:
+        url = benchmark_database_url(url)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from None
     os.environ["DATABASE_URL"] = url
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
@@ -192,6 +213,7 @@ def main() -> int:
         return run(worker(args))
 
     run(seed(args))
+    before = run(database_snapshot())
     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as folder:
         log = os.path.join(folder, "requests.jsonl")
         forward = [str(item) for pair in (
@@ -202,10 +224,20 @@ def main() -> int:
         processes = [subprocess.Popen([sys.executable, __file__, "--worker", *forward],
                                       stdout=subprocess.DEVNULL) for _ in range(args.workers)]
         for process in processes:
-            process.wait()
+            try:
+                process.wait(timeout=args.seconds + 60)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait()
         time.sleep(0.2)
-        print(json.dumps(summarize(log, args, time.time() - started), indent=2))
-    return 0
+        report = summarize(log, args, time.time() - started)
+        after = run(database_snapshot())
+        report.update(worker_exit_codes=[process.returncode for process in processes],
+                      database_before=before, database_after=after,
+                      committed_transactions=after['xact_commit'] - before['xact_commit'],
+                      updated_tuples=after['tup_updated'] - before['tup_updated'])
+        print(json.dumps(report, indent=2))
+    return int(any(report['worker_exit_codes']) or report['gap_violations'] > 0 or report['overlapping_requests'] > 0)
 
 
 if __name__ == "__main__":

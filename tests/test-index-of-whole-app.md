@@ -36,14 +36,14 @@ through their `tests/conftest.py`, so nothing has to be set in the terminal. See
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**97 test files, 780 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**98 test files, 782 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
 | [Backend (FastAPI, search)](#backend-fastapi-search) | 38 | 337 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 14 | 109 | `cd crawler && poetry run pytest tests/indexer` |
-| [Crawler](#crawler) | 34 | 334 | `cd crawler && poetry run pytest tests/crawler` |
+| [Crawler](#crawler) | 35 | 336 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 11 | 0 | npm scripts in `frontend/package.json` (see below) |
 
 ### End-to-end (full app)
@@ -129,6 +129,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [README.md](../crawler/tests/README.md) | write-up |  |  |
 | [benchmarks/bench_claim.py](../crawler/tests/benchmarks/bench_claim.py) | helper |  | [test_case.md](../crawler/tests/test_case.md#claim-benchmark) |
 | [benchmarks/bench_indexer.py](../crawler/tests/benchmarks/bench_indexer.py) | helper |  |  |
+| [benchmarks/bench_safety.py](../crawler/tests/benchmarks/bench_safety.py) | helper |  |  |
 | [benchmarks/bench_search.py](../crawler/tests/benchmarks/bench_search.py) | helper |  |  |
 | [benchmarks/fake_web_load.py](../crawler/tests/benchmarks/fake_web_load.py) | helper |  |  |
 | [conftest.py](../crawler/tests/conftest.py) | fixtures |  | [test_case.md](../crawler/tests/test_case.md#conftestpy) |
@@ -159,6 +160,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [crawler/scheduler/test_fail_target.py](../crawler/tests/crawler/scheduler/test_fail_target.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_fail_targetpy) |
 | [crawler/scheduler/test_repository.py](../crawler/tests/crawler/scheduler/test_repository.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_repositorypy) |
 | [crawler/worker/test_availability.py](../crawler/tests/crawler/worker/test_availability.py) | tests | 2 | [test_case.md](../crawler/tests/test_case.md#test_availabilitypy) |
+| [crawler/worker/test_benchmark_safety.py](../crawler/tests/crawler/worker/test_benchmark_safety.py) | tests | 2 |  |
 | [crawler/worker/test_database_faults.py](../crawler/tests/crawler/worker/test_database_faults.py) | tests | 2 |  |
 | [crawler/worker/test_deadlock_retry.py](../crawler/tests/crawler/worker/test_deadlock_retry.py) | tests | 3 | [test_case.md](../crawler/tests/test_case.md#test_deadlock_retrypy) |
 | [crawler/worker/test_live_pipeline.py](../crawler/tests/crawler/worker/test_live_pipeline.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_live_pipelinepy) |
