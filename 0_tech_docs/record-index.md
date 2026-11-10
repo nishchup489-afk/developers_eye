@@ -67,6 +67,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0054 | backend/package-boundary | [Retain backend as the shared schema package instead of introducing de_core](backend/package-boundary/ADR-0054-retain-backend-as-the-shared-schema-package.md) | accepted |
 | ADR-0055 | crawler/monitoring-and-telemetry | [Batch adjacent CPU checkpoints and write full attempt summaries at completion](crawler/monitoring-and-telemetry/ADR-0055-batched-cpu-checkpoints-and-terminal-attempt-summaries.md) | accepted |
 | ADR-0056 | frontend/search-experience | [Use Axios Node HTTP transport for cancellable search requests](frontend/search-experience/ADR-0056-close-search-sockets-on-cancellation.md) | accepted |
+| ADR-0057 | backend/admin-api | [Log slow searches with stage timings and store human relevance judgments in PostgreSQL](backend/admin-api/ADR-0057-slow-search-log-and-human-judging.md) | accepted |
 
 ## Incidents
 
@@ -94,6 +95,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | INC-0038 | crawler/content-processing | [FastAPI documentation fell through to article and event categories](crawler/content-processing/INC-0038-fastapi-documents-mapped-to-articles.md) | resolved |
 | INC-0039 | infra/local-dev-and-testing | [Fresh backend Poetry environment could not collect HTTP tests](infra/local-dev-and-testing/INC-0039-fresh-clone-test-dependencies.md) | resolved |
 | INC-0040 | frontend/search-experience | [Aborted Linux search left its PostgreSQL query waiting](frontend/search-experience/INC-0040-aborted-search-left-postgres-waiting.md) | resolved |
+| INC-0041 | backend/bm25-statistics | [Searches took 5-11 s because BM25 document-frequency counts scanned every vector](backend/bm25-statistics/INC-0041-search-latency-from-detoasting-df-counts.md) | resolved |
 
 ## Experiments
 
@@ -114,4 +116,6 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | EXP-0013 | infra/performance-and-scaling | [Separate cold DF cost from retrieval expansion and page hydration](infra/performance-and-scaling/EXP-0013-read-only-search-stage-profiling.md) | done |
 | EXP-0014 | backend/ranking | [Agent-reviewed 25-query real-corpus BM25 and PostgreSQL baseline](backend/ranking/EXP-0014-agent-reviewed-25-query-baseline.md) | done |
 | EXP-0015 | infra/performance-and-scaling | [Measure Linux crawl write costs and stage workers before further redesign](infra/performance-and-scaling/EXP-0015-linux-crawl-write-cost-and-staged-workers.md) | done |
+| EXP-0016 | backend/bm25-statistics | [GIN-only document-frequency counts against the planner's seq-scan choice at 126k documents](backend/bm25-statistics/EXP-0016-gin-only-document-frequency-counts.md) | done |
+| EXP-0017 | backend/retrieval | [Title-match channel and dotted identifiers recover recall misses](backend/retrieval/EXP-0017-title-channel-and-dotted-identifier-recall.md) | done |
 <!-- record-index:end -->

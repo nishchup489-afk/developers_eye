@@ -1,0 +1,136 @@
+[
+ {
+  "query": "python generator yield from",
+  "mode": "all",
+  "seq_scan_plan_ms": 1653.8,
+  "gin_plan_ms": 56.3,
+  "df": {
+   "TEXT": {
+    "yield": 3537,
+    "generat": 7857,
+    "python": 12723
+   },
+   "CODE": {
+    "generator": 711,
+    "yield": 2511,
+    "python": 11400,
+    "from": 19923
+   }
+  }
+ },
+ {
+  "query": "python dataclasses",
+  "mode": "text",
+  "seq_scan_plan_ms": 971.6,
+  "gin_plan_ms": 17.9,
+  "df": {
+   "TEXT": {
+    "dataclass": 162,
+    "python": 12723
+   }
+  }
+ },
+ {
+  "query": "python context manager",
+  "mode": "all",
+  "seq_scan_plan_ms": 1347.7,
+  "gin_plan_ms": 53.8,
+  "df": {
+   "TEXT": {
+    "manag": 5469,
+    "python": 12723,
+    "context": 15825
+   },
+   "CODE": {
+    "manager": 729,
+    "context": 3861,
+    "python": 11400
+   }
+  }
+ },
+ {
+  "query": "python asyncio event loop",
+  "mode": "text",
+  "seq_scan_plan_ms": 1636.2,
+  "gin_plan_ms": 43.0,
+  "df": {
+   "TEXT": {
+    "loop": 3708,
+    "asyncio": 324,
+    "python": 12723,
+    "event": 16719
+   }
+  }
+ },
+ {
+  "query": "python concurrent.futures",
+  "mode": "text",
+  "seq_scan_plan_ms": 975.4,
+  "gin_plan_ms": 19.8,
+  "df": {
+   "TEXT": {
+    "concurrent.futures": 105,
+    "python": 12723
+   }
+  }
+ },
+ {
+  "query": "FastAPI Depends",
+  "mode": "all",
+  "seq_scan_plan_ms": 1343.8,
+  "gin_plan_ms": 19.7,
+  "df": {
+   "TEXT": {
+    "fastapi": 5928,
+    "depend": 8901
+   },
+   "CODE": {
+    "depends": 1113,
+    "fastapi": 5928
+   }
+  }
+ },
+ {
+  "query": "FastAPI settings environment variables",
+  "mode": "text",
+  "seq_scan_plan_ms": 1641.3,
+  "gin_plan_ms": 60.9,
+  "df": {
+   "TEXT": {
+    "environ": 3165,
+    "fastapi": 5928,
+    "variabl": 8637,
+    "set": 30429
+   }
+  }
+ },
+ {
+  "query": "django class based views",
+  "mode": "text",
+  "seq_scan_plan_ms": 1828.8,
+  "gin_plan_ms": 66.8,
+  "df": {
+   "TEXT": {
+    "django": 9762,
+    "class": 17319,
+    "base": 18387,
+    "view": 108795
+   }
+  }
+ },
+ {
+  "query": "HTTP 500 internal server error",
+  "mode": "text",
+  "seq_scan_plan_ms": 1798.4,
+  "gin_plan_ms": 40.7,
+  "df": {
+   "TEXT": {
+    "500": 1905,
+    "intern": 5673,
+    "server": 8517,
+    "error": 16527,
+    "http": 15978
+   }
+  }
+ }
+]

@@ -25,6 +25,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | --- | --- | --- | --- |
 | [ADR-0030](ADR-0030-read-only-observability-plane.md) | decision | Expose read-only operational reports from backend-owned query services | accepted |
 | [ADR-0044](ADR-0044-search-availability-telemetry.md) | decision | Record search outcomes per minute in PostgreSQL, and sample the corpus for statistics | accepted |
+| [ADR-0057](ADR-0057-slow-search-log-and-human-judging.md) | decision | Log slow searches with stage timings and store human relevance judgments in PostgreSQL | accepted |
 
 ## Decisions to record
 
@@ -32,5 +33,6 @@ The identified decisions for this feature are indexed above. Record new decision
 
 ## Rules for future changes
 
-- Separate operational write commands into a new design and permission model.
+- Separate operational write commands into a new design and permission model. Relevance judging writes (ADR-0057) are the one exception: administrator session, same-origin, judge taken from the session.
+- Store a row per search only for slow or timed-out searches (ADR-0057); never for every search.
 - Keep secrets server-side and report status meanings explicit.

@@ -41,3 +41,13 @@ Details: `0_tech_docs/frontend/search-experience/INC-0033-upstream-timeout-ignor
 **Lesson.** A search vocabulary built from stems is not a dictionary. Anything shown to users has to go back through the same stemmer the index used.
 
 Details: `0_tech_docs/backend/fuzzy-correction/ADR-0045-did-you-mean-with-surface-word-suggestions.md`.
+
+## Ten-second searches from counting common words (2026-11-10)
+
+**Problem.** At about 100k documents, nine evaluated searches took over 5 s (`HTTP 500 internal server error` 10.7 s). BM25 needs, for each query word, the number of documents that contain it. For common words like `python` or `error`, PostgreSQL chose a sequential scan of `search_index` over the GIN index, and that scan unpacks (detoasts) every stored `tsvector`: about 1 s per word.
+
+**Fix.** The document-frequency query now runs with `enable_seqscan` off for that one statement (transaction-local, then restored), so it always reads GIN posting lists. On a 126k copy the counts are identical and take 18–67 ms instead of 0.97–1.83 s; whole cold searches dropped from 1–2 s to 61–275 ms. Slow searches are now logged with time per stage on the admin Search quality page.
+
+**Lesson.** The planner prices rows, not the cost of unpacking large TOASTed values. When a count only needs "which documents contain this", make sure it stays on the index, and measure at the corpus size you plan to run.
+
+Details: `0_tech_docs/backend/bm25-statistics/INC-0041-search-latency-from-detoasting-df-counts.md`, `EXP-0016-gin-only-document-frequency-counts.md`.

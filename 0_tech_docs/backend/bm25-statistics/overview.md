@@ -23,6 +23,8 @@ The linked source contracts and tests are the current mechanics reference; no se
 | --- | --- | --- | --- |
 | [ADR-0027](ADR-0027-batch-ranking-statistics-and-external-corpus.md) | decision | Batch query statistics and keep full-corpus aggregation outside the request path | accepted |
 | [EXP-0003](EXP-0003-ranking-statistics-round-trip-audit.md) | experiment | Static round-trip audit of batched ranking statistics | done |
+| [INC-0041](INC-0041-search-latency-from-detoasting-df-counts.md) | incident | Searches took 5-11 s because BM25 document-frequency counts scanned every vector | resolved |
+| [EXP-0016](EXP-0016-gin-only-document-frequency-counts.md) | experiment | GIN-only document-frequency counts against the planner's seq-scan choice at 126k documents | done |
 
 ## Decisions to record
 
@@ -37,3 +39,4 @@ The loader needs live PostgreSQL checks for lexeme/DF/TF consistency and concurr
 - Require PostgreSQL fixtures for stemming, empty/stripped vectors, long documents and concurrent updates.
 - Do not use combined search_terms counts as per-channel BM25 DF.
 - Persist exact stats only with transactional update/delete/rebuild semantics.
+- Keep document-frequency counts on the GIN index (`_gin_only_plans`, transaction-local); re-run EXP-0016 at 100k+ documents before changing the DF query (INC-0041).

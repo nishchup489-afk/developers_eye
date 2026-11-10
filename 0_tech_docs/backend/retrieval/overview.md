@@ -23,12 +23,15 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
 | [ADR-0024](ADR-0024-bounded-postgres-candidate-retrieval.md) | decision | Use bounded PostgreSQL candidate retrieval before final ranking | accepted |
+| [EXP-0017](EXP-0017-title-channel-and-dotted-identifier-recall.md) | experiment | Title-match channel and dotted identifiers recover recall misses | done |
 
 ## Decisions to record
 
 The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
+
+- Keep the title-match channel (`retrieval/titles.py`) in every mode and the dotted-identifier alternatives in the code channel; removing either reopens the recall misses in EXP-0017.
 
 - Document whether a retriever contributes text, code or both.
 - Add adapters and channel-contract tests before calling merge_hits.
