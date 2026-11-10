@@ -1,32 +1,45 @@
-# CI and container plan
+# CI and deployment containers
 
-Area: infra · Status: planned
+Area: infra · Status: active
 
 ## Purpose
 
-Records the proposed disposable PostgreSQL and frontend validation gates. No Dockerfile, Compose or CI workflow is present at the inspected baseline; provider and rollout choices are uncommitted.
+CI workflows, container definitions and local verification exist. The selected
+deployment is a Vercel frontend and authenticated Oracle API, with PG18 on a
+mounted block volume. Local tests do not establish cloud deployment readiness.
 
-Reviewed against `facd333` on 2026-11-02. “Active” means implementation exists, not that it is integrated into every caller or production-verified.
+Deployment boundary reviewed on 2026-11-10. “Active” means implementation and
+local validation exist; it does not mean deployed or verified on Oracle.
 
 ## Code
 
 - [`backend/pyproject.toml`](../../../backend/pyproject.toml)
 - [`crawler/pyproject.toml`](../../../crawler/pyproject.toml)
 - [`frontend/package.json`](../../../frontend/package.json)
+- [`deploy/docker-compose.yml`](../../../deploy/docker-compose.yml)
+- [`deploy/Caddyfile`](../../../deploy/Caddyfile)
+- [`deploy/tests/smoke_stack.py`](../../../deploy/tests/smoke_stack.py)
+- [Container readiness workflow](../../../.github/workflows/oracle-readiness.yml)
 
 ## How-it-works docs
 
-The linked source contracts and tests are the current mechanics reference; no separate mechanics guide is claimed.
+The [deployment runbook](../../../deploy/README.md) describes first boot,
+PG18 seed transfer, edge authentication, backups and the local verification scope.
 
 ## Records
 
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
 | [ADR-0039](ADR-0039-reproducible-ci-and-containers-plan.md) | decision | Add disposable PostgreSQL verification before automating deployment | proposed |
+| [ADR-0058](ADR-0058-vercel-to-oracle-authenticated-api.md) | decision | Deploy Vercel behind a scoped authenticated API hop to Oracle | accepted |
+| [EXP-0018](EXP-0018-local-oracle-container-readiness.md) | experiment | Verify the local Oracle container and edge-auth boundary | done |
 
 ## Decisions to record
 
-Pending implementation/evaluation choices are recorded as proposals: ADR-0039. Do not mark them accepted solely because this overview exists.
+ADR-0039 is the earlier proposal. ADR-0058 records the concrete deployment
+decision. See [the runbook](../../../deploy/README.md) and
+[the readiness checklist](../../journal/oracle_deployment_readiness.md) for
+repository evidence and unperformed cloud/operator actions.
 
 ## Rules for future changes
 

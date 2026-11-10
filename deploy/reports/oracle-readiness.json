@@ -1,0 +1,407 @@
+{
+  "date": "2026-11-10",
+  "branch": "codex/oracle-deployment-readiness",
+  "baseline": "996418f",
+  "application_revision": "b6ed82b",
+  "test_revision": "733ab86",
+  "harness_revision": "a447db8",
+  "scope": "Repository readiness only; no cloud deployment or external configuration changed",
+  "application_suite": {
+    "status": "passed",
+    "started_at_local": "2026-11-10T00:28:57",
+    "duration_seconds": 83.1,
+    "passed": 1390,
+    "skipped": 0,
+    "suites": [
+      {
+        "name": "backend",
+        "passed": 602,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "name": "crawler",
+        "passed": 544,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "name": "indexer",
+        "passed": 192,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "name": "fe-lint",
+        "passed": 1,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "name": "fe-types",
+        "passed": 1,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "name": "fe-admin-unit",
+        "passed": 9,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "name": "fe-search-unit",
+        "passed": 17,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "name": "fe-build",
+        "passed": 1,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "name": "fe-integration",
+        "passed": 12,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "name": "fe-admin",
+        "passed": 4,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "name": "fe-admin-routes",
+        "passed": 6,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      {
+        "name": "fe-overview-routes",
+        "passed": 1,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "exit_code": 0
+      }
+    ]
+  },
+  "local_stack": {
+    "status": "passed",
+    "checks": [
+      "Production Compose: API-only ingress, one crawler/indexer, private DB/API, bounded logs",
+      "PG18 empty migration, FastAPI startup, Caddy config/runtime and unauthenticated health",
+      "Missing/wrong edge credentials denied; spoofed IP cannot bypass; production docs disabled",
+      "Authenticated visitor rate buckets separate; repeat limited; malformed identity and missing admin key denied",
+      "Direct private API request still requires edge credential",
+      "Real Next.js -> Caddy -> FastAPI -> PG18: runtime edge secret, live result, spoof-resistant independent visitor limits",
+      "Actual backup.sh and restore-test.sh round-trip nonempty PG18 core tables in isolated containers",
+      "Linux container SIGTERM waits for async finally cleanup and exits zero"
+    ],
+    "frontend_included": true,
+    "scope": "Isolated local Linux/amd64 Docker PG18/API/Caddy and optional real Next.js; no public cloud, DNS, TLS, ARM execution or crawler network traffic"
+  },
+  "additional_checks": [
+    "PostgreSQL18 parses production postgresql.conf with max_connections=60 without starting a production server",
+    "preflight.sh POSIX shell syntax passed",
+    "GitHub workflow YAML parsed; ARM64 publication defaults false"
+  ],
+  "security": {
+    "npm_audit_including_dev": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "runtime_python_audit": "No known vulnerabilities; exact complete installed dependency inventory, unpublished backend/crawler omitted from advisory lookup",
+    "gitleaks": {
+      "version": "8.16.0",
+      "range": "996418f..733ab86",
+      "result": "no leaks found"
+    }
+  },
+  "images": [
+    {
+      "name": "application",
+      "id": "sha256:bd03af4f8b70c7de5a2d7347bd7430e378f12c760c7ed3e668941479b71ff9a0",
+      "repo_digests": [
+        "de-oracle-smoke-a039b48a56@sha256:bd03af4f8b70c7de5a2d7347bd7430e378f12c760c7ed3e668941479b71ff9a0"
+      ]
+    },
+    {
+      "name": "postgres",
+      "id": "sha256:123b17998ccaf47e53b502e8c6a1e79afd8f579c6f3eec83c563da026f957395",
+      "repo_digests": [
+        "postgres@sha256:123b17998ccaf47e53b502e8c6a1e79afd8f579c6f3eec83c563da026f957395"
+      ]
+    },
+    {
+      "name": "caddy",
+      "id": "sha256:78bd35025c7ba85961dd149ae670315129954e77abe2383ac47c89106b35ade9",
+      "repo_digests": [
+        "caddy@sha256:78bd35025c7ba85961dd149ae670315129954e77abe2383ac47c89106b35ade9"
+      ]
+    },
+    {
+      "name": "python_base",
+      "id": "sha256:9aaa474097d094040649f2162a627c0049b408f52138d980916788d80f04802f",
+      "repo_digests": [
+        "python@sha256:9aaa474097d094040649f2162a627c0049b408f52138d980916788d80f04802f"
+      ]
+    }
+  ],
+  "runtime_python_packages": [
+    {
+      "name": "alembic",
+      "version": "1.20.1"
+    },
+    {
+      "name": "annotated-doc",
+      "version": "0.0.5"
+    },
+    {
+      "name": "annotated-types",
+      "version": "0.8.0"
+    },
+    {
+      "name": "anyio",
+      "version": "4.16.0"
+    },
+    {
+      "name": "asyncpg",
+      "version": "0.32.0"
+    },
+    {
+      "name": "backend",
+      "version": "0.1.0"
+    },
+    {
+      "name": "beautifulsoup4",
+      "version": "4.15.0"
+    },
+    {
+      "name": "bs4",
+      "version": "0.0.2"
+    },
+    {
+      "name": "certifi",
+      "version": "2026.10.23"
+    },
+    {
+      "name": "click",
+      "version": "8.5.1"
+    },
+    {
+      "name": "crawler",
+      "version": "0.1.0"
+    },
+    {
+      "name": "defusedxml",
+      "version": "0.7.1"
+    },
+    {
+      "name": "fastapi",
+      "version": "0.142.4"
+    },
+    {
+      "name": "furl",
+      "version": "2.1.4"
+    },
+    {
+      "name": "greenlet",
+      "version": "3.5.6"
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0"
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9"
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1"
+    },
+    {
+      "name": "idna",
+      "version": "3.20"
+    },
+    {
+      "name": "iniconfig",
+      "version": "2.3.1"
+    },
+    {
+      "name": "Jinja2",
+      "version": "3.1.6"
+    },
+    {
+      "name": "lxml",
+      "version": "6.1.3"
+    },
+    {
+      "name": "Mako",
+      "version": "1.4.3"
+    },
+    {
+      "name": "markdown-it-py",
+      "version": "4.2.0"
+    },
+    {
+      "name": "MarkupSafe",
+      "version": "3.0.4"
+    },
+    {
+      "name": "mdurl",
+      "version": "0.1.2"
+    },
+    {
+      "name": "numpy",
+      "version": "2.5.4"
+    },
+    {
+      "name": "opentelemetry-api",
+      "version": "1.45.2"
+    },
+    {
+      "name": "orderedmultidict",
+      "version": "1.0.2"
+    },
+    {
+      "name": "packaging",
+      "version": "26.3"
+    },
+    {
+      "name": "pip",
+      "version": "26.2.2"
+    },
+    {
+      "name": "pluggy",
+      "version": "1.7.0"
+    },
+    {
+      "name": "psycopg",
+      "version": "3.3.8"
+    },
+    {
+      "name": "psycopg-binary",
+      "version": "3.3.8"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.14.3"
+    },
+    {
+      "name": "pydantic_core",
+      "version": "2.50.4"
+    },
+    {
+      "name": "pydantic-settings",
+      "version": "2.16.2"
+    },
+    {
+      "name": "Pygments",
+      "version": "2.21.0"
+    },
+    {
+      "name": "pytest",
+      "version": "9.2.0"
+    },
+    {
+      "name": "pytest-asyncio",
+      "version": "1.4.1.post1"
+    },
+    {
+      "name": "python-dotenv",
+      "version": "1.2.4"
+    },
+    {
+      "name": "python-multipart",
+      "version": "0.0.32"
+    },
+    {
+      "name": "redis",
+      "version": "8.1.0"
+    },
+    {
+      "name": "rich",
+      "version": "15.0.0"
+    },
+    {
+      "name": "six",
+      "version": "1.17.0"
+    },
+    {
+      "name": "soupsieve",
+      "version": "4.1"
+    },
+    {
+      "name": "SQLAlchemy",
+      "version": "2.1.8"
+    },
+    {
+      "name": "starlette",
+      "version": "1.10.0"
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.16.0"
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.5"
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.54.0"
+    }
+  ],
+  "file_sha256": {
+    "backend/src/backend/api/edge_trust.py": "84303300dc671566d56912dc2cf2cac0c88ba7729976c9d72fc0e4f041606a09",
+    "backend/src/backend/core/config.py": "072c04016beb9f69d6f93fc943d873c64dd6d511e57b8988630003958d01c20a",
+    "backend/src/backend/core/shutdown.py": "edcf6121992858fedfde10a936dda5a7142acec2cc9f3301d6386db69ae1807e",
+    "backend/src/backend/main.py": "24a67af1217732f1ab7c43ab458e7d000e7805120cef087d1e90a8c278206afb",
+    "frontend/lib/axios.js": "8dc526c31237e70435f4dcf2e7e6ae88e0a28778ec8d3d66cb13966cddb57072",
+    "frontend/lib/search.ts": "424c8da81fce64cbc3fec9b0f21b15ba8c1d4fecc4dc30dfa064d7990f6c5cd8",
+    "frontend/app/api/search/overview/route.ts": "13d5ffe8b63364ea2a0f1eec54eb0489c4efe1ef7f992282b70a0455760d52fc",
+    "deploy/docker-compose.yml": "4fe213bbe19b646bc4fa7c4b58c8a76dffb90c49ce966f400f9a9c07dbd55893",
+    "deploy/Caddyfile": "02503654ed3b28417246380e2f3d257b513e75c2c7687bbe55a1c80a37601854",
+    "deploy/tests/smoke_stack.py": "9d4fa43f384c20286ff5d5d7184691dbe23beb2d5b289c95f975c3668d4f9639"
+  },
+  "unverified": [
+    "Actual Oracle account/quotas/VM/block mount/firewall",
+    "Public DNS/TLS",
+    "Real Vercel project settings and production credentials",
+    "Actual local-to-VM corpus transfer",
+    "ARM64 CI/build/execution and GHCR publication",
+    "Scheduled/offsite backups and external uptime monitors",
+    "Representative sustained production load"
+  ]
+}

@@ -1,2 +1,3 @@
 # Linux deployment entry points must not pick up Windows CRLF line endings.
 deploy/*.sh text eol=lf
+0_tech_docs/record-index.md text eol=lf

@@ -1,69 +1,187 @@
-# Deploying Developer's Eye
+# Vercel frontend and Oracle API deployment
 
-One server runs everything: PostgreSQL, the API, crawler and indexer workers, the
-web app and Caddy for TLS. The target is the Oracle Cloud Always Free ARM shape
-(4 OCPU, 24 GB RAM, 200 GB block volume). At about 31 KB per document, 2 million
-documents need about 62 GB, which fits.
+Vercel runs the frontend (`frontend/`, Node 24, `iad1`). Its server routes call
+the Oracle VM's HTTPS API. Caddy terminates TLS and authenticates that hop;
+FastAPI independently checks the credential before trusting a visitor IP.
+The VM runs PostgreSQL 18, one API process, one crawler, one indexer and daily
+telemetry maintenance. Only Caddy publishes ports 80/443. Browser requests stay
+on the frontend origin, so this topology needs no API CORS configuration.
 
-## First boot
+This is a **4 OCPU / 24 GB** profile. Verify your actual tenancy allowance before
+provisioning: Oracle currently lists 2 OCPU/12 GB for Always Free tenancies and,
+separately, 3,000 OCPU hours/18,000 GB hours monthly for paid tenancies, shared
+across A1 resources. A budget alert is not a spending cap. See
+[Always Free resources](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm)
+and [paid-tenancy allowances](https://www.oracle.com/cloud/price-list/#pricing-containers).
+The repository does not upgrade an account or guarantee a zero bill.
 
-1. Create an Ubuntu ARM VM and attach the block volume. Open ports 80 and 443 in
-   the network security list and in the VM firewall.
-2. Install Docker and point your domain at the VM.
-3. Clone the repository, then:
+## Host and secrets
 
-```bash
-cd deploy
+Create the ARM Ubuntu VM in the chosen home region. Mount the intended block
+volume at `/data`; verify its device/UUID before formatting anything. Configure
+`/etc/fstab` using the actual UUID and network-volume mount options. `nofail`
+does not prove the disk is mounted. Install Docker Engine and Compose, keep SSH
+key-only and limited to your IP, and enable OS security updates. Open 80/443 in
+both OCI rules and the host firewall; leave 5432/8000 private. Reserve the public
+IP and point the API hostname at it. Account, firewall, disk, swap and DNS setup
+remain operator actions.
+
+After cloning to `/opt/developers-eye`:
+
+```sh
+cd /opt/developers-eye/deploy
+mountpoint /data
+sudo install -d -m 0700 /data/pgdata /data/backups
 cp .env.example .env
-docker compose up -d --build
-docker compose ps
+chmod 600 .env
 ```
 
-Fill in `.env` before the last step. `migrate` runs Alembic once and every other
-service waits for it. Workers register sources and queue start URLs on first start.
+Set the real `SITE_ADDRESS=api.<domain>` (no scheme), the data path, and three
+independent secrets: `POSTGRES_PASSWORD`, `EDGE_SHARED_SECRET`, and
+`CRAWLER_REPORT_API_KEY`. Generate each with `openssl rand -hex 32`. Use a hex
+database password so the configured URL remains valid. Keep `.env`
+shell-compatible because the host scripts source it. Never commit it.
 
-## Upgrading an existing database
+```sh
+./preflight.sh
+docker compose build
+```
 
-The new migrations add a generated column to `crawl_target`, which rewrites the
-table and locks it while it does. Stop the crawlers first:
+Preflight checks secret lengths, hostname, the `/data` mount, resolved data path,
+old cluster layouts and Compose configuration without printing secret values.
+Compose refuses to create a missing data directory. PG18 mounts
+`/var/lib/postgresql` and stores data under `18/docker`
+([official layout](https://hub.docker.com/_/postgres)). Do not reuse a PG16/17
+data directory. Choose one database setup path before starting workers.
 
-```bash
-docker compose stop crawler indexer-0 indexer-1
+## Empty database or local seed
+
+For a new empty corpus, `docker compose up -d` runs Alembic before the API and
+workers. The crawler seeds sources and starts real policy-checked acquisition.
+Start only `db`, `migrate`, `api`, and `caddy` if you want API validation first.
+
+For a local seed, check `SHOW server_version` and `pg_dump --version`. A PG16
+client **cannot** dump a PG18 server. Use PG18 tools and restore into PG18;
+logical archives are portable from x86 to ARM. See
+[PostgreSQL compatibility](https://www.postgresql.org/docs/18/app-pgdump.html).
+Stop local crawler/indexer processes for a stable comparison. Use a password
+prompt or `.pgpass`, not a password in the command:
+
+```sh
+pg_dump -h localhost -U postgres -d developers_eye --format=custom --compress=6 \
+  --exclude-table-data=crawl_event --file=seed.dump
+scp seed.dump ubuntu@<vm-host>:seed.dump
+```
+
+Move the uploaded archive onto `/data`. Restore into a **new empty database
+before migrations or workers**, never over an existing application database:
+
+```sh
+cd /opt/developers-eye/deploy
+docker compose up -d db
+docker compose cp /data/seed.dump db:/tmp/seed.dump
+docker compose exec -T db pg_restore -U developers_eye -d developers_eye \
+  --jobs=4 --no-owner --no-privileges --exit-on-error /tmp/seed.dump
 docker compose run --rm migrate
-docker compose up -d
+docker compose exec -T db psql -U developers_eye -d developers_eye -c ANALYZE
 ```
 
-Vocabulary counts need one rebuild if they were never rebuilt on this database:
+Match `INDEXER_INDEX_VERSION` to the local worker. If vocabulary needs a rebuild,
+keep the indexer stopped and run:
 
-```bash
-docker compose stop indexer-0 indexer-1
+```sh
 docker compose run --rm indexer-0 python -m indexer.vocabulary_rebuild --once
 docker compose up -d
 ```
 
-## Scaling
+Compare source/document/index counts with the local snapshot, run known searches
+through Vercel and inspect authorized admin reports. Local smoke tests do not
+claim to have transferred your corpus to the VM.
 
-| What | How | Limit |
-| --- | --- | --- |
-| Crawl rate | `docker compose up -d --scale crawler=3` | Hosts in the source list. Each host gets one request every 2 seconds, however many workers run. |
-| Index rate | Add `indexer-2` and set every `INDEXER_SHARD_COUNT` to 3 | CPU shared with the database. |
-| Connections | Keep `(DB_POOL_SIZE + DB_MAX_OVERFLOW) * processes` under `max_connections` (60) | Beyond that, add PgBouncer. |
+## Vercel settings and API trust
 
-Crawl rate is decided by the number of hosts, not workers. 100 active hosts give at
-most 50 requests per second.
+Set Root Directory to `frontend`, Node to 24, then configure Production variables
+and redeploy. `frontend/vercel.json` selects `iad1`, near Ashburn.
 
-## Backups
+| Server-only variable | Value |
+| --- | --- |
+| `BACKEND_URL` | `https://api.<domain>` |
+| `EDGE_SHARED_SECRET` | Same edge credential as the VM |
+| `KNOWLEDGE_PANEL` | Optional on/off |
+| `WIKIPEDIA_USER_AGENT` | Optional real operator contact |
 
-```bash
-./backup.sh
-./restore-test.sh
+Leave admin/OAuth/reporting credentials unset for a public demo. To enable admin
+later, configure its allowlist and session/OAuth settings, reporting key, and the
+**full** URL `CRAWLER_REPORT_API_URL=https://api.<domain>/admin/crawler/report`.
+The internal Docker hostname `http://api:8000` is unreachable from Vercel.
+Preview can stay in labeled demo mode instead of sharing production credentials.
+Keep Groq keys on the backend; never use `NEXT_PUBLIC_` for any secret.
+
+Axios attaches the edge credential only to configured backend origins, never
+GitHub/Wikipedia. Next derives visitor identity from
+[Vercel's overwritten headers](https://vercel.com/docs/headers/request-headers),
+ignoring caller-supplied `X-Eye-Client-IP`. Caddy rejects missing/wrong credentials
+except on `/health`. FastAPI validates the credential again and normalizes a
+single IP for search/AI quotas. Uvicorn proxy-header trust is disabled. Admin
+endpoints still require their independent service key; production docs are off.
+
+## Live checks still required
+
+- `https://api.<domain>/health` must return status `ok` with a valid certificate.
+  This is liveness, not proof of database/search/frontend readiness.
+- Direct unauthenticated `/search` and `/health/db` must return 403.
+- The Vercel UI must perform live search, paging, source/mode changes and correct
+  rate limiting for separate visitors. Missing edge configuration fails closed.
+- Verify import counts, migration head and actual crawl/index progress.
+
+These remain operator checks until performed. See the
+[readiness checklist](../0_tech_docs/journal/oracle_deployment_readiness.md).
+
+## Backups and shutdown
+
+`./backup.sh` writes PG18 custom archives under `/data/backups`, skips
+`crawl_event` data and keeps seven days. `./restore-test.sh [archive]` restores
+into a unique temporary PG18 container, checks nonempty core tables against live
+counts and executes a search query. Startup waiting is bounded. This is not an
+exact snapshot-count comparison while the live database changes.
+
+Schedule nightly backups and weekly restore testing on the host. Example root
+crontab commands for this checkout:
+
+```cron
+15 3 * * * cd /opt/developers-eye/deploy && ./backup.sh
+45 4 * * 0 cd /opt/developers-eye/deploy && ./restore-test.sh
 ```
 
-Schedule `backup.sh` nightly and `restore-test.sh` weekly. Set `BACKUP_REMOTE` for
-an offsite copy: a backup on the same disk does not survive losing that disk.
+Configure cron output delivery/monitoring so failures are visible. Set
+`BACKUP_REMOTE` to a dedicated rclone offsite path, with credentials outside Git.
+Measure compressed dump size against the allowance first. Local pruning does
+**not** prune remote copies; configure remote lifecycle/retention separately.
+Add external uptime monitors for both the API and Vercel URL. No schedules,
+remote credentials or external monitors are installed by this repository.
 
-## Health
+Compose caps each service's JSON logs at 20 MB × 3. The production crawler logs
+to console and sets SQL to WARNING. SIGTERM cancels active worker tasks, permits
+monitor/session/engine cleanup, and leaves unfinished crawl leases to recovery.
+It does not finish every in-flight crawl. Compose allows 45 seconds before
+SIGKILL; abrupt crashes still rely on fencing, rollback and lease expiry.
 
-- Liveness: `docker compose ps` shows health for `db` and `api`.
-- Crawl and index progress: the admin dashboard at `/admin`.
-- Slow queries: Postgres logs anything over one second (`docker compose logs db`).
+## Local validation and later scaling
+
+Run `python3 deploy/tests/smoke_stack.py --output report.json` with Docker access
+and permission to clean PostgreSQL-owned temporary files (CI uses sudo).
+It builds the API image and uses a unique local PG18/API/Caddy stack to verify
+empty migrations, auth rejection, spoof resistance, separate rate buckets,
+admin-key layering and disabled docs. It never reads real env files or starts a
+crawler. Local HTTP validation does not establish public TLS, OCI or ARM runtime.
+
+CI runs that smoke test for deployment changes. Manual dispatch of the same
+workflow also builds `linux/arm64`; GHCR publication is opt-in through `publish`.
+No workflow or image publication was dispatched here. Vercel builds the frontend
+separately; backend and worker services use the shared Python image.
+
+Steady-state pool maxima total 28: API 10 plus crawler/indexer/maintenance 6 each.
+Migration adds at most 6, leaving reserve below PostgreSQL's 60 for backup/admin
+connections. Recompute before scaling. Indexer shards must be coordinated, and
+crawlers must keep shared host pacing. The 24 GB database tuning must be resized
+before using a 12 GB Always Free VM.

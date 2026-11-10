@@ -58,8 +58,12 @@ is a crawl timestamp, not a publication or content-update date.
 | --------------- | ------ | -------- | -------------------------------------------------------------------------------- |
 | q               | string | yes      | Trimmed; 1–256 characters after collapsing spaces; at most 1024 raw characters   |
 | source          | enum   | no       | docs, github, stackoverflow, reddit, articles, events, practice; empty means all |
+| mode            | enum   | no       | all (default), text, code |
+| page            | integer | no      | Starts at 1; (page - 1) × limit must not exceed 1000 |
+| limit           | integer | no      | 1–50; default 20 |
+| language        | string | no       | Explicit language preference such as en or pt-BR; other languages remain eligible |
 
-Unknown query parameters are ignored. Unsupported methods return 405 (Next.js also provides HEAD/OPTIONS behavior). No pagination, sort, autocomplete, or user-auth parameters are implemented.
+Unknown query parameters are ignored. Unsupported methods return 405 (Next.js also provides HEAD/OPTIONS behavior). Source `discussions` combines Stack Overflow and Reddit. Pagination is bounded and deterministic; arbitrary sort and public user-auth parameters are not implemented. Spelling suggestions use the separate endpoint below.
 
 ```sh
 curl --get 'http://localhost:3000/api/search' --data-urlencode 'q=fastapi async'
@@ -274,7 +278,15 @@ Return 200 when essential retrieval dependencies are ready, 503 otherwise. No to
 
 ## 4. Proposed internal/admin API — not implemented
 
-These operations must be authorized inside the backend before exposure. The search frontend neither calls nor proxies them. Authentication and roles have not been implemented; a possible contract is an admin bearer token validated by FastAPI. Examples intentionally contain no credentials.
+The hypothetical operations below remain proposals. Existing administration is
+implemented separately: GitHub sessions and administrator/viewer allowlists in
+Next.js, plus a service bearer key in FastAPI. Reporting includes
+`/admin/crawler/report`, `/admin/indexer/report`, `/admin/indexer/vocabulary`
+and the `/admin/system` reports. `/admin/search-quality` provides slow-query
+inspection, evaluation and authorized query/judgment maintenance. The Next.js
+admin routes proxy these implemented services; a public demo leaves admin off.
+All deployed backend routes additionally require the edge credential. Examples
+below intentionally contain no credentials and do not replace those contracts.
 
 Common proposed errors: 401 unauthenticated, 403 unauthorized, 404 missing resource, 409 conflict, 422 validation failure, 429 rate limit, 503 unavailable. Suggested error envelope: `{ "error": { "code": "invalid_input", "message": "...", "request_id": "..." } }`. This differs from the implemented browser bridge’s simple error envelope.
 

@@ -26,12 +26,17 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | --- | --- | --- | --- |
 | [ADR-0035](../local-dev-and-testing/ADR-0035-configuration-and-validation-boundaries.md) | decision | Keep configuration explicit and distinguish test tiers from deployment evidence | accepted |
 | [INC-0006](INC-0006-reporting-api-key-committed-to-git.md) | incident | Live CRAWLER_REPORT_API_KEY committed to git in crawler/src/crawler/.env.local | open |
+| [INC-0042](INC-0042-vercel-oracle-ingress-trust-mismatch.md) | incident | Vercel-to-Oracle ingress trust mismatch found before deployment | resolved |
 
 ## Decisions to record
 
 The identified decisions for this feature are indexed above. Record new decisions or changed trade-offs before altering their invariants.
 
 ## Rules for future changes
+
+- The Vercel-to-API edge credential is independent of admin/provider credentials.
+  Scope it to backend origins and accept visitor IPs only after validating that
+  hop (ADR-0058, INC-0042). Production startup requires it.
 
 - Never commit real secrets; only `*.env.example` (INC-0006).
 - After adding an ignore rule for a file that was ever committed, `git rm --cached` it (INC-0006).

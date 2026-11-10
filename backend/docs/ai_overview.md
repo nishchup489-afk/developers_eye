@@ -10,7 +10,11 @@ FastAPI owns this feature. Next.js renders the card and forwards requests; it ne
 
 Without a backend key, search omits `overview_token` and no provider call occurs. If the overview tables or database are unavailable, overview returns 503 and does not call Groq. Ordinary search does not access the overview tables.
 
-For Compose, put the same settings in `deploy/.env`, run the migration service, and rebuild/recreate the API and web services. The web service receives an explicit UI configuration allowlist rather than the entire `.env`, so the Groq key is not passed to Next.js. The two API workers share the PostgreSQL state.
+For the Oracle/Vercel topology, put provider settings in `deploy/.env`, run the
+migration service and rebuild/recreate the API. Vercel receives only its backend
+origin and edge credential, never the Groq key. The supplied profile has one API
+process; quota/cache state remains PostgreSQL-backed if it is later scaled.
+See [deployment setup](../../deploy/README.md).
 
 ## Request flow
 
@@ -73,7 +77,13 @@ The backend locks one `ai_overview_budget` row in a short transaction, reads the
 
 Groq `Retry-After` is parsed as seconds or an HTTP date; a missing/invalid value defaults to 60 seconds. The backend persists a shared cooldown when Groq returns 429. Application quotas, cooldowns and cache survive API restarts because PostgreSQL owns them. These limits protect calls through this app; another application sharing the Groq organization can still consume its quota. Check the [actual organization limits](https://console.groq.com/docs/rate-limits), especially when changing models.
 
-Client identity uses the connection IP unless `AI_OVERVIEW_CLIENT_IP_HEADER` names a trusted, ingress-overwritten header. Compose uses `X-Eye-Client-IP`: Caddy overwrites it, Next preserves it, and FastAPI uses it when configured. Neither API nor web ports are published directly in Compose. Leave the setting empty if this trust boundary is unavailable; requests proxied through Next then share its connection bucket. Raw `X-Forwarded-For` is ignored. PostgreSQL stores a SHA-256 client hash, not the raw address.
+With `EDGE_SHARED_SECRET`, authenticated middleware validates the single
+`X-Eye-Client-IP` derived by Next from Vercel platform headers and supplies the
+request client identity. Raw caller headers cannot override it; Compose leaves
+`AI_OVERVIEW_CLIENT_IP_HEADER` empty and disables Uvicorn proxy-header trust.
+Without an edge credential, local deployments use the connection IP or an
+explicitly configured trusted legacy header. PostgreSQL stores a SHA-256 client
+hash, not the raw address. Only Caddy publishes ports in the Oracle profile.
 
 ## Verification
 

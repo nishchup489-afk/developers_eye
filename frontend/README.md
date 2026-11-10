@@ -23,7 +23,11 @@ AI overview is owned by FastAPI. The frontend needs only `BACKEND_URL`; configur
 
 The search proxy passes the backend's opaque `overview_token` to the UI as `overviewToken`. The overview proxy forwards `{ token }` to FastAPI `POST /search/overview` and preserves its response status and `Retry-After`. The card displays plain-text paragraphs, source links, loading and retry states. Demo and saved-result views do not request overviews.
 
-The proxy preserves the ingress-overwritten `X-Eye-Client-IP` and browser `Sec-Fetch-Site` headers; the backend decides whether to trust/use them. The backend stores generation budgets, cooldowns, cache entries and leases in PostgreSQL so API workers share them across restarts.
+The proxy derives visitor identity from Vercel platform headers and ignores a
+caller-supplied `X-Eye-Client-IP`. A server-only `EDGE_SHARED_SECRET`, scoped to
+backend origins, authenticates the hop before FastAPI trusts that identity.
+Browser `Sec-Fetch-Site` is preserved. PostgreSQL stores generation budgets,
+cooldowns, caches and leases across restarts. See [Oracle/Vercel setup](../deploy/README.md).
 
 ## Checks
 
