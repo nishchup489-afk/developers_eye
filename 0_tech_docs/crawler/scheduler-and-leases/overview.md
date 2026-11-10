@@ -26,6 +26,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | [ADR-0005](ADR-0005-round-robin-bfs-claim-order.md) | decision | Claim order is round robin across sources, then priority and BFS depth inside a source | accepted |
 | [ADR-0006](ADR-0006-capped-exponential-retry-backoff.md) | decision | Failed targets retry with capped exponential backoff on failure_count, forever | accepted |
 | [EXP-0001](EXP-0001-claim-path-concurrency-benchmark.md) | experiment | Claim path latency and multi-worker drain, source-locked vs unlocked round robin | done |
+| [INC-0032](INC-0032-crawler-pipeline-stalled-by-postgres-advisory-lock-contention.md) | incident | Crawler pipeline stalled by PostgreSQL advisory-lock contention | open |
 
 ## Decisions to record
 

@@ -30,6 +30,7 @@ older planning snapshot that predated the BM25 integration.
 | [ADR-0028](ADR-0028-candidate-bm25-ranking-plan.md) | architecture | Original candidate BM25 design (retrospective plan) | proposed, historical |
 | [EXP-0004](EXP-0004-lexical-relevance-evaluation.md) | experiment | Lexical retrieval, BM25 diagnostics, and golden ranking verification | done |
 | [EXP-0012](EXP-0012-judged-lexical-relevance-evaluation.md) | experiment | Strictly judged BM25 vs PostgreSQL comparison | running, results pending |
+| [EXP-0014](EXP-0014-agent-reviewed-25-query-baseline.md) | experiment | Agent-reviewed 25-query real-corpus BM25 and PostgreSQL baseline | done |
 
 ## Verification and open gates
 
@@ -37,7 +38,8 @@ older planning snapshot that predated the BM25 integration.
 - Deterministic synthetic golden tests document expected BM25 score/order.
 - Evaluation supports known-positive candidate recall (100 per channel),
   P@10, MRR@10, nDCG@10, no-result rate and per-query diagnostics.
-- **Not yet established:** independently judged live results or quality win,
+- [The 25-query live-corpus baseline](../../../backend/evaluation/checklist-25/README.md) has 328 agent grades with explicit assessor/blinding limits and reports at five and ten results (EXP-0014).
+- **Not yet established:** independent human judgments or a general quality win,
   complete-corpus Recall@100, or ranking safety under the unordered 20k
   preliminary retrieval pool.
 - Do not claim that BM25 improves relevance from overlap or synthetic tests.

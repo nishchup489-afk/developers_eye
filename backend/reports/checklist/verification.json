@@ -1,0 +1,318 @@
+{
+  "date": "2026-11-09",
+  "source_revision": "140c855",
+  "branch": "fix/checklist",
+  "scope": "Engineering checklist only; final three sections unchanged",
+  "runs": [
+    {
+      "platform": "Windows 11 / PostgreSQL 18.3 / Python 3.14.4 / Node 24.15.0",
+      "started_at_local": "2026-11-09T22:25:15",
+      "duration_seconds": 70.0,
+      "command": "python scripts/run_all_tests.py --with-build --save",
+      "suites": [
+        {
+          "name": "backend",
+          "title": "Backend (FastAPI, search)",
+          "status": "PASS",
+          "passed": 547,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "crawler",
+          "title": "Crawler",
+          "status": "PASS",
+          "passed": 543,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "indexer",
+          "title": "Indexer",
+          "status": "PASS",
+          "passed": 192,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-lint",
+          "title": "Frontend lint (eslint)",
+          "status": "PASS",
+          "passed": 1,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-types",
+          "title": "Frontend typecheck (tsc)",
+          "status": "PASS",
+          "passed": 1,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-admin-unit",
+          "title": "Frontend admin unit",
+          "status": "PASS",
+          "passed": 6,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-search-unit",
+          "title": "Frontend search unit",
+          "status": "PASS",
+          "passed": 15,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-build",
+          "title": "Frontend production build",
+          "status": "PASS",
+          "passed": 1,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-integration",
+          "title": "Frontend integration",
+          "status": "PASS",
+          "passed": 12,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-admin",
+          "title": "Frontend admin integration",
+          "status": "PASS",
+          "passed": 4,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-admin-routes",
+          "title": "Frontend admin routes",
+          "status": "PASS",
+          "passed": 5,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-overview-routes",
+          "title": "Frontend AI overview routes",
+          "status": "PASS",
+          "passed": 1,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        }
+      ],
+      "total_passed": 1328,
+      "skipped": 0
+    },
+    {
+      "platform": "Fresh Ubuntu 26.04 WSL Git clone / PostgreSQL 18.6 / Python 3.14 / official Node 24.15.0",
+      "started_at_local": "2026-11-09T22:25:09",
+      "duration_seconds": 51.05,
+      "command": "python scripts/run_all_tests.py --with-build --save",
+      "suites": [
+        {
+          "name": "backend",
+          "title": "Backend (FastAPI, search)",
+          "status": "PASS",
+          "passed": 547,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "crawler",
+          "title": "Crawler",
+          "status": "PASS",
+          "passed": 543,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "indexer",
+          "title": "Indexer",
+          "status": "PASS",
+          "passed": 192,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-lint",
+          "title": "Frontend lint (eslint)",
+          "status": "PASS",
+          "passed": 1,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-types",
+          "title": "Frontend typecheck (tsc)",
+          "status": "PASS",
+          "passed": 1,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-admin-unit",
+          "title": "Frontend admin unit",
+          "status": "PASS",
+          "passed": 6,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-search-unit",
+          "title": "Frontend search unit",
+          "status": "PASS",
+          "passed": 15,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-build",
+          "title": "Frontend production build",
+          "status": "PASS",
+          "passed": 1,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-integration",
+          "title": "Frontend integration",
+          "status": "PASS",
+          "passed": 12,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-admin",
+          "title": "Frontend admin integration",
+          "status": "PASS",
+          "passed": 4,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-admin-routes",
+          "title": "Frontend admin routes",
+          "status": "PASS",
+          "passed": 5,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "fe-overview-routes",
+          "title": "Frontend AI overview routes",
+          "status": "PASS",
+          "passed": 1,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "exit_code": 0
+        }
+      ],
+      "total_passed": 1328,
+      "skipped": 0
+    }
+  ],
+  "fresh_stack": {
+    "platforms": [
+      "Windows",
+      "Linux"
+    ],
+    "command": "NEXT_BUILD_DIR=.next-test-runner python backend/scripts/e2e_search_stack.py",
+    "result": "passed",
+    "checks": [
+      "empty database migrated to head",
+      "real Next.js and FastAPI startup",
+      "search and deterministic pagination",
+      "source filters and code mode",
+      "suggestions",
+      "query length agreement",
+      "429 and Retry-After",
+      "real PostgreSQL statement timeout to HTTP 504",
+      "overload HTTP 503 and concurrency cap",
+      "12 alternating search/suggestion disconnects clear real PostgreSQL lock waiters before unchanged 2.5-second bound",
+      "no leaked concurrency slots; recovery"
+    ],
+    "database": "separate generated disposable database; removed by script"
+  },
+  "security": {
+    "npm_audit_including_dev": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "pip_audit": {
+      "backend": "no known vulnerabilities",
+      "crawler": "no known vulnerabilities",
+      "scope": "independently installed Poetry environments; local project packages are unpublished"
+    },
+    "gitleaks": {
+      "version": "8.16.0",
+      "result": "no leaks found",
+      "scope": "branch commits dd8ad88..140c855; excludes earlier main history"
+    },
+    "github_actions_run": "not dispatched or verified"
+  },
+  "limits": [
+    "No real browser automation or production deployment",
+    "Agent relevance judgments are not an independent human holdout",
+    "Fake-web load is short controlled Linux testing, not sustained representative traffic",
+    "Optional counters/caches/fillfactor/de_core proposals evaluated and deferred, not implemented",
+    "Existing registry source expansion verified; no public crawl started"
+  ]
+}

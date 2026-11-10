@@ -22,6 +22,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
 | [ADR-0019](ADR-0019-normalize-classify-fingerprint.md) | decision | Normalize before deterministic classification and content fingerprinting | accepted |
+| [INC-0038](INC-0038-fastapi-documents-mapped-to-articles.md) | incident | FastAPI documentation fell through to article and event categories | resolved |
 
 ## Decisions to record
 

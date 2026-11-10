@@ -23,6 +23,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
 | [ADR-0030](../../backend/admin-api/ADR-0030-read-only-observability-plane.md) | decision | Expose read-only operational reports from backend-owned query services | accepted |
+| [ADR-0055](ADR-0055-batched-cpu-checkpoints-and-terminal-attempt-summaries.md) | decision | Batch adjacent CPU checkpoints and write full attempt summaries at completion | accepted |
 
 ## Decisions to record
 

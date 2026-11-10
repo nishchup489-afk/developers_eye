@@ -28,6 +28,9 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | [ADR-0048](ADR-0048-ground-ai-overviews-in-signed-results.md) | decision | Ground AI overviews in signed search results with bounded Groq usage | superseded |
 | [ADR-0049](../../backend/ai-overview/ADR-0049-backend-owned-overviews-with-shared-postgres-budgets.md) | decision | Own AI overviews in FastAPI with shared PostgreSQL budgets | accepted |
 | [INC-0033](INC-0033-upstream-timeout-ignored-on-first-hung-request.md) | incident | Upstream timeout ignored on a Next.js server's first hung request | resolved |
+| [ADR-0053](ADR-0053-language-preferences-and-result-provenance.md) | decision | Explicit language preference and transparent result provenance | accepted |
+| [ADR-0056](ADR-0056-close-search-sockets-on-cancellation.md) | decision | Use Axios Node HTTP transport for cancellable search requests | accepted |
+| [INC-0040](INC-0040-aborted-search-left-postgres-waiting.md) | incident | Aborted Linux search left its PostgreSQL query waiting | resolved |
 
 ## Decisions to record
 
@@ -40,7 +43,7 @@ The identified decisions for this feature are indexed above. Record new decision
 
 - Change backend response schemas and frontend validators together.
 - Keep timeout, no-store and redirect behavior when changing the HTTP abstraction.
-- Do not remove `abortableFetch` in `lib/axios.js` or call FastAPI with bare `fetch`; re-run `npm run test:integration` (cold-start timeout case) after Next.js upgrades (INC-0033).
+- Keep `searchRequestOptions` on search/suggestion requests for actual socket cancellation (ADR-0056). Retain `abortableFetch` for other fetch-based server calls; re-run cold-start timeout and repeated cancellation tests after upgrades (INC-0033, INC-0040).
 - Only offer spelling suggestions; never rewrite the user's query (ADR-0045).
 - AI overview generation, signing, validation, provider credentials and quotas belong in FastAPI; frontend code only renders/proxies the backend contract (ADR-0049).
 - Render model text as plain text. Preserve the backend's status and Retry-After; forward only the documented ingress headers. See the [AI overview feature](../../backend/ai-overview/overview.md).

@@ -23,6 +23,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | ID | Type | Title | Status |
 | --- | --- | --- | --- |
 | [ADR-0012](ADR-0012-crawler-depends-on-backend-never-reverse.md) | decision | The crawler package depends on the backend package, never the reverse | accepted |
+| [ADR-0054](ADR-0054-retain-backend-as-the-shared-schema-package.md) | decision | Retain backend as the shared schema package instead of introducing de_core | accepted |
 
 ## Decisions to record
 

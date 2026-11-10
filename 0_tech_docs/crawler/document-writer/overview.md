@@ -24,7 +24,9 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | [ADR-0011](ADR-0011-soft-availability-for-removed-pages.md) | decision | A 404 or 410 marks stored documents unavailable instead of deleting them, and they can come back | accepted |
 | [ADR-0021](ADR-0021-extracted-content-and-writer-ownership.md) | decision | Persist extracted documents rather than raw HTML in the primary store | accepted |
 | [ADR-0036](../../indexer/vocubulary/ADR-0036-vocabulary-maintenance-and-lock-boundary.md) | decision | Keep vocabulary maintenance transactional and rebuild it with a one-shot CLI | accepted |
-| [ADR-0050](ADR-0050-feed-records-never-replace-fetched-pages.md) | decision | A feed or API record never replaces a fetched page, and only a page can remove or revive one | accepted |
+| [ADR-0050](ADR-0050-feed-records-never-replace-fetched-pages.md) | decision | A feed or API record never replaces a fetched page, and only a page can remove or revive one | superseded |
+| [ADR-0052](ADR-0052-acquisition-provenance-and-content-quality.md) | decision | Preserve first acquisition ownership and reject poorer replacement content | accepted |
+| [INC-0037](INC-0037-thin-pages-and-competing-sources-replaced-content.md) | incident | Thin pages and competing sources replaced richer content and ownership | resolved |
 
 ## Decisions to record
 
@@ -36,8 +38,8 @@ The identified decisions for this feature are indexed above. Record new decision
   for current producer/quality rules (supersedes ADR-0050).
 
 - Never hard-delete a document because of a 404/410; mark it unavailable (ADR-0011).
-- Remove index rows in the same transaction through `remove_indexed_documents()` (ADR-0011, ADR-0002).
-- Every successful page store resets `is_available`, `unavailable_at`, `unavailable_http_status` (ADR-0011). A feed or API record never does (ADR-0050).
+- The indexer removes index rows and queues vocabulary deltas in its index transaction; the crawler only marks stored content unavailable (ADR-0043, ADR-0052).
+- Selected page content can reset `is_available`, `unavailable_at`, `unavailable_http_status`; a rejected competing page or a feed/API record cannot revive it (ADR-0052).
 - A feed or API record must not replace a fetched page (ADR-0050).
 - Do not add raw-body persistence without retention, size and replay contracts.
 - Keep removal and revival semantics covered by persistence tests.

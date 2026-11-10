@@ -25,6 +25,8 @@ The linked source contracts and tests are the current mechanics reference; no se
 | [ADR-0038](ADR-0038-measure-before-adding-search-infrastructure.md) | decision | Optimize measured bottlenecks before adding caches, brokers or distributed workers | proposed |
 | [EXP-0005](EXP-0005-search-and-ingestion-capacity-baseline.md) | experiment | Measure search latency and ingestion interference before scaling | planned |
 | [EXP-0008](EXP-0008-crawl-index-search-at-2m.md) | experiment | Measure crawl, index and search capacity for a 2M document target | done |
+| [EXP-0013](EXP-0013-read-only-search-stage-profiling.md) | experiment | Separate cold DF cost from retrieval expansion and page hydration | done |
+| [EXP-0015](EXP-0015-linux-crawl-write-cost-and-staged-workers.md) | experiment | Measure Linux crawl write costs and stage workers before further redesign | done |
 
 ## Decisions to record
 

@@ -1,7 +1,8 @@
 # Fix checklist
 
-Audited 2026-11-04, updated after the 2M scaling work. Audit ran against real runs on a disposable database (`developers_eye_audit_test`, Postgres 18, migrated from empty).
-Now: backend 537 passed, crawler and indexer 720 passed, DNS runner 73/73, frontend lint, typecheck, build, integration and admin tests pass, npm audit clean. Real browser tests were not run.
+Audited 2026-11-04; engineering checklist completed on `fix/checklist` on 2026-11-09. Final verification: 12 suites, 1,328 tests/checks, zero failures or skips on both Windows/PostgreSQL 18.3 and a fresh Ubuntu 26.04 checkout/PostgreSQL 18.6. Both real Next.js-to-FastAPI stack runs passed, including twelve repeated search/suggestion disconnects against locked PostgreSQL tables. Real browser automation and production deployment were not run.
+
+Evidence and reproduction: [completion journal](checklist-completion-2026-11-09.md), [machine-readable verification](../../backend/reports/checklist/verification.json). Optional counters, DNS/HTTP caches, fillfactor changes and `de_core` extraction were evaluated and deferred with explicit prerequisites; checked evaluation items do not claim these features shipped. The final three sections are intentionally unchanged.
 
 Ticked items with no automated test behind them (keep ticked, but know the evidence is manual):
 - Key rotation, old-key 401/403 and deployment checks: one-off local checks recorded in INC-0006.
@@ -28,7 +29,7 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 
 
 
-## P1 · c
+## P1 · Corpus statistics
 - [x] Replace indefinite startup-only corpus statistics snapshots. (background refresh every 10 minutes, keeps the last good snapshot on failure)
 - [x] Establish consistency rules for N, avgDL and live DF. (N is raised to fit live DF: _consistent_corpus, unit tested)
 - [x] Reproduce and fix the df > N failure after indexing new documents. (test_live_counts_above_an_old_snapshot_raise_n_instead_of_failing)
@@ -36,8 +37,8 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [x] Measure and optimize startup corpus-statistics loading. (sampled avgDL, see EXP-0008)
 - [x] Add integration tests for searching while the index grows or shrinks.
 
-## p1 : search relavence 
-- [x] Compare custom BM25 ordering against PostgreSQL's native ranking. (partial: script and one report exist (backend/scripts/compare_rankings.py), no judged comparison yet)
+## P1 · Search relevance
+- [x] Compare custom BM25 ordering against PostgreSQL's native ranking. (EXP-0014: frozen 25-query real-corpus comparison, 328 agent grades with explicit assessor limitations; reports at five and ten results)
 - [x] create a pre golden ranking test
 - [x] Implement Recall@100 for candidate retrieval.
 - [x] Implement Precision@10 for result relevance.
@@ -48,15 +49,15 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [x] Create documented golden ranking tests with expected score/order.
 
 ## P1 · Retrieval, filtering and API integration
-- [x] Pass source, category, mode, page and page size through the UI, proxy and backend. (proxy forwards source, page and mode; UI sends source. No page or mode control in the UI yet)
+- [x] Pass source, category, mode, page and page size through the UI, proxy and backend. (category chips, mode controls, bounded page/limit and language preference flow through UI, shared URLs, proxy and API; ADR-0053)
 - [x] Apply eligible source/category filters before per-channel candidate limits. (stored search_index.category)
 - [x] Fix backend global top-100-per-channel cutoff for restricted searches. (filters run inside retrieval)
 - [x] Fix the frontend's client-only filtering of the initial 20 results. (filter chips search the server)
 - [x] Reproduce fastapi event results: 13 existing events, zero surviving candidates.
 - [x] Implement deterministic pagination and stable tie-breaking. (tests: test_pagination, test_equal_bm25_scores_break_ties_by_document_id)
-- [x] Wire TEXT, CODE and ALL mode selection end to end. (partial: backend done and tested, proxy and UI never send mode)
+- [x] Wire TEXT, CODE and ALL mode selection end to end. (backend, proxy and UI wired; real-stack code-mode and frontend integration checks pass)
 - [x] Define combined Discussions category and its source/type mapping. (stackoverflow + reddit in backend.search.categories, integration tested)
-- [x] Connect spelling/fuzzy suggestions through the API and UI. (partial: GET /search/suggest tested, UI does not call it)
+- [x] Connect spelling/fuzzy suggestions through the API and UI. (UI explicit suggestion display, validated proxy and real-stack integration pass)
 - [x] Validate invalid filters, empty queries, deep paging and no-result responses. (tests: api/test_search (422 cases), test_invalid_pagination_rejected_without_db_access, test_no_match_returns_empty)
 - [x] Add API request limits, query-size limits, deadlines and cancellation handling. (ADR-0046)
 - [x] Implement public API rate limiting with HTTP 429. (per client, per process; Next.js forwards the client address, compose sets FORWARDED_ALLOW_IPS)
@@ -79,7 +80,7 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [x] Remove lease recovery work from every claim; design one periodic reaper. (reap_forever, one process at a time through an advisory lock)
 - [x] Drive orphan recovery from unfinished attempts with appropriate indexing. (ix_crawl_attempt_unfinished and ix_crawl_target_lease)
 - [x] Make startup seeding/discovery single-owner or advisory-lock guarded. (sync_sources_once)
-- [x] Test lease expiry, fencing, retries, backoff and recovery after crashes. (pytest: test_concurrent_claims, test_recovery, test_deadlock_retry, test_postgres_pipeline. test_complete_target, test_fail_target and test_repository are scripts pytest does not collect: run them directly, all pass. They are not in CI yet)
+- [x] Test lease expiry, fencing, retries, backoff and recovery after crashes. (PostgreSQL concurrency, recovery, fencing, deadlock and pipeline regressions; test_legacy_contracts now collects all three rollback-only scheduler scripts in pytest/CI with an explicit test database)
 - [x] Preserve SSRF pinning, robots compliance and Retry-After behavior through refactors.
 
 ## P2 · Indexer, vocabulary and data integrity
@@ -113,13 +114,13 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [x] Fix crawler/indexer's 3 failed tests and investigate 19 skips. (all pass, 0 skipped)
 - [x] Repair fuzzy test collection failure from the removed import. (suite removed with get_fuzzy_search)
 - [x] Repair stale package-boundary test imports and mocks. (backend.admin_services)
-- [x] Preserve passing DNS safety tests (73/73). (standalone runner 73/73 on 2026-11-04. Under plain pytest these show as failures because the crawler project has no asyncio_mode)
-- [ ] Add PostgreSQL integration tests for each reproduced defect.
+- [x] Preserve passing DNS safety tests (73/73). (73 DNS safety cases remain covered; orchestrated crawler suite uses asyncio auto mode and passes on Windows and Linux)
+- [x] Add PostgreSQL integration tests for each reproduced defect. (writer ownership/provenance/quality and rollback, category repair dry-run/idempotence, language paging, telemetry atomicity/failures, scheduler contracts and real-stack cancellation; both migrated test databases pass)
 - [x] Create GitHub Actions with Postgres 16, Alembic and backend/crawler pytest. (.github/workflows/ci.yml, has not run on GitHub yet)
 - [x] Add frontend lint, TypeScript typecheck and production build to CI. (ci.yml)
 - [x] Upgrade Next.js to a patched version and validate relevant advisories. (16.4.5, npm audit reports 0)
 - [x] Run dependency and secret scans in CI. (gitleaks, npm audit and pip-audit)
-- [ ] Verify the complete fresh-clone setup on a clean machine/container. (partial: API and web images build, db, migrate and API boot in Docker on Postgres 16)
+- [x] Verify the complete fresh-clone setup on a clean machine/container. (fresh Linux Git clone, independent Poetry installs, npm ci, empty PostgreSQL migration, all 12 suites/1,328 checks and real-stack integration pass; INC-0039, INC-0040)
 
 ## P2 · Search relevance and UX quality
 - [x] Create a 20–30-query judged relevance dataset. (25 real-corpus queries, 328 editorial agent grades, frozen rankings and independent reference checks; assessor/blinding limits explicit, EXP-0014)
@@ -155,15 +156,15 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [x] Add partial indexes matching host-aware frontier selection. (ix_crawl_target_host_due)
 - [x] Replace batch-barrier execution with continuous bounded worker slots. (run_continuous, test_runner_continuous)
 - [x] Evaluate LISTEN/NOTIFY to reduce idle polling. (rejected: idle claims are cheap and hosts become ready by time, not by an event)
-- [ ] Reduce per-crawl DB transactions and telemetry write amplification.
-- [ ] Replace source-wide frontier COUNT queries with maintained counters if verified safe.
-- [ ] Evaluate safe HTTP connection reuse with host/IP pinning.
-- [ ] Evaluate safe DNS TTL caching and conditional GET / 304 reuse.
-- [ ] Deploy and profile crawlers in Linux before changing event-loop settings.
+- [x] Reduce per-crawl DB transactions and telemetry write amplification. (ADR-0055, EXP-0015: batched CPU checkpoints/atomic terminal summary; one-worker transactions/request 8.88 → 7.91, updated tuples/request 10.03 → 5.00)
+- [x] Replace source-wide frontier COUNT queries with maintained counters if verified safe. (evaluated and deferred: largest-source count 10.742 ms; cross-path counter correctness not established, so preserve exact budget checks; EXP-0015)
+- [x] Evaluate safe HTTP connection reuse with host/IP pinning. (retain request-scoped pinning; pooled origin/IP-set lifecycle and DNS/TLS measurements required before reuse; EXP-0015)
+- [x] Evaluate safe DNS TTL caching and conditional GET / 304 reuse. (deferred: getaddrinfo lacks TTL and validator ownership/request-header lifecycle is not implemented; existing 304 handling retained, EXP-0015)
+- [x] Deploy and profile crawlers in Linux before changing event-loop settings. (local Ubuntu/WSL deployment and staged real-worker fake-web runs; no public production deployment or event-loop change; EXP-0015)
 - [x] Size DB pools across processes; evaluate PgBouncer and prepared-statement behavior. (2 crawlers + 2 indexers + API fit in max_connections 60 without PgBouncer)
-- [ ] Evaluate crawl_target fillfactor/autovacuum and crawl_event retention.
-- [ ] Expand eligible, policy-compliant hosts and source categories. (THE 2M BLOCKER: only 5 sources and hosts today, and default max_pages is 10,000)
-- [ ] Increase workers in stages, verifying aggregate politeness and throughput each time.
+- [x] Evaluate crawl_target fillfactor/autovacuum and crawl_event retention. (HOT/dead tuple/table stats and deployment-vs-local vacuum settings captured; keep storage settings, bounded 14-day purge already exists, zero local events eligible; EXP-0015)
+- [x] Expand eligible, policy-compliant hosts and source categories. (already expanded in current registry: 380 enabled website/RSS/API sources, 316 hosts, initial scope checks pass; runtime robots/pinning/pacing still mandatory. Budgets total 598,245 pages, not proof of 2M capacity; EXP-0015)
+- [x] Increase workers in stages, verifying aggregate politeness and throughput each time. (Linux 1/2/4/8 workers: 54.79/58.77/59.64/67.41 requests/s, zero gap/overlap violations and all child exits zero; short fake-web runs only, EXP-0015)
 
 ## Maintenance · Code structure and architectural debt
 - [x] Break up long process_job and _finalize logic by job type and outcome. (resource outcome/parsing dispatch, target transition, missing/noindex and document storage helpers; worker regressions pass, ADR-0054)

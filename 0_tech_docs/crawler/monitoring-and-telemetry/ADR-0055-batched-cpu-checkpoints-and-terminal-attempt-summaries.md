@@ -70,7 +70,7 @@ policy is unchanged. Failure diagnostics still survive a rolled-back final write
 
 Native worker/writer regressions passed, including real PostgreSQL event visibility,
 failure snapshots, and atomic terminal summaries. Linux before/after write counters
-are recorded separately in the crawl experiment; do not infer a throughput gain
+are recorded in [EXP-0015](../../infra/performance-and-scaling/EXP-0015-linux-crawl-write-cost-and-staged-workers.md); do not infer a throughput gain
 from statement counting alone.
 
 ## Revisit when

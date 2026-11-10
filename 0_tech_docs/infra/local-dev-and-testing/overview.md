@@ -27,6 +27,8 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | --- | --- | --- | --- |
 | [ADR-0035](ADR-0035-configuration-and-validation-boundaries.md) | decision | Keep configuration explicit and distinguish test tiers from deployment evidence | accepted |
 | [ADR-0051](ADR-0051-one-runner-over-native-suite-runners.md) | decision | One test runner script orchestrates the native suite runners and reports through rich | accepted |
+| [INC-0036](INC-0036-redirected-windows-test-runner-encoding.md) | incident | Redirected Windows test runner failed before executing suites | resolved |
+| [INC-0039](INC-0039-fresh-clone-test-dependencies.md) | incident | Fresh backend Poetry environment could not collect HTTP tests | resolved |
 
 ## Decisions to record
 

@@ -1,3 +1,14 @@
+---
+id: INC-0032
+title: Crawler pipeline stalled by PostgreSQL advisory-lock contention
+status: open
+date: 2026-11-02
+severity: high
+area: crawler
+feature: scheduler-and-leases
+related: [ADR-0043, EXP-0011]
+---
+
 # INC-0032: Crawler Pipeline Stalled by PostgreSQL Advisory-Lock Contention
 
 **Date:** November 2, 2026  
