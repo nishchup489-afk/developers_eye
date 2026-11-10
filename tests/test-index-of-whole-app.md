@@ -36,12 +36,12 @@ through their `tests/conftest.py`, so nothing has to be set in the terminal. See
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**95 test files, 771 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**96 test files, 774 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 36 | 328 | `cd backend && poetry run pytest` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 37 | 331 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 14 | 109 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 34 | 334 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 11 | 0 | npm scripts in `frontend/package.json` (see below) |
@@ -79,6 +79,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [test_package_boundary.py](../backend/tests/test_package_boundary.py) | tests | 1 | [test_case.md](../backend/tests/test_case.md#package-boundary) |
 | [unit/test_ai_overview.py](../backend/tests/unit/test_ai_overview.py) | tests | 10 |  |
 | [unit/test_analyzer.py](../backend/tests/unit/test_analyzer.py) | tests | 13 | [test_case.md](../backend/tests/test_case.md#query-analyzer) |
+| [unit/test_code_excerpt.py](../backend/tests/unit/test_code_excerpt.py) | tests | 3 |  |
 | [unit/test_corpus_refresh.py](../backend/tests/unit/test_corpus_refresh.py) | tests | 3 |  |
 | [unit/test_fuzzy_suggestions.py](../backend/tests/unit/test_fuzzy_suggestions.py) | tests | 9 | [test_case.md](../backend/tests/test_case.md#fuzzy-suggestions) |
 | [unit/test_main_lifespan_search.py](../backend/tests/unit/test_main_lifespan_search.py) | tests | 1 | [test_case.md](../backend/tests/test_case.md#app-startup-lifespan) |

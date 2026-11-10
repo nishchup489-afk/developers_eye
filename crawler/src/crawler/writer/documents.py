@@ -6,6 +6,8 @@ verified source/target and owns the transaction; this module only writes SQL.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from sqlalchemy import Text, and_, case, cast, func, or_, update
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import insert
@@ -55,13 +57,19 @@ def _page_may_replace(incoming_body, source_id: int):
     )
 
 
-async def upsert_document(
+@dataclass(frozen=True, slots=True)
+class DocumentWriteResult:
+    document_id: int
+    content_selected: bool
+
+
+async def store_document(
     session: AsyncSession,
     document: ProcessedDocument,
     *,
     source_id: int,
     crawl_target_id: int,
-) -> int:
+) -> DocumentWriteResult:
     """Insert a new document, or refresh an existing document with the same URL.
 
     - last_seen_at is refreshed on every successful observation.
@@ -193,6 +201,7 @@ async def upsert_document(
     )
 
     saved_id = await session.scalar(statement)
+    selected = saved_id is not None
     if saved_id is None:
         # The conflict row was kept. Removed pages stay as they were last seen.
         saved_id = await session.scalar(
@@ -210,4 +219,11 @@ async def upsert_document(
         )
     if saved_id is None:
         raise RuntimeError("Database did not return a document ID")
-    return saved_id
+    return DocumentWriteResult(saved_id, selected)
+
+
+async def upsert_document(session: AsyncSession, document: ProcessedDocument, *,
+                          source_id: int, crawl_target_id: int) -> int:
+    """Compatibility API for callers that need only the canonical document ID."""
+    return (await store_document(session, document, source_id=source_id,
+                                 crawl_target_id=crawl_target_id)).document_id

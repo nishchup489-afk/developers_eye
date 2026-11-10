@@ -19,6 +19,7 @@ from crawler.policy_and_politeness.policy_coordinator import FetchResult
 from crawler.policy_and_politeness.robots_policy import RobotsDecision
 from crawler.worker.jobs import jobs, utility
 from crawler.worker.telemetry import checkpoint
+from crawler.writer.documents import DocumentWriteResult
 
 
 class Session:
@@ -103,7 +104,7 @@ def test_atomic_storage_events_and_dedup(monkeypatch, decision):
         results = [target, now] if decision == "stale" else [target, now, True, previous, 99 if decision == "duplicate" else None]
         session = Session(results)
         monkeypatch.setattr(utility, "complete_target", AsyncMock(return_value=True))
-        monkeypatch.setattr(utility, "upsert_document", AsyncMock(return_value=42))
+        monkeypatch.setattr(utility, "store_document", AsyncMock(return_value=DocumentWriteResult(42, True)))
         monkeypatch.setattr(utility, "finish_attempt", AsyncMock(return_value=True))
         result = await utility._finalize(session_factory=lambda: session, target_id=1, source_id=1,
             expected_lease_until=lease, attempt_id=11, action="complete", outcome="success", message="Processed",
@@ -111,7 +112,7 @@ def test_atomic_storage_events_and_dedup(monkeypatch, decision):
             parsed=SimpleNamespace(discovered_links=[], documents=[]), processed=ProcessingResult(source_url=document.url, documents=(document,)),
             targets=[], elapsed=.25, measurements={"version": 1, "stored": 0})
         if decision == "stale":
-            utility.upsert_document.assert_not_awaited()
+            utility.store_document.assert_not_awaited()
             assert result.outcome == "stale"
             assert session.events[-1].outcome == "stale"
         else:

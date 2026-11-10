@@ -280,6 +280,14 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_config_read_from_env`
 - `test_invalid_env`
 
+### [backend/tests/unit/test_code_excerpt.py](../../backend/tests/unit/test_code_excerpt.py)
+
+3 cases
+
+- `test_later_code_block_with_more_query_terms_beats_first_block`
+- `test_code_keeps_indentation_and_is_bounded`
+- `test_invalid_blocks_do_not_prevent_plain_body_fallback`
+
 ### [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)
 
 3 cases
@@ -1260,6 +1268,7 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 - [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 - [backend/tests/unit/test_ai_overview.py](../../backend/tests/unit/test_ai_overview.py)
+- [backend/tests/unit/test_code_excerpt.py](../../backend/tests/unit/test_code_excerpt.py)
 - [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)
 - [backend/tests/unit/test_ranking_goldens.py](../../backend/tests/unit/test_ranking_goldens.py)
 - [backend/tests/unit/test_relevance_cli.py](../../backend/tests/unit/test_relevance_cli.py)

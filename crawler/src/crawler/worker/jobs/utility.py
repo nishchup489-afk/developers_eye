@@ -37,7 +37,7 @@ from crawler.scheduler.repository import complete_target, fail_target
 from crawler.worker.jobs.schemas import JobOutcome, JobResult, TargetAction
 from crawler.worker.jobs.constants import _AGENT_SCOPE, _DIRECTIVE_SPLIT, _RETRY_AFTER_CAP_SECONDS
 from crawler.writer.attempts import finish_attempt, start_attempt
-from crawler.writer.documents import is_structured_record, page_owned, upsert_document
+from crawler.writer.documents import is_structured_record, page_owned, store_document
 from backend.models.crawl_attempt import CrawlAttempt
 from crawler.worker.telemetry import event
 
@@ -386,19 +386,13 @@ async def _finalize(
                         Document.content_hash == document.content_hash,
                         Document.canonical_url != document.canonical_url).limit(1))
                     decision = "unchanged" if previous and previous.content_hash == document.content_hash else "updated" if previous else "new"
-                    document_id = await upsert_document(
+                    stored = await store_document(
                         session, document,
                         source_id=source_id,
                         crawl_target_id=target_id,
                     )
-                    kept = False
-                    if previous is not None:
-                        # The writer decides; a replaced row always ends up
-                        # owned by this target and available.
-                        stored = (await session.execute(
-                            select(Document.last_crawl_target_id, Document.is_available)
-                            .where(Document.id == document_id))).one()
-                        kept = stored.last_crawl_target_id != target_id or not stored.is_available
+                    document_id = stored.document_id
+                    kept = not stored.content_selected
                     if kept:
                         decision = "kept_existing"
                     event(session, attempt_id, "DEDUP", "duplicate" if duplicate and not kept else decision,

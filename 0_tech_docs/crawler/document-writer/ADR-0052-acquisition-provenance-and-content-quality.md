@@ -39,6 +39,9 @@ Canonical URL identity stays global; multiple observations need provenance.
   the stored body. The selected page producer may edit its own page.
 - Sighting/provenance-only updates do not change `updated_at`; selected content
   and index-relevant metadata changes do. Keep all writes in the caller's transaction.
+- `store_document` returns the atomic selection decision with the ID; finalization
+  does not issue another SELECT to infer whether content was kept. `upsert_document`
+  retains the existing ID-only API for other callers.
 
 ## Options considered
 
@@ -70,7 +73,7 @@ gain provenance lazily and their earlier unseen acquisitions cannot be recovered
 
 ## Evidence
 
-The real-PostgreSQL writer and pipeline suites passed 29 tests, including competing
+The writer, pipeline, and monitoring suites passed 44 tests, including competing
 page sources, page/feed quality, unchanged sightings, rollback, tombstones,
 nested sitemap scoping, and partial-commit replay.
 
