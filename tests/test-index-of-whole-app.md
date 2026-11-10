@@ -36,12 +36,12 @@ through their `tests/conftest.py`, so nothing has to be set in the terminal. See
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**108 test files, 814 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**108 test files, 815 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 44 | 366 | `cd backend && poetry run pytest` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 44 | 367 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 14 | 109 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 37 | 339 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 13 | 0 | npm scripts in `frontend/package.json` (see below) |
@@ -57,7 +57,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [__init__.py](../backend/tests/__init__.py) | helper |  |  |
 | [api/conftest.py](../backend/tests/api/conftest.py) | fixtures |  |  |
 | [api/test_ai_overview.py](../backend/tests/api/test_ai_overview.py) | tests | 5 |  |
-| [api/test_edge_trust.py](../backend/tests/api/test_edge_trust.py) | tests | 6 |  |
+| [api/test_edge_trust.py](../backend/tests/api/test_edge_trust.py) | tests | 7 |  |
 | [api/test_search.py](../backend/tests/api/test_search.py) | tests | 8 | [test_case.md](../backend/tests/test_case.md#search-http-api) |
 | [api/test_search_limits.py](../backend/tests/api/test_search_limits.py) | tests | 22 | [test_case.md](../backend/tests/test_case.md#public-search-limits-adr-0046) |
 | [api/test_search_quality_routes.py](../backend/tests/api/test_search_quality_routes.py) | tests | 4 |  |

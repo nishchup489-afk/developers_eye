@@ -68,6 +68,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0055 | crawler/monitoring-and-telemetry | [Batch adjacent CPU checkpoints and write full attempt summaries at completion](crawler/monitoring-and-telemetry/ADR-0055-batched-cpu-checkpoints-and-terminal-attempt-summaries.md) | accepted |
 | ADR-0056 | frontend/search-experience | [Use Axios Node HTTP transport for cancellable search requests](frontend/search-experience/ADR-0056-close-search-sockets-on-cancellation.md) | accepted |
 | ADR-0057 | backend/admin-api | [Log slow searches with stage timings and store human relevance judgments in PostgreSQL](backend/admin-api/ADR-0057-slow-search-log-and-human-judging.md) | accepted |
+| ADR-0058 | infra/ci-and-containers | [Deploy Vercel behind a scoped authenticated API hop to Oracle](infra/ci-and-containers/ADR-0058-vercel-to-oracle-authenticated-api.md) | accepted |
 
 ## Incidents
 
@@ -96,6 +97,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | INC-0039 | infra/local-dev-and-testing | [Fresh backend Poetry environment could not collect HTTP tests](infra/local-dev-and-testing/INC-0039-fresh-clone-test-dependencies.md) | resolved |
 | INC-0040 | frontend/search-experience | [Aborted Linux search left its PostgreSQL query waiting](frontend/search-experience/INC-0040-aborted-search-left-postgres-waiting.md) | resolved |
 | INC-0041 | backend/bm25-statistics | [Searches took 5-11 s because BM25 document-frequency counts scanned every vector](backend/bm25-statistics/INC-0041-search-latency-from-detoasting-df-counts.md) | resolved |
+| INC-0042 | infra/configuration-and-secrets | [Existing single-server ingress assumptions were unsafe for a Vercel API hop](infra/configuration-and-secrets/INC-0042-vercel-oracle-ingress-trust-mismatch.md) | resolved |
 
 ## Experiments
 
@@ -118,4 +120,5 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | EXP-0015 | infra/performance-and-scaling | [Measure Linux crawl write costs and stage workers before further redesign](infra/performance-and-scaling/EXP-0015-linux-crawl-write-cost-and-staged-workers.md) | done |
 | EXP-0016 | backend/bm25-statistics | [GIN-only document-frequency counts against the planner's seq-scan choice at 126k documents](backend/bm25-statistics/EXP-0016-gin-only-document-frequency-counts.md) | done |
 | EXP-0017 | backend/retrieval | [Title-match channel and dotted identifiers recover recall misses](backend/retrieval/EXP-0017-title-channel-and-dotted-identifier-recall.md) | done |
+| EXP-0018 | infra/ci-and-containers | [Verify local Oracle containers and authenticated Vercel ingress](infra/ci-and-containers/EXP-0018-local-oracle-container-readiness.md) | done |
 <!-- record-index:end -->

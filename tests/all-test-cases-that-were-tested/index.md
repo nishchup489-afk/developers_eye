@@ -27,7 +27,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/api/test_edge_trust.py](../../backend/tests/api/test_edge_trust.py)
 
-6 cases
+7 cases
 
 - `test_edge_rejects_direct_calls`
 - `test_authenticated_visitors_get_separate_rate_limit_buckets`
@@ -35,6 +35,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_duplicate_credentials_or_identity_are_rejected`
 - `test_health_and_local_development_never_import_spoofed_identity`
 - `test_production_requires_a_valid_edge_secret`
+- `test_invalid_secret_does_not_appear_in_startup_validation_text`
 
 ### [backend/tests/api/test_search.py](../../backend/tests/api/test_search.py)
 

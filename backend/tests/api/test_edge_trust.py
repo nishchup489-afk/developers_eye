@@ -65,3 +65,10 @@ def test_health_and_local_development_never_import_spoofed_identity():
 def test_production_requires_a_valid_edge_secret(secret):
     with pytest.raises(ValidationError):
         Settings(_env_file=None, database_url="postgresql+asyncpg:///test", app_env="production", edge_shared_secret=secret)
+
+
+def test_invalid_secret_does_not_appear_in_startup_validation_text():
+    marker = "fixture-short-secret"
+    with pytest.raises(ValidationError) as error:
+        Settings(_env_file=None, database_url="postgresql+asyncpg:///test", edge_shared_secret=marker)
+    assert marker not in str(error.value)
