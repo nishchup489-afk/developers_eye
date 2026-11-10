@@ -1127,6 +1127,12 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 
 Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_fail_targetpy)
 
+### [crawler/tests/crawler/scheduler/test_legacy_contracts.py](../../crawler/tests/crawler/scheduler/test_legacy_contracts.py)
+
+1 cases
+
+- `test_scheduler_script_contract`
+
 ### [crawler/tests/crawler/scheduler/test_repository.py](../../crawler/tests/crawler/scheduler/test_repository.py)
 
 Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_repositorypy)
@@ -1297,6 +1303,7 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/unit/test_result_presentation.py](../../backend/tests/unit/test_result_presentation.py)
 - [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
+- [crawler/tests/crawler/scheduler/test_legacy_contracts.py](../../crawler/tests/crawler/scheduler/test_legacy_contracts.py)
 - [crawler/tests/crawler/worker/test_benchmark_safety.py](../../crawler/tests/crawler/worker/test_benchmark_safety.py)
 - [crawler/tests/crawler/worker/test_database_faults.py](../../crawler/tests/crawler/worker/test_database_faults.py)
 - [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)

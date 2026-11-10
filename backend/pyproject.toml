@@ -32,7 +32,9 @@ build-backend = "poetry.core.masonry.api"
 [dependency-groups]
 dev = [
     "pytest-asyncio (>=1.4.1,<2.0.0)",
-    "rich (>=15.0.0,<16.0.0)"
+    "rich (>=15.0.0,<16.0.0)",
+    "httpx (>=0.28.1,<0.29.0)",
+    "httpx2 (>=2.0.0,<3.0.0)"
 ]
 
 [tool.pytest.ini_options]

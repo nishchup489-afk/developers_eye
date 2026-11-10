@@ -34,6 +34,14 @@ The identified decisions for this feature are indexed above. Record new decision
 
 ## Rules for future changes
 
+- Backend development dependencies include both `httpx` (direct async API
+  tests) and `httpx2` (Starlette's current TestClient); `poetry install` must
+  provide both without borrowing packages from the crawler environment.
+- Use the official Node.js 24 build for frontend validation. Ubuntu's packaged
+  Node 22 in the clean Linux run omitted native TypeScript support.
+- `test_legacy_contracts.py` collects the three rollback-only scheduler scripts
+  in pytest/CI and replaces their application session factory with a validated
+  `TEST_DATABASE_URL` factory before running them.
 - Keep redirected runner output UTF-8 compatible; see INC-0036.
 - The orchestrated production build defaults to `.next-test-runner` so active
   development caches are preserved; explicit `NEXT_BUILD_DIR` takes precedence.

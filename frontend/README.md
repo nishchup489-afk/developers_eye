@@ -4,8 +4,12 @@ Responsive Next.js search frontend with a custom GSAP eye illustration, staggere
 
 ## Run
 
+Use the official Node.js 24 distribution (also used by CI). The test commands
+require a Node build with native TypeScript support; some distribution-packaged
+Node builds omit it.
+
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 

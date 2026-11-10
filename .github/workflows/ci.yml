@@ -33,7 +33,7 @@ jobs:
       - name: Install
         run: |
           python -m venv .venv
-          .venv/bin/pip install ./backend ./crawler pytest pytest-asyncio httpx colorama pip-audit
+          .venv/bin/pip install ./backend ./crawler pytest pytest-asyncio httpx httpx2 colorama pip-audit
       - name: Migrate an empty database, down one and up again
         working-directory: backend
         run: |
