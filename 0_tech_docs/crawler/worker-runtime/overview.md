@@ -34,6 +34,9 @@ The identified decisions for this feature are indexed above. Record new decision
 
 ## Rules for future changes
 
+- Keep resource outcome/parsing dispatch separate from lease-owned finalization;
+  use the named transition, missing/noindex, and document-storage helpers (ADR-0054).
+
 - Insert or lock several rows in one transaction only in a sorted, deterministic order (INC-0002).
 - Retry `40P01` only around a whole replayable transaction, re-checking lease ownership each time, and never repeat network work (INC-0002).
 - Never leave an attempt open with no owner; close it or leave it to lease recovery (INC-0002).

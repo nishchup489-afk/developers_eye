@@ -166,13 +166,13 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [ ] Increase workers in stages, verifying aggregate politeness and throughput each time.
 
 ## Maintenance · Code structure and architectural debt
-- [ ] Break up long process_job and _finalize logic by job type and outcome.
+- [x] Break up long process_job and _finalize logic by job type and outcome. (resource outcome/parsing dispatch, target transition, missing/noindex and document storage helpers; worker regressions pass, ADR-0054)
 - [x] Split the 955-line search-experience.tsx into testable UI components. (result rows, snippets, favicon, knowledge panel, suggestion display, and source icons extracted into components/search; lint and TypeScript pass)
 - [x] Consolidate frontend's two API clients into a consistent typed interface. (one JSDoc-typed AxiosInstance factory; browser/server origin and credential boundaries retained, no duplicate transport defaults)
-- [ ] Evaluate a small shared de_core package for DB models and common runtime contracts.
-- [ ] Review ownership boundaries between crawler, indexer and API.
-- [ ] Remove dead imports/functions and obsolete tests and docs.
-- [ ] Keep refactors in small commits separate from behavior changes.
+- [x] Evaluate a small shared de_core package for DB models and common runtime contracts. (ADR-0054: retain existing one-way backend schema dependency; extraction deferred until an independent consumer or measured packaging benefit exists)
+- [x] Review ownership boundaries between crawler, indexer and API. (ADR-0054 ownership table; obsolete crawler-to-indexer mutation imports removed)
+- [x] Remove dead imports/functions and obsolete tests and docs. (dead/duplicate imports removed from the refactored job/finalize modules; no duplicate top-level Python definitions found; superseded acquisition rules labeled)
+- [x] Keep refactors in small commits separate from behavior changes. (separate result-component, HTTP-client, and worker-dispatch refactor commits)
 
 ## Tech docs · Architecture, decisions and experiments
 - [ ] Verify root README and installation/runtime instructions.

@@ -12,11 +12,7 @@ HTML, sitemap, feed and JSON API resources share one policy and lease lifecycle.
 from __future__ import annotations
 
 import logging
-import re
 import time
-from dataclasses import dataclass, replace
-from datetime import datetime
-from typing import Literal
 
 import asyncio
 import random
@@ -24,38 +20,31 @@ import random
 from collections.abc import Awaitable, Callable
 from sqlalchemy.exc import DBAPIError
 from crawler.worker.jobs.schemas import JobOutcome, JobResult, TargetAction
-from sqlalchemy import delete, func, select, update
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from backend.db.session import SessionFactory
 from backend.models.crawler_frontier import CrawlTarget
-from backend.models.documents import Document
 from backend.models.source import Source
 from backend.schema.crawler_frontier import CrawlTargetCreate
 from crawler.fetcher.fetch import HTTPXHopFetcher
 from crawler.fetcher.config import ALLOWED_MEDIA_TYPES, FetcherConfig
 from crawler.fetcher.schemas import OneHopFetcher
 from crawler.frontier.repository import enqueue_targets
-from crawler.frontier.urls import normalize_url
 from crawler.frontier.scope import CrawlScope
 from crawler.parser.parser import parse
 from crawler.parser.schemas import ParseResult
-from crawler.parser.schemas import DiscoveredLink
 from crawler.parser.sitemap import MAX_ENTRIES as MAX_SITEMAP_ENTRIES, parse_sitemap_resource
 from crawler.parser.feeds import parse_feed
 from crawler.parser.api import parse_json_api
-from crawler.policy_and_politeness.host_policy import is_allowed_host
 from crawler.policy_and_politeness.policy_coordinator import FetchResult, PolicyCoordinator, _header
 from crawler.policy_and_politeness.politeness_policy import PolitenessManager
-from crawler.policy_and_politeness.robots_policy import RobotsDecision, USER_AGENT
-from crawler.processing.normalize.normalize import normalize_document
+from crawler.policy_and_politeness.robots_policy import RobotsDecision
 from crawler.processing.processing import process
-from crawler.processing.schemas import ProcessingResult, SkipReason
-from crawler.scheduler.repository import complete_target, fail_target
-from crawler.worker.jobs.utility import _add_x_robots, _create_discovered_targets, _finalize, _x_robots_directives
-from crawler.worker.jobs.constants import _HTML_MEDIA_TYPES
-from crawler.writer.attempts import finish_attempt, start_attempt
-from crawler.writer.documents import upsert_document
+from crawler.processing.schemas import ProcessingResult
+from crawler.worker.jobs.utility import _create_discovered_targets, _finalize
+from crawler.worker.jobs.resources import plan_response, parse_resource
+from crawler.writer.attempts import start_attempt
 from crawler.worker.telemetry import checkpoint
 from crawler.worker.recovery import recover_failed_claim
 
@@ -266,96 +255,54 @@ async def process_job(
             retry_after = fetched.retry_after_seconds
             message = fetched.reason
 
-            if fetched.decision == RobotsDecision.DENY:
-                action, outcome = "block", "blocked"
-            elif fetched.decision == RobotsDecision.DEFER:
-                action, outcome = "retry", "failed"
-            elif fetched.decision != RobotsDecision.ALLOW:
-                raise RuntimeError(f"Unexpected policy decision: {fetched.decision!r}")
-            elif http_status == 304:
-                action, outcome = "complete", "not_modified"
-            elif http_status in (401, 403):
-                action, outcome = "block", "blocked"
-            elif http_status in (204, 205):
-                action, outcome = "complete", "success"
-                message = f"HTTP {http_status}: no content"
-            elif http_status in (404, 410):
-                action, outcome = "complete", "failed"
-                message = f"HTTP {http_status}: resource unavailable"
-            elif http_status != 200:
-                action, outcome = "retry", "failed"
-                message = f"Unhandled HTTP status: {http_status}"
-            else:
+            response_plan = plan_response(fetched, kind=kind, allowed_hosts=allowed_hosts, scope=scope, depth=depth)
+            action, outcome, message = response_plan.action, response_plan.outcome, response_plan.message
+            if response_plan.parseable:
                 content_type = _header(fetched.headers, "content-type") or ""
-                mime_type = content_type.split(";", 1)[0].strip().casefold()
-                if not is_allowed_host(fetched.final_url, list(allowed_hosts)) or (kind == "page" and not scope.allows(fetched.final_url, depth)):
-                    action, outcome = "block", "blocked"
-                    message = "Final URL exceeds the source host or path scope"
-                elif kind == "page" and mime_type not in _HTML_MEDIA_TYPES:
-                    # An accepted 200 non-HTML response is valid, but this job
-                    # cannot parse/index it yet; schedule a normal recrawl.
-                    action, outcome = "complete", "success"
-                    message = f"Skipped unsupported MIME: {mime_type or '(none)'}"
-                elif not fetched.body:
-                    action, outcome = "retry", "failed"
-                    message = "HTTP 200 response had empty body"
-                else:
-                    stage = "parse"
-                    parser = {"page": parse, "sitemap": parse_sitemap_resource, "rss": parse_feed, "api": parse_json_api}[kind]
-                    # Parsing and processing are CPU work. Threads keep the event
-                    # loop free for other slots and the worker heartbeat.
-                    parsed = await asyncio.to_thread(
-                        parser,
-                        url=fetched.final_url,
-                        content=fetched.body,
-                        content_type=content_type,
-                        **({"options": api_options} if kind == "api" else {}),
+                stage = "parse"
+                parser = {"page": parse, "sitemap": parse_sitemap_resource, "rss": parse_feed, "api": parse_json_api}[kind]
+                # Parsing and processing are CPU work. Threads keep the event
+                # loop free for other slots and the worker heartbeat.
+                parsed = await asyncio.to_thread(
+                    parse_resource, parser=parser, kind=kind, fetched=fetched,
+                    content_type=content_type, allowed_hosts=allowed_hosts, scope=scope,
+                    api_options=api_options, follow_entry_links=follow_entry_links,
+                    discover_sitemaps=discover_sitemaps,
+                )
+                measurements["resource_kind"] = kind
+                measurements["parsed"] = True
+                await checkpoint(session_factory, attempt_id, "PARSE", "success",
+                                 {"documents": len(parsed.documents),
+                                  "words": sum(len((d.body or "").split()) for d in parsed.documents)}, measurements)
+                stage = "process"
+                processed = await asyncio.to_thread(process, parsed)
+                measurements["accepted"] = len(processed.documents)
+                measurements["skipped"] = [{"url": s.url, "reason": str(s.reason), "details": s.details} for s in processed.skipped]
+                await checkpoint(session_factory, attempt_id, "PROCESS",
+                                 "accepted" if processed.documents else "skipped",
+                                 {"accepted": len(processed.documents), "skipped": measurements["skipped"]}, measurements)
+                new_targets = _create_discovered_targets(
+                    parsed,
+                    target_id=target_id,
+                    source_id=source_id,
+                    allowed_hosts=allowed_hosts,
+                    # A sitemap is the source's URL list, so keep all of it.
+                    max_links=MAX_SITEMAP_ENTRIES if kind == "sitemap" else max_links,
+                    parent_depth=depth,
+                    scope=scope,
+                    target_kind=kind,
+                )
+                if len(new_targets) > max_links:
+                    new_targets, overflow = new_targets[:max_links], new_targets[max_links:]
+                    measurements["links_overflow_enqueued"] = await _enqueue_overflow(
+                        session_factory, overflow,
+                        max_pages=scope.max_pages, batch_size=max_links,
                     )
-                    if kind in {"rss", "api"}:
-                        parsed = replace(parsed,
-                            documents=tuple(d for d in parsed.documents if is_allowed_host(d.url, list(allowed_hosts)) and scope.allows(d.url, 0)),
-                            discovered_links=tuple(link for link in parsed.discovered_links if link.kind != "page" or follow_entry_links))
-                    parsed = _add_x_robots(parsed, fetched.headers)
-                    if discover_sitemaps:
-                        parsed = replace(parsed, discovered_links=tuple(
-                            DiscoveredLink(url=value, kind="sitemap") for value in fetched.sitemap_urls
-                        ) + parsed.discovered_links)
-                    if set(_x_robots_directives(fetched.headers)) & {"nofollow", "none"}:
-                        parsed = replace(parsed, discovered_links=())
-                    measurements["resource_kind"] = kind
-                    measurements["parsed"] = True
-                    await checkpoint(session_factory, attempt_id, "PARSE", "success",
-                                     {"documents": len(parsed.documents),
-                                      "words": sum(len((d.body or "").split()) for d in parsed.documents)}, measurements)
-                    stage = "process"
-                    processed = await asyncio.to_thread(process, parsed)
-                    measurements["accepted"] = len(processed.documents)
-                    measurements["skipped"] = [{"url": s.url, "reason": str(s.reason), "details": s.details} for s in processed.skipped]
-                    await checkpoint(session_factory, attempt_id, "PROCESS",
-                                     "accepted" if processed.documents else "skipped",
-                                     {"accepted": len(processed.documents), "skipped": measurements["skipped"]}, measurements)
-                    new_targets = _create_discovered_targets(
-                        parsed,
-                        target_id=target_id,
-                        source_id=source_id,
-                        allowed_hosts=allowed_hosts,
-                        # A sitemap is the source's URL list, so keep all of it.
-                        max_links=MAX_SITEMAP_ENTRIES if kind == "sitemap" else max_links,
-                        parent_depth=depth,
-                        scope=scope,
-                        target_kind=kind,
-                    )
-                    if len(new_targets) > max_links:
-                        new_targets, overflow = new_targets[:max_links], new_targets[max_links:]
-                        measurements["links_overflow_enqueued"] = await _enqueue_overflow(
-                            session_factory, overflow,
-                            max_pages=scope.max_pages, batch_size=max_links,
-                        )
-                    action, outcome = "complete", "success"
-                    message = (
-                        f"Parsed {len(processed.documents)} accepted, "
-                        f"{len(processed.skipped)} skipped documents"
-                    )
+                action, outcome = "complete", "success"
+                message = (
+                    f"Parsed {len(processed.documents)} accepted, "
+                    f"{len(processed.skipped)} skipped documents"
+                )
         except Exception as exc:
             # This protects runner from a single job's fetch/parser/processor
             # exception. DB failures during final persistence are NOT swallowed.

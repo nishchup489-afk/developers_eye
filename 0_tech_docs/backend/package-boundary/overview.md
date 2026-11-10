@@ -30,6 +30,9 @@ The identified decisions for this feature are indexed above. Record new decision
 
 ## Rules for future changes
 
+- Keep the current shared backend package until the extraction gate in ADR-0054
+  is met; crawler finalization must not import indexer mutation helpers.
+
 - Never import `crawler` or `indexer` from `backend`; move shared code into `backend` (ADR-0012).
 - Keep path dependencies relative (ADR-0012).
 - Keep passing: `backend/tests/test_package_boundary.py`.

@@ -64,6 +64,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0051 | infra/local-dev-and-testing | [One test runner script orchestrates the native suite runners and reports through rich](infra/local-dev-and-testing/ADR-0051-one-runner-over-native-suite-runners.md) | accepted |
 | ADR-0052 | crawler/document-writer | [Preserve first acquisition ownership and reject poorer replacement content](crawler/document-writer/ADR-0052-acquisition-provenance-and-content-quality.md) | accepted |
 | ADR-0053 | frontend/search-experience | [Explicit language preference and transparent result provenance](frontend/search-experience/ADR-0053-language-preferences-and-result-provenance.md) | accepted |
+| ADR-0054 | backend/package-boundary | [Retain backend as the shared schema package instead of introducing de_core](backend/package-boundary/ADR-0054-retain-backend-as-the-shared-schema-package.md) | accepted |
 
 ## Incidents
 

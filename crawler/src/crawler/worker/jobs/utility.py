@@ -1,42 +1,28 @@
 from __future__ import annotations
 
-import logging
-import re
 import time
-from dataclasses import dataclass, replace
+from dataclasses import replace
 from datetime import datetime
-from typing import Literal
 
 from sqlalchemy import and_, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from backend.models.search_index import SearchIndex
-from indexer.vocabulary import remove_indexed_documents
-from backend.db.session import SessionFactory
 from backend.models.crawler_frontier import CrawlTarget
 from backend.models.documents import Document
-from backend.models.search_index import SearchIndex
-from indexer.vocabulary import remove_indexed_documents
 from backend.models.source import Source
 from backend.schema.crawler_frontier import CrawlTargetCreate
-from crawler.fetcher.fetch import HTTPXHopFetcher
-from crawler.fetcher.schemas import OneHopFetcher
 from crawler.frontier.repository import enqueue_targets
 from crawler.frontier.urls import normalize_url
 from crawler.frontier.scope import CrawlScope, DEFAULT_MAX_PAGES
-from crawler.parser.parser import parse
 from crawler.parser.schemas import ParseResult
 from crawler.policy_and_politeness.host_policy import is_allowed_host
-from crawler.policy_and_politeness.policy_coordinator import FetchResult, PolicyCoordinator
-from crawler.policy_and_politeness.politeness_policy import PolitenessManager
-from crawler.policy_and_politeness.robots_policy import RobotsDecision, USER_AGENT
+from crawler.policy_and_politeness.robots_policy import USER_AGENT
 from crawler.processing.normalize.normalize import normalize_document
-from crawler.processing.processing import process
 from crawler.processing.schemas import ProcessingResult, SkipReason
 from crawler.scheduler.repository import complete_target, fail_target
 from crawler.worker.jobs.schemas import JobOutcome, JobResult, TargetAction
 from crawler.worker.jobs.constants import _AGENT_SCOPE, _DIRECTIVE_SPLIT, _RETRY_AFTER_CAP_SECONDS
-from crawler.writer.attempts import finish_attempt, start_attempt
+from crawler.writer.attempts import finish_attempt
 from crawler.writer.documents import is_structured_record, page_owned, store_document
 from backend.models.crawl_attempt import CrawlAttempt
 from crawler.worker.telemetry import event
@@ -183,6 +169,140 @@ def _noindex_urls(parsed: ParseResult, processed: ProcessingResult) -> set[str]:
     return urls
 
 
+async def _mark_missing_resource(session, row, *, target_id, attempt_id, http_status):
+    unavailable_ids = (
+        await session.scalars(
+            update(Document)
+            .where(or_(
+                # A missing feed says nothing about its articles,
+                # and a missing article is gone even if a feed wrote it.
+                Document.canonical_url == row.normalized_url,
+                and_(Document.last_crawl_target_id == target_id, page_owned()),
+            ))
+            .values(
+                is_available=False,
+                unavailable_http_status=http_status,
+                unavailable_at=func.coalesce(
+                    Document.unavailable_at,
+                    func.clock_timestamp(),
+                ),
+            )
+            .returning(Document.id)
+        )
+    ).all()
+
+    event(session, attempt_id, "STORE", "not_stored", {
+        "unavailable_document_ids": unavailable_ids,
+        "http_status": http_status,
+        "reason": "Documents marked unavailable; indexer owns removal",
+    })
+
+
+async def _apply_noindex(session, parsed, processed):
+    noindex = _noindex_urls(parsed, processed)
+
+    if noindex:
+        # Lock existing documents in deterministic order.
+        unavailable_ids = (
+            await session.scalars(
+                select(Document.id)
+                .where(Document.canonical_url.in_(noindex))
+                .order_by(Document.id)
+                .with_for_update()
+            )
+        ).all()
+
+        if unavailable_ids:
+            await session.execute(
+                update(Document)
+                .where(Document.id.in_(unavailable_ids))
+                .values(
+                    is_available=False,
+                    unavailable_http_status=None,
+                    unavailable_at=func.coalesce(
+                        Document.unavailable_at,
+                        func.clock_timestamp(),
+                    ),
+                )
+            )
+
+
+async def _store_processed_documents(session, processed, *, source_id, target_id, attempt_id, measurements):
+    documents_saved = skipped = 0
+    # Serialize observations of the same identity/hash across workers.
+    lock_keys = sorted({key for d in processed.documents for key in
+                        ("canonical:" + d.canonical_url, "content:" + d.content_hash)})
+    for key in lock_keys:
+        await session.execute(select(func.pg_advisory_xact_lock(func.hashtextextended(key, 0))))
+    for document in processed.documents:
+        previous = await session.scalar(select(Document).where(Document.canonical_url == document.canonical_url))
+        duplicate = await session.scalar(select(Document.id).where(
+            Document.content_hash == document.content_hash,
+            Document.canonical_url != document.canonical_url).limit(1))
+        decision = "unchanged" if previous and previous.content_hash == document.content_hash else "updated" if previous else "new"
+        stored = await store_document(
+            session, document,
+            source_id=source_id,
+            crawl_target_id=target_id,
+        )
+        document_id = stored.document_id
+        kept = not stored.content_selected
+        if kept:
+            decision = "kept_existing"
+        event(session, attempt_id, "DEDUP", "duplicate" if duplicate and not kept else decision,
+              {"canonical_url": document.canonical_url, "matching_document_id": duplicate,
+               "decision": decision, "content_hash": document.content_hash,
+               "reason": "Acquisition would replace higher-quality content or revive a removed page" if kept
+               else "Matching content at another canonical URL; retained by current writer" if duplicate
+               else "Canonical URL content hash comparison"})
+        if kept:
+            skipped += 1
+        else:
+            documents_saved += 1
+        measurements["documents"].append({"id": document_id, "decision": decision,
+                                           "duplicate_of": duplicate, "canonical_url": document.canonical_url})
+    return documents_saved, skipped
+
+
+async def _transition_target(session, *, action, target_id, expected_lease_until, interval_seconds, retry_after_seconds):
+    if action == "complete":
+        transitioned = await complete_target(
+            session, target_id, expected_lease_until, interval_seconds,
+        )
+    elif action == "retry":
+        transitioned = await fail_target(
+            session, target_id, expected_lease_until,
+        )
+        if transitioned and retry_after_seconds is not None:
+            wait = max(0, min(int(retry_after_seconds), _RETRY_AFTER_CAP_SECONDS))
+            await session.execute(
+                update(CrawlTarget)
+                .where(CrawlTarget.id == target_id)
+                .values(next_fetch_at=func.greatest(
+                    CrawlTarget.next_fetch_at,
+                    func.clock_timestamp() + func.make_interval(
+                        0, 0, 0, 0, 0, 0, wait
+                    ),
+                ))
+            )
+    else:
+        transitioned = await session.scalar(
+            update(CrawlTarget)
+            .where(
+                CrawlTarget.id == target_id,
+                CrawlTarget.state == "leased",
+                CrawlTarget.lease_until == expected_lease_until,
+                CrawlTarget.lease_until > func.clock_timestamp(),
+            )
+            .values(
+                state="blocked" if action == "block" else "disabled",
+                lease_until=None,
+            )
+            .returning(CrawlTarget.id)
+        ) is not None
+    return transitioned
+
+
 async def _finalize(
     *,
     session_factory: async_sessionmaker[AsyncSession],
@@ -264,41 +384,10 @@ async def _finalize(
                 )
 
             # The target is row-locked. Validate/transition it before the writes.
-            if action == "complete":
-                transitioned = await complete_target(
-                    session, target_id, expected_lease_until, interval_seconds,
-                )
-            elif action == "retry":
-                transitioned = await fail_target(
-                    session, target_id, expected_lease_until,
-                )
-                if transitioned and retry_after_seconds is not None:
-                    wait = max(0, min(int(retry_after_seconds), _RETRY_AFTER_CAP_SECONDS))
-                    await session.execute(
-                        update(CrawlTarget)
-                        .where(CrawlTarget.id == target_id)
-                        .values(next_fetch_at=func.greatest(
-                            CrawlTarget.next_fetch_at,
-                            func.clock_timestamp() + func.make_interval(
-                                0, 0, 0, 0, 0, 0, wait
-                            ),
-                        ))
-                    )
-            else:
-                transitioned = await session.scalar(
-                    update(CrawlTarget)
-                    .where(
-                        CrawlTarget.id == target_id,
-                        CrawlTarget.state == "leased",
-                        CrawlTarget.lease_until == expected_lease_until,
-                        CrawlTarget.lease_until > func.clock_timestamp(),
-                    )
-                    .values(
-                        state="blocked" if action == "block" else "disabled",
-                        lease_until=None,
-                    )
-                    .returning(CrawlTarget.id)
-                ) is not None
+            transitioned = await _transition_target(
+                session, action=action, target_id=target_id,
+                expected_lease_until=expected_lease_until, interval_seconds=interval_seconds,
+                retry_after_seconds=retry_after_seconds)
 
             if not transitioned:
                 measurements.update(result="stale", reason="Lease expired before target transition")
@@ -318,95 +407,17 @@ async def _finalize(
 
             
             if action == "complete" and http_status in (404, 410):
-                unavailable_ids = (
-                    await session.scalars(
-                        update(Document)
-                        .where(or_(
-                            # A missing feed says nothing about its articles,
-                            # and a missing article is gone even if a feed wrote it.
-                            Document.canonical_url == row.normalized_url,
-                            and_(Document.last_crawl_target_id == target_id, page_owned()),
-                        ))
-                        .values(
-                            is_available=False,
-                            unavailable_http_status=http_status,
-                            unavailable_at=func.coalesce(
-                                Document.unavailable_at,
-                                func.clock_timestamp(),
-                            ),
-                        )
-                        .returning(Document.id)
-                    )
-                ).all()
-
-                event(session, attempt_id, "STORE", "not_stored", {
-                    "unavailable_document_ids": unavailable_ids,
-                    "http_status": http_status,
-                    "reason": "Documents marked unavailable; indexer owns removal",
-                })
-
+                await _mark_missing_resource(session, row, target_id=target_id,
+                                             attempt_id=attempt_id, http_status=http_status)
 
             if action == "complete" and parsed is not None and processed is not None:
                 
-                noindex = _noindex_urls(parsed, processed)
+                await _apply_noindex(session, parsed, processed)
 
-                if noindex:
-                    # Lock existing documents in deterministic order.
-                    unavailable_ids = (
-                        await session.scalars(
-                            select(Document.id)
-                            .where(Document.canonical_url.in_(noindex))
-                            .order_by(Document.id)
-                            .with_for_update()
-                        )
-                    ).all()
-
-                    if unavailable_ids:
-                        await session.execute(
-                            update(Document)
-                            .where(Document.id.in_(unavailable_ids))
-                            .values(
-                                is_available=False,
-                                unavailable_http_status=None,
-                                unavailable_at=func.coalesce(
-                                    Document.unavailable_at,
-                                    func.clock_timestamp(),
-                                ),
-                            )
-                        )
-
-                # Serialize observations of the same identity/hash across workers.
-                lock_keys = sorted({key for d in processed.documents for key in
-                                    ("canonical:" + d.canonical_url, "content:" + d.content_hash)})
-                for key in lock_keys:
-                    await session.execute(select(func.pg_advisory_xact_lock(func.hashtextextended(key, 0))))
-                for document in processed.documents:
-                    previous = await session.scalar(select(Document).where(Document.canonical_url == document.canonical_url))
-                    duplicate = await session.scalar(select(Document.id).where(
-                        Document.content_hash == document.content_hash,
-                        Document.canonical_url != document.canonical_url).limit(1))
-                    decision = "unchanged" if previous and previous.content_hash == document.content_hash else "updated" if previous else "new"
-                    stored = await store_document(
-                        session, document,
-                        source_id=source_id,
-                        crawl_target_id=target_id,
-                    )
-                    document_id = stored.document_id
-                    kept = not stored.content_selected
-                    if kept:
-                        decision = "kept_existing"
-                    event(session, attempt_id, "DEDUP", "duplicate" if duplicate and not kept else decision,
-                          {"canonical_url": document.canonical_url, "matching_document_id": duplicate,
-                           "decision": decision, "content_hash": document.content_hash,
-                           "reason": "Acquisition would replace higher-quality content or revive a removed page" if kept
-                           else "Matching content at another canonical URL; retained by current writer" if duplicate
-                           else "Canonical URL content hash comparison"})
-                    if kept:
-                        skipped += 1
-                    else:
-                        documents_saved += 1
-                    measurements["documents"].append({"id": document_id, "decision": decision,
-                                                       "duplicate_of": duplicate, "canonical_url": document.canonical_url})
+                documents_saved, kept_existing = await _store_processed_documents(
+                    session, processed, source_id=source_id, target_id=target_id,
+                    attempt_id=attempt_id, measurements=measurements)
+                skipped += kept_existing
                 if targets:
                     links_enqueued = await enqueue_targets(session, targets, max_pages=max_pages)
 
