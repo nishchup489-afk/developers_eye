@@ -2,12 +2,12 @@
 
 ## Implementation status
 
-This document describes the repository as inspected on October 5, 2026.
+Reviewed for the Vercel → Oracle API topology on November 10, 2026.
 
 - `backend/` is a FastAPI app. `GET /search` is implemented (October 30, 2026) over the PostgreSQL full-text index, and `GET /search/suggest` (spelling suggestions, wired to the UI on November 7, 2026) and `GET /health` exist too; the other public routes below are still proposals.
 - **Implemented:** Next.js `GET /api/search`, `GET /api/search/suggest` and the transport-only `POST /api/search/overview` proxy; FastAPI `POST /search/overview` owns optional Groq generation. Frontend runtime validation, curated demo search, browser-local saved results, and `/docs` are implemented too.
-- **Not implemented:** every FastAPI route and external connector below. Their contracts are proposals based on README.md and system_design.md. They are a backend implementation handoff, not claims that those services exist.
-- No backend files were changed to implement the frontend.
+- **Proposed:** routes explicitly labeled proposed and external provider connector interfaces below. Search reads the stored PostgreSQL corpus; it does not perform federated provider searches.
+- Production API requests require a server-only edge credential; admin routes additionally require their service key. Only `/health` is public on the Oracle ingress.
 
 ## 1. Connection and configuration
 
@@ -16,9 +16,9 @@ Browser → same-origin Next.js /api/search → FastAPI /search
                                          → index / provider connectors
 ```
 
-From `frontend/`, run `npm install` and `npm run dev`. The site opens at http://localhost:3000. Without configuration, searches run against a small curated dataset in `lib/demo.ts`; every response and the UI identify demo mode. There is no third-party network retrieval in demo mode. Demo ranking uses query-term matches followed by fixed fixture scores, not BM25.
+From `frontend/`, run `npm ci` with official Node 24, then `npm run dev`. The site opens at http://localhost:3000. Without configuration, searches run against a small curated dataset in `lib/demo.ts`; every response and the UI identify demo mode. There is no third-party network retrieval in demo mode. Demo ranking uses query-term matches followed by fixed fixture scores, not BM25.
 
-To connect a future backend, create `frontend/.env.local`:
+To connect FastAPI, create `frontend/.env.local`:
 
 ```dotenv
 BACKEND_URL=http://127.0.0.1:8000
@@ -29,6 +29,26 @@ Restart Next.js after changing configuration. Use a backend URL reachable from t
 BACKEND_URL is server-only. No `NEXT_PUBLIC_` credential variables are needed. Because the browser calls its own origin, CORS is not required for this server-to-server connection. There is no authentication header forwarded in the current bridge. Add an explicit server credential contract before connecting an authenticated backend.
 
 The homepage reads the configuration per request. A live-mode label means an origin is configured, not that a health check succeeded.
+
+## Vercel → Oracle deployment boundary
+
+Set `BACKEND_URL=https://api.<domain>` and `EDGE_SHARED_SECRET` as server-only
+Vercel environment variables. The edge credential is attached only to configured
+backend origins, never GitHub, Wikipedia, browser requests, or redirected hosts.
+The browser calls same-origin Next.js routes, so this topology needs no API CORS
+allowlist. `frontend/vercel.json` chooses `iad1`; set project root to `frontend`.
+
+Next.js derives the visitor identity from Vercel's overwritten forwarding headers,
+ignoring caller-supplied `X-Eye-Client-IP`. Caddy rejects unauthenticated requests
+except `/health`; FastAPI independently validates the edge credential and IP.
+Uvicorn proxy-header trust is disabled. Admin access remains off unless configured;
+its reporting URL must be the full `https://api.<domain>/admin/crawler/report`.
+See [deployment instructions](https://github.com/nishchup489-afk/developers_eye/blob/main/deploy/README.md).
+
+`/api/search` accepts `source`, `mode`, `page`, `limit`, and `language`; shared URLs
+retain these controls. Responses can include conservative `language`, `version`,
+`last_seen_at`, `related_variants` and `snippet_is_code` metadata. Last observation
+is a crawl timestamp, not a publication or content-update date.
 
 ## 2. Implemented frontend API
 
@@ -134,21 +154,21 @@ Additional result fields are accepted but not used. The bridge rejects the entir
 ### Browser integration
 
 - `components/search-experience.tsx` fetches `/api/search` only when a form, suggested query, or source card is activated.
-- UI tabs filter the returned collection locally; they do not trigger provider requests. Direct API callers may use the server `source` parameter.
+- UI tabs issue source-filtered server searches. Source/category restrictions apply before candidate limits; they do not call third-party providers.
 - The Discussions tab groups `stackoverflow` and `reddit`. It is a frontend vertical, not an additional API enum value; direct API callers still use the individual provider categories. Cards reuse the entered query, or a sample query when the input is blank.
-- Queries are shareable as `/?q=fastapi%20async#results`. Loading that URL runs the search; browser back/forward restores query state. Filters and saved view are local UI state, not encoded in the URL.
+- Queries and controls are shareable on `/search?q=...&source=docs&mode=all&page=1&limit=20&language=en`. Browser back/forward restores search state; saved results remain local.
 - New searches abort obsolete browser fetches. Server upstream requests remain bounded by their own deadline.
 - Saved results live in localStorage under `developers-eye-saved`. They are validated on load and can be removed with the same bookmark button. They are local to the browser, not synced to an account. Storage failure falls back to the session with a visible notice.
 - The "Try" chips on the home page are static examples. On the results page, when a plain single-line query returns fewer than 3 results, the page calls `/api/search/suggest` in the background and, if there is a suggestion, shows "Did you mean …" with the corrected words in bold. Clicking it runs that search; the original search is never rewritten.
 - Keyboard shortcuts: `/`, Ctrl+K, and Cmd+K focus search. GSAP motion respects `prefers-reduced-motion`.
 
-## 3. Proposed public FastAPI contracts — not implemented
+## 3. FastAPI contracts — implemented routes are labeled
 
 These contracts give the backend team concrete starting points. Only `/search` is required by this frontend. Paths below are relative to BACKEND_URL. The proposals are not exposed as generic Next.js proxies.
 
 ### GET /search — implemented
 
-Implemented in `backend/src/backend/api/search.py`. Accepts `q` (1–256 characters after normalizing, at most 1024 raw, 422 otherwise), optional `source` and optional `limit` (1–50, default 20). Each result also carries `type`, the raw document type. Over the per-client rate limit returns 429 with `Retry-After`; at the concurrency cap, 503 with `Retry-After`; past the 3-second statement or 4-second total deadline, 504. Any other database failure returns 503. Limits are set with the `SEARCH_RATE_LIMIT_PER_MINUTE`, `SEARCH_RATE_LIMIT_BURST`, `SEARCH_MAX_CONCURRENT`, `SEARCH_QUERY_DEADLINE_MS` and `SEARCH_TOTAL_DEADLINE_MS` environment variables. The category comes from known hosts (GitHub/GitLab, Stack Overflow/Stack Exchange, Reddit, practice sites) and otherwise from the document type.
+Implemented in `backend/src/backend/api/search.py`. Accepts `q` (1–256 characters after normalizing, at most 1024 raw, 422 otherwise), optional `source` and optional `limit` (1–50, default 20), `page` (offset at most 1,000), `mode` (all/text/code) and explicit `language` preference. Each result also carries `type`, the raw document type. Over the per-client rate limit returns 429 with `Retry-After`; at the concurrency cap, 503 with `Retry-After`; past the 3-second statement or 4-second total deadline, 504. Any other database failure returns 503. Limits are set with the `SEARCH_RATE_LIMIT_PER_MINUTE`, `SEARCH_RATE_LIMIT_BURST`, `SEARCH_MAX_CONCURRENT`, `SEARCH_QUERY_DEADLINE_MS` and `SEARCH_TOTAL_DEADLINE_MS` environment variables. The category comes from known hosts (GitHub/GitLab, Stack Overflow/Stack Exchange, Reddit, practice sites) and otherwise from the document type.
 
 Original proposal: accept `q` and optional `source` using the same validation as the bridge. Return `{ "query": string, "results": SearchResult[] }`; optional `took_ms`, totals, metadata, and warnings may be added. The current bridge ignores backend top-level extras and supplies its own timing/mode. Respect the source filter when provided. Return results in relevance order and use the normalized schema above. Deduplicate canonical URLs before returning.
 
@@ -358,7 +378,7 @@ class Connector:
 
 Suggested sequence: classify intent → choose sources → consult cache/local index → bounded parallel connector calls → normalize → deduplicate → BM25/quality ranking → source diversity → snippets → response.
 
-Each connector needs its own timeout shorter than the bridge’s 10 seconds, bounded concurrency, quota accounting, cache strategy, and backoff. A provider failure should leave other results available where possible. Never label a source as healthy just because configuration exists. Provider warnings currently cannot be shown individually by this UI; extend SearchResponse and its validation together if needed.
+Each connector needs its own timeout shorter than the search bridge’s six seconds, bounded concurrency, quota accounting, cache strategy, and backoff. A provider failure should leave other results available where possible. Never label a source as healthy just because configuration exists. Provider warnings currently cannot be shown individually by this UI; extend SearchResponse and its validation together if needed.
 
 ## 6. Integration checklist
 

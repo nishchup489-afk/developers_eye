@@ -28,6 +28,9 @@ const routes = [
     "Backend contract",
     "Spelling suggestion from the indexed vocabulary; never rewrites /search.",
   ],
+  ["POST", "/api/search/overview", "Implemented in Next.js", "Forwards signed evidence to backend-owned optional AI overview."],
+  ["POST", "/search/overview", "Backend contract", "Validates evidence and applies shared PostgreSQL quotas/cache."],
+  ["GET", "/api/admin/system/report", "Implemented · authenticated", "Protected system observability; admin access is off unless configured."],
   ["GET", "/sources", "Proposed", "Source registry and availability."],
   ["GET", "/documents/{id}", "Proposed", "Normalized document details."],
   ["GET", "/related", "Proposed", "Related documents."],
@@ -102,17 +105,18 @@ export default function Docs() {
           <DocsToc sections={sections} />
           <article className="docs-article">
             <p className="docs-note">
-              The backend currently contains a Python package scaffold, with no
-              implemented HTTP routes or third-party connectors. The frontend
-              search bridge is implemented. All backend endpoints below are
-              proposed contracts, not available services.
+              FastAPI serves indexed search, spelling suggestions, optional AI
+              overview and authenticated admin reports. The frontend calls it
+              through server-side route handlers. Rows labeled proposed are
+              future interfaces and are not available services.
             </p>
             <h2 id="connect">Connect the backend</h2>
             <p>
               Leave <code>BACKEND_URL</code> unset to explore labeled demo data.
-              Once FastAPI implements <code>GET /search</code>, add its origin
+              To search the PostgreSQL index, add the FastAPI origin
               to <code>frontend/.env.local</code> and restart Next.js. This
-              variable stays on the server.
+              variable stays on the server. The Vercel deployment also needs a
+              server-only <code>EDGE_SHARED_SECRET</code> matching the API ingress.
             </p>
             <CodeBlock
               title="frontend/.env.local"
@@ -120,13 +124,14 @@ export default function Docs() {
             />
             <h2 id="contract">The search contract</h2>
             <p>
-              Use a trimmed query of 1–300 characters. The optional{" "}
+              Use a query of 1–256 normalized characters (at most 1,024 raw). The optional{" "}
               <code>source</code> filter accepts{" "}
               <code>
                 docs | github | stackoverflow | reddit | articles | events |
                 practice
               </code>
-              . UI source tabs filter the returned collection locally.
+              . Source tabs query the server. Mode (all/text/code), page, page
+              size (1–50), and language preference are passed through to FastAPI.
             </p>
             <CodeBlock
               title="GET /search · 200 response"
@@ -178,7 +183,9 @@ export default function Docs() {
               <code>400</code> means the query or source is invalid.{" "}
               <code>502</code> means the backend is unreachable, returned an
               error, or sent an invalid payload. <code>504</code> means the
-              10-second upstream timeout elapsed. Errors use{" "}
+              backend deadline or six-second search-proxy timeout elapsed.
+              Rate limits return <code>429</code>; overload returns <code>503</code>,
+              both with Retry-After. Errors use{" "}
               <code>{'{ "error": "Human-readable message" }'}</code>. Responses
               are not cached. Search requests cancel when superseded.
             </p>

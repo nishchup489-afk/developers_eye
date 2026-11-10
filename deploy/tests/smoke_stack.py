@@ -8,6 +8,8 @@ import json
 import os
 from pathlib import Path
 import secrets
+import shutil
+import socket
 import subprocess
 import tempfile
 import time
@@ -21,6 +23,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--image", help="Use an already built Python image")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--frontend", action="store_true", help="Also start a previously built local Next.js frontend")
     args = parser.parse_args()
     project = "de-oracle-smoke-" + secrets.token_hex(5)
     image = args.image or project + ":local"
@@ -124,6 +127,64 @@ def main():
             probe = "import urllib.request,urllib.error;\ntry: urllib.request.urlopen('http://127.0.0.1:8000/search?q=python')\nexcept urllib.error.HTTPError as e: assert e.code==403\nelse: raise AssertionError('unguarded API')"
             run(compose + ["exec", "-T", "api", "python", "-c", probe])
             checks.append("Direct private API request still requires edge credential")
+            if args.frontend:
+                frontend = ROOT / "frontend"
+                build_dir = os.environ.get("NEXT_BUILD_DIR", ".next")
+                assert (frontend / build_dir / "BUILD_ID").exists(), "Build the frontend first with the same NEXT_BUILD_DIR"
+                with socket.socket() as listener:
+                    listener.bind(("127.0.0.1", 0))
+                    next_port = listener.getsockname()[1]
+                with (folder / "next.log").open("w+") as next_log:
+                    server = subprocess.Popen([shutil.which("node"), "node_modules/next/dist/bin/next", "start",
+                        "--hostname", "127.0.0.1", "--port", str(next_port)], cwd=frontend, stdout=next_log, stderr=next_log,
+                        env={**os.environ, "BACKEND_URL": base, "EDGE_SHARED_SECRET": values["EDGE_SHARED_SECRET"],
+                             "KNOWLEDGE_PANEL": "off", "VERCEL": "1"})
+                    next_base = "http://127.0.0.1:" + str(next_port)
+                    try:
+                        for attempt in range(100):
+                            if server.poll() is not None:
+                                raise RuntimeError("Next.js exited during startup")
+                            try:
+                                urlopen(next_base + "/api/search", timeout=2)
+                            except HTTPError as exc:
+                                assert exc.code == 400  # Ready, missing query.
+                                break
+                            except URLError:
+                                time.sleep(.1)
+                        else:
+                            raise RuntimeError("Next.js did not become ready")
+
+                        def visit(ip, status, spoofed_ip):
+                            req = Request(next_base + "/api/search?q=python", headers={
+                                "X-Vercel-Forwarded-For": ip, "X-Eye-Client-IP": spoofed_ip,
+                                "X-Edge-Secret": "caller-supplied-wrong-secret"})
+                            try:
+                                result = urlopen(req, timeout=10)
+                            except HTTPError as exc:
+                                result = exc
+                            with result:
+                                data = json.load(result)
+                                assert result.status == status, (result.status, data)
+                                if status == 200:
+                                    assert data["mode"] == "live" and len(data["results"]) == 1
+                                else:
+                                    assert result.headers.get("Retry-After")
+
+                        visit("198.51.100.30", 200, "203.0.113.1")
+                        visit("198.51.100.30", 429, "203.0.113.2")
+                        visit("198.51.100.31", 200, "203.0.113.1")
+                        checks.append("Real Next.js -> Caddy -> FastAPI -> PG18: runtime edge secret, live result, spoof-resistant independent visitor limits")
+                    except BaseException:
+                        next_log.seek(0)
+                        print(next_log.read()[-4000:])
+                        raise
+                    finally:
+                        server.terminate()
+                        try:
+                            server.wait(timeout=10)
+                        except subprocess.TimeoutExpired:
+                            server.kill()
+                            server.wait()
             env.update(COMPOSE_FILE=str(config), COMPOSE_PROJECT_NAME=project)
             run(["sh", "deploy/backup.sh"])
             run(["sh", "deploy/restore-test.sh"])
@@ -157,7 +218,8 @@ raise SystemExit(asyncio.run(with_sigterm(work())))
             if args.output:
                 args.output.parent.mkdir(parents=True, exist_ok=True)
                 args.output.write_text(json.dumps({"status": "passed", "checks": checks,
-                    "scope": "Isolated local Linux/amd64 Docker PG18/API/Caddy; no public cloud, DNS, TLS, ARM execution or crawler network traffic"}, indent=2) + "\n")
+                    "frontend_included": args.frontend,
+                    "scope": "Isolated local Linux/amd64 Docker PG18/API/Caddy and optional real Next.js; no public cloud, DNS, TLS, ARM execution or crawler network traffic"}, indent=2) + "\n")
         except BaseException:
             subprocess.run(compose + ["logs", "--tail", "50"], cwd=ROOT, env=env)
             raise
