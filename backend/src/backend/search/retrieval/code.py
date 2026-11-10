@@ -8,6 +8,7 @@ Scores are preliminary PostgreSQL scores; final ranking is BM25.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
 import unicodedata
 
 from sqlalchemy import text
@@ -20,6 +21,13 @@ MAX_OFFSET = 10_000
 
 CANDIDATE_POOL = 20_000  # See search_text: bounds ranking work on common terms.
 
+# The simple parser indexes `asyncio.Semaphore(...)` as the one lexeme
+# 'asyncio.semaphore', so the query "asyncio Semaphore" ('asyncio' & 'semaphore')
+# never matched it (EXP-0017). Plain multi-word queries also try each pair of
+# adjacent words joined by a dot. Queries with operators keep their exact meaning.
+_PLAIN_WORDS = re.compile(r"[A-Za-z_][A-Za-z0-9_]*(?: [A-Za-z_][A-Za-z0-9_]*){1,5}")
+_OPERATOR_WORDS = frozenset({"or", "and", "not"})
+
 
 @dataclass(frozen=True, slots=True)
 class CodeRetrievalHit:
@@ -30,7 +38,10 @@ class CodeRetrievalHit:
 _CODE_SEARCH_SQL = text(
     """
     WITH input_query AS (
-        SELECT websearch_to_tsquery('simple', :query_text) AS tsq
+        SELECT CASE
+            WHEN CAST(:dotted AS text) IS NULL THEN websearch_to_tsquery('simple', :query_text)
+            ELSE websearch_to_tsquery('simple', :query_text) || CAST(CAST(:dotted AS text) AS tsquery)
+        END AS tsq
     )
     SELECT
         si.document_id,
@@ -60,6 +71,24 @@ def _validate_query(query: str) -> str:
     return normalized
 
 
+def dotted_alternatives(query: str) -> str | None:
+    """Return a tsquery that joins adjacent plain words with a dot, or None.
+
+    "asyncio Semaphore" -> 'asyncio.semaphore'; "python asyncio Semaphore" ->
+    ('python.asyncio' & 'semaphore') | ('python' & 'asyncio.semaphore').
+    """
+    if _PLAIN_WORDS.fullmatch(query) is None:
+        return None
+    words = query.lower().split(" ")
+    if _OPERATOR_WORDS.intersection(words):
+        return None
+    options = []
+    for i in range(len(words) - 1):
+        joined = words[:i] + [f"{words[i]}.{words[i + 1]}"] + words[i + 2:]
+        options.append("(" + " & ".join(f"'{word}'" for word in joined) + ")")
+    return " | ".join(options)
+
+
 def _validate_pagination(limit: int, offset: int) -> None:
     if type(limit) is not int or not 1 <= limit <= MAX_RESULTS:
         raise ValueError(f"limit must be an integer between 1 and {MAX_RESULTS}")
@@ -82,6 +111,7 @@ async def search_code(
         return []
     result = await session.execute(_CODE_SEARCH_SQL, {
         "query_text": normalized, "limit": limit, "offset": offset,
+        "dotted": dotted_alternatives(normalized),
         "pool": CANDIDATE_POOL, "categories": list(categories) if categories is not None else None,
     })
     return [

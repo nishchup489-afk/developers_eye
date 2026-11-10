@@ -99,10 +99,11 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/integration/test_code.py](../../backend/tests/integration/test_code.py)
 
-17 cases · write-up: [test_case.md](../../backend/tests/test_case.md#code-retrieval)
+18 cases · write-up: [test_case.md](../../backend/tests/test_case.md#code-retrieval)
 
 - `test_returns_typed_sorted_hits_from_database`
 - `test_normalizes_query_and_binds_pagination`
+- `test_dotted_alternatives_only_for_plain_word_queries`
 - `test_defaults_are_correct`
 - `test_blank_query_never_hits_database`
 - `test_invalid_query_type_is_rejected`
@@ -243,6 +244,15 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_problems_quiet_on_healthy_system`
 - `test_purge_events_deletes_only_old_rows`
 - `test_indexer_report_lists_heartbeats`
+
+### [backend/tests/integration/test_title_retrieval.py](../../backend/tests/integration/test_title_retrieval.py)
+
+4 cases
+
+- `test_reference_page_is_crowded_out_of_a_small_text_pool`
+- `test_title_channel_returns_the_page_whose_title_is_the_query`
+- `test_title_channel_keeps_websearch_semantics_and_filters`
+- `test_title_channel_validates_input`
 
 ### [backend/tests/test_package_boundary.py](../../backend/tests/test_package_boundary.py)
 
@@ -448,11 +458,12 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/unit/test_search_pipeline.py](../../backend/tests/unit/test_search_pipeline.py)
 
-10 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-service-pipeline)
+11 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-service-pipeline)
 
 - `test_all_mode_merges_candidates_preserves_scores_and_generates_snippets`
 - `test_text_mode_does_not_query_code`
 - `test_code_mode_does_not_query_text_and_uses_code_block`
+- `test_title_candidates_join_the_pool_in_every_mode`
 - `test_filter_before_pagination_and_preserve_bm25_order`
 - `test_unavailable_and_invalid_urls_removed_before_paging`
 - `test_no_hits_skips_bm25_and_metadata`
@@ -1294,6 +1305,7 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/integration/test_migrations.py](../../backend/tests/integration/test_migrations.py)
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
 - [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
+- [backend/tests/integration/test_title_retrieval.py](../../backend/tests/integration/test_title_retrieval.py)
 - [backend/tests/unit/test_ai_overview.py](../../backend/tests/unit/test_ai_overview.py)
 - [backend/tests/unit/test_code_excerpt.py](../../backend/tests/unit/test_code_excerpt.py)
 - [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)

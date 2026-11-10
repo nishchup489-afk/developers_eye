@@ -15,6 +15,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from backend.search.retrieval.code import (
+    dotted_alternatives,
     MAX_OFFSET,
     MAX_QUERY_CHARS,
     MAX_RESULTS,
@@ -56,12 +57,31 @@ async def test_normalizes_query_and_binds_pagination():
     assert await search_code(session, "\t FastAPI\n  APIRouter  ", limit=12, offset=8) == []
     sql, params = session.execute.await_args.args
     assert params == {"query_text": "FastAPI APIRouter", "limit": 12, "offset": 8,
-                      "pool": 20_000, "categories": None}
+                      "pool": 20_000, "categories": None,
+                      "dotted": "('fastapi.apirouter')"}
     assert "FROM search_index" in str(sql)
     assert "code_vector @@" in str(sql)
     assert "websearch_to_tsquery('simple'" in str(sql)
     assert "ts_rank_cd(" in str(sql)
     assert "ORDER BY score DESC, si.document_id ASC" in str(sql)
+
+
+@pytest.mark.parametrize(
+    ("query", "expected"),
+    [
+        ("asyncio Semaphore", "('asyncio.semaphore')"),
+        ("python asyncio Semaphore", "('python.asyncio' & 'semaphore') | ('python' & 'asyncio.semaphore')"),
+        ("include_router", None),               # one word: nothing to join
+        ("asyncio.create_task", None),          # already dotted
+        ("python OR javascript", None),         # operators keep their meaning
+        ("python -django", None),
+        ('"event loop"', None),
+        ("a b c d e f g", None),                # more than six words
+        ("x'); DROP TABLE t; --", None),
+    ],
+)
+def test_dotted_alternatives_only_for_plain_word_queries(query, expected):
+    assert dotted_alternatives(query) == expected
 
 
 @pytest.mark.asyncio
@@ -74,6 +94,7 @@ async def test_defaults_are_correct():
         "offset": 0,
         "pool": 20_000,
         "categories": None,
+        "dotted": None,
     }
 
 
@@ -218,9 +239,14 @@ async def test_postgresql_temp_index_end_to_end():
                         "INSERT INTO search_index (document_id, code_vector) VALUES "
                         "(1, to_tsvector('simple', 'FastAPI APIRouter include_router')), "
                         "(2, to_tsvector('simple', 'Django views urlpatterns')), "
-                        "(3, to_tsvector('simple', 'FastAPI dependency injection'))"
+                        "(3, to_tsvector('simple', 'FastAPI dependency injection')), "
+                        "(4, to_tsvector('simple', 'sem = asyncio.Semaphore(10)'))"
                     )
                 )
+
+                # EXP-0017: the dotted identifier is one lexeme in the index.
+                assert [hit.document_id for hit in await search_code(session, "asyncio Semaphore")] == [4]
+                assert await search_code(session, "asyncio OR Semaphore") == []
 
                 hits = await search_code(session, "FastAPI APIRouter")
                 assert [hit.document_id for hit in hits] == [1]
