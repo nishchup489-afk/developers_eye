@@ -66,7 +66,13 @@ def load_queries(path: Path) -> list[dict[str, str]]:
         if not isinstance(stratum, str) or not stratum.strip():
             raise ValueError(f"query {qid} has an invalid stratum")
         seen.add(qid)
-        result.append({"query_id": qid, "query": query, "mode": mode, "stratum": stratum})
+        item = {"query_id": qid, "query": query, "mode": mode, "stratum": stratum}
+        source = entry.get("source")
+        if source is not None:
+            if source not in {"docs", "github", "stackoverflow", "reddit", "articles", "events", "practice", "discussions"}:
+                raise ValueError(f"query {qid} has an invalid source")
+            item["source"] = source
+        result.append(item)
     return result
 
 
@@ -132,8 +138,9 @@ async def collect(
                         k=10,
                         text_corpus=text_corpus,
                         code_corpus=code_corpus,
+                        source=item.get("source"),
                     )
-                    report.update(query_id=item["query_id"], stratum=item["stratum"])
+                    report.update(query_id=item["query_id"], stratum=item["stratum"], source=item.get("source"))
                     reports.append(report)
         return {
             "schema_version": 1,
@@ -148,6 +155,7 @@ async def collect(
 
 
 def display_results(results: dict[str, Any]) -> None:
+    cutoff = results.get("cutoff", 10)
     print(f"Corpus: {results['corpus_id']}")
     print(f"Queries: {results['query_count']}")
     if results["status"] != "complete":
@@ -155,11 +163,11 @@ def display_results(results: dict[str, Any]) -> None:
         for item in results["per_query"]:
             if item["status"] == "incomplete":
                 print(f"  {item['query_id']}: {item['reason']} "
-                      f"({len(item['missing_top_10_judgments'])} missing top-10 URLs)")
+                      f"({len(item[f'missing_top_{cutoff}_judgments'])} missing top-{cutoff} URLs)")
         return
     aggregate = results["aggregate"]
     print("Metric                             BM25          PostgreSQL")
-    for key in ("precision_at_10", "mrr_at_10", "ndcg_at_10"):
+    for key in (f"precision_at_{cutoff}", f"mrr_at_{cutoff}", f"ndcg_at_{cutoff}"):
         a, b = aggregate["bm25"][key], aggregate["postgresql"][key]
         print(f"{key:30} {a if a is not None else 'N/A':>12} "
               f"{b if b is not None else 'N/A':>18}")
@@ -181,6 +189,7 @@ def main() -> int:
     scoring.add_argument("--snapshot", type=Path, required=True)
     scoring.add_argument("--qrels", type=Path, required=True)
     scoring.add_argument("--output", type=Path, required=True)
+    scoring.add_argument("--cutoff", type=int, choices=(5, 10), default=10)
 
     args = parser.parse_args()
     if args.command == "collect":
@@ -202,7 +211,7 @@ def main() -> int:
     snapshot, qrels = read_json(args.snapshot), read_json(args.qrels)
     if snapshot.get("corpus_id") != qrels.get("corpus_id"):
         parser.error("snapshot and judgments have different corpus_id values")
-    results = evaluate_suite(snapshot, qrels)
+    results = evaluate_suite(snapshot, qrels, k=args.cutoff)
     write_json(args.output, results, overwrite=True)
     display_results(results)
     return 0 if results["status"] == "complete" else 2

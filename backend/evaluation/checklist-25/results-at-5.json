@@ -1,0 +1,899 @@
+{
+  "status": "complete",
+  "corpus_id": "checklist-100k-2026-11-09",
+  "snapshot_created_utc": "2026-11-10T02:25:42.033796+00:00",
+  "query_count": 25,
+  "cutoff": 5,
+  "unjudged_query_ids": [],
+  "per_query": [
+    {
+      "query_id": "C001",
+      "query": "python async api",
+      "mode": "text",
+      "candidate_count": 100,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 16,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 0.9375,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.6063941521420345
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.2273266861187518
+      },
+      "bm25_top_5": [
+        "https://docs.aiohttp.org/en/stable/third_party.html",
+        "https://redis.io/docs/latest/operate/oss_and_stack/stack-with-enterprise/release-notes/redisgears/redisgears-1.2-release-notes/",
+        "https://learn.microsoft.com/en-us/azure/azure-functions/python-scale-performance-reference",
+        "https://docs.djangoproject.com/en/6.1/topics/async/",
+        "https://redis.io/docs/latest/develop/ai/context-engine/agent-playbooks/agent-integration/"
+      ],
+      "postgresql_top_5": [
+        "https://redis.io/docs/latest/operate/oss_and_stack/stack-with-enterprise/release-notes/redisgears/redisgears-1.2-release-notes/",
+        "https://redis.io/docs/latest/develop/ai/redisvl/user_guide/how_to_guides/migrate-indexes/",
+        "https://docs.aiohttp.org/en/stable/third_party.html",
+        "https://redis.io/docs/latest/operate/oss_and_stack/stack-with-enterprise/release-notes/redisgears/",
+        "https://docs.cloud.google.com/storage/docs/rapid/use-objects-in-zonal-buckets"
+      ]
+    },
+    {
+      "query_id": "C002",
+      "query": "asyncio.create_task",
+      "mode": "code",
+      "candidate_count": 20,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 15,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.867811381317105
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.90976723004651
+      },
+      "bm25_top_5": [
+        "https://docs.astral.sh/ruff/rules/asyncio-dangling-task/",
+        "https://docs.python.org/3/library/asyncio-sync.html",
+        "https://docs.python.org/3/howto/a-conceptual-overview-of-asyncio.html",
+        "https://docs.python.org/3/library/asyncio-task.html",
+        "https://docs.python.org/3/library/asyncio-future.html"
+      ],
+      "postgresql_top_5": [
+        "https://docs.python.org/3/howto/a-conceptual-overview-of-asyncio.html",
+        "https://docs.python.org/3/library/asyncio-task.html",
+        "https://docs.aiohttp.org/en/stable/web_advanced.html",
+        "https://docs.python.org/3/library/asyncio-dev.html",
+        "https://docs.python.org/3/library/asyncio-sync.html"
+      ]
+    },
+    {
+      "query_id": "C003",
+      "query": "asyncio gather",
+      "mode": "all",
+      "candidate_count": 12,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 10,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.8727122851108061
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.5903694098621622
+      },
+      "bm25_top_5": [
+        "https://docs.python.org/3/library/asyncio-task.html",
+        "https://docs.python.org/3/library/asyncio-api-index.html",
+        "https://docs.aiohttp.org/en/stable/_modules/aiohttp/web_runner.html",
+        "https://docs.python.org/3/library/profiling.sampling.html",
+        "https://docs.python.org/3/genindex-G.html"
+      ],
+      "postgresql_top_5": [
+        "https://docs.python.org/3/library/profiling.sampling.html",
+        "https://docs.python.org/3/genindex-G.html",
+        "https://docs.python.org/3/library/asyncio-task.html",
+        "https://docs.python.org/3/whatsnew/3.11.html",
+        "https://docs.python.org/3/library/asyncio-api-index.html"
+      ]
+    },
+    {
+      "query_id": "C004",
+      "query": "FastAPI Depends",
+      "mode": "all",
+      "candidate_count": 91,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 13,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.8061941684150765
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.8777221344374128
+      },
+      "bm25_top_5": [
+        "https://docs.astral.sh/ruff/rules/fast-api-non-annotated-dependency/",
+        "https://fastapi.tiangolo.com/tutorial/dependencies/",
+        "https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/",
+        "https://fastapi.tiangolo.com/tutorial/dependencies/global-dependencies/",
+        "https://fastapi.tiangolo.com/reference/dependencies/"
+      ],
+      "postgresql_top_5": [
+        "https://fastapi.tiangolo.com/reference/dependencies/",
+        "https://fastapi.tiangolo.com/reference/security/",
+        "https://fastapi.tiangolo.com/tutorial/dependencies/",
+        "https://fastapi.tiangolo.com/tutorial/dependencies/classes-as-dependencies/",
+        "https://fastapi.tiangolo.com/advanced/advanced-dependencies/"
+      ]
+    },
+    {
+      "query_id": "C005",
+      "query": "\"dependency injection\"",
+      "mode": "text",
+      "candidate_count": 100,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 16,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.9030970842075382
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.7416088716490667
+      },
+      "bm25_top_5": [
+        "https://docs.nestjs.com/providers",
+        "https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html",
+        "https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/fixture-di.html",
+        "https://docs.nestjs.com/fundamentals/custom-providers",
+        "https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-10.0"
+      ],
+      "postgresql_top_5": [
+        "https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-10.0",
+        "https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/webapplication?view=aspnetcore-10.0",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection/overview",
+        "https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html",
+        "https://learn.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection"
+      ]
+    },
+    {
+      "query_id": "C006",
+      "query": "FastAPI lifespan events",
+      "mode": "text",
+      "candidate_count": 8,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 8,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.9364759149279142
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      "bm25_top_5": [
+        "https://fastapi.tiangolo.com/advanced/testing-events/",
+        "https://fastapi.tiangolo.com/reference/apirouter/",
+        "https://vercel.com/docs/frameworks/backend/fastapi",
+        "https://fastapi.tiangolo.com/advanced/async-tests/",
+        "https://fastapi.tiangolo.com/advanced/events/"
+      ],
+      "postgresql_top_5": [
+        "https://fastapi.tiangolo.com/advanced/events/",
+        "https://fastapi.tiangolo.com/advanced/testing-events/",
+        "https://vercel.com/docs/frameworks/backend/fastapi",
+        "https://fastapi.tiangolo.com/reference/apirouter/",
+        "https://fastapi.tiangolo.com/reference/testclient/"
+      ]
+    },
+    {
+      "query_id": "C007",
+      "query": "python 3.14",
+      "mode": "text",
+      "candidate_count": 100,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 18,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.637277412938352
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.43815442871761234
+      },
+      "bm25_top_5": [
+        "https://pydantic.dev/docs/validation/latest/concepts/forward_annotations/",
+        "https://docs.astral.sh/ruff/rules/access-annotations-from-class-dict/",
+        "https://docs.python.org/3/library/asyncio-policy.html",
+        "https://docs.python.org/3/deprecations/c-api-pending-removal-in-3.14.html",
+        "https://docs.python.org/3/deprecations/pending-removal-in-3.16.html"
+      ],
+      "postgresql_top_5": [
+        "https://docs.python.org/3/whatsnew/3.12.html",
+        "https://docs.python.org/3/whatsnew/3.14.html",
+        "https://docs.python.org/3/whatsnew/3.13.html",
+        "https://mypy.readthedocs.io/en/stable/changelog.html",
+        "https://docs.python.org/3/whatsnew/3.15.html"
+      ]
+    },
+    {
+      "query_id": "C008",
+      "query": "\"TaskGroup\"",
+      "mode": "all",
+      "candidate_count": 6,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 6,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.7503001602127553
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      "bm25_top_5": [
+        "https://docs.python.org/3/library/asyncio-api-index.html",
+        "https://docs.python.org/3/library/asyncio-graph.html",
+        "https://docs.python.org/3/library/asyncio-task.html",
+        "https://docs.python.org/3/genindex-T.html",
+        "https://docs.python.org/3/whatsnew/3.11.html"
+      ],
+      "postgresql_top_5": [
+        "https://docs.python.org/3/library/asyncio-task.html",
+        "https://docs.python.org/3/whatsnew/3.11.html",
+        "https://docs.python.org/3/whatsnew/3.13.html",
+        "https://docs.python.org/3/library/asyncio-api-index.html",
+        "https://docs.python.org/3/library/asyncio-graph.html"
+      ]
+    },
+    {
+      "query_id": "C009",
+      "query": "\"TypeError\"",
+      "mode": "code",
+      "candidate_count": 100,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 16,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.8177503273848066
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.3893543313198461
+      },
+      "bm25_top_5": [
+        "https://eslint.org/docs/latest/use/troubleshooting/v9-rule-api-changes",
+        "https://eslint.org/docs/latest/rules/no-unsafe-optional-chaining",
+        "https://docs.ruby-lang.org/en/master/language/implicit_conversion_rdoc.html",
+        "https://docs.python.org/3/builtins/exceptions.html",
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/What_went_wrong"
+      ],
+      "postgresql_top_5": [
+        "https://nodejs.org/api/assert.html",
+        "https://pandas.pydata.org/docs/user_guide/categorical.html",
+        "https://docs.ruby-lang.org/en/master/ENV.html",
+        "https://docs.python.org/3/reference/compound_stmts.html",
+        "https://docs.jax.dev/en/latest/301/hijax-types.html"
+      ]
+    },
+    {
+      "query_id": "C010",
+      "query": "\"ModuleNotFoundError\"",
+      "mode": "text",
+      "candidate_count": 45,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 17,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.7611915317451772
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.8952429981827418
+      },
+      "bm25_top_5": [
+        "https://learn.microsoft.com/en-us/azure/azure-functions/recover-python-functions",
+        "https://lightning.ai/docs/pytorch/stable/optional-api/api/lightning.pytorch.callbacks.RichModelSummary",
+        "https://docs.astral.sh/uv/reference/troubleshooting/build-failures/",
+        "https://docs.python.org/3/reference/import.html",
+        "https://lightning.ai/docs/pytorch/stable/optional-api/api/lightning.pytorch.callbacks.DeviceStatsMonitor"
+      ],
+      "postgresql_top_5": [
+        "https://learn.microsoft.com/en-us/azure/azure-functions/recover-python-functions",
+        "https://docs.python.org/3/reference/import.html",
+        "https://docs.python.org/3/library/importlib.html",
+        "https://docs.astral.sh/uv/reference/troubleshooting/build-failures/",
+        "https://docs.python.org/3/c-api/exceptions.html"
+      ]
+    },
+    {
+      "query_id": "C011",
+      "query": "python list comprehension",
+      "mode": "text",
+      "candidate_count": 100,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 15,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 0.9333333333333333,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.40209485233686065
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.49329472333833
+      },
+      "bm25_top_5": [
+        "https://docs.astral.sh/ruff/rules/unpacked-list-comprehension/",
+        "https://docs.astral.sh/ruff/rules/manual-list-comprehension/",
+        "https://docs.astral.sh/ruff/rules/reimplemented-starmap/",
+        "https://docs.scala-lang.org/scala3/book/scala-for-python-devs.html",
+        "https://docs.astral.sh/ruff/rules/quadratic-list-summation/"
+      ],
+      "postgresql_top_5": [
+        "https://docs.scala-lang.org/scala3/book/scala-for-python-devs.html",
+        "https://docs.python.org/3/whatsnew/2.0.html",
+        "https://docs.astral.sh/ruff/rules/quadratic-list-summation/",
+        "https://docs.python.org/3/howto/functional.html",
+        "https://docs.python.org/3/whatsnew/2.4.html"
+      ]
+    },
+    {
+      "query_id": "C012",
+      "query": "\"context manager\"",
+      "mode": "text",
+      "candidate_count": 100,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 6,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 0.2,
+        "mrr_at_5": 0.5,
+        "ndcg_at_5": 0.3438208277094997
+      },
+      "postgresql": {
+        "precision_at_5": 0.6,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.6688191978523136
+      },
+      "bm25_top_5": [
+        "https://docs.opensearch.org/latest/ml-commons-plugin/context-management/",
+        "https://docs.python.org/3/library/contextlib.html",
+        "https://docs.opensearch.org/latest/ml-commons-plugin/api/context-management-apis/create-context-management/",
+        "https://docs.opensearch.org/latest/ml-commons-plugin/api/context-management-apis/delete-context-management/",
+        "https://docs.opensearch.org/latest/ml-commons-plugin/api/context-management-apis/index/"
+      ],
+      "postgresql_top_5": [
+        "https://docs.python.org/3/library/contextlib.html",
+        "https://docs.opensearch.org/latest/ml-commons-plugin/context-management/",
+        "https://docs.opensearch.org/latest/ml-commons-plugin/api/context-management-apis/create-context-management/",
+        "https://docs.python.org/3/library/test.html",
+        "https://docs.python.org/3/library/unittest.html"
+      ]
+    },
+    {
+      "query_id": "C013",
+      "query": "pathlib Path",
+      "mode": "code",
+      "candidate_count": 100,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 17,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 0.8,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.5000210775802868
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.2897668655428758
+      },
+      "bm25_top_5": [
+        "https://docs.astral.sh/ruff/rules/invalid-pathlib-with-suffix/",
+        "https://docs.astral.sh/ruff/rules/typing-only-standard-library-import/",
+        "https://docs.astral.sh/ruff/rules/path-constructor-current-directory/",
+        "https://docs.astral.sh/ruff/rules/implicit-cwd/",
+        "https://docs.astral.sh/ruff/rules/late-future-import/"
+      ],
+      "postgresql_top_5": [
+        "https://vercel.com/docs/ai-gateway/inputs-and-tools/vision",
+        "https://vercel.com/docs/ai-gateway/inputs-and-tools/file-input",
+        "https://docs.astral.sh/ruff/rules/typing-only-standard-library-import/",
+        "https://docs.python.org/3/whatsnew/3.15.html",
+        "https://docs.astral.sh/ruff/rules/path-constructor-current-directory/"
+      ]
+    },
+    {
+      "query_id": "C014",
+      "query": "javascript Promise.all",
+      "mode": "code",
+      "candidate_count": 17,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 11,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.5983494111400032
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.34452133333249796
+      },
+      "bm25_top_5": [
+        "https://firebase.google.com/docs/rules/unit-tests",
+        "https://eslint.org/docs/latest/rules/require-atomic-updates",
+        "https://eslint.org/docs/latest/rules/no-await-in-loop",
+        "https://docs.deno.com/examples/timing_safe_comparison/",
+        "https://docs.deno.com/examples/worker_pool/"
+      ],
+      "postgresql_top_5": [
+        "https://nodejs.org/api/stream_iter.html",
+        "https://eslint.org/docs/latest/rules/require-atomic-updates",
+        "https://nodejs.org/api/events.html",
+        "https://firebase.google.com/docs/rules/unit-tests",
+        "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-9.html"
+      ]
+    },
+    {
+      "query_id": "C015",
+      "query": "javascript fetch",
+      "mode": "all",
+      "candidate_count": 171,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 12,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 0.8,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.6275717767768734
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.5508492941340157
+      },
+      "bm25_top_5": [
+        "https://flask.palletsprojects.com/en/stable/patterns/javascript/",
+        "https://supabase.com/docs/reference/javascript/v1/auth-getuser",
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Network_requests",
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Debugging_JavaScript",
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Sending_forms_through_JavaScript"
+      ],
+      "postgresql_top_5": [
+        "https://supabase.com/docs/reference/javascript/v1/select",
+        "https://flask.palletsprojects.com/en/stable/patterns/javascript/",
+        "https://docs.deno.com/deploy/classic/api/runtime-fetch/",
+        "https://docs.deno.com/examples/fetch_timeout/",
+        "https://docs.deno.com/examples/fetch_unix_socket/"
+      ]
+    },
+    {
+      "query_id": "C016",
+      "query": "react useEffect",
+      "mode": "all",
+      "candidate_count": 117,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 17,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.5251884396690667
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.8357926221960373
+      },
+      "bm25_top_5": [
+        "https://bun.com/docs/lint/rules/bun/react-no-latest-value-ref",
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Frameworks_libraries/React_accessibility",
+        "https://react.dev/reference/react-dom/flushSync",
+        "https://nextjs.org/docs/messages/react-hydration-error",
+        "https://bun.com/docs/lint/rules/bun/react-no-namespace-hooks"
+      ],
+      "postgresql_top_5": [
+        "https://react.dev/reference/react/useEffect",
+        "https://nextjs.org/docs/15/pages/api-reference/functions/use-router",
+        "https://nextjs.org/docs/pages/api-reference/functions/use-router",
+        "https://nextjs.org/docs/app/guides/preserving-ui-state",
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Frameworks_libraries/React_accessibility"
+      ]
+    },
+    {
+      "query_id": "C017",
+      "query": "\"Cache-Control\"",
+      "mode": "all",
+      "candidate_count": 144,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 13,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.9165323715184533
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      "bm25_top_5": [
+        "https://learn.microsoft.com/en-us/aspnet/core/performance/caching/response?view=aspnetcore-10.0",
+        "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-caching.html",
+        "https://docs.spring.io/spring-framework/reference/web/webflux/caching.html",
+        "https://caddyserver.com/docs/caddyfile/directives/header",
+        "https://firebase.google.com/docs/app-hosting/optimize-cache"
+      ],
+      "postgresql_top_5": [
+        "https://learn.microsoft.com/en-us/aspnet/core/performance/caching/response?view=aspnetcore-10.0",
+        "https://docs.deno.com/deploy/reference/caching/",
+        "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-caching.html",
+        "https://docs.spring.io/spring-framework/reference/web/webflux/caching.html",
+        "https://docs.expo.dev/eas/hosting/reference/caching/"
+      ]
+    },
+    {
+      "query_id": "C018",
+      "query": "django QuerySet select_related",
+      "mode": "code",
+      "candidate_count": 2,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 2,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 0.4,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      "postgresql": {
+        "precision_at_5": 0.4,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      "bm25_top_5": [
+        "https://docs.djangoproject.com/en/6.1/ref/models/querysets/",
+        "https://docs.djangoproject.com/en/6.1/ref/contrib/admin/"
+      ],
+      "postgresql_top_5": [
+        "https://docs.djangoproject.com/en/6.1/ref/models/querysets/",
+        "https://docs.djangoproject.com/en/6.1/ref/contrib/admin/"
+      ]
+    },
+    {
+      "query_id": "C019",
+      "query": "ruff FAST002",
+      "mode": "all",
+      "candidate_count": 1,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 1,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 0.2,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      "postgresql": {
+        "precision_at_5": 0.2,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      "bm25_top_5": [
+        "https://docs.astral.sh/ruff/rules/fast-api-non-annotated-dependency/"
+      ],
+      "postgresql_top_5": [
+        "https://docs.astral.sh/ruff/rules/fast-api-non-annotated-dependency/"
+      ]
+    },
+    {
+      "query_id": "C020",
+      "query": "pyhton asyncio",
+      "mode": "all",
+      "candidate_count": 0,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 1,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 0.0,
+      "bm25": {
+        "precision_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "ndcg_at_5": 0.0
+      },
+      "postgresql": {
+        "precision_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "ndcg_at_5": 0.0
+      },
+      "bm25_top_5": [],
+      "postgresql_top_5": []
+    },
+    {
+      "query_id": "C021",
+      "query": "javascript optional chaining",
+      "mode": "text",
+      "candidate_count": 100,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 5,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 0.2,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.4554594382818066
+      },
+      "postgresql": {
+        "precision_at_5": 0.6,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.6150386377826782
+      },
+      "bm25_top_5": [
+        "https://eslint.org/docs/latest/rules/no-unsafe-optional-chaining",
+        "https://eslint.org/docs/latest/rules/no-dupe-else-if",
+        "https://eslint.org/docs/latest/rules/no-multi-assign",
+        "https://nodejs.org/api/module.html",
+        "https://docs.cypress.io/api/cypress-api/ensure"
+      ],
+      "postgresql_top_5": [
+        "https://eslint.org/docs/latest/rules/no-unsafe-optional-chaining",
+        "https://flask.palletsprojects.com/en/stable/api/",
+        "https://nodejs.org/api/http2.html",
+        "https://mongoosejs.com/docs/documents.html",
+        "https://mongoosejs.com/docs/8.x/docs/documents.html"
+      ]
+    },
+    {
+      "query_id": "C022",
+      "query": "python 3.12 asyncio",
+      "mode": "text",
+      "candidate_count": 41,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 14,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 0.8,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.5115981850679548
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.49093334564670704
+      },
+      "bm25_top_5": [
+        "https://docs.python.org/3/library/asyncore.html",
+        "https://docs.python.org/3/library/asynchat.html",
+        "https://docs.python.org/3/deprecations/pending-removal-in-3.16.html",
+        "https://docs.python.org/3/library/asyncio-runner.html",
+        "https://vercel.com/docs/ai-gateway/sdks-and-apis/ai-sdk-python"
+      ],
+      "postgresql_top_5": [
+        "https://docs.aiohttp.org/en/stable/changes.html",
+        "https://docs.pytest.org/en/stable/changelog.html",
+        "https://docs.python.org/3/reference/datamodel.html",
+        "https://docs.python.org/3/whatsnew/3.12.html",
+        "https://docs.python.org/3/library/asynchat.html"
+      ]
+    },
+    {
+      "query_id": "C023",
+      "query": "FastAPI OAuth2",
+      "mode": "all",
+      "candidate_count": 15,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 12,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.6343169226155623
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      "bm25_top_5": [
+        "https://fastapi.tiangolo.com/how-to/custom-docs-ui-assets/",
+        "https://fastapi.tiangolo.com/tutorial/security/",
+        "https://fastapi.tiangolo.com/reference/openapi/docs/",
+        "https://fastapi.tiangolo.com/tutorial/security/first-steps/",
+        "https://fastapi.tiangolo.com/reference/dependencies/"
+      ],
+      "postgresql_top_5": [
+        "https://fastapi.tiangolo.com/reference/security/",
+        "https://fastapi.tiangolo.com/advanced/security/oauth2-scopes/",
+        "https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/",
+        "https://fastapi.tiangolo.com/tutorial/security/simple-oauth2/",
+        "https://fastapi.tiangolo.com/tutorial/security/get-current-user/"
+      ]
+    },
+    {
+      "query_id": "C024",
+      "query": "\"No module named\"",
+      "mode": "text",
+      "candidate_count": 100,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 3,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 0.6666666666666666,
+      "bm25": {
+        "precision_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "ndcg_at_5": 0.0
+      },
+      "postgresql": {
+        "precision_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "ndcg_at_5": 0.0
+      },
+      "bm25_top_5": [
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Module.html",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/module/ModuleFinder.html",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/module/ModuleDescriptor.Builder.html",
+        "https://learn.microsoft.com/en-us/powershell/module/powershellget/install-module?view=powershellget-2.x",
+        "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/get-module?view=powershell-7.6"
+      ],
+      "postgresql_top_5": [
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/module/ModuleDescriptor.Builder.html",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/module/ModuleDescriptor.html",
+        "https://docs.astral.sh/ruff/rules/invalid-module-name/",
+        "https://learn.microsoft.com/en-us/powershell/module/powershellget/install-module?view=powershellget-2.x",
+        "https://docs.astral.sh/uv/concepts/build-backend/"
+      ]
+    },
+    {
+      "query_id": "C025",
+      "query": "github actions",
+      "mode": "all",
+      "candidate_count": 129,
+      "recall_budget": "100 per channel (up to 200 in ALL mode)",
+      "judged_positive_count": 19,
+      "missing_top_5_judgments": [],
+      "unjudged_count": 0,
+      "status": "complete",
+      "candidate_recall_at_100_per_channel": 1.0,
+      "bm25": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.7235887993557807
+      },
+      "postgresql": {
+        "precision_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "ndcg_at_5": 0.24240285942971743
+      },
+      "bm25_top_5": [
+        "https://docs.github.com/en/actions/tutorials/migrate-to-github-actions/automated-migrations",
+        "https://docs.github.com/en/actions/tutorials/migrate-to-github-actions/manual-migrations",
+        "https://docs.github.com/en/actions",
+        "https://docs.github.com/en/actions/get-started",
+        "https://docs.github.com/en/actions/concepts/metrics"
+      ],
+      "postgresql_top_5": [
+        "https://docs.github.com/en/actions/tutorials/migrate-to-github-actions/automated-migrations/azure-devops-migration",
+        "https://docs.github.com/en/actions/tutorials/migrate-to-github-actions/manual-migrations/migrate-from-travis-ci",
+        "https://docs.github.com/en/actions/tutorials/migrate-to-github-actions/automated-migrations/use-github-actions-importer",
+        "https://docs.github.com/en/actions/tutorials/migrate-to-github-actions/automated-migrations/gitlab-migration",
+        "https://docs.github.com/en/actions/tutorials/migrate-to-github-actions/automated-migrations/bamboo-migration"
+      ]
+    }
+  ],
+  "aggregate": {
+    "candidate_recall_at_100_per_channel": 0.9415,
+    "bm25": {
+      "precision_at_5": 0.776,
+      "mrr_at_5": 0.9,
+      "ndcg_at_5": 0.6479098608181485
+    },
+    "postgresql": {
+      "precision_at_5": 0.832,
+      "mrr_at_5": 0.92,
+      "ndcg_at_5": 0.624038598783571
+    },
+    "zero_candidate_query_rate": 0.04,
+    "note": "Macro averages exclude queries without known positive judgments from recall/MRR/nDCG. P@5 counts missing positions as nonrelevant."
+  }
+}

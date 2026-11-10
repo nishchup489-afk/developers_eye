@@ -32,6 +32,8 @@ from backend.search.ranking.orchestrator import rank_candidates
 from backend.search.ranking.statistics import get_corpus_statistics
 from backend.search.ranking.types import CorpusStatistics
 from backend.search.service import _retrieve_candidates
+from backend.search.service import _metadata_for_candidates
+from backend.search.categories import categories_for_filter
 
 
 def _native_score(query: str, mode: SearchMode):
@@ -56,12 +58,14 @@ async def compare_one(
     k: int,
     text_corpus: CorpusStatistics | None = None,
     code_corpus: CorpusStatistics | None = None,
+    source: str | None = None,
 ) -> dict[str, object]:
     settings = SearchConfig()
     normalized = analyze_query(query, config=settings)
 
     # The service's real retrieval logic, limited to 100 per channel.
-    hits = await _retrieve_candidates(session, normalized, mode)
+    categories = categories_for_filter(source)
+    hits = await _retrieve_candidates(session, normalized, mode, categories)
     ids = [hit.document_id for hit in hits]
     if not ids:
         return {
@@ -90,6 +94,8 @@ async def compare_one(
         code_corpus=code_corpus,
         tokenizer_config=settings,
     )
+    bm25, _ = await _metadata_for_candidates(session, bm25, categories)
+    ids = [hit.document_id for hit in bm25]
 
     score = _native_score(normalized, mode)
     stmt = (
@@ -131,8 +137,8 @@ async def compare_one(
         for doc_id in bm25_ids
     ]
     top_n = min(k, len(ids))
-    overlap = len(set(pg_ids[:top_n]) & set(bm25_ids[:top_n])) / top_n
-    mean_shift = sum(abs(row["rank_shift"]) for row in documents) / len(documents)
+    overlap = len(set(pg_ids[:top_n]) & set(bm25_ids[:top_n])) / top_n if top_n else None
+    mean_shift = sum(abs(row["rank_shift"]) for row in documents) / len(documents) if documents else None
 
     return {
         "query": normalized,

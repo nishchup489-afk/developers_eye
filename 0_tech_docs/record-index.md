@@ -108,4 +108,5 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | EXP-0011 | crawler/worker-runtime | [Worker recovery from a real database restart, and crawler and indexer writers racing](crawler/worker-runtime/EXP-0011-database-outage-and-concurrent-writers.md) | done |
 | EXP-0012 | backend/ranking | [Evaluate judged candidate recall and BM25 relevance against PostgreSQL FTS](backend/ranking/EXP-0012-judged-lexical-relevance-evaluation.md) | running |
 | EXP-0013 | infra/performance-and-scaling | [Separate cold DF cost from retrieval expansion and page hydration](infra/performance-and-scaling/EXP-0013-read-only-search-stage-profiling.md) | done |
+| EXP-0014 | backend/ranking | [Agent-reviewed 25-query real-corpus BM25 and PostgreSQL baseline](backend/ranking/EXP-0014-agent-reviewed-25-query-baseline.md) | done |
 <!-- record-index:end -->

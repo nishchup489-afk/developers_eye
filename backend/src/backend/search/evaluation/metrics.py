@@ -74,9 +74,9 @@ def _metrics_for_order(
     ideal = sum((2**grade - 1) / log2(rank + 1)
                 for rank, grade in enumerate(ideal_grades, start=1))
     return {
-        "precision_at_10": hits / k,
-        "mrr_at_10": (1 / first_relevant) if first_relevant else (0.0 if positives else None),
-        "ndcg_at_10": dcg / ideal if ideal else None,
+        f"precision_at_{k}": hits / k,
+        f"mrr_at_{k}": (1 / first_relevant) if first_relevant else (0.0 if positives else None),
+        f"ndcg_at_{k}": dcg / ideal if ideal else None,
     }
 
 
@@ -92,8 +92,8 @@ def evaluate_query(
     per channel. ALL mode may therefore contain up to 200 unique candidates.
     It is not a full-corpus recall estimate or a global top-100 recall.
     """
-    if type(k) is not int or k != 10:
-        raise ValueError("this evaluation contract fixes k=10")
+    if type(k) is not int or k not in (5, 10):
+        raise ValueError("evaluation cutoff must be 5 or 10")
     grades, no_relevant = _validate_judgments(judgment_data)
     text_order = _ordered_urls(report, "bm25_rank")
     postgres_order = _ordered_urls(report, "postgres_rank")
@@ -117,7 +117,7 @@ def evaluate_query(
         "candidate_count": report["candidate_count"],
         "recall_budget": "100 per channel (up to 200 in ALL mode)",
         "judged_positive_count": len(positives),
-        "missing_top_10_judgments": missing,
+        f"missing_top_{k}_judgments": missing,
         "unjudged_count": sum(grade is None for grade in grades.values()),
     }
     if reason is not None:
@@ -133,14 +133,16 @@ def evaluate_query(
         "candidate_recall_at_100_per_channel": recall,
         "bm25": _metrics_for_order(text_order, positive_grades, positives=positives, k=k),
         "postgresql": _metrics_for_order(postgres_order, positive_grades, positives=positives, k=k),
-        "bm25_top_10": text_order[:k],
-        "postgresql_top_10": postgres_order[:k],
+        f"bm25_top_{k}": text_order[:k],
+        f"postgresql_top_{k}": postgres_order[:k],
     }
 
 
 def evaluate_suite(
     snapshot: Mapping[str, Any],
     qrels: Mapping[str, Any],
+    *,
+    k: int = RANK_CUTOFF,
 ) -> dict[str, Any]:
     reports = snapshot.get("reports")
     entries = qrels.get("queries")
@@ -153,13 +155,14 @@ def evaluate_suite(
     if len(ids) != len(set(ids)) or set(entries) != set(ids):
         raise ValueError("qrel query IDs must match unique snapshot query IDs exactly")
 
-    results = [evaluate_query(report, entries[report["query_id"]]) for report in reports]
+    results = [evaluate_query(report, entries[report["query_id"]], k=k) for report in reports]
     unfinished = [r["query_id"] for r in results if r["status"] != "complete"]
     result: dict[str, Any] = {
         "status": "incomplete" if unfinished else "complete",
         "corpus_id": snapshot.get("corpus_id"),
         "snapshot_created_utc": snapshot.get("created_utc"),
         "query_count": len(results),
+        "cutoff": k,
         "unjudged_query_ids": unfinished,
         "per_query": results,
         "aggregate": None,
@@ -177,10 +180,10 @@ def evaluate_suite(
 
     result["aggregate"] = {
         "candidate_recall_at_100_per_channel": avg("candidate_recall_at_100_per_channel"),
-        "bm25": {name: avg(name, "bm25") for name in ("precision_at_10", "mrr_at_10", "ndcg_at_10")},
-        "postgresql": {name: avg(name, "postgresql") for name in ("precision_at_10", "mrr_at_10", "ndcg_at_10")},
+        "bm25": {name: avg(name, "bm25") for name in (f"precision_at_{k}", f"mrr_at_{k}", f"ndcg_at_{k}")},
+        "postgresql": {name: avg(name, "postgresql") for name in (f"precision_at_{k}", f"mrr_at_{k}", f"ndcg_at_{k}")},
         "zero_candidate_query_rate": sum(r["candidate_count"] == 0 for r in results) / len(results),
-        "note": "Macro averages exclude queries without known positive judgments from recall/MRR/nDCG. P@10 counts missing positions as nonrelevant.",
+        "note": f"Macro averages exclude queries without known positive judgments from recall/MRR/nDCG. P@{k} counts missing positions as nonrelevant.",
     }
     return result
 

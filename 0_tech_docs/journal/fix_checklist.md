@@ -122,17 +122,17 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [ ] Verify the complete fresh-clone setup on a clean machine/container. (partial: API and web images build, db, migrate and API boot in Docker on Postgres 16)
 
 ## P2 · Search relevance and UX quality
-- [ ] Create a 20–30-query judged relevance dataset.
-- [ ] Include code identifiers, error messages, phrases, typos and multi-term queries.
-- [ ] Include source-restricted, version-specific and category-specific queries.
-- [ ] Record relevance of top-5/top-10 results and compare changes.
+- [x] Create a 20–30-query judged relevance dataset. (25 real-corpus queries, 328 editorial agent grades, frozen rankings and independent reference checks; assessor/blinding limits explicit, EXP-0014)
+- [x] Include code identifiers, error messages, phrases, typos and multi-term queries. (checklist-25 manifest; typo retrieval is an actual scored miss)
+- [x] Include source-restricted, version-specific and category-specific queries. (Docs/GitHub source restrictions and Python 3.12/3.14 queries; coverage limitations recorded)
+- [x] Record relevance of top-5/top-10 results and compare changes. (offline reproducible BM25/PostgreSQL P/MRR/nDCG reports at both cutoffs; unchanged weights, EXP-0014)
 - [x] Investigate Russian/Portuguese pages outranking relevant English pages. (historical diagnostics reviewed; current 100k FastAPI Depends query does not reproduce the old order, recorded in ADR-0053 and raw language-preference report)
 - [x] Define language preference without permanently hiding other languages. (ADR-0053: explicit stable preference preserves candidate identities and BM25 scores; real PostgreSQL regression)
 - [x] Group or distinguish versions, translations and canonical duplicates. (recognized locale/version URL families and exact content hashes labeled as related variants, no URLs hidden; bounded candidate scope)
 - [x] Review 832 FastAPI pages classified as other and their UI article mapping. (INC-0038: current snapshot has 52 other; 116 derived-category repairs identified, exact-host classification and idempotent repair implemented)
 - [x] Show trustworthy source, version, language and freshness metadata. (declared/path language, known URL versions, last observation date; no inferred publication dates)
 - [x] Improve code excerpts and highlight relevance in search snippets. (bounded query-relevant code selection; preserved code layout and escaped identifier/Unicode highlighting)
-- [ ] Evaluate ranking against a stored benchmark before adjusting weights.
+- [x] Evaluate ranking against a stored benchmark before adjusting weights. (EXP-0014: mixed results, no weight change adopted; human-reviewed holdout still required before tuning)
 
 ## P2 · Measured performance optimization
 - [x] Create repeatable search benchmarks under controlled ingestion. (bench_search.py; no ingestion running yet)

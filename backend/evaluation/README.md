@@ -1,7 +1,8 @@
 # Developer's Eye relevance lab
 
-**Status:** instrumentation and deterministic goldens exist; real-corpus judged
-results are pending. See
+**Status:** an [agent-reviewed 25-query real-corpus baseline](checklist-25/README.md)
+now includes frozen rankings, grades and top-5/top-10 results. Independent human
+validation remains pending. See
 [`EXP-0012`](../../0_tech_docs/backend/ranking/EXP-0012-judged-lexical-relevance-evaluation.md)
 for the experimental contract and metric definitions.
 

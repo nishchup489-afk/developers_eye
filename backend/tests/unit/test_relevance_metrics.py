@@ -125,3 +125,11 @@ def test_suite_never_reports_partial_averages_as_complete():
 def test_suite_query_mismatch_rejected():
     with pytest.raises(ValueError, match="query IDs"):
         evaluate_suite({"reports": [report()]}, {"queries": {"Q999": qrels(a=3)}})
+
+
+def test_top_five_precision_and_recall_use_the_declared_cutoff():
+    result = evaluate_suite({"reports": [report()]}, {"queries": {"Q001": qrels(a=3, b=2, c=1, d=0)}}, k=5)
+    assert result["cutoff"] == 5
+    assert result["aggregate"]["bm25"]["precision_at_5"] == pytest.approx(2 / 5)
+    assert result["aggregate"]["bm25"]["mrr_at_5"] == 1
+    assert result["aggregate"]["candidate_recall_at_100_per_channel"] == pytest.approx(2 / 3)

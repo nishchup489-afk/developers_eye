@@ -411,7 +411,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ### [backend/tests/unit/test_relevance_metrics.py](../../backend/tests/unit/test_relevance_metrics.py)
 
-9 cases
+10 cases
 
 - `test_exact_precision_mrr_ndcg_and_candidate_recall`: Known-relevant c is absent from retrieval and lowers recall.
 - `test_missing_top_ten_judgments_prevent_a_published_score`
@@ -422,6 +422,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_conflicting_no_relevant_flag_rejected`
 - `test_suite_never_reports_partial_averages_as_complete`
 - `test_suite_query_mismatch_rejected`
+- `test_top_five_precision_and_recall_use_the_declared_cutoff`
 
 ### [backend/tests/unit/test_relevance_metrics_base.py](../../backend/tests/unit/test_relevance_metrics_base.py)
 

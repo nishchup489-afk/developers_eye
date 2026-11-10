@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "description": "25-query frozen real-corpus benchmark. Judgments are editorial agent review, independent of scorer order; this is not a human user study. Source restrictions are part of each query.",
+  "queries": [
+    {
+      "query_id": "C001",
+      "query": "python async api",
+      "mode": "text",
+      "stratum": "multi-term",
+      "source": "docs"
+    },
+    {
+      "query_id": "C002",
+      "query": "asyncio.create_task",
+      "mode": "code",
+      "stratum": "identifier",
+      "source": "docs"
+    },
+    {
+      "query_id": "C003",
+      "query": "asyncio gather",
+      "mode": "all",
+      "stratum": "identifier",
+      "source": "docs"
+    },
+    {
+      "query_id": "C004",
+      "query": "FastAPI Depends",
+      "mode": "all",
+      "stratum": "source-restricted",
+      "source": "docs"
+    },
+    {
+      "query_id": "C005",
+      "query": "\"dependency injection\"",
+      "mode": "text",
+      "stratum": "phrase",
+      "source": "docs"
+    },
+    {
+      "query_id": "C006",
+      "query": "FastAPI lifespan events",
+      "mode": "text",
+      "stratum": "multi-term",
+      "source": "docs"
+    },
+    {
+      "query_id": "C007",
+      "query": "python 3.14",
+      "mode": "text",
+      "stratum": "version-specific",
+      "source": "docs"
+    },
+    {
+      "query_id": "C008",
+      "query": "\"TaskGroup\"",
+      "mode": "all",
+      "stratum": "identifier",
+      "source": "docs"
+    },
+    {
+      "query_id": "C009",
+      "query": "\"TypeError\"",
+      "mode": "code",
+      "stratum": "error-message",
+      "source": "docs"
+    },
+    {
+      "query_id": "C010",
+      "query": "\"ModuleNotFoundError\"",
+      "mode": "text",
+      "stratum": "error-message",
+      "source": "docs"
+    },
+    {
+      "query_id": "C011",
+      "query": "python list comprehension",
+      "mode": "text",
+      "stratum": "documentation",
+      "source": "docs"
+    },
+    {
+      "query_id": "C012",
+      "query": "\"context manager\"",
+      "mode": "text",
+      "stratum": "phrase",
+      "source": "docs"
+    },
+    {
+      "query_id": "C013",
+      "query": "pathlib Path",
+      "mode": "code",
+      "stratum": "identifier",
+      "source": "docs"
+    },
+    {
+      "query_id": "C014",
+      "query": "javascript Promise.all",
+      "mode": "code",
+      "stratum": "identifier",
+      "source": "docs"
+    },
+    {
+      "query_id": "C015",
+      "query": "javascript fetch",
+      "mode": "all",
+      "stratum": "multi-term",
+      "source": "docs"
+    },
+    {
+      "query_id": "C016",
+      "query": "react useEffect",
+      "mode": "all",
+      "stratum": "documentation",
+      "source": "docs"
+    },
+    {
+      "query_id": "C017",
+      "query": "\"Cache-Control\"",
+      "mode": "all",
+      "stratum": "phrase",
+      "source": "docs"
+    },
+    {
+      "query_id": "C018",
+      "query": "django QuerySet select_related",
+      "mode": "code",
+      "stratum": "identifier",
+      "source": "docs"
+    },
+    {
+      "query_id": "C019",
+      "query": "ruff FAST002",
+      "mode": "all",
+      "stratum": "documentation",
+      "source": "docs"
+    },
+    {
+      "query_id": "C020",
+      "query": "pyhton asyncio",
+      "mode": "all",
+      "stratum": "typo",
+      "source": "docs"
+    },
+    {
+      "query_id": "C021",
+      "query": "javascript optional chaining",
+      "mode": "text",
+      "stratum": "documentation",
+      "source": "docs"
+    },
+    {
+      "query_id": "C022",
+      "query": "python 3.12 asyncio",
+      "mode": "text",
+      "stratum": "version-specific",
+      "source": "docs"
+    },
+    {
+      "query_id": "C023",
+      "query": "FastAPI OAuth2",
+      "mode": "all",
+      "stratum": "documentation",
+      "source": "docs"
+    },
+    {
+      "query_id": "C024",
+      "query": "\"No module named\"",
+      "mode": "text",
+      "stratum": "error-message",
+      "source": "docs"
+    },
+    {
+      "query_id": "C025",
+      "query": "github actions",
+      "mode": "all",
+      "stratum": "category-specific",
+      "source": "github"
+    }
+  ]
+}

@@ -36,12 +36,12 @@ through their `tests/conftest.py`, so nothing has to be set in the terminal. See
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**97 test files, 779 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**97 test files, 780 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 38 | 336 | `cd backend && poetry run pytest` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 38 | 337 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 14 | 109 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 34 | 334 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 11 | 0 | npm scripts in `frontend/package.json` (see below) |
@@ -94,7 +94,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [unit/test_relavance_matrics/recall@100.py](../backend/tests/unit/test_relavance_matrics/recall@100.py) | helper |  |  |
 | [unit/test_relavance_matrics/relavance_runner.py](../backend/tests/unit/test_relavance_matrics/relavance_runner.py) | helper |  |  |
 | [unit/test_relevance_cli.py](../backend/tests/unit/test_relevance_cli.py) | tests | 3 |  |
-| [unit/test_relevance_metrics.py](../backend/tests/unit/test_relevance_metrics.py) | tests | 9 |  |
+| [unit/test_relevance_metrics.py](../backend/tests/unit/test_relevance_metrics.py) | tests | 10 |  |
 | [unit/test_relevance_metrics_base.py](../backend/tests/unit/test_relevance_metrics_base.py) | tests | 7 |  |
 | [unit/test_result_presentation.py](../backend/tests/unit/test_result_presentation.py) | tests | 3 |  |
 | [unit/test_search_pipeline.py](../backend/tests/unit/test_search_pipeline.py) | tests | 10 | [test_case.md](../backend/tests/test_case.md#search-service-pipeline) |
