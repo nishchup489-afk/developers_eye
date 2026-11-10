@@ -39,9 +39,11 @@ def main():
         def run(command, **kwargs):
             return subprocess.run(command, cwd=ROOT, env=env, check=True, text=True, **kwargs)
 
-        rendered = json.loads(run(["docker", "compose", "--env-file", str(env_file), "-f",
+        rendered = json.loads(run(["docker", "compose", "-p", project, "--env-file", str(env_file), "-f",
                                   "deploy/docker-compose.yml", "config", "--format", "json"], capture_output=True).stdout)
         services = rendered["services"]
+        assert all(v.get("name", "").startswith(project + "_") for v in rendered.get("volumes", {}).values())
+        assert all(v.get("name", "").startswith(project + "_") for v in rendered.get("networks", {}).values())
         assert "web" not in services and "indexer-1" not in services
         assert services["crawler"]["deploy"]["replicas"] == 1
         assert services["indexer-0"]["environment"]["INDEXER_SHARD_COUNT"] == "1"
