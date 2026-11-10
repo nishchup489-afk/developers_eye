@@ -26,10 +26,11 @@ The script needs ``rich``. Both Poetry projects already install it, so if the
 Python you start it with lacks it, the script re-runs itself with the
 crawler's or backend's virtualenv.
 
-Test database: when ``TEST_DATABASE_URL`` is not already set, ``TEST_*``
-variables are read from ``backend/.env`` (``--env-file`` / ``--no-env-file``).
-Nothing else from that file is loaded, so the suites never see the
-production ``DATABASE_URL`` through this script.
+Test database: put ``TEST_DATABASE_URL`` in the repo-root ``.env.local``
+(copy ``.env.local.example``). The pytest suites load it themselves through
+their ``tests/conftest.py``; this script reads the same file for its database
+checks. Only test keys (``TEST_*``, ``*_TEST_*``) are read, and a value set in
+the shell wins. ``--env-file`` points at another file, ``--no-env-file`` skips it.
 
 Exit code: 0 when every suite that ran passed, 1 otherwise, 2 for bad usage.
 """
@@ -395,7 +396,7 @@ def db_checks(url: str | None, source: str, py: PyInfo | None) -> list[Check]:
                 "database",
                 "TEST_DATABASE_URL",
                 "warn",
-                "not set: PostgreSQL tests will skip or fail. Set it in backend/.env or the shell.",
+                "not set: PostgreSQL tests will skip or fail. Put it in .env.local (see .env.local.example).",
             )
         )
         return checks
@@ -1039,7 +1040,7 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
         "--python", metavar="PATH", help="Python to run the pytest suites with (default: each project's venv)"
     )
     parser.add_argument(
-        "--env-file", default="backend/.env", help="read TEST_* variables from this file (default: backend/.env)"
+        "--env-file", default=".env.local", help="read test variables from this file (default: .env.local)"
     )
     parser.add_argument("--no-env-file", action="store_true", help="do not read any env file")
     parser.add_argument("--no-env-checks", action="store_true", help="skip the environment section")
@@ -1105,15 +1106,19 @@ def main(argv: list[str] | None = None) -> int:
     started_at = dt.datetime.now()
     render_header(console, started_at, selected)
 
-    # Test database settings: shell first, then TEST_* keys from the env file.
+    # Test settings: shell first, then test keys from .env.local (same rules as tests/conftest.py).
     extra_env: dict[str, str] = {}
     db_source = "shell"
-    if not args.no_env_file and not os.environ.get("TEST_DATABASE_URL"):
+    if not args.no_env_file:
         env_path = (ROOT / args.env_file) if not Path(args.env_file).is_absolute() else Path(args.env_file)
-        file_values = {k: v for k, v in read_env_file(env_path).items() if k.startswith("TEST_") and v}
+        file_values = {
+            k: v for k, v in read_env_file(env_path).items() if (k.startswith("TEST_") or "_TEST_" in k) and v
+        }
         extra_env.update({k: v for k, v in file_values.items() if k not in os.environ})
-        if "TEST_DATABASE_URL" in file_values:
+        if "TEST_DATABASE_URL" in extra_env:
             db_source = str(env_path.relative_to(ROOT)) if env_path.is_relative_to(ROOT) else str(env_path)
+    elif not os.environ.get("TEST_DATABASE_URL"):
+        db_source = "nowhere"
     db_url = os.environ.get("TEST_DATABASE_URL") or extra_env.get("TEST_DATABASE_URL")
     env = build_env(extra_env)
 

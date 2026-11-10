@@ -28,7 +28,9 @@ below with its own runner and prints one diagnostics report (environment and
 test-database checks, per-suite counts, skip reasons, slowest tests, grouped
 failures). `--with-build` adds `next build` and the frontend tests that need it,
 `--only backend indexer` narrows the run, `--save` writes HTML, text and JSON
-copies to `tests/reports/` (git-ignored). See
+copies to `tests/reports/` (git-ignored). The test database URL lives in the
+repo-root `.env.local` (copy `.env.local.example`); both pytest projects load it
+through their `tests/conftest.py`, so nothing has to be set in the terminal. See
 [ADR-0051](../0_tech_docs/infra/local-dev-and-testing/ADR-0051-one-runner-over-native-suite-runners.md).
 
 Everything between the markers is generated. Write notes above them.
@@ -58,6 +60,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [api/test_search.py](../backend/tests/api/test_search.py) | tests | 8 | [test_case.md](../backend/tests/test_case.md#search-http-api) |
 | [api/test_search_limits.py](../backend/tests/api/test_search_limits.py) | tests | 22 | [test_case.md](../backend/tests/test_case.md#public-search-limits-adr-0046) |
 | [api/test_search_route.py](../backend/tests/api/test_search_route.py) | tests | 4 | [test_case.md](../backend/tests/test_case.md#search-http-api) |
+| [conftest.py](../backend/tests/conftest.py) | fixtures |  |  |
 | [golden/test_bm25_golden.py](../backend/tests/golden/test_bm25_golden.py) | tests | 8 |  |
 | [integration/test_ai_overview.py](../backend/tests/integration/test_ai_overview.py) | tests | 5 |  |
 | [integration/test_code.py](../backend/tests/integration/test_code.py) | tests | 17 | [test_case.md](../backend/tests/test_case.md#code-retrieval) |
@@ -126,6 +129,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [benchmarks/bench_indexer.py](../crawler/tests/benchmarks/bench_indexer.py) | helper |  |  |
 | [benchmarks/bench_search.py](../crawler/tests/benchmarks/bench_search.py) | helper |  |  |
 | [benchmarks/fake_web_load.py](../crawler/tests/benchmarks/fake_web_load.py) | helper |  |  |
+| [conftest.py](../crawler/tests/conftest.py) | fixtures |  | [test_case.md](../crawler/tests/test_case.md#conftestpy) |
 | [crawler/fetcher/conftest.py](../crawler/tests/crawler/fetcher/conftest.py) | fixtures |  | [test_case.md](../crawler/tests/test_case.md#conftestpy) |
 | [crawler/fetcher/test_fetcher.py](../crawler/tests/crawler/fetcher/test_fetcher.py) | tests | 33 | [test_case.md](../crawler/tests/test_case.md#test_fetcherpy) |
 | [crawler/frontier/test_enqueue_target.py](../crawler/tests/crawler/frontier/test_enqueue_target.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_enqueue_targetpy) |
