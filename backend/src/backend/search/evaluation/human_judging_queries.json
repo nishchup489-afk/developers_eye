@@ -1,0 +1,294 @@
+{
+  "schema_version": 1,
+  "description": "Human judging set (ADR-0057). Import it on the admin Search quality page, capture pools on the frozen corpus, then grade every pooled URL 0-3 without looking at either ranker's order. Agent grades from EXP-0014 are deliberately not imported.",
+  "queries": [
+    {
+      "query_id": "H001",
+      "query": "python async api",
+      "mode": "text",
+      "stratum": "multi-term",
+      "source": "docs",
+      "origin": "checklist-25 C001"
+    },
+    {
+      "query_id": "H002",
+      "query": "asyncio.create_task",
+      "mode": "code",
+      "stratum": "identifier",
+      "source": "docs",
+      "origin": "checklist-25 C002"
+    },
+    {
+      "query_id": "H003",
+      "query": "asyncio gather",
+      "mode": "all",
+      "stratum": "identifier",
+      "source": "docs",
+      "origin": "checklist-25 C003"
+    },
+    {
+      "query_id": "H004",
+      "query": "FastAPI Depends",
+      "mode": "all",
+      "stratum": "source-restricted",
+      "source": "docs",
+      "origin": "checklist-25 C004"
+    },
+    {
+      "query_id": "H005",
+      "query": "\"dependency injection\"",
+      "mode": "text",
+      "stratum": "phrase",
+      "source": "docs",
+      "origin": "checklist-25 C005"
+    },
+    {
+      "query_id": "H006",
+      "query": "FastAPI lifespan events",
+      "mode": "text",
+      "stratum": "multi-term",
+      "source": "docs",
+      "origin": "checklist-25 C006"
+    },
+    {
+      "query_id": "H007",
+      "query": "python 3.14",
+      "mode": "text",
+      "stratum": "version-specific",
+      "source": "docs",
+      "origin": "checklist-25 C007"
+    },
+    {
+      "query_id": "H008",
+      "query": "\"TaskGroup\"",
+      "mode": "all",
+      "stratum": "identifier",
+      "source": "docs",
+      "origin": "checklist-25 C008"
+    },
+    {
+      "query_id": "H009",
+      "query": "\"TypeError\"",
+      "mode": "code",
+      "stratum": "error-message",
+      "source": "docs",
+      "origin": "checklist-25 C009"
+    },
+    {
+      "query_id": "H010",
+      "query": "\"ModuleNotFoundError\"",
+      "mode": "text",
+      "stratum": "error-message",
+      "source": "docs",
+      "origin": "checklist-25 C010"
+    },
+    {
+      "query_id": "H011",
+      "query": "python list comprehension",
+      "mode": "text",
+      "stratum": "documentation",
+      "source": "docs",
+      "origin": "checklist-25 C011"
+    },
+    {
+      "query_id": "H012",
+      "query": "\"context manager\"",
+      "mode": "text",
+      "stratum": "phrase",
+      "source": "docs",
+      "origin": "checklist-25 C012"
+    },
+    {
+      "query_id": "H013",
+      "query": "pathlib Path",
+      "mode": "code",
+      "stratum": "identifier",
+      "source": "docs",
+      "origin": "checklist-25 C013"
+    },
+    {
+      "query_id": "H014",
+      "query": "javascript Promise.all",
+      "mode": "code",
+      "stratum": "identifier",
+      "source": "docs",
+      "origin": "checklist-25 C014"
+    },
+    {
+      "query_id": "H015",
+      "query": "javascript fetch",
+      "mode": "all",
+      "stratum": "multi-term",
+      "source": "docs",
+      "origin": "checklist-25 C015"
+    },
+    {
+      "query_id": "H016",
+      "query": "react useEffect",
+      "mode": "all",
+      "stratum": "documentation",
+      "source": "docs",
+      "origin": "checklist-25 C016"
+    },
+    {
+      "query_id": "H017",
+      "query": "\"Cache-Control\"",
+      "mode": "all",
+      "stratum": "phrase",
+      "source": "docs",
+      "origin": "checklist-25 C017"
+    },
+    {
+      "query_id": "H018",
+      "query": "django QuerySet select_related",
+      "mode": "code",
+      "stratum": "identifier",
+      "source": "docs",
+      "origin": "checklist-25 C018"
+    },
+    {
+      "query_id": "H019",
+      "query": "ruff FAST002",
+      "mode": "all",
+      "stratum": "documentation",
+      "source": "docs",
+      "origin": "checklist-25 C019"
+    },
+    {
+      "query_id": "H020",
+      "query": "pyhton asyncio",
+      "mode": "all",
+      "stratum": "typo",
+      "source": "docs",
+      "origin": "checklist-25 C020"
+    },
+    {
+      "query_id": "H021",
+      "query": "javascript optional chaining",
+      "mode": "text",
+      "stratum": "documentation",
+      "source": "docs",
+      "origin": "checklist-25 C021"
+    },
+    {
+      "query_id": "H022",
+      "query": "python 3.12 asyncio",
+      "mode": "text",
+      "stratum": "version-specific",
+      "source": "docs",
+      "origin": "checklist-25 C022"
+    },
+    {
+      "query_id": "H023",
+      "query": "FastAPI OAuth2",
+      "mode": "all",
+      "stratum": "documentation",
+      "source": "docs",
+      "origin": "checklist-25 C023"
+    },
+    {
+      "query_id": "H024",
+      "query": "\"No module named\"",
+      "mode": "text",
+      "stratum": "error-message",
+      "source": "docs",
+      "origin": "checklist-25 C024"
+    },
+    {
+      "query_id": "H025",
+      "query": "github actions",
+      "mode": "all",
+      "stratum": "category-specific",
+      "source": "github",
+      "origin": "checklist-25 C025"
+    },
+    {
+      "query_id": "H026",
+      "query": "javascript event loop",
+      "mode": "text",
+      "stratum": "documentation",
+      "source": null,
+      "origin": "EXP-0004 100k recall miss or edge case"
+    },
+    {
+      "query_id": "H027",
+      "query": "javascript Object.entries",
+      "mode": "code",
+      "stratum": "identifier",
+      "source": null,
+      "origin": "EXP-0004 100k recall miss or edge case"
+    },
+    {
+      "query_id": "H028",
+      "query": "HTTP 404",
+      "mode": "code",
+      "stratum": "error-message",
+      "source": null,
+      "origin": "EXP-0004 100k recall miss or edge case"
+    },
+    {
+      "query_id": "H029",
+      "query": "HTTP 500 internal server error",
+      "mode": "text",
+      "stratum": "error-message",
+      "source": null,
+      "origin": "EXP-0004 100k recall miss or edge case"
+    },
+    {
+      "query_id": "H030",
+      "query": "HTTP caching Cache-Control",
+      "mode": "all",
+      "stratum": "multi-term",
+      "source": null,
+      "origin": "EXP-0004 100k recall miss or edge case"
+    },
+    {
+      "query_id": "H031",
+      "query": "Rust lifetimes",
+      "mode": "text",
+      "stratum": "documentation",
+      "source": null,
+      "origin": "EXP-0004 100k recall miss or edge case"
+    },
+    {
+      "query_id": "H032",
+      "query": "Rust pattern matching",
+      "mode": "text",
+      "stratum": "documentation",
+      "source": null,
+      "origin": "EXP-0004 100k recall miss or edge case"
+    },
+    {
+      "query_id": "H033",
+      "query": "asyncio Semaphore",
+      "mode": "code",
+      "stratum": "identifier",
+      "source": null,
+      "origin": "EXP-0004 100k recall miss or edge case"
+    },
+    {
+      "query_id": "H034",
+      "query": "asyncio TaskGroup",
+      "mode": "code",
+      "stratum": "identifier",
+      "source": null,
+      "origin": "EXP-0004 100k recall miss or edge case"
+    },
+    {
+      "query_id": "H035",
+      "query": "django cache framework",
+      "mode": "text",
+      "stratum": "documentation",
+      "source": null,
+      "origin": "EXP-0004 100k recall miss or edge case"
+    },
+    {
+      "query_id": "H036",
+      "query": "fastapi dependecy injection",
+      "mode": "text",
+      "stratum": "typo",
+      "source": null,
+      "origin": "EXP-0004 100k recall miss or edge case"
+    }
+  ]
+}
