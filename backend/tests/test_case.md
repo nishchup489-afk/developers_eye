@@ -531,7 +531,9 @@ $env:PYTHONPATH = "src"
 # Suites in backend/tests (no database needed)
 poetry run pytest tests -v
 
-# Retrieval suites (integration cases need a dedicated test database)
+# Retrieval suites (integration cases need a dedicated test database).
+# TEST_DATABASE_URL is read from the repo-root .env.local; the line below is only
+# needed to override it for one terminal.
 $env:TEST_DATABASE_URL = "postgresql+asyncpg://YOUR_USERNAME:YOUR_PASSWORD@localhost:5432/developers_eye_test"
 poetry run pytest tests/integration -v --tb=short
 ```

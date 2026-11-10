@@ -43,7 +43,10 @@ ran, which skipped and which need PostgreSQL.
   are judged by exit code; their `PASS ...` lines are counted as passed checks.
 - Each pytest suite uses its project's own interpreter (in-project `.venv`, then `poetry env info`, then the
   current Python; `--python` overrides). `PYTHONPATH` gets both `src/` folders, as the per-package docs say.
-- Only `TEST_*` keys are read from `backend/.env`, and only when `TEST_DATABASE_URL` is not already set.
+- Test settings live in one git-ignored file, the repo-root `.env.local` (template `.env.local.example`).
+  `backend.core.local_env.load_local_env` reads it from `backend/tests/conftest.py` and
+  `crawler/tests/conftest.py`, so plain `pytest` runs get it too; the runner reads the same file for its
+  database checks. Only test keys (`TEST_*`, `*_TEST_*`) are read, and a shell variable wins.
 - Environment checks: toolchain versions, git state, free disk, `node_modules`, ports 3181/3182, and for the
   test DB: name contains "test", port reachable, login, server version, `pg_trgm`, table count, connections.
 - Report: environment table, suite table, skip reasons, slowest tests, failures grouped by shared cause,
@@ -73,7 +76,7 @@ results back. JUnit XML is pytest's stable machine format; `rich` is already ins
 ## Invariants
 - The runner never edits test files or the test DB itself; it only runs suites.
 - Suites run sequentially and from their own folder.
-- Only `TEST_*` variables are taken from `backend/.env`.
+- Only test keys (`TEST_*`, `*_TEST_*`) are taken from the repo-root `.env.local`; never `DATABASE_URL`.
 - Exit code is non-zero when any suite that ran failed or errored.
 
 ## Evidence
@@ -89,4 +92,4 @@ results back. JUnit XML is pytest's stable machine format; `rich` is already ins
 ## Rules for future changes
 - Add a new suite to `SUITES` in `scripts/run_all_tests.py` and to `frontend/package.json` or `testpaths`, not one or the other.
 - Do not run suites in parallel without a per-suite test database.
-- Do not load non-`TEST_*` variables from env files in the runner.
+- Do not load non-test variables from `.env.local` in the runner or the conftests.

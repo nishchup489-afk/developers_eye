@@ -36,6 +36,8 @@ The PostgreSQL pipeline cases skip when `TEST_DATABASE_URL` is absent. A skipped
 
 ## 4. Verify real PostgreSQL writes
 
+`TEST_DATABASE_URL` is read automatically from the repo-root `.env.local` (copy `.env.local.example`), so normal test runs need no `$env:` line. The commands below are only for running migrations against the test database, where `DATABASE_URL` must point at it too.
+
 Create a separate test database, then set both variables for that test process:
 
 ```powershell
