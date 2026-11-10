@@ -38,6 +38,7 @@ from backend.search.query_selector.planner import SearchMode
 from backend.search.service import search_documents
 from backend.search.retrieval.fuzzy.correction import suggest_query_correction
 from backend.search.telemetry import telemetry
+from backend.search.trace import stage_summary, started_trace
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["search"])
@@ -132,6 +133,16 @@ async def search(
             )
 
     started = perf_counter()
+    trace = started_trace()
+
+    def record_slow(outcome: str, result_count: int | None = None) -> None:
+        stages, stopped_in = stage_summary(trace)
+        telemetry.record_slow(
+            query=normalized, mode=mode.value, category=source, page=page,
+            outcome=outcome, elapsed_ms=(perf_counter() - started) * 1000, result_count=result_count,
+            stages=stages, stopped_in=None if outcome == "successful" else stopped_in,
+        )
+
     try:
         async with asyncio.timeout(TOTAL_DEADLINE_SECONDS):
             results = await run_unless_disconnected(request, run())
@@ -140,6 +151,7 @@ async def search(
         return Response(status_code=CLIENT_CLOSED_REQUEST)
     except TimeoutError as exc:
         telemetry.record("timed_out")
+        record_slow("timed_out")
         raise HTTPException(504, "Search timed out") from exc
     except (ValueError, QueryValidationError) as exc:
         telemetry.record("invalid")
@@ -147,6 +159,7 @@ async def search(
     except (SQLAlchemyError, *DATABASE_UNAVAILABLE_ERRORS) as exc:
         if _is_database_timeout(exc):
             telemetry.record("timed_out")
+            record_slow("timed_out")
             raise HTTPException(504, "Search timed out") from exc
         telemetry.record("database_errors")
         logger.exception("Search database failure")
@@ -163,6 +176,7 @@ async def search(
         _in_flight.release()
 
     telemetry.record("successful", (perf_counter() - started) * 1000)
+    record_slow("successful", len(results))
     # ADR-0049: backend issues evidence; overview generation is a separate request.
     return SearchResponseOut(query=normalized, results=results, overview_token=sign_context(normalized, results))
 

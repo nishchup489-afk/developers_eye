@@ -4,6 +4,7 @@ from .documents import Document
 from .robot_cache import RobotsCache
 from .search_index import SearchIndex
 from .search_minute import SearchMinute
+from .search_quality import RelevanceJudgment, RelevanceQuery, RelevanceRun, SearchSlowQuery
 from .ai_overview import OverviewBudget, OverviewCache
 from .search_terms import SearchTerm, VocabularyChange
 from .source import Source

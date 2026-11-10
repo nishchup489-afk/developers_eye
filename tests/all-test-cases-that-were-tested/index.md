@@ -65,6 +65,15 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_deadline_waits_for_cancelled_work_to_unwind`: A deadline that fires mid-search still lets the search close its session first.
 - `test_disconnect_raises_client_disconnected`
 
+### [backend/tests/api/test_search_quality_routes.py](../../backend/tests/api/test_search_quality_routes.py)
+
+4 cases
+
+- `test_routes_need_the_report_key`
+- `test_write_errors_map_to_422_and_missing_queries_to_404`
+- `test_judge_name_is_passed_through_and_truncated`
+- `test_timed_out_search_is_kept_with_the_stage_it_stopped_in`
+
 ### [backend/tests/api/test_search_route.py](../../backend/tests/api/test_search_route.py)
 
 4 cases · write-up: [test_case.md](../../backend/tests/test_case.md#search-http-api)
@@ -218,6 +227,17 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_real_statement_timeout_is_504`
 - `test_total_deadline_stops_the_postgres_query`
 - `test_client_disconnect_stops_the_postgres_query`
+
+### [backend/tests/integration/test_search_quality.py](../../backend/tests/integration/test_search_quality.py)
+
+6 cases
+
+- `test_slow_report_groups_repeats_and_shows_where_timeouts_stopped`
+- `test_telemetry_flush_writes_slow_rows_once`
+- `test_judging_workflow_scores_only_when_every_pooled_url_is_graded`
+- `test_judging_writes_are_validated`
+- `test_import_human_set_is_idempotent_and_keeps_existing_queries`
+- `test_shipped_human_set_is_well_formed`
 
 ### [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 
@@ -484,6 +504,14 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_expected_revision_finds_the_newest_migration`
 - `test_route_records_each_failure`
 - `test_route_records_success_with_latency`
+
+### [backend/tests/unit/test_search_trace.py](../../backend/tests/unit/test_search_trace.py)
+
+3 cases
+
+- `test_stage_is_a_no_op_outside_a_request`
+- `test_trace_records_finished_stages_and_where_a_search_stopped`
+- `test_only_slow_or_timed_out_searches_keep_query_text`
 
 ### [backend/tests/unit/test_snippet_bounds.py](../../backend/tests/unit/test_snippet_bounds.py)
 
@@ -1299,11 +1327,13 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 These test files have no matching heading in a `test_case.md`.
 
 - [backend/tests/api/test_ai_overview.py](../../backend/tests/api/test_ai_overview.py)
+- [backend/tests/api/test_search_quality_routes.py](../../backend/tests/api/test_search_quality_routes.py)
 - [backend/tests/golden/test_bm25_golden.py](../../backend/tests/golden/test_bm25_golden.py)
 - [backend/tests/integration/test_ai_overview.py](../../backend/tests/integration/test_ai_overview.py)
 - [backend/tests/integration/test_corpus_mutation_search.py](../../backend/tests/integration/test_corpus_mutation_search.py)
 - [backend/tests/integration/test_migrations.py](../../backend/tests/integration/test_migrations.py)
 - [backend/tests/integration/test_ranking_developer_queries.py](../../backend/tests/integration/test_ranking_developer_queries.py)
+- [backend/tests/integration/test_search_quality.py](../../backend/tests/integration/test_search_quality.py)
 - [backend/tests/integration/test_search_reporting.py](../../backend/tests/integration/test_search_reporting.py)
 - [backend/tests/integration/test_title_retrieval.py](../../backend/tests/integration/test_title_retrieval.py)
 - [backend/tests/unit/test_ai_overview.py](../../backend/tests/unit/test_ai_overview.py)
@@ -1315,6 +1345,7 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/unit/test_relevance_metrics_base.py](../../backend/tests/unit/test_relevance_metrics_base.py)
 - [backend/tests/unit/test_result_presentation.py](../../backend/tests/unit/test_result_presentation.py)
 - [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
+- [backend/tests/unit/test_search_trace.py](../../backend/tests/unit/test_search_trace.py)
 - [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
 - [crawler/tests/crawler/scheduler/test_legacy_contracts.py](../../crawler/tests/crawler/scheduler/test_legacy_contracts.py)
 - [crawler/tests/crawler/worker/test_benchmark_safety.py](../../crawler/tests/crawler/worker/test_benchmark_safety.py)

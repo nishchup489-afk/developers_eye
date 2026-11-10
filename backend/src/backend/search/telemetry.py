@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from collections import deque
 import os
 import socket
 from dataclasses import dataclass, field
@@ -26,6 +27,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from backend.core.config import settings
 from backend.db.session import SessionFactory
 from backend.models.search_minute import SearchMinute
+from backend.models.search_quality import SearchSlowQuery
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +38,10 @@ FLUSH_SECONDS = 15.0
 FLUSH_TIMEOUT_SECONDS = 10.0
 PRUNE_SECONDS = 3600.0
 MAX_MINUTES_IN_MEMORY = 120
+# ADR-0057: only searches at or over this many ms, or timed out, keep their query text.
+SLOW_QUERY_MS = int(os.environ.get("SEARCH_SLOW_QUERY_MS", "1000"))
+MAX_SLOW_IN_MEMORY = 200
+MAX_SLOW_QUERY_CHARS = 256
 
 
 def _new_buckets() -> list[int]:
@@ -65,6 +71,25 @@ class SearchTelemetry:
         self._minutes: dict[datetime, MinuteCounts] = {}
         self._failing = False
         self._next_prune = 0.0
+        self._slow: deque[dict] = deque(maxlen=MAX_SLOW_IN_MEMORY)
+
+    def record_slow(
+        self, *, query: str, mode: str, category: str | None, page: int, outcome: str,
+        elapsed_ms: float, result_count: int | None, stages: dict[str, float], stopped_in: str | None,
+    ) -> bool:
+        """Keep one slow or timed-out search for the admin slow-query list."""
+        if outcome != "timed_out" and elapsed_ms < SLOW_QUERY_MS:
+            return False
+        self._slow.append(dict(
+            recorded_at=datetime.now(timezone.utc), process=self.process,
+            query=query[:MAX_SLOW_QUERY_CHARS], mode=mode, category=category, page=page, outcome=outcome,
+            elapsed_ms=round(elapsed_ms), result_count=result_count, stages=dict(stages), stopped_in=stopped_in,
+        ))
+        return True
+
+    def slow_rows(self) -> list[dict]:
+        """Slow searches not yet written, newest last."""
+        return list(self._slow)
 
     def record(self, outcome: str, latency_ms: float | None = None) -> None:
         now = _current_minute()
@@ -90,7 +115,8 @@ class SearchTelemetry:
     async def flush(self, factory=SessionFactory) -> None:
         dirty = {at: minute for at, minute in self._minutes.items() if minute.dirty}
         prune = monotonic() >= self._next_prune
-        if not dirty and not prune:
+        slow = list(self._slow)
+        if not dirty and not prune and not slow:
             return
         rows = [self._row(at, minute) for at, minute in dirty.items()]
         for minute in dirty.values():
@@ -103,13 +129,20 @@ class SearchTelemetry:
                     await session.execute(statement.on_conflict_do_update(
                         index_elements=["minute", "process"],
                         set_={name: statement.excluded[name] for name in columns}))
+                if slow:
+                    await session.execute(insert(SearchSlowQuery).values(slow))
                 if prune:
                     cutoff = datetime.now(timezone.utc) - timedelta(days=settings.admin_event_retention_days)
                     await session.execute(delete(SearchMinute).where(SearchMinute.minute < cutoff))
+                    await session.execute(delete(SearchSlowQuery).where(SearchSlowQuery.recorded_at < cutoff))
         except BaseException:
             for minute in dirty.values():
                 minute.dirty = True
             raise
+        for row in slow:
+            # Rows recorded during the write stay queued for the next flush.
+            if self._slow and self._slow[0] is row:
+                self._slow.popleft()
         if prune:
             self._next_prune = monotonic() + PRUNE_SECONDS
         # The current minute stays: later searches add to the same row.

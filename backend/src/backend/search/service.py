@@ -39,6 +39,7 @@ from backend.search.retrieval.fts import search_text
 from backend.search.retrieval.titles import TITLE_CANDIDATES, search_titles
 from backend.search.snippets.snippets import generate_snippet
 from backend.search.snippets.code import code_excerpt
+from backend.search.trace import stage
 from backend.search.types import RankedHit, RetrievalHit
 from backend.search.presentation import prefer_language, result_identity, variant_counts, LANGUAGE_TAG
 
@@ -203,7 +204,8 @@ async def search_documents(
     normalized = analyze_query(query, config=settings)
     plan = select_query_plan(normalized, mode=mode)
     categories = categories_for_filter(category)
-    candidates = await _retrieve_candidates(session, plan.query, plan.mode, categories)
+    with stage("retrieval"):
+        candidates = await _retrieve_candidates(session, plan.query, plan.mode, categories)
     if not candidates:
         return []
 
@@ -211,17 +213,19 @@ async def search_documents(
     if snapshot is None:
         raise RuntimeError("BM25 corpus statistics not initialized; run app lifespan")
 
-    ranked = await rank_candidates(
-        session,
-        plan.query,
-        candidates,
-        mode=plan.mode,
-        text_corpus=snapshot.text,
-        code_corpus=snapshot.code,
-        tokenizer_config=settings,
-        df_cache=_df_cache,
-    )
-    eligible, metadata = await _metadata_for_candidates(session, ranked, categories)
+    with stage("ranking"):
+        ranked = await rank_candidates(
+            session,
+            plan.query,
+            candidates,
+            mode=plan.mode,
+            text_corpus=snapshot.text,
+            code_corpus=snapshot.code,
+            tokenizer_config=settings,
+            df_cache=_df_cache,
+        )
+    with stage("metadata"):
+        eligible, metadata = await _metadata_for_candidates(session, ranked, categories)
     eligible = prefer_language(eligible, metadata, language)
     variants_by_id = variant_counts(eligible, metadata)
     page_result = paginate_hits(eligible, page=page, limit=limit, config=settings)
@@ -235,10 +239,11 @@ async def search_documents(
         Document.metadata_["code_blocks"].label("code_blocks"),
         Document.last_seen_at,
     ).where(Document.id.in_(ids), Document.is_available.is_(True))
-    bodies = {
-        int(row.id): row
-        for row in (await session.execute(body_query)).all()
-    }
+    with stage("snippets"):
+        bodies = {
+            int(row.id): row
+            for row in (await session.execute(body_query)).all()
+        }
 
     terms = _snippet_terms(plan.query)
     results: list[SearchResultOut] = []
