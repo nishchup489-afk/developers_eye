@@ -11,8 +11,8 @@ informs:
 - ADR-0038
 code:
 - backend/src/backend/search/evaluation/metrics.py
-- backend/scripts/evaluate_relevance.py
-- backend/scripts/compare_rankings.py
+- scripts/evaluate_relevance.py
+- scripts/compare_rankings.py
 - backend/evaluation/queries.json
 - backend/tests/unit/test_relevance_metrics.py
 - backend/tests/unit/test_ranking_goldens.py
@@ -112,7 +112,7 @@ From `backend/` (set `DATABASE_URL` for the frozen local PostgreSQL corpus):
 poetry run pytest tests/unit/test_relevance_metrics.py tests/unit/test_ranking_goldens.py -v
 poetry run pytest tests/integration/test_ranking_developer_queries.py -v -rs
 
-poetry run python scripts/evaluate_relevance.py collect \
+poetry run python ../scripts/evaluate_relevance.py collect \
   --corpus-id <frozen-database-id> \
   --queries evaluation/queries.json \
   --snapshot reports/exp-0004-snapshot.json \
@@ -121,7 +121,7 @@ poetry run python scripts/evaluate_relevance.py collect \
 # Open reports/exp-0004-qrels.json, manually fill null grades (0..3).
 # Add independently verified relevant URLs that may be absent from the pool.
 # For genuine zero-relevant queries, set no_relevant_documents=true.
-poetry run python scripts/evaluate_relevance.py score \
+poetry run python ../scripts/evaluate_relevance.py score \
   --snapshot reports/exp-0004-snapshot.json \
   --qrels reports/exp-0004-qrels.json \
   --output reports/exp-0004-results.json

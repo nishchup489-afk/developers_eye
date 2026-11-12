@@ -21,7 +21,7 @@ code:
   - backend/src/backend/search/ranking/statistics.py
   - backend/src/backend/search/ranking/orchestrator.py
   - backend/src/backend/search/tokenizer.py
-  - backend/scripts/search_relevance_diagnostics/diagnose_relevance.py
+  - scripts/search_relevance_diagnostics/diagnose_relevance.py
   - backend/tests/golden/test_bm25_golden.py
 ---
 

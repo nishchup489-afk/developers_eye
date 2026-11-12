@@ -4,7 +4,7 @@ Fifteen engineering trade-offs for Developer's Eye, each measured on the real
 local corpus. How every number was calculated, step by step:
 [guide/tradeoffs_calculation.md](guide/tradeoffs_calculation.md). Raw reports:
 [backend/reports/tradeoffs/](backend/reports/tradeoffs/). Scripts:
-[backend/scripts/tradeoffs/](backend/scripts/tradeoffs/). Tech-doc records:
+[scripts/tradeoffs/](scripts/tradeoffs/). Tech-doc records:
 EXP-0019 (item 1), EXP-0020 (items 2-5), EXP-0021 (items 6-10), EXP-0022 (items 11-15).
 
 ## Read this first

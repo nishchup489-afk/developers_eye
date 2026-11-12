@@ -25,8 +25,8 @@ candidate set. It is **not exhaustive corpus recall or global Recall@100**.
 From the repository root, using a Python environment with backend installed:
 
 ```powershell
-python backend/scripts/evaluate_relevance.py score --snapshot backend/evaluation/checklist-25/snapshot.json --qrels backend/evaluation/checklist-25/qrels.json --cutoff 5 --output backend/evaluation/checklist-25/results-at-5.json
-python backend/scripts/evaluate_relevance.py score --snapshot backend/evaluation/checklist-25/snapshot.json --qrels backend/evaluation/checklist-25/qrels.json --cutoff 10 --output backend/evaluation/checklist-25/results-at-10.json
+python scripts/evaluate_relevance.py score --snapshot backend/evaluation/checklist-25/snapshot.json --qrels backend/evaluation/checklist-25/qrels.json --cutoff 5 --output backend/evaluation/checklist-25/results-at-5.json
+python scripts/evaluate_relevance.py score --snapshot backend/evaluation/checklist-25/snapshot.json --qrels backend/evaluation/checklist-25/qrels.json --cutoff 10 --output backend/evaluation/checklist-25/results-at-10.json
 ```
 
 Scoring uses neither PostgreSQL nor the network. To collect another run, use the

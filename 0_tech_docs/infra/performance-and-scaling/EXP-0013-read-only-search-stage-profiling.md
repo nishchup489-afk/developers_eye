@@ -43,9 +43,9 @@ tags before paging and fetch code blocks with final-page bodies.
 From repository root, with installed backend dependencies and DATABASE_URL:
 
 ```powershell
-python backend/scripts/profile_search.py --rounds 5 --output backend/reports/checklist/search-before.json
+python scripts/profile_search.py --rounds 5 --output backend/reports/checklist/search-before.json
 # Apply the page-hydration change, then repeat with another output path.
-python backend/scripts/profile_search.py --rounds 5 --output backend/reports/checklist/search-after-hydration.json
+python scripts/profile_search.py --rounds 5 --output backend/reports/checklist/search-after-hydration.json
 ```
 
 Cold means DF-cache-cold, not disk-cold. Increasing rounds improves percentile

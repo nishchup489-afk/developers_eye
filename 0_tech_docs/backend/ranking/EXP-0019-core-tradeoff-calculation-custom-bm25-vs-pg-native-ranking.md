@@ -36,7 +36,7 @@ that work buys nothing. Trade-off 1 of [CORE_TRADEOFFS.md](../../../CORE_TRADEOF
 
 ## Reproduce
 ```
-crawler\.venv\Scripts\python.exe backend\scripts\tradeoffs\search_bench.py ranking --rounds 5
+crawler\.venv\Scripts\python.exe scripts\tradeoffs\search_bench.py ranking --rounds 5
 ```
 Raw: `backend/reports/tradeoffs/01-ranking-bm25-vs-pg.json`. Method: `guide/tradeoffs_calculation.md`.
 

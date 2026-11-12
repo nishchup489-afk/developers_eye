@@ -21,7 +21,7 @@ code:
   - backend/tests/unit/test_relavance_matrics/nDCG@10.py
   - backend/tests/unit/test_relavance_matrics/recall@100.py
   - backend/tests/unit/test_relavance_matrics/relavance_runner.py
-  - backend/scripts/search_relevance_diagnostics/diagnose_relevance.py
+  - scripts/search_relevance_diagnostics/diagnose_relevance.py
 ---
 
 # EXP-0009: Human-Judged Search Relevance Metrics

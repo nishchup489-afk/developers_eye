@@ -6,7 +6,7 @@ date: 2026-11-09
 severity: medium
 area: crawler
 feature: content-processing
-code: [crawler/src/crawler/processing/classifier/classify.py, backend/src/backend/search/categories.py, backend/scripts/backfill_search_categories.py]
+code: [crawler/src/crawler/processing/classifier/classify.py, backend/src/backend/search/categories.py, scripts/backfill_search_categories.py]
 fix_commits: []
 related: [ADR-0053]
 ---

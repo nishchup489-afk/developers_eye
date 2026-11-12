@@ -33,10 +33,10 @@ Trade-offs 2-5 of [CORE_TRADEOFFS.md](../../../CORE_TRADEOFFS.md); they set publ
 
 ## Reproduce
 ```
-crawler\.venv\Scripts\python.exe backend\scripts\tradeoffs\search_bench.py depth --rounds 3
-crawler\.venv\Scripts\python.exe backend\scripts\tradeoffs\search_bench.py complexity --rounds 5
-crawler\.venv\Scripts\python.exe backend\scripts\tradeoffs\http_bench.py concurrency --seconds 20
-crawler\.venv\Scripts\python.exe backend\scripts\tradeoffs\http_bench.py timeout --users 25 --seconds 30
+crawler\.venv\Scripts\python.exe scripts\tradeoffs\search_bench.py depth --rounds 3
+crawler\.venv\Scripts\python.exe scripts\tradeoffs\search_bench.py complexity --rounds 5
+crawler\.venv\Scripts\python.exe scripts\tradeoffs\http_bench.py concurrency --seconds 20
+crawler\.venv\Scripts\python.exe scripts\tradeoffs\http_bench.py timeout --users 25 --seconds 30
 ```
 Raw: `backend/reports/tradeoffs/02-*.json` to `05-*.json`.
 

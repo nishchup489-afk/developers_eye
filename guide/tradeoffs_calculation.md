@@ -4,7 +4,7 @@ This guide explains, step by step, where every number in
 [`CORE_TRADEOFFS.md`](../CORE_TRADEOFFS.md) comes from, so you can check it,
 rerun it, or run it again on the Oracle VM. Every number is in a JSON report in
 [`backend/reports/tradeoffs/`](../backend/reports/tradeoffs/), and every report
-was written by one script in [`backend/scripts/tradeoffs/`](../backend/scripts/tradeoffs/).
+was written by one script in [`scripts/tradeoffs/`](../scripts/tradeoffs/).
 
 **In one paragraph:** each trade-off is a script that runs the real code
 (search service, API, crawler, indexer) on a copy of your database, times every
@@ -22,7 +22,7 @@ because it has the backend, the crawler and the indexer installed together:
 
 ```powershell
 crawler\.venv\Scripts\python.exe -m pip install psutil   # once; the CPU/RAM sampler needs it
-crawler\.venv\Scripts\python.exe backend\scripts\tradeoffs\search_bench.py ranking
+crawler\.venv\Scripts\python.exe scripts\tradeoffs\search_bench.py ranking
 ```
 
 (The backend's own Poetry environment works for the search-only scripts, but
@@ -50,7 +50,7 @@ name, or you can pass `--database-url` or set `BENCH_DATABASE_URL`.
 ### 0.3 Run everything
 
 ```bash
-PY=crawler/.venv/Scripts/python.exe; S=backend/scripts/tradeoffs
+PY=crawler/.venv/Scripts/python.exe; S=scripts/tradeoffs
 $PY $S/search_bench.py ranking --rounds 5                         # 1
 $PY $S/search_bench.py depth --rounds 3                           # 2
 $PY $S/search_bench.py complexity --rounds 5                      # 3
@@ -74,7 +74,7 @@ The whole set takes about 45 minutes here.
 
 ## 1. The measuring tools every script shares
 
-All of these live in [`common.py`](../backend/scripts/tradeoffs/common.py).
+All of these live in [`common.py`](../scripts/tradeoffs/common.py).
 
 ### 1.1 Latency percentiles
 

@@ -6,7 +6,7 @@ date: 2026-11-09
 severity: medium
 area: frontend
 feature: search-experience
-code: [frontend/lib/axios.js, frontend/tests/integration.mjs, backend/scripts/e2e_search_stack.py]
+code: [frontend/lib/axios.js, frontend/tests/integration.mjs, scripts/e2e_search_stack.py]
 related: [INC-0033, ADR-0056]
 ---
 

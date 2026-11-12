@@ -76,7 +76,7 @@ The limits exist to protect one connection pool on one server, so the check shou
 ## Evidence
 - Measured: no latency numbers were taken for this change.
 - Assumed: 60 per minute with a burst of 20 suits a person searching by hand.
-- Tests: `backend/tests/api/test_search_limits.py`, `backend/tests/integration/test_search_deadlines.py`, `frontend/tests/integration.mjs`, `frontend/tests/search-unit.mjs`, and `backend/scripts/e2e_search_stack.py`, which runs real Next.js and FastAPI against a fresh PostgreSQL database and uses a held table lock to make queries really slow.
+- Tests: `backend/tests/api/test_search_limits.py`, `backend/tests/integration/test_search_deadlines.py`, `frontend/tests/integration.mjs`, `frontend/tests/search-unit.mjs`, and `scripts/e2e_search_stack.py`, which runs real Next.js and FastAPI against a fresh PostgreSQL database and uses a held table lock to make queries really slow.
 
 ## Revisit when
 - The API runs on more than one host, or more than 4 workers per host.
