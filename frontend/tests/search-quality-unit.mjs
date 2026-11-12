@@ -5,13 +5,15 @@ import { evaluationFixture, judgingFixture, slowFixture } from "./fixtures/searc
 assert.equal(isSlowSearchReport(slowFixture()), true);
 assert.equal(isEvaluationReport(evaluationFixture()), true);
 assert.equal(isJudgingQuery(judgingFixture()), true);
-const slowMutations = [(r) => { r.queries[0].elapsed_ms = "slow"; }, (r) => { r.stage_means_ms.ranking = null; }, (r) => { r.repeated = null; }, (r) => { r.queries[0].stages.ranking = "x"; }];
+const slowMutations = [(r) => { r.queries[0].elapsed_ms = "slow"; }, (r) => { r.stage_means_ms.ranking = "slow"; }, (r) => { r.repeated = null; }, (r) => { r.queries[0].stages.ranking = "x"; }];
 for (const mutate of slowMutations) { const r = slowFixture(); mutate(r); assert.equal(isSlowSearchReport(r), false); }
 const evalMutations = [(r) => { r.k = 7; }, (r) => { r.aggregate.bm25.ndcg_at_10 = "high"; }, (r) => { r.queries[0].no_relevant_documents = "no"; }, (r) => { delete r.aggregate; }];
 for (const mutate of evalMutations) { const r = evaluationFixture(); mutate(r); assert.equal(isEvaluationReport(r), false); }
 const judgingMutations = [(r) => { r.judgments[0].grade = 4; }, (r) => { r.judgments[0].origin = "agent"; }, (r) => { r.judgments = null; }];
 for (const mutate of judgingMutations) { const r = judgingFixture(); mutate(r); assert.equal(isJudgingQuery(r), false); }
-console.log("PASS search quality contract: slow searches, evaluation metrics, judging queries, malformed fields");
+// The backend sends null means when no slow search was recorded in the window.
+assert.equal(isSlowSearchReport({ ...slowFixture(), total: 0, timed_out: 0, timeouts_by_stage: {}, repeated: [], queries: [], stage_means_ms: { retrieval: null, ranking: null, metadata: null, snippets: null } }), true);
+console.log("PASS search quality contract: slow searches (including an empty window), evaluation metrics, judging queries, malformed fields");
 
 const admin = redactSlowSearchReport(slowFixture(), "admin");
 assert.equal(admin.queries[0].query, "HTTP 500 internal server error");

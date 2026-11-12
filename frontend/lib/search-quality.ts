@@ -7,7 +7,7 @@ export type SlowSearch = {
 };
 export type RepeatedSlowSearch = { query: string; mode: string; count: number; timed_out: number; max_ms: number; mean_ms: number };
 export type SlowSearchReport = {
-  hours: number; threshold_ms: number; total: number; timed_out: number; stage_means_ms: Partial<Record<Stage, number>>;
+  hours: number; threshold_ms: number; total: number; timed_out: number; stage_means_ms: Partial<Record<Stage, number | null>>;
   timeouts_by_stage: Record<string, number>; repeated: RepeatedSlowSearch[]; queries: SlowSearch[];
 };
 export type RankerMetrics = Record<string, number | null>;
@@ -35,6 +35,8 @@ const str = (v: unknown) => typeof v === "string";
 const nullableStr = (v: unknown) => v === null || str(v);
 const numberMap = (v: unknown) => object(v) && Object.values(v).every(num);
 const metrics = (v: unknown) => object(v) && Object.values(v).every(nullableNum);
+// A stage with no timings in the window (or an empty window) has a null mean.
+const nullableNumberMap = metrics;
 
 function isSlowSearch(v: unknown): v is SlowSearch {
   return object(v) && str(v.recorded_at) && str(v.query) && str(v.mode) && nullableStr(v.category) && num(v.page) && str(v.outcome)
@@ -42,7 +44,7 @@ function isSlowSearch(v: unknown): v is SlowSearch {
 }
 
 export function isSlowSearchReport(v: unknown): v is SlowSearchReport {
-  return object(v) && num(v.hours) && num(v.threshold_ms) && num(v.total) && num(v.timed_out) && numberMap(v.stage_means_ms)
+  return object(v) && num(v.hours) && num(v.threshold_ms) && num(v.total) && num(v.timed_out) && nullableNumberMap(v.stage_means_ms)
     && numberMap(v.timeouts_by_stage) && Array.isArray(v.queries) && v.queries.every(isSlowSearch)
     && Array.isArray(v.repeated) && v.repeated.every(r => object(r) && str(r.query) && str(r.mode) && num(r.count) && num(r.timed_out) && num(r.max_ms) && num(r.mean_ms));
 }

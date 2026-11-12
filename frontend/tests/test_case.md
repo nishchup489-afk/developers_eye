@@ -122,7 +122,7 @@ Unit test for the Wikipedia knowledge-panel helpers in `lib/knowledge.ts`, behin
 
 | Area | What it checks |
 | --- | --- |
-| Contract | `isSlowSearchReport`, `isEvaluationReport` and `isJudgingQuery` accept the fixtures and reject a non-numeric time, a null stage mean, a missing list, `k=7`, a string metric, a grade of 4 and an unknown origin. |
+| Contract | `isSlowSearchReport`, `isEvaluationReport` and `isJudgingQuery` accept the fixtures and an empty window whose stage means are all null, and reject a non-numeric time, a string stage mean, a missing list, `k=7`, a string metric, a grade of 4 and an unknown origin. |
 | Redaction | `redactSlowSearchReport` keeps query text for admins and hides it for viewers and guests while keeping the timings. |
 | Write bodies | `judgmentBody` keeps only `url`, `grade`, `note` and `add`, and rejects non-http(s) URLs, grades outside 0–3 or not integers, notes over 2,000 characters and URLs over 2,048. `queryBody` trims the query and rejects an empty or over 256 character query, an unknown mode and wrong field types. |
 
