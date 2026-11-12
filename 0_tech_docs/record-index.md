@@ -122,5 +122,5 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | EXP-0016 | backend/bm25-statistics | [GIN-only document-frequency counts against the planner's seq-scan choice at 126k documents](backend/bm25-statistics/EXP-0016-gin-only-document-frequency-counts.md) | done |
 | EXP-0017 | backend/retrieval | [Title-match channel and dotted identifiers recover recall misses](backend/retrieval/EXP-0017-title-channel-and-dotted-identifier-recall.md) | done |
 | EXP-0018 | infra/ci-and-containers | [Verify local Oracle containers and authenticated Vercel ingress](infra/ci-and-containers/EXP-0018-local-oracle-container-readiness.md) | done |
-| EXP-0019 | backend/ranking | [EXP-0019-core-tradeoff-calculation-custom-bm25-vs-pg-native-ranking.md](backend/ranking/EXP-0019-core-tradeoff-calculation-custom-bm25-vs-pg-native-ranking.md) |  |
+| EXP-0019 | backend/ranking | [Calculating core trade offs for Custom BM25 vs PostgreSQL native ranking](backend/ranking/EXP-0019-core-tradeoff-calculation-custom-bm25-vs-pg-native-ranking.md) | done            # planned \| running \| done |
 <!-- record-index:end -->

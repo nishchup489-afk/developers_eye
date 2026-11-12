@@ -60,7 +60,7 @@ async def relation_sizes(schema: str) -> dict:
     from backend.db.session import SessionFactory
     async with SessionFactory() as session:
         rows = (await session.execute(text(
-            "SELECT c.relname, c.relkind, pg_relation_size(c.oid) AS main, pg_total_relation_size(c.oid) AS total "
+            "SELECT c.relname, c.relkind::text AS relkind, pg_relation_size(c.oid) AS main, pg_total_relation_size(c.oid) AS total "
             "FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace "
             "WHERE n.nspname = :s AND (c.relname = 'search_index' OR c.relname LIKE '%search_index%')"),
             {"s": schema})).all()
