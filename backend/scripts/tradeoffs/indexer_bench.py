@@ -198,11 +198,16 @@ async def bench_processes(args, url):
     from backend.db.session import SessionFactory
     async with SessionFactory() as session:
         ids = await sample_ids(session, args.docs)
+    # Children get the exact ID list: after the reset these documents have no
+    # index rows, so sampling again in the child would pick other documents.
+    ids_file = common.REPORT_DIR / ".indexer-sample-ids.json"
+    ids_file.parent.mkdir(parents=True, exist_ok=True)
+    ids_file.write_text(json.dumps(ids), encoding="utf-8")
     rows = []
     for n in args.processes:
         async def work(n=n):
             procs = [subprocess.Popen(
-                [sys.executable, __file__, "_shard", "--database-url", url, "--docs", str(args.docs),
+                [sys.executable, __file__, "_shard", "--database-url", url, "--ids-file", str(ids_file),
                  "--shard-count", str(n), "--shard-index", str(k), "--batch-size", str(args.batch_size),
                  "--concurrency", str(args.concurrency)],
                 stdout=subprocess.PIPE, text=True) for k in range(n)]
@@ -212,14 +217,15 @@ async def bench_processes(args, url):
                 merged.update(json.loads(out.strip().splitlines()[-1])["outcomes"])
             return {"outcomes": dict(merged), "processes": n}
         rows.append(await measured_run(url, ids, f"processes={n}", work))
+    ids_file.unlink(missing_ok=True)
     common.write_report("08b-indexer-processes", {"batch_size": args.batch_size, "concurrency_per_process": args.concurrency,
                                                   "pool_per_process": os.environ.get("DB_POOL_SIZE"), "runs": rows}, args.output)
 
 
 async def shard_worker(args):
     from backend.db.session import SessionFactory
-    async with SessionFactory() as session:
-        ids = [i for i in await sample_ids(session, args.docs) if i % args.shard_count == args.shard_index]
+    ids = [i for i in json.loads(Path(args.ids_file).read_text(encoding="utf-8"))
+           if i % args.shard_count == args.shard_index]
     result = await index_ids(ids, batch_size=args.batch_size, concurrency=args.concurrency)
     print(json.dumps(result))
 
@@ -341,6 +347,7 @@ if __name__ == "__main__":
     parser.add_argument("--shard-count", type=int, default=1)
     parser.add_argument("--shard-index", type=int, default=0)
     parser.add_argument("--pool-size", type=int, default=None)
+    parser.add_argument("--ids-file")
     parser.add_argument("--output", type=Path)
     a = parser.parse_args()
     biggest = max(a.workers + [a.concurrency]) if a.what == "concurrency" else a.concurrency

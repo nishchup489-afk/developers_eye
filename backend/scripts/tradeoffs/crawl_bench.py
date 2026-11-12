@@ -102,7 +102,8 @@ async def enqueue(source_id: int, label: str, per_host: int) -> None:
                                  normalized_url=f"http://{h}/{label}/p{i}", kind="page")
                for i in range(per_host) for h in HOSTS]
     async with SessionFactory() as session, session.begin():
-        await enqueue_targets(session, targets)
+        # The default per-call budget (DEFAULT_MAX_PAGES) would stop later runs.
+        await enqueue_targets(session, targets, max_pages=1_000_000)
 
 
 async def crawl_counts(source_id: int, label: str) -> dict:
@@ -125,9 +126,12 @@ async def park_leftovers(source_id: int) -> None:
     from sqlalchemy import text
     from backend.db.session import SessionFactory
     async with SessionFactory() as session, session.begin():
+        # A cancelled run leaves leased targets, which would hold their hosts for
+        # the whole lease and starve the next run, so release them too.
         await session.execute(text(
-            "UPDATE crawl_target SET next_fetch_at = now() + interval '10 years' "
-            "WHERE source_id = :s AND state = 'queued'"), {"s": source_id})
+            "UPDATE crawl_target SET state = 'queued', lease_until = NULL, "
+            "next_fetch_at = now() + interval '10 years' "
+            "WHERE source_id = :s AND state IN ('queued', 'leased')"), {"s": source_id})
 
 
 async def crawl_for(source_id: int, workers: int, seconds: float) -> None:
@@ -144,6 +148,7 @@ async def crawl_for(source_id: int, workers: int, seconds: float) -> None:
 async def bench_workers(args):
     allow_local_mock_hosts()
     source_id = await ensure_source()
+    await park_leftovers(source_id)
     mock = start_mock(args.capacity)
     rows = []
     try:
@@ -179,6 +184,7 @@ async def bench_mixed(args, url):
     import http_bench
     allow_local_mock_hosts()
     source_id = await ensure_source()
+    await park_leftovers(source_id)
     mock = start_mock(args.capacity)
     api = http_bench.start_server(url, {})
     await enqueue(source_id, f"warm-{int(time.time())}", per_host=2)
