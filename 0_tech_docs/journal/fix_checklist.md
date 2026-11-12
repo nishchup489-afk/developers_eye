@@ -190,6 +190,8 @@ Ticked items with no automated test behind them (keep ticked, but know the evide
 - [ ] Update optimization-plan.md with dependencies and measured prerequisites.
 - [ ] Repair five reported broken documentation links.
 - [ ] Verify all diagrams, glossary entries and documentation navigation.
+- [ ] create good amount of issue in repostory
+
 
 ## Technical writing · Three engineering blogs
 - [ ] Draft: Building a Polite, SSRF-Resistant Web Crawler.
