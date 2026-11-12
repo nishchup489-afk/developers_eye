@@ -113,9 +113,18 @@ async def load(users: int, seconds: float, mix, seed: int = 7) -> dict:
 
 
 def server_cpu(pid: int) -> float:
+    """CPU of the server and its children: on Windows a venv's python.exe is a
+    launcher that runs the real interpreter as a child process."""
     import psutil
-    times = psutil.Process(pid).cpu_times()
-    return times.user + times.system
+    root = psutil.Process(pid)
+    total = 0.0
+    for proc in [root] + root.children(recursive=True):
+        try:
+            times = proc.cpu_times()
+            total += times.user + times.system
+        except psutil.Error:
+            pass
+    return total
 
 
 async def bench_concurrency(args, url):
