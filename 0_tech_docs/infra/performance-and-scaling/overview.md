@@ -27,6 +27,9 @@ The linked source contracts and tests are the current mechanics reference; no se
 | [EXP-0008](EXP-0008-crawl-index-search-at-2m.md) | experiment | Measure crawl, index and search capacity for a 2M document target | done |
 | [EXP-0013](EXP-0013-read-only-search-stage-profiling.md) | experiment | Separate cold DF cost from retrieval expansion and page hydration | done |
 | [EXP-0015](EXP-0015-linux-crawl-write-cost-and-staged-workers.md) | experiment | Measure Linux crawl write costs and stage workers before further redesign | done |
+| [EXP-0020](EXP-0020-search-depth-length-concurrency-and-timeouts.md) | experiment | Search candidate depth, query length, concurrency and timeout budget on the 100K corpus | done |
+| [EXP-0021](EXP-0021-crawler-and-indexer-throughput-tradeoffs.md) | experiment | Crawler workers, indexer batch and concurrency, mixed load and connection pools | done |
+| [EXP-0022](EXP-0022-storage-scaling-vocabulary-cloud-and-recrawl.md) | experiment | Corpus scaling, index choice, vocabulary refresh, Oracle ARM estimate and recrawl yield | done |
 
 ## Decisions to record
 
