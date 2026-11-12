@@ -1,0 +1,218 @@
+{
+  "benchmark": "11-corpus-scaling",
+  "created_utc": "2026-11-12T05:16:26+00:00",
+  "commit": "86fa4d2859ff84f7a94f2d883283bba3f6504e10",
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "logical_cpus": 20,
+    "physical_cpus": 20,
+    "ram_gb": 31.7,
+    "python": "3.14.4"
+  },
+  "postgres": {
+    "server_version": "18.3",
+    "shared_buffers": "128MB",
+    "work_mem": "4MB",
+    "effective_cache_size": "4GB",
+    "max_connections": "200",
+    "random_page_cost": "4",
+    "jit": "on",
+    "max_parallel_workers_per_gather": "2",
+    "database": "developers_eye_bench",
+    "search_index_rows": 96941,
+    "database_size_mb": 3211.8
+  },
+  "rounds_per_query": 3,
+  "queries": [
+    [
+      "python",
+      "all"
+    ],
+    [
+      "docker",
+      "all"
+    ],
+    [
+      "react hooks",
+      "all"
+    ],
+    [
+      "postgresql index",
+      "text"
+    ],
+    [
+      "asyncio gather",
+      "all"
+    ],
+    [
+      "FastAPI Depends",
+      "all"
+    ],
+    [
+      "typescript generics",
+      "text"
+    ],
+    [
+      "git rebase",
+      "all"
+    ],
+    [
+      "redis cache",
+      "all"
+    ],
+    [
+      "kubernetes deployment",
+      "text"
+    ],
+    [
+      "asyncio.create_task",
+      "code"
+    ],
+    [
+      "useEffect cleanup",
+      "all"
+    ]
+  ],
+  "note": "search_index sampled per size; document table shared; search_documents() end to end",
+  "sizes": {
+    "10000": {
+      "schema": "c10000",
+      "rows": 10000,
+      "table_total_mb": 126.8,
+      "table_heap_mb": 8.6,
+      "toast_and_other_mb": 62.7,
+      "indexes_mb": {
+        "c10000_ix_search_index_category": 0.1,
+        "c10000_search_index_pkey": 0.2,
+        "c10000_ix_search_index_code_vector": 16.1,
+        "c10000_ix_search_index_vector": 39.1
+      },
+      "mb_per_1000_docs": 12.68,
+      "mean_text_matches_per_query": 177.8,
+      "cold_df": {
+        "n": 36,
+        "mean_ms": 55.987,
+        "p50_ms": 45.157,
+        "p95_ms": 164.236,
+        "p99_ms": 212.098,
+        "max_ms": 212.098
+      },
+      "warm_df": {
+        "n": 36,
+        "mean_ms": 49.512,
+        "p50_ms": 37.062,
+        "p95_ms": 180.53,
+        "p99_ms": 325.239,
+        "max_ms": 325.239
+      },
+      "peak_postgres_rss_mb": 1223.0,
+      "resources": {
+        "wall_seconds": 3.835,
+        "python_cpu_seconds": 0.969,
+        "sampler_cpu_seconds_excluded": 1.125,
+        "postgres_cpu_seconds": 4.062,
+        "system_cpu_seconds": 24.859,
+        "python_cpu_cores": 0.253,
+        "postgres_cpu_cores": 1.059,
+        "system_cpu_cores": 6.483,
+        "peak_python_rss_mb": 94.4,
+        "peak_postgres_rss_mb": 1223.0,
+        "peak_system_used_mb": 31496.4,
+        "mean_system_cpu_percent": 25.7
+      }
+    },
+    "50000": {
+      "schema": "c50000",
+      "rows": 50000,
+      "table_total_mb": 568.9,
+      "table_heap_mb": 42.5,
+      "toast_and_other_mb": 313.0,
+      "indexes_mb": {
+        "c50000_ix_search_index_category": 0.4,
+        "c50000_search_index_pkey": 1.1,
+        "c50000_ix_search_index_code_vector": 67.2,
+        "c50000_ix_search_index_vector": 144.7
+      },
+      "mb_per_1000_docs": 11.378,
+      "mean_text_matches_per_query": 883.9,
+      "cold_df": {
+        "n": 36,
+        "mean_ms": 106.276,
+        "p50_ms": 81.591,
+        "p95_ms": 314.472,
+        "p99_ms": 418.641,
+        "max_ms": 418.641
+      },
+      "warm_df": {
+        "n": 36,
+        "mean_ms": 90.62,
+        "p50_ms": 51.882,
+        "p95_ms": 235.622,
+        "p99_ms": 279.509,
+        "max_ms": 279.509
+      },
+      "peak_postgres_rss_mb": 1278.8,
+      "resources": {
+        "wall_seconds": 7.244,
+        "python_cpu_seconds": 1.047,
+        "sampler_cpu_seconds_excluded": 1.938,
+        "postgres_cpu_seconds": 5.359,
+        "system_cpu_seconds": 25.234,
+        "python_cpu_cores": 0.145,
+        "postgres_cpu_cores": 0.74,
+        "system_cpu_cores": 3.483,
+        "peak_python_rss_mb": 97.4,
+        "peak_postgres_rss_mb": 1278.8,
+        "peak_system_used_mb": 31519.5,
+        "mean_system_cpu_percent": 15.1
+      }
+    },
+    "100000": {
+      "schema": "public",
+      "rows": 96941,
+      "table_total_mb": 1125.1,
+      "table_heap_mb": 85.6,
+      "toast_and_other_mb": 649.1,
+      "indexes_mb": {
+        "ix_search_index_code_vector": 126.2,
+        "ix_search_index_vector": 260.9,
+        "ix_search_index_category": 1.1,
+        "search_index_pkey": 2.2
+      },
+      "mb_per_1000_docs": 11.606,
+      "mean_text_matches_per_query": 1698.0,
+      "cold_df": {
+        "n": 36,
+        "mean_ms": 300.627,
+        "p50_ms": 232.98,
+        "p95_ms": 666.573,
+        "p99_ms": 1574.645,
+        "max_ms": 1574.645
+      },
+      "warm_df": {
+        "n": 36,
+        "mean_ms": 132.524,
+        "p50_ms": 66.577,
+        "p95_ms": 536.625,
+        "p99_ms": 835.391,
+        "max_ms": 835.391
+      },
+      "peak_postgres_rss_mb": 1282.5,
+      "resources": {
+        "wall_seconds": 15.642,
+        "python_cpu_seconds": 1.078,
+        "sampler_cpu_seconds_excluded": 4.078,
+        "postgres_cpu_seconds": 12.047,
+        "system_cpu_seconds": 61.5,
+        "python_cpu_cores": 0.069,
+        "postgres_cpu_cores": 0.77,
+        "system_cpu_cores": 3.932,
+        "peak_python_rss_mb": 100.3,
+        "peak_postgres_rss_mb": 1282.5,
+        "peak_system_used_mb": 31564.1,
+        "mean_system_cpu_percent": 18.1
+      }
+    }
+  }
+}

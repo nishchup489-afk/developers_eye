@@ -1,0 +1,96 @@
+{
+  "benchmark": "12-index-alternatives",
+  "created_utc": "2026-11-12T05:15:00+00:00",
+  "commit": "86fa4d2859ff84f7a94f2d883283bba3f6504e10",
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "logical_cpus": 20,
+    "physical_cpus": 20,
+    "ram_gb": 31.7,
+    "python": "3.14.4"
+  },
+  "table_rows": 96941,
+  "query": "SELECT document_id FROM search_index WHERE search_vector @@ websearch_to_tsquery('english', :q) LIMIT 20000",
+  "queries": [
+    "python",
+    "docker",
+    "react hooks",
+    "postgresql index",
+    "asyncio gather",
+    "FastAPI Depends",
+    "typescript generics",
+    "git rebase",
+    "redis cache",
+    "kubernetes deployment",
+    "asyncio.create_task",
+    "useEffect cleanup"
+  ],
+  "rounds": 3,
+  "variants": [
+    {
+      "variant": "none (sequential scan)",
+      "build_seconds": 0.0,
+      "index_mb": 0.0,
+      "match_query": {
+        "n": 36,
+        "mean_ms": 812.793,
+        "p50_ms": 785.218,
+        "p95_ms": 986.724,
+        "p99_ms": 1022.76,
+        "max_ms": 1022.76
+      },
+      "plan_for_python": "Limit > Seq Scan",
+      "insert_rows": 2000,
+      "insert_ms_per_row": 0.107
+    },
+    {
+      "variant": "GIN fastupdate=on (current)",
+      "build_seconds": 14.06,
+      "index_mb": 249.3,
+      "match_query": {
+        "n": 36,
+        "mean_ms": 1.351,
+        "p50_ms": 0.791,
+        "p95_ms": 6.194,
+        "p99_ms": 7.279,
+        "max_ms": 7.279
+      },
+      "plan_for_python": "Limit > Bitmap Heap Scan",
+      "insert_rows": 2000,
+      "insert_ms_per_row": 1.176
+    },
+    {
+      "variant": "GIN fastupdate=off",
+      "build_seconds": 13.78,
+      "index_mb": 249.4,
+      "match_query": {
+        "n": 36,
+        "mean_ms": 1.282,
+        "p50_ms": 0.809,
+        "p95_ms": 6.588,
+        "p99_ms": 6.889,
+        "max_ms": 6.889
+      },
+      "plan_for_python": "Limit > Bitmap Heap Scan",
+      "insert_rows": 2000,
+      "insert_ms_per_row": 2.059
+    },
+    {
+      "variant": "GiST",
+      "build_seconds": 5.28,
+      "index_mb": 28.4,
+      "match_query": {
+        "n": 36,
+        "mean_ms": 316.322,
+        "p50_ms": 281.245,
+        "p95_ms": 733.542,
+        "p99_ms": 779.76,
+        "max_ms": 779.76
+      },
+      "plan_for_python": "Limit > Seq Scan",
+      "insert_rows": 2000,
+      "insert_ms_per_row": 0.207
+    }
+  ]
+}

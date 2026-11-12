@@ -1,0 +1,111 @@
+{
+  "benchmark": "15-recrawl-frequency",
+  "created_utc": "2026-11-12T04:49:29+00:00",
+  "commit": "86fa4d2859ff84f7a94f2d883283bba3f6504e10",
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "logical_cpus": 20,
+    "physical_cpus": 20,
+    "ram_gb": 31.7,
+    "python": "3.14.4"
+  },
+  "observed": {
+    "recrawled_pages": 1354,
+    "changed": 212,
+    "changed_share": 0.1566,
+    "mean_hours_between_crawls": 72.7,
+    "mean_bytes_per_fetch": 160201,
+    "mean_bytes_all_successful_fetches": 213795
+  },
+  "fitted_change_rate_per_day": 0.05618,
+  "mean_days_between_changes": 17.8,
+  "assumption": "each page changes as an independent Poisson process with one shared rate; fitted to one observed interval",
+  "source_intervals_configured": [
+    {
+      "kind": "website",
+      "crawl_interval_seconds": 2592000,
+      "n": 167
+    },
+    {
+      "kind": "rss",
+      "crawl_interval_seconds": 86400,
+      "n": 161
+    },
+    {
+      "kind": "website",
+      "crawl_interval_seconds": 1814400,
+      "n": 25
+    },
+    {
+      "kind": "website",
+      "crawl_interval_seconds": 5184000,
+      "n": 14
+    },
+    {
+      "kind": "website",
+      "crawl_interval_seconds": 3888000,
+      "n": 12
+    },
+    {
+      "kind": "website",
+      "crawl_interval_seconds": 86400,
+      "n": 1
+    },
+    {
+      "kind": "api",
+      "crawl_interval_seconds": 2592000,
+      "n": 1
+    }
+  ],
+  "model": {
+    "1 day": {
+      "fetches_per_100k_docs_per_month": 3000000,
+      "gb_per_100k_docs_per_month": 480.6,
+      "gb_per_2m_docs_per_month": 9612.1,
+      "changed_page_yield": 0.055,
+      "useful_fetches_per_100k_per_month": 163888,
+      "mean_stale_share": 0.028
+    },
+    "3 days": {
+      "fetches_per_100k_docs_per_month": 1000000,
+      "gb_per_100k_docs_per_month": 160.2,
+      "gb_per_2m_docs_per_month": 3204.0,
+      "changed_page_yield": 0.155,
+      "useful_fetches_per_100k_per_month": 155098,
+      "mean_stale_share": 0.08
+    },
+    "7 days": {
+      "fetches_per_100k_docs_per_month": 428571,
+      "gb_per_100k_docs_per_month": 68.7,
+      "gb_per_2m_docs_per_month": 1373.2,
+      "changed_page_yield": 0.325,
+      "useful_fetches_per_100k_per_month": 139345,
+      "mean_stale_share": 0.173
+    },
+    "14 days": {
+      "fetches_per_100k_docs_per_month": 214286,
+      "gb_per_100k_docs_per_month": 34.3,
+      "gb_per_2m_docs_per_month": 686.6,
+      "changed_page_yield": 0.545,
+      "useful_fetches_per_100k_per_month": 116692,
+      "mean_stale_share": 0.308
+    },
+    "30 days": {
+      "fetches_per_100k_docs_per_month": 100000,
+      "gb_per_100k_docs_per_month": 16.0,
+      "gb_per_2m_docs_per_month": 320.4,
+      "changed_page_yield": 0.815,
+      "useful_fetches_per_100k_per_month": 81462,
+      "mean_stale_share": 0.517
+    },
+    "60 days": {
+      "fetches_per_100k_docs_per_month": 50000,
+      "gb_per_100k_docs_per_month": 8.0,
+      "gb_per_2m_docs_per_month": 160.2,
+      "changed_page_yield": 0.966,
+      "useful_fetches_per_100k_per_month": 48282,
+      "mean_stale_share": 0.714
+    }
+  }
+}

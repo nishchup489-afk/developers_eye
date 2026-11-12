@@ -1,0 +1,183 @@
+{
+  "benchmark": "06-crawler-concurrency",
+  "created_utc": "2026-11-12T05:25:24+00:00",
+  "commit": "77d50ca7f6a71deb4895af3a5c8ccf8b002afd9e",
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "logical_cpus": 20,
+    "physical_cpus": 20,
+    "ram_gb": 31.7,
+    "python": "3.14.4"
+  },
+  "mock": "64 hosts on 127.0.0.1:80, 40-250 ms per page, 429 under 1 s per host, 503 over 24 in flight",
+  "politeness": "crawler default: 1 request in flight and 2 s between requests per host, shared through crawl_host",
+  "pool_per_process": "DB_POOL_SIZE=4 DB_MAX_OVERFLOW=2",
+  "runs": [
+    {
+      "workers": 2,
+      "seconds": 45.0,
+      "attempts": {
+        "success:200": 229,
+        "None:None": 1
+      },
+      "bytes": "1009423",
+      "documents": 229,
+      "docs_per_second": 5.09,
+      "politeness_ceiling_docs_per_second": 32.0,
+      "server": {
+        "status_200": 231,
+        "bytes_sent": 1014567,
+        "epoch": 0,
+        "hosts_seen": 64,
+        "smallest_gap_seconds": 11.189
+      },
+      "resources": {
+        "wall_seconds": 45.303,
+        "python_cpu_seconds": 11.062,
+        "sampler_cpu_seconds_excluded": 16.094,
+        "postgres_cpu_seconds": 6.234,
+        "system_cpu_seconds": 206.859,
+        "python_cpu_cores": 0.244,
+        "postgres_cpu_cores": 0.138,
+        "system_cpu_cores": 4.566,
+        "peak_python_rss_mb": 207.6,
+        "peak_postgres_rss_mb": 1270.4,
+        "peak_system_used_mb": 32060.8,
+        "mean_system_cpu_percent": 21.7
+      }
+    },
+    {
+      "workers": 8,
+      "seconds": 45.0,
+      "attempts": {
+        "success:200": 628,
+        "None:None": 6
+      },
+      "bytes": "2753086",
+      "documents": 628,
+      "docs_per_second": 13.96,
+      "politeness_ceiling_docs_per_second": 32.0,
+      "server": {
+        "status_200": 635,
+        "bytes_sent": 2782472,
+        "epoch": 0,
+        "hosts_seen": 64,
+        "smallest_gap_seconds": 3.866
+      },
+      "resources": {
+        "wall_seconds": 45.398,
+        "python_cpu_seconds": 29.25,
+        "sampler_cpu_seconds_excluded": 13.969,
+        "postgres_cpu_seconds": 8.797,
+        "system_cpu_seconds": 232.781,
+        "python_cpu_cores": 0.644,
+        "postgres_cpu_cores": 0.194,
+        "system_cpu_cores": 5.128,
+        "peak_python_rss_mb": 286.6,
+        "peak_postgres_rss_mb": 1244.1,
+        "peak_system_used_mb": 32070.6,
+        "mean_system_cpu_percent": 24.6
+      }
+    },
+    {
+      "workers": 16,
+      "seconds": 45.0,
+      "attempts": {
+        "success:200": 667,
+        "None:None": 5
+      },
+      "bytes": "2895399",
+      "documents": 667,
+      "docs_per_second": 14.82,
+      "politeness_ceiling_docs_per_second": 32.0,
+      "server": {
+        "status_200": 673,
+        "bytes_sent": 2916279,
+        "epoch": 0,
+        "hosts_seen": 64,
+        "smallest_gap_seconds": 3.187
+      },
+      "resources": {
+        "wall_seconds": 45.509,
+        "python_cpu_seconds": 29.641,
+        "sampler_cpu_seconds_excluded": 16.531,
+        "postgres_cpu_seconds": 8.906,
+        "system_cpu_seconds": 237.969,
+        "python_cpu_cores": 0.651,
+        "postgres_cpu_cores": 0.196,
+        "system_cpu_cores": 5.229,
+        "peak_python_rss_mb": 322.2,
+        "peak_postgres_rss_mb": 1262.2,
+        "peak_system_used_mb": 32065.5,
+        "mean_system_cpu_percent": 24.8
+      }
+    },
+    {
+      "workers": 32,
+      "seconds": 45.0,
+      "attempts": {
+        "success:200": 619,
+        "None:None": 25
+      },
+      "bytes": "2750837",
+      "documents": 619,
+      "docs_per_second": 13.76,
+      "politeness_ceiling_docs_per_second": 32.0,
+      "server": {
+        "status_200": 634,
+        "bytes_sent": 2811306,
+        "epoch": 0,
+        "hosts_seen": 64,
+        "smallest_gap_seconds": 3.331
+      },
+      "resources": {
+        "wall_seconds": 45.71,
+        "python_cpu_seconds": 29.062,
+        "sampler_cpu_seconds_excluded": 16.328,
+        "postgres_cpu_seconds": 8.172,
+        "system_cpu_seconds": 214.891,
+        "python_cpu_cores": 0.636,
+        "postgres_cpu_cores": 0.179,
+        "system_cpu_cores": 4.701,
+        "peak_python_rss_mb": 255.8,
+        "peak_postgres_rss_mb": 1367.7,
+        "peak_system_used_mb": 31850.4,
+        "mean_system_cpu_percent": 22.6
+      }
+    },
+    {
+      "workers": 64,
+      "seconds": 45.0,
+      "attempts": {
+        "success:200": 550,
+        "None:None": 45
+      },
+      "bytes": "2432135",
+      "documents": 550,
+      "docs_per_second": 12.22,
+      "politeness_ceiling_docs_per_second": 32.0,
+      "server": {
+        "status_200": 586,
+        "bytes_sent": 2583675,
+        "epoch": 0,
+        "hosts_seen": 64,
+        "smallest_gap_seconds": 2.448
+      },
+      "resources": {
+        "wall_seconds": 45.63,
+        "python_cpu_seconds": 28.844,
+        "sampler_cpu_seconds_excluded": 16.797,
+        "postgres_cpu_seconds": 7.906,
+        "system_cpu_seconds": 203.969,
+        "python_cpu_cores": 0.632,
+        "postgres_cpu_cores": 0.173,
+        "system_cpu_cores": 4.47,
+        "peak_python_rss_mb": 299.5,
+        "peak_postgres_rss_mb": 1270.3,
+        "peak_system_used_mb": 31829.2,
+        "mean_system_cpu_percent": 21.4
+      }
+    }
+  ]
+}

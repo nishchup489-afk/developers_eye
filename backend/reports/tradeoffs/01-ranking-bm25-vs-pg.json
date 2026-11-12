@@ -1,0 +1,626 @@
+{
+  "benchmark": "01-ranking-bm25-vs-pg",
+  "created_utc": "2026-11-12T04:47:28+00:00",
+  "commit": "86fa4d2859ff84f7a94f2d883283bba3f6504e10",
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "logical_cpus": 20,
+    "physical_cpus": 20,
+    "ram_gb": 31.7,
+    "python": "3.14.4"
+  },
+  "postgres": {
+    "server_version": "18.3",
+    "shared_buffers": "128MB",
+    "work_mem": "4MB",
+    "effective_cache_size": "4GB",
+    "max_connections": "200",
+    "random_page_cost": "4",
+    "jit": "on",
+    "max_parallel_workers_per_gather": "2",
+    "database": "developers_eye_bench",
+    "search_index_rows": 99941,
+    "database_size_mb": 2354.6
+  },
+  "idle_baseline": {
+    "wall_seconds": 3.018,
+    "python_cpu_seconds": 0.031,
+    "sampler_cpu_seconds_excluded": 0.859,
+    "postgres_cpu_seconds": 0.375,
+    "system_cpu_seconds": 14.797,
+    "python_cpu_cores": 0.01,
+    "postgres_cpu_cores": 0.124,
+    "system_cpu_cores": 4.903,
+    "peak_python_rss_mb": 79.7,
+    "peak_postgres_rss_mb": 1170.8,
+    "peak_system_used_mb": 31771.7,
+    "mean_system_cpu_percent": 12.9
+  },
+  "rounds_per_query": 5,
+  "labels": "agent-reviewed checklist-25 qrels (EXP-0014); not human judgments",
+  "relevance": {
+    "bm25": {
+      "p_at_10": 0.708,
+      "mrr_at_10": 0.9,
+      "ndcg_at_10": 0.6929,
+      "judged_share_of_top10": 0.9677
+    },
+    "postgresql": {
+      "p_at_10": 0.78,
+      "mrr_at_10": 0.9267,
+      "ndcg_at_10": 0.6885,
+      "judged_share_of_top10": 1.0
+    }
+  },
+  "latency": {
+    "cold": {
+      "bm25": {
+        "n": 125,
+        "mean_ms": 235.645,
+        "p50_ms": 146.308,
+        "p95_ms": 673.794,
+        "p99_ms": 1553.267,
+        "max_ms": 2174.349
+      },
+      "pg": {
+        "n": 125,
+        "mean_ms": 81.787,
+        "p50_ms": 15.849,
+        "p95_ms": 426.111,
+        "p99_ms": 1256.608,
+        "max_ms": 1942.173
+      },
+      "retrieval": {
+        "n": 125,
+        "mean_ms": 74.66,
+        "p50_ms": 10.839,
+        "p95_ms": 421.283,
+        "p99_ms": 1254.023,
+        "max_ms": 1933.576
+      }
+    },
+    "warm": {
+      "bm25": {
+        "n": 125,
+        "mean_ms": 79.184,
+        "p50_ms": 45.265,
+        "p95_ms": 386.257,
+        "p99_ms": 520.856,
+        "max_ms": 601.374
+      },
+      "pg": {
+        "n": 125,
+        "mean_ms": 48.027,
+        "p50_ms": 13.453,
+        "p95_ms": 308.784,
+        "p99_ms": 494.397,
+        "max_ms": 525.761
+      },
+      "retrieval": {
+        "n": 125,
+        "mean_ms": 43.77,
+        "p50_ms": 9.679,
+        "p95_ms": 306.345,
+        "p99_ms": 467.813,
+        "max_ms": 491.038
+      }
+    }
+  },
+  "resources": {
+    "wall_seconds": 41.384,
+    "python_cpu_seconds": 2.547,
+    "sampler_cpu_seconds_excluded": 14.297,
+    "postgres_cpu_seconds": 22.656,
+    "system_cpu_seconds": 235.125,
+    "python_cpu_cores": 0.062,
+    "postgres_cpu_cores": 0.547,
+    "system_cpu_cores": 5.682,
+    "peak_python_rss_mb": 97.4,
+    "peak_postgres_rss_mb": 1196.7,
+    "peak_system_used_mb": 31968.5,
+    "mean_system_cpu_percent": 26.8
+  },
+  "per_query": [
+    {
+      "query_id": "C001",
+      "query": "python async api",
+      "mode": "text",
+      "candidates": 100,
+      "bm25": {
+        "p_at_k": 0.9,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.6580199913611079,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.40501596913062937,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C002",
+      "query": "asyncio.create_task",
+      "mode": "code",
+      "candidates": 20,
+      "bm25": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.9427292459191753,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.8980144040126123,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C003",
+      "query": "asyncio gather",
+      "mode": "all",
+      "candidates": 23,
+      "bm25": {
+        "p_at_k": 0.4,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.6543843995732368,
+        "judged_in_top_k": 4,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 0.9,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.6988091277859861,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C004",
+      "query": "FastAPI Depends",
+      "mode": "all",
+      "candidates": 91,
+      "bm25": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.7926406384684052,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.9551835685879629,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C005",
+      "query": "\"dependency injection\"",
+      "mode": "text",
+      "candidates": 104,
+      "bm25": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.8140406500422702,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.7381147498930528,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C006",
+      "query": "FastAPI lifespan events",
+      "mode": "text",
+      "candidates": 8,
+      "bm25": {
+        "p_at_k": 0.8,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.946893939970018,
+        "judged_in_top_k": 8,
+        "returned": 8
+      },
+      "postgresql": {
+        "p_at_k": 0.8,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 1.0,
+        "judged_in_top_k": 8,
+        "returned": 8
+      }
+    },
+    {
+      "query_id": "C007",
+      "query": "python 3.14",
+      "mode": "text",
+      "candidates": 115,
+      "bm25": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.6868204174469158,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.5705840140841667,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C008",
+      "query": "\"TaskGroup\"",
+      "mode": "all",
+      "candidates": 6,
+      "bm25": {
+        "p_at_k": 0.6,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.8012600191948525,
+        "judged_in_top_k": 6,
+        "returned": 6
+      },
+      "postgresql": {
+        "p_at_k": 0.6,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 1.0,
+        "judged_in_top_k": 6,
+        "returned": 6
+      }
+    },
+    {
+      "query_id": "C009",
+      "query": "\"TypeError\"",
+      "mode": "code",
+      "candidates": 100,
+      "bm25": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.8311498593334544,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.5056561717547567,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C010",
+      "query": "\"ModuleNotFoundError\"",
+      "mode": "text",
+      "candidates": 45,
+      "bm25": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.7105643947348806,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.9683011188328597,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C011",
+      "query": "python list comprehension",
+      "mode": "text",
+      "candidates": 100,
+      "bm25": {
+        "p_at_k": 0.9,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.5646411717949028,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 0.9,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.5131199491457176,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C012",
+      "query": "\"context manager\"",
+      "mode": "text",
+      "candidates": 104,
+      "bm25": {
+        "p_at_k": 0.2,
+        "mrr_at_k": 0.5,
+        "ndcg_at_k": 0.40623175858824323,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 0.5,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.7848693777165592,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C013",
+      "query": "pathlib Path",
+      "mode": "code",
+      "candidates": 100,
+      "bm25": {
+        "p_at_k": 0.9,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.6380263901557481,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.3232283949792574,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C014",
+      "query": "javascript Promise.all",
+      "mode": "code",
+      "candidates": 17,
+      "bm25": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.7244684937276733,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.5920266536963161,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C015",
+      "query": "javascript fetch",
+      "mode": "all",
+      "candidates": 183,
+      "bm25": {
+        "p_at_k": 0.6,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.6304166287548494,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.7684925290584576,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C016",
+      "query": "react useEffect",
+      "mode": "all",
+      "candidates": 140,
+      "bm25": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.6622160424593203,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.7463650510539078,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C017",
+      "query": "\"Cache-Control\"",
+      "mode": "all",
+      "candidates": 144,
+      "bm25": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.9622851039793827,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.9942173966026455,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C018",
+      "query": "django QuerySet select_related",
+      "mode": "code",
+      "candidates": 2,
+      "bm25": {
+        "p_at_k": 0.2,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 1.0,
+        "judged_in_top_k": 2,
+        "returned": 2
+      },
+      "postgresql": {
+        "p_at_k": 0.2,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 1.0,
+        "judged_in_top_k": 2,
+        "returned": 2
+      }
+    },
+    {
+      "query_id": "C019",
+      "query": "ruff FAST002",
+      "mode": "all",
+      "candidates": 1,
+      "bm25": {
+        "p_at_k": 0.1,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 1.0,
+        "judged_in_top_k": 1,
+        "returned": 1
+      },
+      "postgresql": {
+        "p_at_k": 0.1,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 1.0,
+        "judged_in_top_k": 1,
+        "returned": 1
+      }
+    },
+    {
+      "query_id": "C020",
+      "query": "pyhton asyncio",
+      "mode": "all",
+      "candidates": 0,
+      "bm25": {
+        "p_at_k": 0.0,
+        "mrr_at_k": 0.0,
+        "ndcg_at_k": 0.0,
+        "judged_in_top_k": 0,
+        "returned": 0
+      },
+      "postgresql": {
+        "p_at_k": 0.0,
+        "mrr_at_k": 0.0,
+        "ndcg_at_k": 0.0,
+        "judged_in_top_k": 0,
+        "returned": 0
+      }
+    },
+    {
+      "query_id": "C021",
+      "query": "javascript optional chaining",
+      "mode": "text",
+      "candidates": 100,
+      "bm25": {
+        "p_at_k": 0.3,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.6579010164593132,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 0.4,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.6801042718229363,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C022",
+      "query": "python 3.12 asyncio",
+      "mode": "text",
+      "candidates": 41,
+      "bm25": {
+        "p_at_k": 0.9,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.7656367868587577,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 0.9,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.5891109017105272,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C023",
+      "query": "FastAPI OAuth2",
+      "mode": "all",
+      "candidates": 15,
+      "bm25": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.7350946654479201,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.9937169194128088,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C024",
+      "query": "\"No module named\"",
+      "mode": "text",
+      "candidates": 112,
+      "bm25": {
+        "p_at_k": 0.0,
+        "mrr_at_k": 0.0,
+        "ndcg_at_k": 0.0,
+        "judged_in_top_k": 10,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 0.2,
+        "mrr_at_k": 0.16666666666666666,
+        "ndcg_at_k": 0.19904392453560393,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    },
+    {
+      "query_id": "C025",
+      "query": "github actions",
+      "mode": "all",
+      "candidates": 128,
+      "bm25": {
+        "p_at_k": 0.9,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.736252432795057,
+        "judged_in_top_k": 9,
+        "returned": 10
+      },
+      "postgresql": {
+        "p_at_k": 1.0,
+        "mrr_at_k": 1.0,
+        "ndcg_at_k": 0.2881391215315142,
+        "judged_in_top_k": 10,
+        "returned": 10
+      }
+    }
+  ]
+}

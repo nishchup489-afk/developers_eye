@@ -122,5 +122,8 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | EXP-0016 | backend/bm25-statistics | [GIN-only document-frequency counts against the planner's seq-scan choice at 126k documents](backend/bm25-statistics/EXP-0016-gin-only-document-frequency-counts.md) | done |
 | EXP-0017 | backend/retrieval | [Title-match channel and dotted identifiers recover recall misses](backend/retrieval/EXP-0017-title-channel-and-dotted-identifier-recall.md) | done |
 | EXP-0018 | infra/ci-and-containers | [Verify local Oracle containers and authenticated Vercel ingress](infra/ci-and-containers/EXP-0018-local-oracle-container-readiness.md) | done |
-| EXP-0019 | backend/ranking | [Calculating core trade offs for Custom BM25 vs PostgreSQL native ranking](backend/ranking/EXP-0019-core-tradeoff-calculation-custom-bm25-vs-pg-native-ranking.md) | done            # planned \| running \| done |
+| EXP-0019 | backend/ranking | [Custom BM25 against PostgreSQL ts_rank_cd on the same candidates, relevance and latency](backend/ranking/EXP-0019-core-tradeoff-calculation-custom-bm25-vs-pg-native-ranking.md) | done |
+| EXP-0020 | infra/performance-and-scaling | [Search candidate depth, query length, concurrency and timeout budget on the 100K corpus](infra/performance-and-scaling/EXP-0020-search-depth-length-concurrency-and-timeouts.md) | done |
+| EXP-0021 | infra/performance-and-scaling | [Crawler workers, indexer batch and concurrency, mixed load and connection pools on one machine](infra/performance-and-scaling/EXP-0021-crawler-and-indexer-throughput-tradeoffs.md) | done |
+| EXP-0022 | infra/performance-and-scaling | [Corpus scaling, search_vector index choice, vocabulary refresh, Oracle ARM estimate and recrawl yield](infra/performance-and-scaling/EXP-0022-storage-scaling-vocabulary-cloud-and-recrawl.md) | done |
 <!-- record-index:end -->

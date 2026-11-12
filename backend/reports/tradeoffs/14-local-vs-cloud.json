@@ -1,0 +1,73 @@
+{
+  "benchmark": "14-local-vs-cloud",
+  "created_utc": "2026-11-12T05:30:38+00:00",
+  "commit": "77d50ca7f6a71deb4895af3a5c8ccf8b002afd9e",
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "logical_cpus": 20,
+    "physical_cpus": 20,
+    "ram_gb": 31.7,
+    "python": "3.14.4"
+  },
+  "assumptions": {
+    "arm_per_core": 0.45,
+    "arm_cores": 4,
+    "arm_ram_gb": 24,
+    "utilisation": 0.7,
+    "local_watts": 110,
+    "price_kwh": 0.16,
+    "ocpu_hour": 0.01,
+    "gb_hour": 0.0015,
+    "output": null
+  },
+  "label": "ESTIMATE, not measured on a VM",
+  "search": {
+    "local_best_successful_per_second": 24.59,
+    "at_users": 25,
+    "local_cpu_ms_per_search": 307.4,
+    "arm_cpu_ms_per_search": 683.1,
+    "arm_cpu_bound_searches_per_second": 4.1,
+    "local_single_user_p50_ms": 197.132,
+    "local_single_user_p95_ms": 2943.929,
+    "arm_single_user_p50_ms_range": [
+      197.132,
+      438
+    ],
+    "arm_single_user_p95_ms_range": [
+      2943.929,
+      6542
+    ],
+    "note": "one uvicorn worker is single-threaded: the API process itself is capped at one core either way"
+  },
+  "crawl": {
+    "local_best_docs_per_second": 14.82,
+    "at_workers": 16,
+    "local_cpu_ms_per_page": 49.3,
+    "arm_cpu_ms_per_page": 109.6,
+    "arm_cpu_bound_pages_per_second": 25.5,
+    "note": "real crawling is capped by politeness (hosts / 2 s) long before CPU"
+  },
+  "index": {
+    "local_best_docs_per_second": 79.38,
+    "label": "batch=500",
+    "local_cpu_ms_per_document": 11.2,
+    "arm_cpu_bound_docs_per_second": 112.5,
+    "arm_hours_to_index_2m": 4.9
+  },
+  "storage": {
+    "search_index_mb_per_1000_docs": 11.61,
+    "search_index_gb_at_2m_linear": 22.7,
+    "fits_in_arm_ram": false
+  },
+  "monthly_cost_usd": {
+    "oracle_always_free_a1": 0.0,
+    "oracle_a1_same_shape_pay_as_you_go": 55.48,
+    "local_pc_electricity_only": 12.85,
+    "note": "local excludes hardware wear and home internet; Oracle free tier excludes nothing within its limits"
+  },
+  "local_machine": {
+    "logical_cpus": 20,
+    "postgres_idle_cpu_cores_subtracted": 0.124
+  }
+}

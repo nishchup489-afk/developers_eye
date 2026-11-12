@@ -1,0 +1,207 @@
+{
+  "benchmark": "10-connection-pool",
+  "created_utc": "2026-11-12T04:58:53+00:00",
+  "commit": "86fa4d2859ff84f7a94f2d883283bba3f6504e10",
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "logical_cpus": 20,
+    "physical_cpus": 20,
+    "ram_gb": 31.7,
+    "python": "3.14.4"
+  },
+  "tasks": 25,
+  "seconds": 20.0,
+  "workload": "concurrent in-process search_documents() calls, one session each, mixed query set, warm DF cache",
+  "max_connections_budget": {
+    "postgres_max_connections": 100,
+    "20_crawler_processes_at_2_plus_2": 80,
+    "api_at_8_plus_2": 10,
+    "indexer_at_4_plus_2": 6,
+    "total_worst_case": 96
+  },
+  "runs": [
+    {
+      "searches_per_second": 3.76,
+      "latency": {
+        "n": 94,
+        "mean_ms": 3956.405,
+        "p50_ms": 4337.609,
+        "p95_ms": 5444.91,
+        "p99_ms": 5764.262,
+        "max_ms": 5764.262
+      },
+      "checkout_wait": {
+        "n": 133,
+        "mean_ms": 4076.45,
+        "p50_ms": 4427.209,
+        "p95_ms": 5021.746,
+        "p99_ms": 5047.099,
+        "max_ms": 5049.326
+      },
+      "errors": {
+        "TimeoutError": 39
+      },
+      "resources": {
+        "wall_seconds": 24.975,
+        "python_cpu_seconds": 1.766,
+        "sampler_cpu_seconds_excluded": 7.641,
+        "postgres_cpu_seconds": 23.844,
+        "system_cpu_seconds": 137.422,
+        "python_cpu_cores": 0.071,
+        "postgres_cpu_cores": 0.955,
+        "system_cpu_cores": 5.502,
+        "peak_python_rss_mb": 97.8,
+        "peak_postgres_rss_mb": 1082.2,
+        "peak_system_used_mb": 31503.6,
+        "mean_system_cpu_percent": 26.1
+      },
+      "pool_size": 1,
+      "max_overflow": 0
+    },
+    {
+      "searches_per_second": 12.89,
+      "latency": {
+        "n": 291,
+        "mean_ms": 1796.885,
+        "p50_ms": 1773.819,
+        "p95_ms": 3096.298,
+        "p99_ms": 3648.62,
+        "max_ms": 4018.451
+      },
+      "checkout_wait": {
+        "n": 291,
+        "mean_ms": 1492.976,
+        "p50_ms": 1541.907,
+        "p95_ms": 2386.63,
+        "p99_ms": 3211.83,
+        "max_ms": 3568.706
+      },
+      "errors": {},
+      "resources": {
+        "wall_seconds": 22.573,
+        "python_cpu_seconds": 5.891,
+        "sampler_cpu_seconds_excluded": 7.375,
+        "postgres_cpu_seconds": 70.812,
+        "system_cpu_seconds": 175.469,
+        "python_cpu_cores": 0.261,
+        "postgres_cpu_cores": 3.137,
+        "system_cpu_cores": 7.773,
+        "peak_python_rss_mb": 106.3,
+        "peak_postgres_rss_mb": 1638.3,
+        "peak_system_used_mb": 31439.1,
+        "mean_system_cpu_percent": 36.7
+      },
+      "pool_size": 2,
+      "max_overflow": 2
+    },
+    {
+      "searches_per_second": 14.32,
+      "latency": {
+        "n": 318,
+        "mean_ms": 1644.686,
+        "p50_ms": 1633.678,
+        "p95_ms": 2943.835,
+        "p99_ms": 3698.347,
+        "max_ms": 5697.92
+      },
+      "checkout_wait": {
+        "n": 318,
+        "mean_ms": 1231.459,
+        "p50_ms": 1215.989,
+        "p95_ms": 2000.599,
+        "p99_ms": 2806.287,
+        "max_ms": 4118.238
+      },
+      "errors": {},
+      "resources": {
+        "wall_seconds": 22.2,
+        "python_cpu_seconds": 6.672,
+        "sampler_cpu_seconds_excluded": 9.578,
+        "postgres_cpu_seconds": 86.141,
+        "system_cpu_seconds": 210.609,
+        "python_cpu_cores": 0.301,
+        "postgres_cpu_cores": 3.88,
+        "system_cpu_cores": 9.487,
+        "peak_python_rss_mb": 107.8,
+        "peak_postgres_rss_mb": 1958.2,
+        "peak_system_used_mb": 31529.3,
+        "mean_system_cpu_percent": 44.2
+      },
+      "pool_size": 4,
+      "max_overflow": 2
+    },
+    {
+      "searches_per_second": 19.21,
+      "latency": {
+        "n": 432,
+        "mean_ms": 1252.348,
+        "p50_ms": 1075.127,
+        "p95_ms": 2937.591,
+        "p99_ms": 3384.968,
+        "max_ms": 4511.035
+      },
+      "checkout_wait": {
+        "n": 432,
+        "mean_ms": 741.911,
+        "p50_ms": 819.022,
+        "p95_ms": 1701.595,
+        "p99_ms": 2246.233,
+        "max_ms": 2999.981
+      },
+      "errors": {},
+      "resources": {
+        "wall_seconds": 22.494,
+        "python_cpu_seconds": 9.328,
+        "sampler_cpu_seconds_excluded": 10.625,
+        "postgres_cpu_seconds": 111.906,
+        "system_cpu_seconds": 241.891,
+        "python_cpu_cores": 0.415,
+        "postgres_cpu_cores": 4.975,
+        "system_cpu_cores": 10.753,
+        "peak_python_rss_mb": 114.0,
+        "peak_postgres_rss_mb": 2584.6,
+        "peak_system_used_mb": 31438.0,
+        "mean_system_cpu_percent": 50.2
+      },
+      "pool_size": 8,
+      "max_overflow": 2
+    },
+    {
+      "searches_per_second": 19.63,
+      "latency": {
+        "n": 414,
+        "mean_ms": 1233.142,
+        "p50_ms": 1055.603,
+        "p95_ms": 2993.378,
+        "p99_ms": 3979.814,
+        "max_ms": 4480.654
+      },
+      "checkout_wait": {
+        "n": 414,
+        "mean_ms": 230.924,
+        "p50_ms": 102.999,
+        "p95_ms": 1013.566,
+        "p99_ms": 1302.606,
+        "max_ms": 1569.132
+      },
+      "errors": {},
+      "resources": {
+        "wall_seconds": 21.088,
+        "python_cpu_seconds": 9.453,
+        "sampler_cpu_seconds_excluded": 10.828,
+        "postgres_cpu_seconds": 111.516,
+        "system_cpu_seconds": 239.312,
+        "python_cpu_cores": 0.448,
+        "postgres_cpu_cores": 5.288,
+        "system_cpu_cores": 11.348,
+        "peak_python_rss_mb": 119.6,
+        "peak_postgres_rss_mb": 4133.7,
+        "peak_system_used_mb": 31637.5,
+        "mean_system_cpu_percent": 51.9
+      },
+      "pool_size": 16,
+      "max_overflow": 4
+    }
+  ]
+}

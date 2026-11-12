@@ -1,0 +1,129 @@
+{
+  "benchmark": "08b-indexer-processes",
+  "created_utc": "2026-11-12T05:30:38+00:00",
+  "commit": "77d50ca7f6a71deb4895af3a5c8ccf8b002afd9e",
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "logical_cpus": 20,
+    "physical_cpus": 20,
+    "ram_gb": 31.7,
+    "python": "3.14.4"
+  },
+  "batch_size": 200,
+  "concurrency_per_process": 4,
+  "pool_per_process": "5",
+  "runs": [
+    {
+      "label": "processes=1",
+      "documents": 3000,
+      "indexed": 3000,
+      "seconds": 78.89,
+      "docs_per_second": 38.03,
+      "wal_mb": 495.13,
+      "wal_kb_per_document": 169.01,
+      "row_writes": {
+        "search_index": 0,
+        "search_terms": 184301,
+        "vocabulary_change": 6000
+      },
+      "locks": {
+        "samples": 1214,
+        "mean_sessions_waiting_on_locks": 0.0,
+        "max_sessions_waiting_on_locks": 0
+      },
+      "resources": {
+        "wall_seconds": 78.901,
+        "python_cpu_seconds": 0.594,
+        "sampler_cpu_seconds_excluded": 28.219,
+        "postgres_cpu_seconds": 35.078,
+        "system_cpu_seconds": 436.344,
+        "python_cpu_cores": 0.008,
+        "postgres_cpu_cores": 0.445,
+        "system_cpu_cores": 5.53,
+        "peak_python_rss_mb": 200.6,
+        "peak_postgres_rss_mb": 1866.3,
+        "peak_system_used_mb": 31768.5,
+        "mean_system_cpu_percent": 26.4
+      },
+      "outcomes": {
+        "indexed": 3000
+      },
+      "processes": 1
+    },
+    {
+      "label": "processes=2",
+      "documents": 3000,
+      "indexed": 3000,
+      "seconds": 20.72,
+      "docs_per_second": 144.79,
+      "wal_mb": 327.49,
+      "wal_kb_per_document": 111.78,
+      "row_writes": {
+        "search_index": 0,
+        "search_terms": 161214,
+        "vocabulary_change": 6000
+      },
+      "locks": {
+        "samples": 291,
+        "mean_sessions_waiting_on_locks": 0.0,
+        "max_sessions_waiting_on_locks": 0
+      },
+      "resources": {
+        "wall_seconds": 20.74,
+        "python_cpu_seconds": 0.156,
+        "sampler_cpu_seconds_excluded": 8.906,
+        "postgres_cpu_seconds": 26.219,
+        "system_cpu_seconds": 168.562,
+        "python_cpu_cores": 0.008,
+        "postgres_cpu_cores": 1.264,
+        "system_cpu_cores": 8.128,
+        "peak_python_rss_mb": 305.6,
+        "peak_postgres_rss_mb": 2294.2,
+        "peak_system_used_mb": 31761.8,
+        "mean_system_cpu_percent": 38.0
+      },
+      "outcomes": {
+        "indexed": 3000
+      },
+      "processes": 2
+    },
+    {
+      "label": "processes=4",
+      "documents": 3000,
+      "indexed": 3000,
+      "seconds": 14.37,
+      "docs_per_second": 208.8,
+      "wal_mb": 286.0,
+      "wal_kb_per_document": 97.62,
+      "row_writes": {
+        "search_index": 0,
+        "search_terms": 116223,
+        "vocabulary_change": 5946
+      },
+      "locks": {
+        "samples": 192,
+        "mean_sessions_waiting_on_locks": 0.0,
+        "max_sessions_waiting_on_locks": 0
+      },
+      "resources": {
+        "wall_seconds": 14.385,
+        "python_cpu_seconds": 0.109,
+        "sampler_cpu_seconds_excluded": 6.641,
+        "postgres_cpu_seconds": 23.406,
+        "system_cpu_seconds": 155.344,
+        "python_cpu_cores": 0.008,
+        "postgres_cpu_cores": 1.627,
+        "system_cpu_cores": 10.799,
+        "peak_python_rss_mb": 486.2,
+        "peak_postgres_rss_mb": 2335.4,
+        "peak_system_used_mb": 31948.9,
+        "mean_system_cpu_percent": 48.3
+      },
+      "outcomes": {
+        "indexed": 3000
+      },
+      "processes": 4
+    }
+  ]
+}

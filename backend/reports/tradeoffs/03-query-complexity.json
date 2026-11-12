@@ -1,0 +1,270 @@
+{
+  "benchmark": "03-query-complexity",
+  "created_utc": "2026-11-12T04:49:27+00:00",
+  "commit": "86fa4d2859ff84f7a94f2d883283bba3f6504e10",
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "logical_cpus": 20,
+    "physical_cpus": 20,
+    "ram_gb": 31.7,
+    "python": "3.14.4"
+  },
+  "postgres": {
+    "server_version": "18.3",
+    "shared_buffers": "128MB",
+    "work_mem": "4MB",
+    "effective_cache_size": "4GB",
+    "max_connections": "200",
+    "random_page_cost": "4",
+    "jit": "on",
+    "max_parallel_workers_per_gather": "2",
+    "database": "developers_eye_bench",
+    "search_index_rows": 99941,
+    "database_size_mb": 2354.6
+  },
+  "rounds_per_query": 5,
+  "note": "full search_documents() (retrieval, BM25, metadata, snippets) in one process; mode=all, limit=10",
+  "terms": {
+    "1": {
+      "queries": [
+        "python",
+        "docker",
+        "kubernetes",
+        "react",
+        "postgresql",
+        "typescript",
+        "redis",
+        "nginx"
+      ],
+      "mean_candidates": 211.6,
+      "queries_with_results": 8,
+      "cold_df": {
+        "n": 40,
+        "mean_ms": 290.291,
+        "p50_ms": 186.753,
+        "p95_ms": 673.256,
+        "p99_ms": 937.434,
+        "max_ms": 937.434
+      },
+      "warm_df": {
+        "n": 40,
+        "mean_ms": 232.453,
+        "p50_ms": 154.795,
+        "p95_ms": 695.0,
+        "p99_ms": 718.403,
+        "max_ms": 718.403
+      },
+      "cpu_ms_per_query": {
+        "python": 28.12,
+        "postgres": 234.57
+      },
+      "text_match_plan": {
+        "query": "python",
+        "execution_ms": 18.938,
+        "top_node": "Limit",
+        "nodes": [
+          "Limit rows=12093.0 ms=18.573",
+          "  Bitmap Heap Scan rows=12093.0 ms=18.108",
+          "    Bitmap Index Scan rows=12102.0 ms=1.105"
+        ],
+        "shared_hit_blocks": 1510,
+        "shared_read_blocks": 5892
+      },
+      "resources": {
+        "wall_seconds": 23.112,
+        "python_cpu_seconds": 2.25,
+        "sampler_cpu_seconds_excluded": 6.391,
+        "postgres_cpu_seconds": 18.766,
+        "system_cpu_seconds": 102.406,
+        "python_cpu_cores": 0.097,
+        "postgres_cpu_cores": 0.812,
+        "system_cpu_cores": 4.431,
+        "peak_python_rss_mb": 97.4,
+        "peak_postgres_rss_mb": 1205.8,
+        "peak_system_used_mb": 31513.9,
+        "mean_system_cpu_percent": 21.0
+      }
+    },
+    "2": {
+      "queries": [
+        "python async",
+        "docker compose",
+        "react hooks",
+        "postgresql index",
+        "typescript generics",
+        "redis cache",
+        "nginx proxy",
+        "git rebase"
+      ],
+      "mean_candidates": 152.1,
+      "queries_with_results": 8,
+      "cold_df": {
+        "n": 40,
+        "mean_ms": 324.002,
+        "p50_ms": 275.296,
+        "p95_ms": 606.808,
+        "p99_ms": 754.284,
+        "max_ms": 754.284
+      },
+      "warm_df": {
+        "n": 40,
+        "mean_ms": 136.418,
+        "p50_ms": 99.956,
+        "p95_ms": 273.268,
+        "p99_ms": 342.933,
+        "max_ms": 342.933
+      },
+      "cpu_ms_per_query": {
+        "python": 27.35,
+        "postgres": 125.97
+      },
+      "text_match_plan": {
+        "query": "python async",
+        "execution_ms": 2.403,
+        "top_node": "Limit",
+        "nodes": [
+          "Limit rows=830.0 ms=2.364",
+          "  Bitmap Heap Scan rows=830.0 ms=2.326",
+          "    Bitmap Index Scan rows=831.0 ms=0.467"
+        ],
+        "shared_hit_blocks": 380,
+        "shared_read_blocks": 395
+      },
+      "resources": {
+        "wall_seconds": 19.797,
+        "python_cpu_seconds": 2.188,
+        "sampler_cpu_seconds_excluded": 5.609,
+        "postgres_cpu_seconds": 10.078,
+        "system_cpu_seconds": 86.656,
+        "python_cpu_cores": 0.11,
+        "postgres_cpu_cores": 0.509,
+        "system_cpu_cores": 4.377,
+        "peak_python_rss_mb": 99.2,
+        "peak_postgres_rss_mb": 1211.8,
+        "peak_system_used_mb": 31613.7,
+        "mean_system_cpu_percent": 20.8
+      }
+    },
+    "5": {
+      "queries": [
+        "python async http client timeout",
+        "docker compose volume mount permissions",
+        "react hooks state update effect",
+        "postgresql index scan query plan",
+        "typescript generic type constraint inference",
+        "redis cache key expiration policy",
+        "nginx reverse proxy websocket upgrade",
+        "git rebase interactive squash commits"
+      ],
+      "mean_candidates": 62.0,
+      "queries_with_results": 8,
+      "cold_df": {
+        "n": 40,
+        "mean_ms": 257.056,
+        "p50_ms": 251.895,
+        "p95_ms": 465.071,
+        "p99_ms": 573.285,
+        "max_ms": 573.285
+      },
+      "warm_df": {
+        "n": 40,
+        "mean_ms": 109.174,
+        "p50_ms": 88.114,
+        "p95_ms": 272.322,
+        "p99_ms": 335.154,
+        "max_ms": 335.154
+      },
+      "cpu_ms_per_query": {
+        "python": 34.96,
+        "postgres": 85.15
+      },
+      "text_match_plan": {
+        "query": "python async http client timeout",
+        "execution_ms": 1.02,
+        "top_node": "Limit",
+        "nodes": [
+          "Limit rows=77.0 ms=1.005",
+          "  Bitmap Heap Scan rows=77.0 ms=1.002",
+          "    Bitmap Index Scan rows=77.0 ms=0.924"
+        ],
+        "shared_hit_blocks": 94,
+        "shared_read_blocks": 27
+      },
+      "resources": {
+        "wall_seconds": 16.301,
+        "python_cpu_seconds": 2.797,
+        "sampler_cpu_seconds_excluded": 4.875,
+        "postgres_cpu_seconds": 6.812,
+        "system_cpu_seconds": 86.156,
+        "python_cpu_cores": 0.172,
+        "postgres_cpu_cores": 0.418,
+        "system_cpu_cores": 5.285,
+        "peak_python_rss_mb": 103.0,
+        "peak_postgres_rss_mb": 1216.2,
+        "peak_system_used_mb": 31669.2,
+        "mean_system_cpu_percent": 24.8
+      }
+    },
+    "10": {
+      "queries": [
+        "python async http client timeout retry session connection pool error handling",
+        "docker compose volume mount permissions linux user group file owner container",
+        "react hooks state update effect cleanup dependency array render memo callback",
+        "postgresql index scan query plan analyze buffers cost estimate join order",
+        "typescript generic type constraint inference conditional mapped keyof infer union",
+        "redis cache key expiration policy eviction memory lru ttl persistence cluster",
+        "nginx reverse proxy websocket upgrade header timeout buffer ssl certificate config",
+        "git rebase interactive squash commits branch merge conflict history force push"
+      ],
+      "mean_candidates": 10.2,
+      "queries_with_results": 7,
+      "cold_df": {
+        "n": 40,
+        "mean_ms": 194.273,
+        "p50_ms": 148.435,
+        "p95_ms": 408.052,
+        "p99_ms": 550.735,
+        "max_ms": 550.735
+      },
+      "warm_df": {
+        "n": 40,
+        "mean_ms": 53.62,
+        "p50_ms": 23.655,
+        "p95_ms": 154.511,
+        "p99_ms": 255.662,
+        "max_ms": 255.662
+      },
+      "cpu_ms_per_query": {
+        "python": 31.84,
+        "postgres": 57.81
+      },
+      "text_match_plan": {
+        "query": "python async http client timeout retry session connection pool error handling",
+        "execution_ms": 1.861,
+        "top_node": "Limit",
+        "nodes": [
+          "Limit rows=10.0 ms=1.848",
+          "  Bitmap Heap Scan rows=10.0 ms=1.847",
+          "    Bitmap Index Scan rows=10.0 ms=1.828"
+        ],
+        "shared_hit_blocks": 63,
+        "shared_read_blocks": 50
+      },
+      "resources": {
+        "wall_seconds": 11.293,
+        "python_cpu_seconds": 2.547,
+        "sampler_cpu_seconds_excluded": 3.172,
+        "postgres_cpu_seconds": 4.625,
+        "system_cpu_seconds": 56.438,
+        "python_cpu_cores": 0.226,
+        "postgres_cpu_cores": 0.41,
+        "system_cpu_cores": 4.998,
+        "peak_python_rss_mb": 103.2,
+        "peak_postgres_rss_mb": 1216.3,
+        "peak_system_used_mb": 31718.5,
+        "mean_system_cpu_percent": 23.0
+      }
+    }
+  }
+}

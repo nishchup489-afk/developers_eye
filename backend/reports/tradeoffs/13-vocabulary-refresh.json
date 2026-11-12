@@ -1,0 +1,156 @@
+{
+  "benchmark": "13-vocabulary-refresh",
+  "created_utc": "2026-11-12T05:12:48+00:00",
+  "commit": "86fa4d2859ff84f7a94f2d883283bba3f6504e10",
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "logical_cpus": 20,
+    "physical_cpus": 20,
+    "ram_gb": 31.7,
+    "python": "3.14.4"
+  },
+  "documents": 2000,
+  "search_terms_rows": 968032,
+  "concurrency": 4,
+  "strategies": {
+    "outbox": {
+      "label": "outbox",
+      "documents": 2000,
+      "indexed": 2000,
+      "seconds": 27.48,
+      "docs_per_second": 72.79,
+      "wal_mb": 303.68,
+      "wal_kb_per_document": 155.48,
+      "row_writes": {
+        "search_index": 1959,
+        "search_terms": 121946,
+        "vocabulary_change": 3959
+      },
+      "locks": {
+        "samples": 394,
+        "mean_sessions_waiting_on_locks": 0.0,
+        "max_sessions_waiting_on_locks": 0
+      },
+      "resources": {
+        "wall_seconds": 27.507,
+        "python_cpu_seconds": 11.688,
+        "sampler_cpu_seconds_excluded": 8.953,
+        "postgres_cpu_seconds": 17.562,
+        "system_cpu_seconds": 132.141,
+        "python_cpu_cores": 0.425,
+        "postgres_cpu_cores": 0.638,
+        "system_cpu_cores": 4.804,
+        "peak_python_rss_mb": 110.4,
+        "peak_postgres_rss_mb": 1808.7,
+        "peak_system_used_mb": 31508.3,
+        "mean_system_cpu_percent": 22.5
+      },
+      "outcomes": {
+        "indexed": 2000
+      },
+      "batch_ms": {
+        "n": 10,
+        "mean_ms": 2747.522,
+        "p50_ms": 2454.28,
+        "p95_ms": 4711.147,
+        "p99_ms": 4711.147,
+        "max_ms": 4711.147
+      },
+      "per_document_ms": {
+        "n": 2000,
+        "mean_ms": 37.153,
+        "p50_ms": 20.026,
+        "p95_ms": 79.317,
+        "p99_ms": 399.209,
+        "max_ms": 3326.494
+      },
+      "drain_ms": {
+        "n": 10,
+        "mean_ms": 568.369,
+        "p50_ms": 450.159,
+        "p95_ms": 1115.621,
+        "p99_ms": 1115.621,
+        "max_ms": 1115.621
+      }
+    },
+    "direct_upsert": {
+      "label": "direct-upsert",
+      "documents": 2000,
+      "seconds": 9.34,
+      "wal_mb": 123.4,
+      "wal_kb_per_document": 63.18,
+      "row_writes": {
+        "search_index": 24,
+        "search_terms": 431010,
+        "vocabulary_change": 2024
+      },
+      "locks": {
+        "samples": 133,
+        "mean_sessions_waiting_on_locks": 2.0,
+        "max_sessions_waiting_on_locks": 3
+      },
+      "resources": {
+        "wall_seconds": 9.352,
+        "python_cpu_seconds": 3.391,
+        "sampler_cpu_seconds_excluded": 3.328,
+        "postgres_cpu_seconds": 6.266,
+        "system_cpu_seconds": 44.906,
+        "python_cpu_cores": 0.363,
+        "postgres_cpu_cores": 0.67,
+        "system_cpu_cores": 4.802,
+        "peak_python_rss_mb": 111.4,
+        "peak_postgres_rss_mb": 1771.4,
+        "peak_system_used_mb": 31482.4,
+        "mean_system_cpu_percent": 21.4
+      },
+      "outcomes": {
+        "indexed": 2000
+      },
+      "per_document_ms": {
+        "n": 2000,
+        "mean_ms": 18.331,
+        "p50_ms": 8.243,
+        "p95_ms": 40.803,
+        "p99_ms": 261.506,
+        "max_ms": 564.896
+      }
+    },
+    "full_rebuild": {
+      "label": "full-rebuild",
+      "documents": 2000,
+      "seconds": 138.49,
+      "wal_mb": 989.62,
+      "wal_kb_per_document": 506.68,
+      "row_writes": {
+        "search_index": 0,
+        "search_terms": 1935955,
+        "vocabulary_change": 0
+      },
+      "locks": {
+        "samples": 994,
+        "mean_sessions_waiting_on_locks": 0.0,
+        "max_sessions_waiting_on_locks": 0
+      },
+      "resources": {
+        "wall_seconds": 138.511,
+        "python_cpu_seconds": 52.531,
+        "sampler_cpu_seconds_excluded": 48.547,
+        "postgres_cpu_seconds": 92.625,
+        "system_cpu_seconds": 761.016,
+        "python_cpu_cores": 0.379,
+        "postgres_cpu_cores": 0.669,
+        "system_cpu_cores": 5.494,
+        "peak_python_rss_mb": 1858.0,
+        "peak_postgres_rss_mb": 2194.6,
+        "peak_system_used_mb": 32382.2,
+        "mean_system_cpu_percent": 26.5
+      },
+      "outcomes": {
+        "indexed": 96941
+      },
+      "documents_scanned": 96941,
+      "terms_written": 949052
+    }
+  }
+}

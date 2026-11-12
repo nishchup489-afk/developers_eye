@@ -1,0 +1,270 @@
+{
+  "benchmark": "08-indexer-concurrency",
+  "created_utc": "2026-11-12T05:08:22+00:00",
+  "commit": "86fa4d2859ff84f7a94f2d883283bba3f6504e10",
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "logical_cpus": 20,
+    "physical_cpus": 20,
+    "ram_gb": 31.7,
+    "python": "3.14.4"
+  },
+  "postgres": {
+    "server_version": "18.3",
+    "shared_buffers": "128MB",
+    "work_mem": "4MB",
+    "effective_cache_size": "4GB",
+    "max_connections": "200",
+    "random_page_cost": "4",
+    "jit": "on",
+    "max_parallel_workers_per_gather": "2",
+    "database": "developers_eye_bench",
+    "search_index_rows": 99941,
+    "database_size_mb": 2396.1
+  },
+  "batch_size": 200,
+  "pool": "9",
+  "runs": [
+    {
+      "label": "concurrency=1",
+      "documents": 3000,
+      "indexed": 3000,
+      "seconds": 53.04,
+      "docs_per_second": 56.56,
+      "wal_mb": 369.37,
+      "wal_kb_per_document": 126.08,
+      "row_writes": {
+        "search_index": 3000,
+        "search_terms": 190485,
+        "vocabulary_change": 6000
+      },
+      "locks": {
+        "samples": 809,
+        "mean_sessions_waiting_on_locks": 0.0,
+        "max_sessions_waiting_on_locks": 0
+      },
+      "resources": {
+        "wall_seconds": 53.057,
+        "python_cpu_seconds": 19.703,
+        "sampler_cpu_seconds_excluded": 16.938,
+        "postgres_cpu_seconds": 27.828,
+        "system_cpu_seconds": 267.172,
+        "python_cpu_cores": 0.371,
+        "postgres_cpu_cores": 0.524,
+        "system_cpu_cores": 5.036,
+        "peak_python_rss_mb": 110.5,
+        "peak_postgres_rss_mb": 1371.1,
+        "peak_system_used_mb": 31259.8,
+        "mean_system_cpu_percent": 24.5
+      },
+      "outcomes": {
+        "indexed": 3000
+      },
+      "batch_ms": {
+        "n": 15,
+        "mean_ms": 3528.441,
+        "p50_ms": 3270.859,
+        "p95_ms": 5048.144,
+        "p99_ms": 5048.144,
+        "max_ms": 5048.144
+      },
+      "per_document_ms": {
+        "n": 3000,
+        "mean_ms": 14.487,
+        "p50_ms": 7.557,
+        "p95_ms": 18.624,
+        "p99_ms": 202.847,
+        "max_ms": 922.941
+      },
+      "drain_ms": {
+        "n": 15,
+        "mean_ms": 572.261,
+        "p50_ms": 578.76,
+        "p95_ms": 1683.007,
+        "p99_ms": 1683.007,
+        "max_ms": 1683.007
+      }
+    },
+    {
+      "label": "concurrency=2",
+      "documents": 3000,
+      "indexed": 3000,
+      "seconds": 40.46,
+      "docs_per_second": 74.14,
+      "wal_mb": 232.81,
+      "wal_kb_per_document": 79.47,
+      "row_writes": {
+        "search_index": 2990,
+        "search_terms": 180634,
+        "vocabulary_change": 5790
+      },
+      "locks": {
+        "samples": 583,
+        "mean_sessions_waiting_on_locks": 0.0,
+        "max_sessions_waiting_on_locks": 0
+      },
+      "resources": {
+        "wall_seconds": 40.478,
+        "python_cpu_seconds": 18.047,
+        "sampler_cpu_seconds_excluded": 14.0,
+        "postgres_cpu_seconds": 23.734,
+        "system_cpu_seconds": 195.516,
+        "python_cpu_cores": 0.446,
+        "postgres_cpu_cores": 0.586,
+        "system_cpu_cores": 4.83,
+        "peak_python_rss_mb": 111.9,
+        "peak_postgres_rss_mb": 1523.1,
+        "peak_system_used_mb": 31475.3,
+        "mean_system_cpu_percent": 23.2
+      },
+      "outcomes": {
+        "indexed": 3000
+      },
+      "batch_ms": {
+        "n": 15,
+        "mean_ms": 2697.366,
+        "p50_ms": 2604.158,
+        "p95_ms": 4005.042,
+        "p99_ms": 4005.042,
+        "max_ms": 4005.042
+      },
+      "per_document_ms": {
+        "n": 3000,
+        "mean_ms": 20.07,
+        "p50_ms": 10.671,
+        "p95_ms": 26.889,
+        "p99_ms": 275.242,
+        "max_ms": 1188.947
+      },
+      "drain_ms": {
+        "n": 15,
+        "mean_ms": 573.655,
+        "p50_ms": 508.213,
+        "p95_ms": 1274.402,
+        "p99_ms": 1274.402,
+        "max_ms": 1274.402
+      }
+    },
+    {
+      "label": "concurrency=4",
+      "documents": 3000,
+      "indexed": 3000,
+      "seconds": 41.38,
+      "docs_per_second": 72.49,
+      "wal_mb": 245.46,
+      "wal_kb_per_document": 83.78,
+      "row_writes": {
+        "search_index": 2985,
+        "search_terms": 180634,
+        "vocabulary_change": 5785
+      },
+      "locks": {
+        "samples": 541,
+        "mean_sessions_waiting_on_locks": 0.0,
+        "max_sessions_waiting_on_locks": 0
+      },
+      "resources": {
+        "wall_seconds": 41.399,
+        "python_cpu_seconds": 18.734,
+        "sampler_cpu_seconds_excluded": 15.25,
+        "postgres_cpu_seconds": 25.328,
+        "system_cpu_seconds": 191.141,
+        "python_cpu_cores": 0.453,
+        "postgres_cpu_cores": 0.612,
+        "system_cpu_cores": 4.617,
+        "peak_python_rss_mb": 114.6,
+        "peak_postgres_rss_mb": 1832.1,
+        "peak_system_used_mb": 31474.2,
+        "mean_system_cpu_percent": 22.1
+      },
+      "outcomes": {
+        "indexed": 3000
+      },
+      "batch_ms": {
+        "n": 15,
+        "mean_ms": 2758.508,
+        "p50_ms": 2632.028,
+        "p95_ms": 4209.573,
+        "p99_ms": 4209.573,
+        "max_ms": 4209.573
+      },
+      "per_document_ms": {
+        "n": 3000,
+        "mean_ms": 41.321,
+        "p50_ms": 21.701,
+        "p95_ms": 156.763,
+        "p99_ms": 444.659,
+        "max_ms": 1612.051
+      },
+      "drain_ms": {
+        "n": 15,
+        "mean_ms": 545.036,
+        "p50_ms": 556.078,
+        "p95_ms": 1260.29,
+        "p99_ms": 1260.29,
+        "max_ms": 1260.29
+      }
+    },
+    {
+      "label": "concurrency=8",
+      "documents": 3000,
+      "indexed": 3000,
+      "seconds": 36.95,
+      "docs_per_second": 81.19,
+      "wal_mb": 273.82,
+      "wal_kb_per_document": 93.46,
+      "row_writes": {
+        "search_index": 5942,
+        "search_terms": 190485,
+        "vocabulary_change": 5942
+      },
+      "locks": {
+        "samples": 466,
+        "mean_sessions_waiting_on_locks": 0.0,
+        "max_sessions_waiting_on_locks": 0
+      },
+      "resources": {
+        "wall_seconds": 36.963,
+        "python_cpu_seconds": 16.047,
+        "sampler_cpu_seconds_excluded": 14.203,
+        "postgres_cpu_seconds": 23.016,
+        "system_cpu_seconds": 173.313,
+        "python_cpu_cores": 0.434,
+        "postgres_cpu_cores": 0.623,
+        "system_cpu_cores": 4.689,
+        "peak_python_rss_mb": 122.9,
+        "peak_postgres_rss_mb": 2340.2,
+        "peak_system_used_mb": 31682.6,
+        "mean_system_cpu_percent": 22.4
+      },
+      "outcomes": {
+        "indexed": 3000
+      },
+      "batch_ms": {
+        "n": 15,
+        "mean_ms": 2463.184,
+        "p50_ms": 2374.914,
+        "p95_ms": 3356.247,
+        "p99_ms": 3356.247,
+        "max_ms": 3356.247
+      },
+      "per_document_ms": {
+        "n": 3000,
+        "mean_ms": 69.982,
+        "p50_ms": 39.826,
+        "p95_ms": 318.655,
+        "p99_ms": 567.714,
+        "max_ms": 1772.38
+      },
+      "drain_ms": {
+        "n": 15,
+        "mean_ms": 546.317,
+        "p50_ms": 603.653,
+        "p95_ms": 1301.23,
+        "p99_ms": 1301.23,
+        "max_ms": 1301.23
+      }
+    }
+  ]
+}
