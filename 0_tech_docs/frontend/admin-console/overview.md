@@ -27,6 +27,8 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | [ADR-0032](../admin-auth/ADR-0032-github-admin-auth-and-service-key-boundary.md) | decision | Authenticate admins with GitHub and keep the backend key behind server routes | accepted |
 | [ADR-0037](../../indexer/coverage-reporting/ADR-0037-operational-coverage-snapshot-semantics.md) | decision | Treat coverage and vocabulary reports as operational observations | accepted |
 | [ADR-0044](../../backend/admin-api/ADR-0044-search-availability-telemetry.md) | decision | Record search outcomes per minute in PostgreSQL, and sample the corpus for statistics | accepted |
+| [ADR-0057](../../backend/admin-api/ADR-0057-slow-search-log-and-human-judging.md) | decision | Log slow searches with stage timings and store human relevance judgments in PostgreSQL | accepted |
+| [INC-0043](INC-0043-slow-search-tab-rejected-empty-window.md) | incident | Slow searches tab rejected an empty window as invalid data | resolved |
 
 ## Decisions to record
 
