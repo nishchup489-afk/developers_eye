@@ -1,7 +1,7 @@
 """Frozen-corpus relevance evaluation: collect once, judge URLs, score offline.
 
 From backend/:
-  poetry run python scripts/evaluate_relevance.py collect \
+  poetry run python ../scripts/evaluate_relevance.py collect \
     --corpus-id dev-local-2026-11-06 \
     --queries evaluation/queries.json \
     --snapshot reports/exp-0004-snapshot.json \
@@ -9,7 +9,7 @@ From backend/:
 
   # Manually grade every URL in the generated qrels (0=irrelevant, 3=ideal).
   # Add independently known relevant URLs even when not retrieved.
-  poetry run python scripts/evaluate_relevance.py score \
+  poetry run python ../scripts/evaluate_relevance.py score \
     --snapshot reports/exp-0004-snapshot.json \
     --qrels reports/exp-0004-qrels.json \
     --output reports/exp-0004-results.json

@@ -1,6 +1,6 @@
 """A local stand-in for many documentation hosts, for crawler load tests.
 
-  python backend/scripts/tradeoffs/mock_hosts.py --port 80 --capacity 24
+  python scripts/tradeoffs/mock_hosts.py --port 80 --capacity 24
 
 Every hostname ending in .bench is served by this one process (the crawler
 benchmark points DNS for *.bench at 127.0.0.1). It behaves like a modest

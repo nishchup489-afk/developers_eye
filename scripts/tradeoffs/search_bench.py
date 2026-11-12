@@ -2,9 +2,9 @@
 
 From the repository root (any Python env with backend + psutil installed):
 
-  python backend/scripts/tradeoffs/search_bench.py ranking    --rounds 5
-  python backend/scripts/tradeoffs/search_bench.py depth      --rounds 3 --depths 50 100 200 500
-  python backend/scripts/tradeoffs/search_bench.py complexity --rounds 10
+  python scripts/tradeoffs/search_bench.py ranking    --rounds 5
+  python scripts/tradeoffs/search_bench.py depth      --rounds 3 --depths 50 100 200 500
+  python scripts/tradeoffs/search_bench.py complexity --rounds 10
 
 Defaults to the developers_eye_bench copy (see common.default_bench_url).
 Read only. Relevance uses the agent-reviewed checklist-25 grades (EXP-0014);
@@ -102,7 +102,7 @@ async def _pg_order(session, query, mode, ids):
     """PostgreSQL-native order over the same candidates (compare_rankings._native_score)."""
     from sqlalchemy import select
     from backend.models.search_index import SearchIndex
-    sys.path.insert(0, str(common.REPO_ROOT / "backend" / "scripts"))
+    sys.path.insert(0, str(common.REPO_ROOT / "scripts"))
     from compare_rankings import _native_score
     score = _native_score(query, mode)
     rows = (await session.execute(select(SearchIndex.document_id).where(SearchIndex.document_id.in_(ids))

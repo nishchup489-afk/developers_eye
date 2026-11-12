@@ -2,8 +2,8 @@
 
 From the repository root, on the benchmark copy (it creates schemas there):
 
-  python backend/scripts/tradeoffs/storage_bench.py scaling --sizes 10000 50000 100000 --rounds 3
-  python backend/scripts/tradeoffs/storage_bench.py indexes --insert-rows 2000
+  python scripts/tradeoffs/storage_bench.py scaling --sizes 10000 50000 100000 --rounds 3
+  python scripts/tradeoffs/storage_bench.py indexes --insert-rows 2000
 
 scaling: copies a deterministic sample of search_index rows (ordered by
 md5(document_id)) into schema c<size>, with the same indexes, and runs the real

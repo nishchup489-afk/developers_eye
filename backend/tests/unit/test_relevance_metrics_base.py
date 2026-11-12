@@ -1,9 +1,14 @@
 """Independent checks for EXP-0009 metric arithmetic and labeling discipline."""
 import math
+import sys
+from pathlib import Path
 
 import pytest
 
-from scripts.search_relevance_metrics.evaluate_relevance import (
+# The scripts live in the repository-level scripts/ folder, outside the backend package.
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
+
+from search_relevance_metrics.evaluate_relevance import (
     EvaluationError,
     dcg_at_k,
     evaluate,

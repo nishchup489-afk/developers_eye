@@ -2,8 +2,8 @@
 
 From backend/:
     poetry add --group dev rich
-    poetry run python scripts/diagnose_relevance.py
-    poetry run python scripts/diagnose_relevance.py --limit 10 --k 10
+    poetry run python ../scripts/search_relevance_diagnostics/diagnose_relevance.py
+    poetry run python ../scripts/search_relevance_diagnostics/diagnose_relevance.py --limit 10 --k 10
 
 Reuses Developer's Eye retrieval and BM25, with one corpus-statistics scan per
 active channel for the entire suite. Reports ranking agreement and heuristics;
@@ -46,7 +46,7 @@ from backend.search.ranking.types import CorpusStatistics
 from backend.search.service import _retrieve_candidates
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-BACKEND_ROOT = SCRIPT_DIR.parent.parent
+BACKEND_ROOT = SCRIPT_DIR.parent.parent / "backend"
 
 DEFAULT_SUITE = SCRIPT_DIR / "diagnostic_queries.json"
 DEFAULT_REPORTS = BACKEND_ROOT / "reports" / "exp-0004"

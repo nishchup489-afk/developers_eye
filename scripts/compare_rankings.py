@@ -1,9 +1,9 @@
 """Compare Developer's Eye BM25 with PostgreSQL ts_rank_cd on identical hits.
 
 From backend/:
-    poetry run python scripts/compare_rankings.py "python async api" --mode text
-    poetry run python scripts/compare_rankings.py "async def fetch" --mode code
-    poetry run python scripts/compare_rankings.py "FastAPI Depends" --mode all --output ranking-report.json
+    poetry run python ../scripts/compare_rankings.py "python async api" --mode text
+    poetry run python ../scripts/compare_rankings.py "async def fetch" --mode code
+    poetry run python ../scripts/compare_rankings.py "FastAPI Depends" --mode all --output ranking-report.json
 
 Reads the configured DATABASE_URL via backend.core.config. Never writes to DB.
 Corpus-statistics aggregation scans the index: run manually, not per request.

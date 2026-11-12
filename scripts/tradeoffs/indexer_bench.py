@@ -2,10 +2,10 @@
 
 Run from the repository root with the crawler environment (it has indexer installed):
 
-  python backend/scripts/tradeoffs/indexer_bench.py batch       --docs 3000 --sizes 25 50 100 250 500
-  python backend/scripts/tradeoffs/indexer_bench.py concurrency --docs 3000 --workers 1 2 4 8
-  python backend/scripts/tradeoffs/indexer_bench.py processes   --docs 3000 --processes 1 2 4
-  python backend/scripts/tradeoffs/indexer_bench.py vocabulary  --docs 2000
+  python scripts/tradeoffs/indexer_bench.py batch       --docs 3000 --sizes 25 50 100 250 500
+  python scripts/tradeoffs/indexer_bench.py concurrency --docs 3000 --workers 1 2 4 8
+  python scripts/tradeoffs/indexer_bench.py processes   --docs 3000 --processes 1 2 4
+  python scripts/tradeoffs/indexer_bench.py vocabulary  --docs 2000
 
 WRITES to the benchmark copy only (common.configure refuses other databases).
 Each run first deletes the search_index rows of a fixed random sample of

@@ -5,7 +5,7 @@ No existing source files need to be edited.
 
 ## Files
 
-- `backend/scripts/diagnose_relevance.py`: Rich terminal dashboard and read-only query runner.
+- `scripts/search_relevance_diagnostics/diagnose_relevance.py`: Rich terminal dashboard and read-only query runner.
 - `backend/evaluation/diagnostic_queries.json`: Editable 100-query suite (10 thematic groups × 10 queries).
 
 ## Install and run
@@ -14,15 +14,15 @@ Place the two files in the matching paths within your `developers-eye` clone. Op
 
 ```powershell
 poetry add --group dev rich
-poetry run python scripts/search_relavance_diagnostics/diagnose_relevance.py --limit 5 --details
-poetry run python scripts/search_relavance_diagnostics/diagnose_relevance.py --k 10
+poetry run python ../scripts/search_relevance_diagnostics/diagnose_relevance.py --limit 5 --details
+poetry run python ../scripts/search_relevance_diagnostics/diagnose_relevance.py --k 10
 ```
 
 To inspect specific cases without rerunning all 100:
 
 ```powershell
-poetry run python scripts/diagnose_relevance.py --id Q051 --details
-poetry run python scripts/diagnose_relevance.py --id Q024 --id Q061 --details
+poetry run python ../scripts/search_relevance_diagnostics/diagnose_relevance.py --id Q051 --details
+poetry run python ../scripts/search_relevance_diagnostics/diagnose_relevance.py --id Q024 --id Q061 --details
 ```
 
 Useful IDs: Q011 `python async api`, Q024 `FastAPI Depends`, Q051 `javascript fetch examples`, Q061 `HTTP 404`.

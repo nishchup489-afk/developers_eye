@@ -1,7 +1,7 @@
 """Read-only, repeatable-read search profiling over the configured corpus.
 
 Run with the crawler environment from the repository root:
-    python backend/scripts/profile_search.py --rounds 5 --output backend/reports/checklist/search-before.json
+    python scripts/profile_search.py --rounds 5 --output backend/reports/checklist/search-before.json
 
 Cold means the application's DF cache is cleared; PostgreSQL/OS caches are not
 flushed. No documents, vectors, statistics tables, or database settings are written.

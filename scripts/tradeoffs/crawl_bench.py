@@ -2,10 +2,10 @@
 
 From the repository root with the crawler environment, on the benchmark copy:
 
-  python backend/scripts/tradeoffs/crawl_bench.py workers --workers 2 8 16 32 64 --seconds 45
-  python backend/scripts/tradeoffs/crawl_bench.py mixed   --workers 16 --users 10 --seconds 30
-  python backend/scripts/tradeoffs/crawl_bench.py pool    --pools 1:0 2:2 4:2 8:2 16:4 --tasks 25 --seconds 20
-  python backend/scripts/tradeoffs/crawl_bench.py recrawl
+  python scripts/tradeoffs/crawl_bench.py workers --workers 2 8 16 32 64 --seconds 45
+  python scripts/tradeoffs/crawl_bench.py mixed   --workers 16 --users 10 --seconds 30
+  python scripts/tradeoffs/crawl_bench.py pool    --pools 1:0 2:2 4:2 8:2 16:4 --tasks 25 --seconds 20
+  python scripts/tradeoffs/crawl_bench.py recrawl
 
 Nothing here contacts a real website. `workers` and `mixed` start
 mock_hosts.py on 127.0.0.1:80 and crawl 64 fake hosts (h00.bench ... h63.bench)

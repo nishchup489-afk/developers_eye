@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 BACKEND_DIR = Path(__file__).resolve().parents[2]
-SCRIPT = runpy.run_path(str(BACKEND_DIR / "scripts" / "evaluate_relevance.py"))
+SCRIPT = runpy.run_path(str(BACKEND_DIR.parent / "scripts" / "evaluate_relevance.py"))
 load_queries = SCRIPT["load_queries"]
 judgment_template = SCRIPT["judgment_template"]
 

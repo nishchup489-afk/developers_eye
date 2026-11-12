@@ -1,7 +1,7 @@
 """Trade-off 14: local machine vs an Oracle Cloud Always Free ARM VM (estimate).
 
-  python backend/scripts/tradeoffs/cloud_estimate.py
-  python backend/scripts/tradeoffs/cloud_estimate.py --arm-per-core 0.45 --local-watts 110 --price-kwh 0.16
+  python scripts/tradeoffs/cloud_estimate.py
+  python scripts/tradeoffs/cloud_estimate.py --arm-per-core 0.45 --local-watts 110 --price-kwh 0.16
 
 No cloud VM was available, so this is an ESTIMATE built only from the measured
 local reports in backend/reports/tradeoffs/ plus the assumptions printed in the

@@ -27,7 +27,7 @@ from dotenv import dotenv_values
 from sqlalchemy.engine import make_url
 from backend.core.local_env import load_local_env
 
-BACKEND = Path(__file__).resolve().parents[1]
+BACKEND = Path(__file__).resolve().parents[1] / "backend"
 FRONTEND = BACKEND.parent / "frontend"
 DOCUMENTS = 25
 API, LIMITED_API = "http://127.0.0.1:8131", "http://127.0.0.1:8132"

@@ -2,8 +2,8 @@
 
 From the repository root:
 
-  python backend/scripts/tradeoffs/http_bench.py concurrency --users 1 10 25 50 100 --seconds 20
-  python backend/scripts/tradeoffs/http_bench.py timeout --deadlines 1000 2000 5000 --users 25 --seconds 30
+  python scripts/tradeoffs/http_bench.py concurrency --users 1 10 25 50 100 --seconds 20
+  python scripts/tradeoffs/http_bench.py timeout --deadlines 1000 2000 5000 --users 25 --seconds 30
 
 Starts its own uvicorn (one worker, like deploy/docker-compose.yml) on the
 benchmark database with the production API pool (DB_POOL_SIZE=8,
