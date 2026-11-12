@@ -31,6 +31,7 @@ older planning snapshot that predated the BM25 integration.
 | [EXP-0004](EXP-0004-lexical-relevance-evaluation.md) | experiment | Lexical retrieval, BM25 diagnostics, and golden ranking verification | done |
 | [EXP-0012](EXP-0012-judged-lexical-relevance-evaluation.md) | experiment | Strictly judged BM25 vs PostgreSQL comparison | running, results pending |
 | [EXP-0014](EXP-0014-agent-reviewed-25-query-baseline.md) | experiment | Agent-reviewed 25-query real-corpus BM25 and PostgreSQL baseline | done |
+| [EXP-0019](EXP-0019-core-tradeoff-calculation-custom-bm25-vs-pg-native-ranking.md) | experiment | Custom BM25 vs PostgreSQL ts_rank_cd on the same candidates: relevance tie, BM25 slower | done, inconclusive until human grades |
 
 ## Verification and open gates
 
