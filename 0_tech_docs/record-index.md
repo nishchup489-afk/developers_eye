@@ -99,6 +99,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | INC-0041 | backend/bm25-statistics | [Searches took 5-11 s because BM25 document-frequency counts scanned every vector](backend/bm25-statistics/INC-0041-search-latency-from-detoasting-df-counts.md) | resolved |
 | INC-0042 | infra/configuration-and-secrets | [Existing single-server ingress assumptions were unsafe for a Vercel API hop](infra/configuration-and-secrets/INC-0042-vercel-oracle-ingress-trust-mismatch.md) | resolved |
 | INC-0043 | frontend/admin-console | [Slow searches tab rejected an empty window as invalid data](frontend/admin-console/INC-0043-slow-search-tab-rejected-empty-window.md) | resolved |
+| INC-0044 | infra/local-dev-and-testing | [Stale Next.js dev chunks left pages unhydrated until a hard refresh](infra/local-dev-and-testing/INC-0044-stale-dev-chunks-block-hydration.md) | mitigated |
 
 ## Experiments
 
