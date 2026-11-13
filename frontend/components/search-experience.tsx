@@ -470,6 +470,9 @@ export default function SearchExperience({
           <a className="nav-link" href="/docs">
             API docs <ArrowUpRight size={12} />
           </a>
+          <Link className="nav-link" href="/admin">
+            Admin <ArrowUpRight size={12} />
+          </Link>
         </nav>
         <Link
           href="/search?saved=1"
