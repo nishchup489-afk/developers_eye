@@ -18,6 +18,7 @@ case "${SITE_ADDRESS:-}" in ""|*example.com*|*/*|*:*) echo "Set SITE_ADDRESS to 
 mountpoint -q /data || { echo "/data is not mounted; refusing to put database files on the boot disk" >&2; exit 1; }
 path=$(realpath -e "${PGDATA_HOST_PATH:-/data/pgdata}")
 case "$path" in /data/*) ;; *) echo "PGDATA_HOST_PATH must resolve inside mounted /data" >&2; exit 1 ;; esac
+[ "$(stat -c %u "$path")" = 70 ] || { echo "$path must be owned by uid 70 (postgres in postgres:18-alpine): sudo chown 70:70 $path" >&2; exit 1; }
 if [ -f "$path/PG_VERSION" ] || [ -d "$path/16" ] || [ -d "$path/17" ]; then
     echo "An older PostgreSQL data layout exists; restore a compatible logical dump into a new PG18 directory" >&2
     exit 1

@@ -33,7 +33,9 @@ After cloning to `/opt/developers-eye`:
 ```sh
 cd /opt/developers-eye/deploy
 mountpoint /data
-sudo install -d -m 0700 /data/pgdata /data/backups
+sudo install -d -m 0700 -o 70 -g 70 /data/pgdata   # postgres:18-alpine runs as uid 70
+sudo install -d -m 0700 /data/backups
+sudo install -d -o ubuntu -g ubuntu /data/upload
 cp .env.example .env
 chmod 600 .env
 ```
@@ -79,16 +81,16 @@ prompt or `.pgpass`, not a password in the command:
 ```sh
 pg_dump -h localhost -U postgres -d developers_eye --format=custom --compress=6 \
   --exclude-table-data=crawl_event --file=seed.dump
-scp seed.dump ubuntu@<vm-host>:seed.dump
+scp seed.dump ubuntu@<vm-host>:/data/upload/seed.dump
 ```
 
-Move the uploaded archive onto `/data`. Restore into a **new empty database
+Upload the archive to `/data/upload`. Restore into a **new empty database
 before migrations or workers**, never over an existing application database:
 
 ```sh
 cd /opt/developers-eye/deploy
 docker compose up -d db
-docker compose cp /data/seed.dump db:/tmp/seed.dump
+docker compose cp /data/upload/seed.dump db:/tmp/seed.dump
 docker compose exec -T db pg_restore -U developers_eye -d developers_eye \
   --jobs=4 --no-owner --no-privileges --exit-on-error /tmp/seed.dump
 docker compose run --rm migrate

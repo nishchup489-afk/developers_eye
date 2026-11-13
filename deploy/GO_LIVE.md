@@ -75,7 +75,9 @@ Run these on the VM.
    sudo mkdir -p /data
    echo "UUID=$(sudo blkid -s UUID -o value /dev/sdb) /data ext4 defaults,_netdev,nofail 0 2" | sudo tee -a /etc/fstab
    sudo mount -a && mountpoint /data
-   sudo install -d -m 0700 /data/pgdata /data/backups
+   sudo install -d -m 0700 -o 70 -g 70 /data/pgdata   # postgres:18-alpine runs as uid 70
+   sudo install -d -m 0700 /data/backups
+   sudo install -d -o ubuntu -g ubuntu /data/upload
    ```
 
 4. A 4 GB swap file as a safety net:
@@ -136,13 +138,13 @@ Check: preflight prints "Preflight passed" and the build finishes (10-20 minutes
 
 ## 5. Load your corpus
 
-1. Copy the dump from your PC: `scp seed.dump ubuntu@<vm-ip>:/data/seed.dump`
+1. Copy the dump from your PC: `scp seed.dump ubuntu@<vm-ip>:/data/upload/seed.dump`
 2. Restore it into the new, empty database **before** anything else starts:
 
    ```sh
    cd /opt/developers-eye/deploy
    docker compose up -d db
-   docker compose cp /data/seed.dump db:/tmp/seed.dump
+   docker compose cp /data/upload/seed.dump db:/tmp/seed.dump
    docker compose exec -T db pg_restore -U developers_eye -d developers_eye \
      --jobs=4 --no-owner --no-privileges --exit-on-error /tmp/seed.dump
    docker compose run --rm migrate
