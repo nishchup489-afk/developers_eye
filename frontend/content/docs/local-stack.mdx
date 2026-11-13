@@ -1,0 +1,55 @@
+---
+title: "Run the local stack"
+description: "Build a live index from a fresh checkout and verify each stage."
+---
+
+Use Node.js 24, Python 3.14, Poetry and PostgreSQL 16 or later. The commands assume your PostgreSQL role can create a database. Open each long-running process in its own terminal, starting at the repo root.
+
+## Prepare the database and settings
+
+```sh
+createdb developers_eye
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env.local
+```
+
+In `backend/.env`, set `DATABASE_URL` to the new database using the `postgresql+asyncpg://` scheme and your local credentials. In `frontend/.env.local`, set `BACKEND_URL=http://127.0.0.1:8000`. For dashboard reports, generate a secret of at least 32 characters and set `CRAWLER_REPORT_API_KEY` to the same value on both sides.
+
+## Start the API and the web app
+
+```sh
+cd backend
+poetry install
+poetry run alembic -c alembic.ini upgrade head
+poetry run uvicorn backend.main:app --reload
+```
+
+Open [the database health check](http://127.0.0.1:8000/health/db) before moving on. In a second terminal:
+
+```sh
+cd frontend
+npm ci
+npm run dev
+```
+
+## Give the crawler somewhere to start
+
+```sh
+cd crawler
+poetry install
+poetry run python -m crawler.main bootstrap
+poetry run python -m crawler.worker.runner --forever --concurrency 2 --batch-size 20
+```
+
+Bootstrap registers sources and queues starting URLs. The worker claims those URLs and writes documents as fetches succeed.
+
+## Turn fetched documents into results
+
+```sh
+cd crawler
+poetry run python -m indexer.worker.runner --forever --batch-size 100 --concurrency 2 --poll-seconds 10
+```
+
+Once documents have been indexed, search for a word from a fetched title. The frontend response should say `live`. If you get an empty list, check whether any fetches have succeeded, then check indexer coverage. A healthy database can still have an empty index.
+
+The [setup guide](https://github.com/nishchup489-afk/developers_eye/blob/main/setup-guide.md) covers platform setup, additional workers, test databases and dashboard sign-in.

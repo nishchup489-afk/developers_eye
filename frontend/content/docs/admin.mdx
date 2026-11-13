@@ -1,0 +1,20 @@
+---
+title: "Admin and observability"
+description: "Set up dashboard access and follow a missing result through the system."
+---
+
+## Connect GitHub sign-in
+
+Create a GitHub OAuth app with the local callback `http://localhost:3000/api/auth/github/callback`. In `frontend/.env.local`, set `ADMIN_APP_URL=http://localhost:3000`, both GitHub client credentials, `ADMIN_GITHUB_IDS` with your numeric account ID, and an `ADMIN_SESSION_SECRET` of at least 32 characters. Point `CRAWLER_REPORT_API_URL` at the backend report route and match `CRAWLER_REPORT_API_KEY` on both services. Restart Next.js, then open [/admin](/admin).
+
+Admin IDs have full dashboard access. `ADMIN_VIEWER_GITHUB_IDS` grants selected accounts read-only access. `ADMIN_VIEWER_ACCESS` can also allow signed-in GitHub users or public guests. Its default is `off`. Server routes check the viewer’s role before forwarding a request.
+
+## Trace a page that should be searchable
+
+1. **Crawler and hosts.** Find the target, its latest attempt and any retry time. Several 429 responses on the same host point to throttling. A backlog spread across many hosts suggests a different scheduling question.
+2. **Corpus and availability.** Check that the document was saved and is still available. A successful HTTP response alone tells you little about the content that survived parsing.
+3. **Indexer and vocabulary.** Check pending documents and worker progress. If regular search works but suggestions lag, inspect vocabulary maintenance.
+4. **Search quality.** Review results and judgments for the query. Grading a result records evaluation evidence for later comparisons.
+5. **System and usage.** Look at database growth, capacity, request timing and AI usage when a symptom affects several queries.
+
+The [admin components](https://github.com/nishchup489-afk/developers_eye/blob/main/frontend/components/admin) render the views. The [backend report services](https://github.com/nishchup489-afk/developers_eye/blob/main/backend/src/backend/admin_services) calculate the underlying aggregates.

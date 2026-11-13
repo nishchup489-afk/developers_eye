@@ -1,0 +1,35 @@
+---
+title: "API and connectors"
+description: "Call search from a client, interpret the response and handle failures."
+---
+
+## Run a search
+
+```sh
+curl "http://localhost:3000/api/search?q=fastapi&source=docs&mode=all&limit=5"
+```
+
+Read `query`, `results`, `took_ms` and `mode` from the response. Each result includes a title, source, URL, snippet and score. Optional fields include tags and language. The response mode is `demo` or `live`. The request parameter named `mode` selects retrieval behavior.
+
+| Parameter | Accepted values |
+| --- | --- |
+| `q` | Required. Up to 256 normalized characters, with a raw-input ceiling of 1,024. |
+| `mode` | `all`, `text` or `code`. |
+| `source` | `docs`, `github`, `stackoverflow`, `reddit`, `articles`, `events`, `practice` or the `discussions` grouping. Omit for all sources. |
+| `page`, `limit` | Pages start at 1. The default size is 20 and the maximum is 50. The maximum offset is 1,000. |
+| `language` | A language preference such as `en` or `en-US`. |
+
+## Companion endpoints
+
+| Request | Result |
+| --- | --- |
+| `GET /api/search/suggest?q=...` | Suggested spelling and corrections. A null suggestion is a normal result. |
+| `GET /api/search/knowledge?q=...` | Topic information when the Wikipedia lookup finds a confident match. |
+| `POST /api/search/overview` | Send JSON with `token` set to the `overviewToken` from live search. The backend handles evidence validation and quotas. |
+| `GET /health` and `GET /health/db` on FastAPI | Process liveness and database connectivity. |
+
+## Errors and integration boundaries
+
+For browser search, `400` indicates invalid input. Respect `Retry-After` on `429`. A `503` means the service is busy, `504` means the deadline elapsed, and `502` means the proxy could not get a usable upstream response. An empty `results` array with a successful status is a valid search.
+
+Connect additional content through the source registry and crawler ingestion paths. The source category in a result describes the indexed document. The public search request reads that index. For provider conventions and a copyable contract, see the [plain Markdown API reference](https://github.com/nishchup489-afk/developers_eye/blob/main/frontend/public/api-reference.md).

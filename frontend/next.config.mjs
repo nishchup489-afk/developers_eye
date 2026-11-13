@@ -1,6 +1,7 @@
-import type { NextConfig } from "next";
+import { createMDX } from "fumadocs-mdx/next";
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   // Allow isolated verification builds alongside a running development server.
   distDir: process.env.NEXT_BUILD_DIR || ".next",
   experimental: { cpus: 2 },
@@ -14,4 +15,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default createMDX()(nextConfig);

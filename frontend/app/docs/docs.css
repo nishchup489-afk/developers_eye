@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+.docs-handbook {
+  --color-fd-primary: #d6fc81;
+  --color-fd-background: #10120e;
+}
+
+.docs-handbook :is(h1, h2, h3, p, a, button) {
+  all: revert-layer;
+}
+
+body:has(.docs-handbook)::before,
+body:has(.docs-handbook)::after {
+  display: none;
+}

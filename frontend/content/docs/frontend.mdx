@@ -1,0 +1,18 @@
+---
+title: "Frontend and enrichments"
+description: "How the Next.js app presents results and talks to the services behind them."
+---
+
+## From the search box to the response
+
+The landing page and results UI live in `frontend/app` and `frontend/components`. The search experience sends requests to same-origin routes under `/api/search`. The route validates the filters, talks to FastAPI using server-side settings and checks the response shape before sending JSON to the browser. An abandoned request carries an abort signal upstream so the database can stop work on a query the visitor has left.
+
+If a bug only appears with sample results, start in `frontend/lib/demo.ts`. If it only appears against a live index, compare the Next.js response with the FastAPI response for the same query. Display contracts, result parsing and error mapping live in `frontend/lib/search.ts`.
+
+## Two kinds of extra context
+
+The knowledge route looks for a confident Wikipedia match and caches both hits and misses. The AI card makes a separate request using the signed evidence token from live search. FastAPI validates the evidence, checks quotas and cache state, and owns the provider credentials. Set `GROQ_API_KEY` and review `AI_OVERVIEW` in the backend environment to enable generation.
+
+## Where the handbook fits
+
+Pages in `frontend/content/docs` are MDX. Fumadocs builds the sidebar from `meta.json`, the page outline from headings and the documentation search index from the same content. To add a guide, create an MDX file with a title and description, add its slug to the sidebar, and run the frontend from `frontend/`. Open [localhost:3000/docs](http://localhost:3000/docs) to preview it.

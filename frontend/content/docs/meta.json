@@ -1,0 +1,22 @@
+{
+  "pages": [
+    "---Start here---",
+    "index",
+    "features",
+    "quick-start",
+    "local-stack",
+    "---How it works---",
+    "architecture",
+    "crawler",
+    "indexer",
+    "search",
+    "frontend",
+    "build-history",
+    "---Reference and operations---",
+    "api",
+    "admin",
+    "deployment",
+    "contributing",
+    "repository"
+  ]
+}

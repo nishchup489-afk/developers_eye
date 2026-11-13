@@ -1,0 +1,26 @@
+---
+title: "Quick start"
+description: "Run the frontend and make a search with only Node.js and npm."
+---
+
+## Start the demo
+
+Install Node.js 24 with npm. From the repository root, run:
+
+```sh
+cd frontend
+npm ci
+npm run dev
+```
+
+Open [localhost:3000](http://localhost:3000) and search for `fastapi`. The demo fixtures include the FastAPI concurrency guide and the project’s GitHub repository. Switch the source filter to **Docs** to narrow the list.
+
+## Check which data you are seeing
+
+Open [/api/search?q=fastapi](/api/search?q=fastapi) on the running frontend. Look for `mode` in the JSON. A value of `demo` means the server used the fixtures in `frontend/lib/demo.ts`. A value of `live` means it contacted FastAPI.
+
+A fresh clone enters demo mode when `BACKEND_URL` is unset. If you already configured the frontend for a backend, clear that value in the environment used by Next.js and restart the dev server to try the demo. An unreachable configured backend produces an error.
+
+## Put your own pages in search
+
+The demo works before you install Python or PostgreSQL. [Run the local stack](/docs/local-stack) when you want to fetch real documents, experiment with ranking, or inspect worker activity.

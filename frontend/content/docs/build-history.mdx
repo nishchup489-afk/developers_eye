@@ -1,0 +1,22 @@
+---
+title: "How it was built"
+description: "Three places where a measurement changed the design."
+---
+
+The project began with a memory. As a child in Bangladesh, Nish learned the names of search engines for a homework assignment. Looking up Pipilika years later prompted a question: what would it take to build a search engine at home? The [project README](https://github.com/nishchup489-afk/developers_eye/blob/main/README.md#why-developers-eye) tells that story in the author's words.
+
+## Making indexing scale past one worker
+
+An index update changes both a document’s vectors and the vocabulary used for spelling suggestions. Early workers contended for a shared vocabulary lock. Adding workers kept throughput around 56–66 documents per second in the recorded benchmark. Moving vocabulary work to an outbox shortened the critical section. With four shards, the experiment measured 581 documents per second and checked the resulting term counts against a recount. [Vocabulary outbox decision](https://github.com/nishchup489-afk/developers_eye/blob/main/0_tech_docs/indexer/vocubulary/ADR-0043-vocabulary-outbox.md) · [Scaling experiment](https://github.com/nishchup489-afk/developers_eye/blob/main/0_tech_docs/infra/performance-and-scaling/EXP-0008-crawl-index-search-at-2m.md)
+
+## Finding the expensive part of a slow search
+
+BM25 needs to know how common a term is. At roughly 100,000 documents, counting matches for common terms could make PostgreSQL scan and unpack stored vectors. The team measured the count separately, changed how it used the GIN index, and then timed complete cold searches again. The recorded range fell from 1.07–1.97 seconds to 61–275 milliseconds on the test corpus. [Latency incident](https://github.com/nishchup489-afk/developers_eye/blob/main/0_tech_docs/backend/bm25-statistics/INC-0041-search-latency-from-detoasting-df-counts.md) · [Query-plan experiment](https://github.com/nishchup489-afk/developers_eye/blob/main/0_tech_docs/backend/bm25-statistics/EXP-0016-gin-only-document-frequency-counts.md)
+
+## Getting the right page into the race
+
+A relevance review found queries where the desired page never entered the candidate pool. Adjusting its BM25 score could only help once retrieval had found it. A title channel recovered eight of ten recorded recall misses. The experiment includes the queries and the remaining failures, which makes it a good starting point for the next ranking change. [Title retrieval experiment](https://github.com/nishchup489-afk/developers_eye/blob/main/0_tech_docs/backend/retrieval/EXP-0017-title-channel-and-dotted-identifier-recall.md)
+
+## Read the rest of the history
+
+Decisions are filed as ADRs, incidents as INCs and experiments as EXPs. Read the date and follow later records when tracing a feature that has changed. The [record index](https://github.com/nishchup489-afk/developers_eye/blob/main/0_tech_docs/record-index.md) covers all three, and the [engineering journal](https://github.com/nishchup489-afk/developers_eye/blob/main/0_tech_docs/journal/README.md) collects implementation notes, fixes and test reports.

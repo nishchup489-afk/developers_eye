@@ -1,0 +1,18 @@
+---
+title: "Indexing and vocabulary"
+description: "How a stored document becomes searchable and stays in sync after a recrawl."
+---
+
+## Select work by freshness
+
+The indexer runs from the crawler’s Poetry environment. Its selector compares the document with its index state. A new document needs its first row. Changed content or a change in index format can make an existing row eligible again. This lets the worker discover pending work after a restart.
+
+## Give text and code their own fields
+
+The analyzer takes a snapshot of the document and organizes its fields. Titles and body prose carry different weights. Code gets a separate vector so an identifier can contribute evidence independently of the explanation around it. The writer persists the vectors and the version they represent. A later recrawl can be compared with that version.
+
+## Keep spelling suggestions current
+
+The same term can appear in thousands of documents. Replacing one document’s index changes its contribution to the shared vocabulary. The index write records vocabulary work in a transactional outbox, so an interruption leaves a record of what still needs applying. Workers can process those changes separately from the index write.
+
+When the dashboard shows a backlog, distinguish pending documents from pending vocabulary updates. More index workers can help with the former. The outbox and vocabulary reports explain the latter. The [indexer guides](https://github.com/nishchup489-afk/developers_eye/blob/main/crawler/src/indexer/docs) cover selection, analysis, vector construction, writes, coverage and repair.

@@ -469,9 +469,9 @@ export default function SearchExperience({
           >
             Search
           </a>
-          <a className="nav-link" href="/docs">
-            API docs <ArrowUpRight size={12} />
-          </a>
+          <Link className="nav-link" href="/docs">
+            Docs <ArrowUpRight size={12} />
+          </Link>
           <Link className="nav-link" href="/admin">
             Admin <ArrowUpRight size={12} />
           </Link>
@@ -945,9 +945,9 @@ export default function SearchExperience({
           <span className="footer-mode">
             ● {mode === "demo" ? "Demo mode" : "Live search configured"}
           </span>
-          <a href="/docs">
+          <Link href="/docs">
             Under the hood <ArrowUpRight size={12} />
-          </a>
+          </Link>
           <Link href="/admin">
             Admin <ArrowUpRight size={12} />
           </Link>

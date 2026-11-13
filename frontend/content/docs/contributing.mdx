@@ -1,0 +1,27 @@
+---
+title: "Testing and contributing"
+description: "Pick the checks that exercise your change and find the evidence behind a result."
+---
+
+## Prepare an isolated database
+
+Create `developers_eye_test` and set `TEST_DATABASE_URL` in the root `.env.local` using `.env.local.example` as the starting point. Install both Poetry packages and the frontend dependencies as described in [local setup](/docs/local-stack). Database-backed tests expect a dedicated test database.
+
+## Run checks from the right environment
+
+From the repository root, list the suites before choosing a focused run. On Windows with an in-project crawler environment:
+
+```powershell
+crawler\.venv\Scripts\python.exe scripts/run_all_tests.py --list
+crawler\.venv\Scripts\python.exe scripts/run_all_tests.py --with-build
+```
+
+The same script runs with the crawler environment’s Python on other platforms. For a frontend-only change, run `npm run lint` and `npm run build` from `frontend/`. The [test catalog](https://github.com/nishchup489-afk/developers_eye/blob/main/tests/test-index-of-whole-app.md) groups cases by subsystem. The [CI workflow](https://github.com/nishchup489-afk/developers_eye/blob/main/.github/workflows/ci.yml) shows the migration checks and suites that run on a pull request.
+
+## Evaluate a ranking change
+
+Keep the query set, result snapshot and human relevance judgments together. The scripts under `scripts/` can compare rankings, collect and score relevance judgments, and profile query stages. Benchmarks that modify data use separate benchmark databases. See the [scripts guide](https://github.com/nishchup489-afk/developers_eye/blob/main/scripts/README.md) and [benchmark method](https://github.com/nishchup489-afk/developers_eye/blob/main/guide/tradeoffs_calculation.md) before reproducing a number.
+
+## Leave a record someone can follow
+
+Update the guide for the behavior you changed. For an architectural decision or incident, use the templates in `0_tech_docs/_templates` and regenerate the record index. For this handbook, edit the MDX under `frontend/content/docs` and check its sidebar entry and links locally. The [contribution guide](https://github.com/nishchup489-afk/developers_eye/blob/main/CONTRIBUTING.md) describes the repository workflow.

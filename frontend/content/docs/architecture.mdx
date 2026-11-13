@@ -1,0 +1,26 @@
+---
+title: "Architecture"
+description: "Follow the write path from a seed URL and the read path from a browser request."
+---
+
+## One page, three jobs
+
+Imagine a source registry entry for a documentation site. Bootstrap puts its start URL in the frontier. A crawler worker leases the target, applies the host policies, fetches it and extracts a document. The same fetch may discover more URLs for a future pass.
+
+An indexer picks up the new document when its stored index is missing or stale. It analyzes the fields, builds PostgreSQL search vectors and records which content version it indexed. You can stop the crawler at this point and still search the material it collected.
+
+When a visitor searches, the Next.js route forwards the query to FastAPI. FastAPI reads candidate documents from the index, ranks them and builds snippets for the requested page. A search never waits for the crawler to visit a website.
+
+## Where state lives
+
+| State | Owner | Why it matters |
+| --- | --- | --- |
+| Sources, frontier, leases and attempts | Crawler | A worker can resume eligible work after another exits. |
+| Document content and availability | Crawler writer | A recrawl can update an existing page or record that it disappeared. |
+| Vectors, index version and vocabulary updates | Indexer | Search and spelling suggestions can follow changes to a document. |
+| Search telemetry, quality judgments and AI usage | Backend | The dashboard can inspect outcomes across requests. |
+| Saved results | Browser | A reader can revisit a result on the same browser. |
+
+## Where to change behavior
+
+Start in [the crawler](/docs/crawler) for missing pages, [the indexer](/docs/indexer) for stale searchable content, and [search and ranking](/docs/search) for unexpected ordering. Backend database models live under `backend/src/backend/models`. Schema changes go through `backend/alembic/versions` so workers and the API agree on the same tables.

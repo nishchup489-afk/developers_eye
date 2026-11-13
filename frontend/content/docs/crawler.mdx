@@ -1,0 +1,20 @@
+---
+title: "Crawler and ingestion"
+description: "How the engine decides what to visit, what to save and when to try again."
+---
+
+## Discovery and scheduling
+
+The seed registry gives each source a starting point and scope. Discovery can add links from HTML, URLs from a sitemap, entries from RSS or Atom, and records from supported JSON APIs. A sitemap entry is a lead. It still goes through the frontier and fetch policy before its content can appear in search.
+
+The scheduler chooses eligible targets from PostgreSQL and puts a lease on each claim. That lets workers share the queue. A failed request can become eligible after backoff. If a worker vanishes, outstanding claims become available when their leases expire.
+
+## A fetch has a budget
+
+The policy stage checks the destination, handles robots rules and coordinates a gap between requests to the same host. The fetcher bounds the response and checks redirects before following them. Adding workers can increase throughput across many hosts while a single host is still paced by its own allowance.
+
+## From response to document
+
+The parser extracts the fields available for the resource. The processing stage normalizes content, classifies it and computes fingerprints. The writer records the outcome and persists accepted content. This is where an unchanged recrawl differs from a new document or a page that has become unavailable.
+
+For a missing result, follow its URL through the frontier, the latest attempt and the document record before investigating ranking. A policy rejection, a retry scheduled for tomorrow and a successful unchanged fetch each need a different response. [Worker and parser implementation](https://github.com/nishchup489-afk/developers_eye/blob/main/crawler/src/crawler) · [Crawler engineering records](https://github.com/nishchup489-afk/developers_eye/blob/main/0_tech_docs/crawler)

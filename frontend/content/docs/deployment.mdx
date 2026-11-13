@@ -1,0 +1,22 @@
+---
+title: "Deployment and recovery"
+description: "How the checked-in Vercel and Docker Compose deployment fits together."
+---
+
+## Know which machine owns each service
+
+Vercel builds the Next.js project from `frontend/`. Its server routes contact an HTTPS API on the VM. Caddy terminates TLS and authenticates the edge request. PostgreSQL 18, FastAPI, the indexer and maintenance run in Compose on the VM. The crawler has an opt-in Compose profile so ingestion can be paused while the existing corpus stays searchable.
+
+## Bring up a new installation
+
+Follow the [go-live runbook](https://github.com/nishchup489-afk/developers_eye/blob/main/deploy/GO_LIVE.md) for the exact sequence. Prepare the mounted data volume and API hostname first. Copy `deploy/.env.example` to the host environment file and set separate database, edge and report credentials. The frontend needs the matching edge and report credentials on its server side.
+
+From `deploy/`, `./preflight.sh` checks the intended mount, paths and Compose settings. Decide whether you are starting with an empty corpus or restoring a seed before running migrations and starting workers. For an empty database, Compose runs migrations before dependent services. Register and cap sources before starting the crawler with the `crawl` profile.
+
+## Check the path from the browser
+
+A working home page confirms that Vercel can serve the UI. Run a search and inspect the response mode to verify the backend connection. Use the smoke checks in `deploy/tests` and the dashboard to verify database access, indexing progress and worker activity.
+
+## Practice recovery
+
+The deployment includes `backup.sh`, `restore-test.sh` and `disk-guard.sh`. A backup becomes useful when a separate restore succeeds. The [deployment guide](https://github.com/nishchup489-afk/developers_eye/blob/main/deploy/README.md) covers archive compatibility, restoration into an empty database, source caps, disk monitoring and service checks.

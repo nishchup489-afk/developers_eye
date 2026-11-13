@@ -1,0 +1,16 @@
+---
+title: "Developer’s Eye"
+description: "A field guide to the search engine, from the first URL in the queue to the snippet under a result."
+---
+
+Search for `fastapi async` and the screen fills with titles, links and excerpts. In live mode, each result has already made a trip through three parts of this repo. A crawler found the page, an indexer turned its prose and code into searchable fields, and the API picked the passage you see. PostgreSQL holds the shared state between them.
+
+## Where to begin
+
+- **Try a search.** The [quick start](/docs/quick-start) gets the interface running with a small set of sample results. For your own searchable corpus, follow [Run the local stack](/docs/local-stack).
+- **Explore the product.** The [feature overview](/docs/features) walks through the search controls and explains where suggestions, summaries and saved results come from.
+- **Follow a page through the engine.** Start with [architecture](/docs/architecture), then follow discovery, indexing and ranking in the order they happen.
+- **Understand a decision.** [How it was built](/docs/build-history) traces three changes back to the experiments that prompted them.
+- **Work on the repo.** The [repository map](/docs/repository) points to the implementation, operational runbooks, test catalog and engineering archive.
+
+The search box in this handbook searches the documentation. Use **Back to search** to query the developer-content index.

@@ -31,7 +31,7 @@ Created by **Nish**
 [![X](https://img.shields.io/badge/@Nishchup489-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/Nishchup489)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Sadnan%20Nishthup-0A66C2?style=for-the-badge)](https://www.linkedin.com/in/sadnan-nishthup-7405273a5/)
 
-Docs site: *coming soon* · Blog: *coming soon*
+**[Project handbook](frontend/content/docs/index.mdx)** · Start the frontend and open `/docs` to browse or search the guides.
 
 </div>
 

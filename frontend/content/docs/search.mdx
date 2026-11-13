@@ -1,0 +1,20 @@
+---
+title: "Search and ranking"
+description: "What happens between entering a query and seeing the first page of results."
+---
+
+## Build a candidate pool
+
+The query analyzer normalizes input. The selector chooses a retrieval plan for the requested mode. PostgreSQL finds candidates through the prose or code vectors, and title retrieval adds pages whose titles match the query. The merge step combines hits by document ID. A Python reference page can match both a title and a code example and still appear once.
+
+## Rank the candidates
+
+The BM25 stage uses term frequency, document length and corpus statistics to score the bounded candidate set. A term that appears on nearly every page carries less distinguishing information than a rare identifier. The distinction between retrieval and ranking matters when debugging: a page that misses every retrieval channel never reaches the scorer.
+
+## Pick the passage
+
+After ordering the candidates, the service applies pagination and prepares the visible results. The snippet stage picks query-relevant text and bounds the excerpt. Presentation code shapes the title, link, source and optional fields for the frontend. To follow the calls in order, start with [the search service](https://github.com/nishchup489-afk/developers_eye/blob/main/backend/src/backend/search/service.py).
+
+## Explain a surprising result
+
+Check the query, source filter and mode first. Then compare candidates and rankings on the same data. `scripts/compare_rankings.py` compares BM25 with PostgreSQL ranking, while `scripts/profile_search.py` reports time spent at each stage. For repeatable quality comparisons, use the [evaluation workflow](https://github.com/nishchup489-afk/developers_eye/blob/main/backend/evaluation/README.md) with a frozen result set and human judgments.
