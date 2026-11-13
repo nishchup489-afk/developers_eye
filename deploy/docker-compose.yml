@@ -18,7 +18,8 @@ x-python: &python
   env_file: ${DEPLOY_ENV_FILE:-.env}
   environment: &python-env
     DATABASE_URL: postgresql+asyncpg://developers_eye:${POSTGRES_PASSWORD:?set in deploy/.env}@db/developers_eye
-    DB_POOL_SIZE: "4"
+    # Workers: 2 + 2 connections each. The API overrides this below.
+    DB_POOL_SIZE: "2"
     DB_MAX_OVERFLOW: "2"
     APP_ENV: production
     EDGE_SHARED_SECRET: ${EDGE_SHARED_SECRET:?set a 32+ character secret in deploy/.env}
@@ -32,7 +33,7 @@ x-python: &python
 
 x-indexer: &indexer
   <<: *python
-  command: ["python", "-m", "indexer.worker.runner", "--forever", "--batch-size", "200", "--concurrency", "4"]
+  command: ["python", "-m", "indexer.worker.runner", "--forever", "--batch-size", "100", "--concurrency", "2"]
 
 services:
   db:
@@ -72,6 +73,7 @@ services:
     environment:
       <<: *python-env
       DB_POOL_SIZE: "8"
+      DB_MAX_OVERFLOW: "2"
       # Identity comes only from the authenticated edge middleware, never XFF.
       FORWARDED_ALLOW_IPS: ""
     healthcheck:

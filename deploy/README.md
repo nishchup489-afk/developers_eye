@@ -3,7 +3,7 @@
 Vercel runs the frontend (`frontend/`, Node 24, `iad1`). Its server routes call
 the Oracle VM's HTTPS API. Caddy terminates TLS and authenticates that hop;
 FastAPI independently checks the credential before trusting a visitor IP.
-The VM runs PostgreSQL 18, one API process, one crawler, one indexer and daily
+The VM runs PostgreSQL 18, one API process, one two-slot crawler (opt-in), one indexer and daily
 telemetry maintenance. Only Caddy publishes ports 80/443. Browser requests stay
 on the frontend origin, so this topology needs no API CORS configuration.
 
@@ -180,8 +180,8 @@ workflow also builds `linux/arm64`; GHCR publication is opt-in through `publish`
 No workflow or image publication was dispatched here. Vercel builds the frontend
 separately; backend and worker services use the shared Python image.
 
-Steady-state pool maxima total 28: API 10 plus crawler/indexer/maintenance 6 each.
-Migration adds at most 6, leaving reserve below PostgreSQL's 60 for backup/admin
-connections. Recompute before scaling. Indexer shards must be coordinated, and
+Steady-state pool maxima total 22: API 10 (8 + 2) plus crawler, indexer and
+maintenance 4 each (2 + 2). Migration adds at most 4, leaving reserve below
+PostgreSQL's 60 for backup/admin connections. Recompute before scaling. Indexer shards must be coordinated, and
 crawlers must keep shared host pacing. The 24 GB database tuning must be resized
 before using a 12 GB Always Free VM.
