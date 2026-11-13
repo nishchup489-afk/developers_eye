@@ -13,3 +13,4 @@ crawler/tests
 backend/tests
 tests/reports
 deploy/backups
+docs
