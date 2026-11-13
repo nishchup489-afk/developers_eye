@@ -80,12 +80,16 @@ services:
       timeout: 5s
       retries: 5
 
-  # Scale with: docker compose up -d --scale crawler=3
-  # Politeness is shared through PostgreSQL, so more processes never mean more
-  # load on any one host. Raise this only after checking the admin dashboard.
+  # Off by default: `docker compose up -d` never starts it. Start it on purpose with
+  #   docker compose --profile crawl up -d crawler
+  # and stop it with `docker compose stop crawler`; the indexer keeps draining.
+  # Two slots with a 2 s per-host gap is about 1 page/s. Concurrency sets the pace
+  # only: corpus size is capped per source (cap-sources.sh) and by disk-guard.sh.
   crawler:
     <<: *python
-    command: ["python", "-m", "crawler.worker.runner", "--forever", "--concurrency", "40", "--batch-size", "40"]
+    profiles: ["crawl"]
+    command: ["python", "-m", "crawler.worker.runner", "--forever", "--concurrency", "2", "--batch-size", "2",
+              "--min-interval-seconds", "${ADMIN_HOST_MIN_INTERVAL_SECONDS:-2}"]
     deploy:
       replicas: 1
 

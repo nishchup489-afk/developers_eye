@@ -43,12 +43,15 @@ def main():
             return subprocess.run(command, cwd=ROOT, env=env, check=True, text=True, **kwargs)
 
         rendered = json.loads(run(["docker", "compose", "-p", project, "--env-file", str(env_file), "-f",
-                                  "deploy/docker-compose.yml", "config", "--format", "json"], capture_output=True).stdout)
+                                  "deploy/docker-compose.yml", "--profile", "crawl", "config", "--format", "json"], capture_output=True).stdout)
         services = rendered["services"]
         assert all(v.get("name", "").startswith(project + "_") for v in rendered.get("volumes", {}).values())
         assert all(v.get("name", "").startswith(project + "_") for v in rendered.get("networks", {}).values())
         assert "web" not in services and "indexer-1" not in services
         assert services["crawler"]["deploy"]["replicas"] == 1
+        assert services["crawler"]["profiles"] == ["crawl"]
+        crawl_args = services["crawler"]["command"]
+        assert crawl_args[crawl_args.index("--concurrency") + 1] == "2"
         assert services["indexer-0"]["environment"]["INDEXER_SHARD_COUNT"] == "1"
         assert all(s["logging"]["options"] == {"max-file": "3", "max-size": "20m"} for s in services.values())
         assert not any(s.get("ports") for n, s in services.items() if n != "caddy")
