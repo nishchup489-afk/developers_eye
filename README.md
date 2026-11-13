@@ -14,9 +14,13 @@ crawler, indexer and BM25 ranking, with code-aware search.
 [![Issues](https://img.shields.io/github/issues/nishchup489-afk/developers_eye?style=flat)](https://github.com/nishchup489-afk/developers_eye/issues)
 [![Good first issues](https://img.shields.io/github/issues/nishchup489-afk/developers_eye/good%20first%20issue?style=flat&color=7057ff&label=good%20first%20issues)](https://github.com/nishchup489-afk/developers_eye/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-2ea44f?style=flat)](CONTRIBUTING.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat)](LICENSE)
+[![Discord](https://img.shields.io/badge/Discord-join%20the%20chat-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/jxbRsFj3d)
 
 **[Live demo](https://developers-eye.vercel.app)** ·
+**[Discord](https://discord.gg/jxbRsFj3d)** ·
 **[Quick start](#quick-start)** ·
+**[Setup guide](setup-guide.md)** ·
 **[Architecture](#architecture)** ·
 **[Why it's built this way](0_tech_docs/README.md)** ·
 **[Contribute](#contributing)**
@@ -40,6 +44,33 @@ Docs site: *coming soon* · Blog: *coming soon*
 It is also built to be read. Every major decision has a written record, every incident has a post-mortem, and every performance claim links to the experiment that produced it. An admin dashboard shows the crawler, indexer, database and search quality live.
 
 Built in public, and designed to be understood, extended and improved by contributors.
+
+> 💬 **Join the community on [Discord](https://discord.gg/jxbRsFj3d)** to ask questions, share what you are building, and follow development.
+
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="assets/search-knowledge-panel.png" alt="Search results for python with the knowledge panel">
+      <p align="center"><b>Results with a knowledge panel</b><br><sub>Ranked results, source filters and a Wikipedia summary beside them</sub></p>
+    </td>
+    <td width="50%" valign="top">
+      <img src="assets/search-did-you-mean.png" alt="Did you mean suggestion for a misspelled query">
+      <p align="center"><b>"Did you mean"</b><br><sub>Spelling correction from the index's own vocabulary</sub></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="assets/admin-hosts.png" alt="Admin dashboard hosts page">
+      <p align="center"><b>Admin dashboard: hosts</b><br><sub>Request rate per host and the throttling signals that come before a ban</sub></p>
+    </td>
+    <td width="50%" valign="top" align="center">
+      <img src="assets/mobile-knowledge-panel.png" alt="Knowledge panel on a phone" width="240">
+      <p align="center"><b>Works on a phone</b><br><sub>The same search and knowledge panel at mobile width</sub></p>
+    </td>
+  </tr>
+</table>
 
 ## Features at a glance
 
@@ -165,10 +196,12 @@ The open-source version is the main one. Run it on your own hardware with as man
 
 **Want your own search engine instead?** Fork the repo and swap the frontend for your brand. Every endpoint is documented in the generated [API map](0_tech_docs/infra/system-architecture/api-map.md), so you can keep the API as it is and connect your own UI.
 
-![alt text](assets/local-preview-.png)
+![Developer's Eye running locally](assets/local-preview-.png)
 
 
-![alt text](assets/local-wave.png)
+![Crawler workers, the indexer and the admin dashboard running side by side in Wave Terminal](assets/local-wave.png)
+
+The [setup guide](setup-guide.md) walks through running a local instance like this one, with as many workers as your machine can take.
 
 
 ## Admin dashboard
@@ -288,7 +321,7 @@ cp .env.local.example .env.local     # set TEST_DATABASE_URL
 python scripts/run_all_tests.py      # every suite, one report
 ```
 
-More detail for each part is in the [backend](backend/README.md), [crawler](crawler/src/crawler/README.md), [indexer](crawler/src/indexer/operations.md) and [frontend](frontend/README.md) guides. To run everything on one server with Docker Compose, follow the [deployment guide](deploy/README.md).
+For hardware recommendations, running several crawler workers and troubleshooting, see the full [setup guide](setup-guide.md). More detail for each part is in the [backend](backend/README.md), [crawler](crawler/src/crawler/README.md), [indexer](crawler/src/indexer/operations.md) and [frontend](frontend/README.md) guides. To run everything on one server with Docker Compose, follow the [deployment guide](deploy/README.md).
 
 ## Environment files
 
@@ -312,7 +345,7 @@ python scripts/run_all_tests.py --only backend indexer
 python scripts/run_all_tests.py --save           # write HTML, text and JSON reports
 ```
 
-![alt text](assets/test-pass.png)
+![Every test suite passing](assets/test-pass.png)
 
 | Suite | Test files | Named cases | Run it alone |
 |---|---:|---:|---|
@@ -352,15 +385,14 @@ Developer's Eye is not only about search. It is also about making the engineerin
 Whether you are new to open source or interested in search infrastructure, you are welcome here.
 
 1. Pick a [`good first issue`](https://github.com/nishchup489-afk/developers_eye/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22), or open a new issue to discuss your idea.
-2. Read [CONTRIBUTING.md](CONTRIBUTING.md). Contributions are expected to follow it so the repo stays disciplined.
+2. Set up a local copy with the [setup guide](setup-guide.md), then read [CONTRIBUTING.md](CONTRIBUTING.md). Contributions are expected to follow it so the repo stays disciplined.
 3. Before changing a subsystem, read its overview and decision records in `0_tech_docs/`. If your change alters behavior, add a record for it.
 
-Found a bug or have a question? [Open an issue](https://github.com/nishchup489-afk/developers_eye/issues).
+Found a bug? [Open an issue](https://github.com/nishchup489-afk/developers_eye/issues). Have a question or an idea? Come talk on [Discord](https://discord.gg/jxbRsFj3d).
 
 ## License and acknowledgments
 
-<!-- TODO: add a LICENSE file to the repo, then name the license here. -->
-License: to be added.
+Released under the [MIT License](LICENSE).
 
 - **Pipilika**, the Bangladeshi search engine that started all of this.
 - **[Mwmbl](https://github.com/mwmbl/mwmbl)** and the engineers who have written publicly about how search engines work.
