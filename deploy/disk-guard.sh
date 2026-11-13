@@ -37,8 +37,8 @@ if [ -z "$reasons" ]; then
     exit 0
 fi
 message="disk-guard:${reasons}"
-if [ -n "$(docker compose ps --status running -q crawler 2>/dev/null)" ]; then
-    docker compose stop crawler >/dev/null
+if [ -n "$(docker compose --profile crawl ps --status running -q crawler 2>/dev/null)" ]; then
+    docker compose --profile crawl stop crawler >/dev/null
     message="$message crawler stopped"
 else
     message="$message crawler already stopped"

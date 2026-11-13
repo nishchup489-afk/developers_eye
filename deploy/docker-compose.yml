@@ -84,7 +84,7 @@ services:
 
   # Off by default: `docker compose up -d` never starts it. Start it on purpose with
   #   docker compose --profile crawl up -d crawler
-  # and stop it with `docker compose stop crawler`; the indexer keeps draining.
+  # and stop it with `docker compose --profile crawl stop crawler`; the indexer keeps draining.
   # Two slots with a 2 s per-host gap is about 1 page/s. Concurrency sets the pace
   # only: corpus size is capped per source (cap-sources.sh) and by disk-guard.sh.
   crawler:
