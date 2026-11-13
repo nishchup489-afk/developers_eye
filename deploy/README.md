@@ -1,5 +1,7 @@
 # Vercel frontend and Oracle API deployment
 
+First deployment? Follow [GO_LIVE.md](GO_LIVE.md) step by step. This page explains the pieces.
+
 Vercel runs the frontend (`frontend/`, Node 24, `iad1`). Its server routes call
 the Oracle VM's HTTPS API. Caddy terminates TLS and authenticates that hop;
 FastAPI independently checks the credential before trusting a visitor IP.
