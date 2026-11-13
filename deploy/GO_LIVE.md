@@ -9,6 +9,9 @@ opt-in is in [ADR-0059](../0_tech_docs/infra/ci-and-containers/ADR-0059-small-op
 
 Placeholders: `api.example.com` is your API hostname, `<vm-ip>` your reserved IP.
 
+Already live? Day-to-day operations are in [../GO_LIVE.md](../GO_LIVE.md), and every
+setting and URL is in [.env.production.example](.env.production.example).
+
 ## 0. Before you start (on your PC)
 
 1. Merge the deploy changes to `main` and push, so the VM can clone them.
