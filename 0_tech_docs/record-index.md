@@ -69,6 +69,7 @@ Accepted means a decision describes an adopted component/strategy, not that ever
 | ADR-0056 | frontend/search-experience | [Use Axios Node HTTP transport for cancellable search requests](frontend/search-experience/ADR-0056-close-search-sockets-on-cancellation.md) | accepted |
 | ADR-0057 | backend/admin-api | [Log slow searches with stage timings and store human relevance judgments in PostgreSQL](backend/admin-api/ADR-0057-slow-search-log-and-human-judging.md) | accepted |
 | ADR-0058 | infra/ci-and-containers | [Deploy Vercel behind a scoped authenticated API hop to Oracle](infra/ci-and-containers/ADR-0058-vercel-to-oracle-authenticated-api.md) | accepted |
+| ADR-0059 | infra/ci-and-containers | [Run a small opt-in production crawl bounded by source caps and a disk guard](infra/ci-and-containers/ADR-0059-small-opt-in-production-crawl.md) | accepted |
 
 ## Incidents
 

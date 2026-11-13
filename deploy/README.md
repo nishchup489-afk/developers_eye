@@ -56,9 +56,16 @@ data directory. Choose one database setup path before starting workers.
 
 ## Empty database or local seed
 
-For a new empty corpus, `docker compose up -d` runs Alembic before the API and
-workers. The crawler seeds sources and starts real policy-checked acquisition.
-Start only `db`, `migrate`, `api`, and `caddy` if you want API validation first.
+For a new empty corpus, `docker compose up -d` runs Alembic before the API,
+indexer and maintenance. It does not start the crawler, which sits in the `crawl`
+profile. Seed sources, cap them, then start crawling on purpose:
+
+```sh
+docker compose run --rm crawler python -m crawler.seed.seed
+./cap-sources.sh            # preview
+./cap-sources.sh --apply
+docker compose --profile crawl up -d crawler
+```
 
 For a local seed, check `SHOW server_version` and `pg_dump --version`. A PG16
 client **cannot** dump a PG18 server. Use PG18 tools and restore into PG18;
@@ -94,9 +101,34 @@ docker compose run --rm indexer-0 python -m indexer.vocabulary_rebuild --once
 docker compose up -d
 ```
 
+A restored database brings its own source caps. Fit them to this VM before any
+crawl with `./cap-sources.sh` and then `./cap-sources.sh --apply`.
+
 Compare source/document/index counts with the local snapshot, run known searches
 through Vercel and inspect authorized admin reports. Local smoke tests do not
 claim to have transferred your corpus to the VM.
+
+## Crawl size and disk
+
+The crawler runs one process with two slots and a 2 s gap per host, about one page
+a second. That sets the pace, not the size. Two limits bound the size:
+
+- **Per-source caps.** A source's `max_pages` (in `source.config`, default 10,000)
+  caps how many URLs it can ever queue; recrawls update existing documents. The
+  seeds add up to about 700K. `./cap-sources.sh --apply` scales every enabled
+  source down to fit `CRAWL_MAX_DOCUMENTS`. Add `--trim-queue` to park never-fetched
+  pages above the new caps (state `disabled`, nothing deleted). Caps live in the
+  database, so rerun it after any restore or reseed.
+- **Disk guard.** `./disk-guard.sh` stops the crawler when `/data` free space drops
+  below `CRAWL_MIN_FREE_GB`, `/` below `CRAWL_MIN_ROOT_FREE_GB`, the database
+  passes `CRAWL_MAX_DB_GB`, or the document estimate reaches `CRAWL_MAX_DOCUMENTS`.
+  Schedule it every 10 minutes. It never restarts the crawler.
+
+`ADMIN_TARGET_DOCUMENTS` and `ADMIN_DB_BUDGET_GB` only drive dashboard progress and
+warnings. `crawl_attempt` still gains one row per fetch and is not purged; the
+guard's database limit is what catches it. Use `docker compose --profile crawl
+stop crawler` to pause crawling and `docker compose --profile crawl down` to stop
+everything. See [ADR-0059](../0_tech_docs/infra/ci-and-containers/ADR-0059-small-opt-in-production-crawl.md).
 
 ## Vercel settings and API trust
 
@@ -149,6 +181,7 @@ Schedule nightly backups and weekly restore testing on the host. Example root
 crontab commands for this checkout:
 
 ```cron
+*/10 * * * * cd /opt/developers-eye/deploy && ./disk-guard.sh >/dev/null
 15 3 * * * cd /opt/developers-eye/deploy && ./backup.sh
 45 4 * * 0 cd /opt/developers-eye/deploy && ./restore-test.sh
 ```

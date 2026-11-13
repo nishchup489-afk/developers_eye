@@ -32,6 +32,7 @@ PG18 seed transfer, edge authentication, backups and the local verification scop
 | --- | --- | --- | --- |
 | [ADR-0039](ADR-0039-reproducible-ci-and-containers-plan.md) | decision | Add disposable PostgreSQL verification before automating deployment | proposed |
 | [ADR-0058](ADR-0058-vercel-to-oracle-authenticated-api.md) | decision | Deploy Vercel behind a scoped authenticated API hop to Oracle | accepted |
+| [ADR-0059](ADR-0059-small-opt-in-production-crawl.md) | decision | Run a small opt-in production crawl bounded by source caps and a disk guard | accepted |
 | [EXP-0018](EXP-0018-local-oracle-container-readiness.md) | experiment | Verify the local Oracle container and edge-auth boundary | done |
 
 ## Decisions to record
