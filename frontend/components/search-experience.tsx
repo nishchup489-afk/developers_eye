@@ -469,10 +469,10 @@ export default function SearchExperience({
           >
             Search
           </a>
-          <Link className="nav-link" href="/docs">
+          <Link className="nav-link nav-link-mobile" href="/docs">
             Docs <ArrowUpRight size={12} />
           </Link>
-          <Link className="nav-link" href="/admin">
+          <Link className="nav-link nav-link-mobile" href="/admin">
             Admin <ArrowUpRight size={12} />
           </Link>
         </nav>

@@ -1311,9 +1311,15 @@ h1 .accent {
   .nav-link {
     display: none;
   }
-  .nav-link:last-child {
+  .header nav {
+    gap: 10px;
+  }
+  .nav-link-mobile {
     display: flex;
     font-size: 11px;
+  }
+  .nav-link-mobile svg {
+    display: none;
   }
   .saved-button {
     gap: 6px;
