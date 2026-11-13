@@ -2658,3 +2658,60 @@ h1 .accent {
   margin-top: 9px; padding: 12px; white-space: pre-wrap; overflow-wrap: anywhere;
   border: 1px solid var(--line); border-radius: 8px; font-size: 12px;
 }
+
+/* Prototype notice: a slim scrolling strip above every public page. */
+.prototype-banner {
+  position: relative;
+  z-index: 70;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background: #141810e6;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.prototype-banner__track {
+  display: inline-flex;
+  padding: 9px 0;
+  animation: prototype-marquee 38s linear infinite;
+}
+.prototype-banner:hover .prototype-banner__track,
+.prototype-banner:focus-within .prototype-banner__track {
+  animation-play-state: paused;
+}
+.prototype-banner__item {
+  padding-right: 64px;
+}
+.prototype-banner a {
+  color: var(--lime);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prototype-banner a:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+@keyframes prototype-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .prototype-banner {
+    white-space: normal;
+    text-align: center;
+  }
+  .prototype-banner__track {
+    animation: none;
+    display: block;
+    padding: 9px 16px;
+  }
+  .prototype-banner__item {
+    padding-right: 0;
+  }
+  .prototype-banner__copy {
+    display: none;
+  }
+}
