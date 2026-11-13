@@ -37,11 +37,13 @@ import {
 } from "@/lib/search";
 import { isKnowledgeResponse, knowledgeQuery, type KnowledgeResponse } from "@/lib/knowledge";
 
+// Highest-scoring queries in the judged 25-query benchmark
+// (backend/evaluation/checklist-25/results-at-10.json, BM25 nDCG@10 0.81-1.00, MRR 1.0).
 const suggestions = [
-  "fastapi async",
-  "react server components",
-  "redis caching",
-  "binary search",
+  "asyncio gather",
+  "FastAPI lifespan events",
+  "django QuerySet select_related",
+  "dependency injection",
 ];
 
 export type SearchFilter = Source | "discussions" | "all";
