@@ -51,8 +51,8 @@ services:
         target: /var/lib/postgresql
         bind:
           create_host_path: false
-      - ./postgresql.conf:/etc/postgresql/postgresql.conf:ro
-    shm_size: 6gb
+      - ./${POSTGRES_CONFIG:-postgresql.conf}:/etc/postgresql/postgresql.conf:ro
+    shm_size: ${POSTGRES_SHM_SIZE:-6gb}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U developers_eye -d developers_eye"]
       interval: 5s

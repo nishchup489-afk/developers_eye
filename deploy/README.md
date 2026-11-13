@@ -183,5 +183,5 @@ separately; backend and worker services use the shared Python image.
 Steady-state pool maxima total 22: API 10 (8 + 2) plus crawler, indexer and
 maintenance 4 each (2 + 2). Migration adds at most 4, leaving reserve below
 PostgreSQL's 60 for backup/admin connections. Recompute before scaling. Indexer shards must be coordinated, and
-crawlers must keep shared host pacing. The 24 GB database tuning must be resized
-before using a 12 GB Always Free VM.
+crawlers must keep shared host pacing. On a 12 GB VM, set `POSTGRES_CONFIG=postgresql-12gb.conf`
+and `POSTGRES_SHM_SIZE=3gb` in `.env` to use the smaller database tuning.
