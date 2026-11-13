@@ -2,7 +2,12 @@ import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, Eye } from "lucide-react";
 import CodeBlock from "@/components/code-block";
 import DocsToc from "@/components/docs-toc";
-export const metadata = { title: "API & connectors — Developer’s Eye" };
+export const metadata = {
+  title: "API & connectors",
+  description:
+    "Developer’s Eye API reference: search, spelling suggestions, AI overviews and connectors, with request and response examples.",
+  alternates: { canonical: "/docs" },
+};
 const routes = [
   [
     "GET",

@@ -2,7 +2,11 @@ import SearchExperience, { type SearchFilter } from "@/components/search-experie
 import { isSearchMode, sourceNames } from "@/lib/search";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Search — Developer’s Eye" };
+export const metadata = {
+  title: "Search",
+  // Result pages are thin, query-specific copies of other sites' content.
+  robots: { index: false, follow: true },
+};
 
 export default async function SearchPage({
   searchParams,
