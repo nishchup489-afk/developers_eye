@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import Ambient from "@/components/ambient";
 import PrototypeBanner from "@/components/prototype-banner";
 import { siteDescription, siteName, siteTagline, siteUrl, twitterHandle } from "@/lib/site";
@@ -64,6 +65,7 @@ export default function RootLayout({
         <PrototypeBanner />
         {children}
         <Ambient />
+        <Analytics />
       </body>
     </html>
   );
