@@ -45,9 +45,56 @@ it was running when the VM went down.
 - **Disk guard** (cron, every 10 min) stops the crawler if `/data` has under 20 GB
   free, `/` under 5 GB, the database passes 25 GB, or documents reach 150K.
 
+## Open a terminal on the server
+
+From Windows, open **PowerShell** (Start menu, type `PowerShell`) on your PC and run:
+
+```powershell
+ssh -i $HOME\.ssh\oracle-de.key ubuntu@132.145.194.228
+```
+
+Answer `yes` the first time it asks about the host fingerprint. The prompt changes to
+`ubuntu@developers-eye:~$`, which means every command you type now runs on the server.
+Then go to the project:
+
+```bash
+cd /opt/developers-eye/deploy
+```
+
+Type `exit` (or press `Ctrl+D`) to leave the server and return to PowerShell.
+
+**First time on a new PC.** Put the private key at `C:\Users\<you>\.ssh\oracle-de.key`
+and make it readable only by you, or SSH refuses it:
+
+```powershell
+icacls $HOME\.ssh\oracle-de.key /inheritance:r
+icacls $HOME\.ssh\oracle-de.key /grant:r "$($env:USERNAME):(R)"
+```
+
+**Shortcut (optional).** Add this to `C:\Users\<you>\.ssh\config` (a plain text file
+with no extension) and from then on connect with just `ssh de`:
+
+```text
+Host de
+    HostName 132.145.194.228
+    User ubuntu
+    IdentityFile ~/.ssh/oracle-de.key
+    ServerAliveInterval 60
+```
+
+The same alias works for copying files: `scp de:/data/backups/<file>.dump .`
+
+**From macOS or Linux** use `ssh -i ~/.ssh/oracle-de.key ubuntu@132.145.194.228`, after
+`chmod 600 ~/.ssh/oracle-de.key`.
+
+**If SSH does not connect at all** (timeout, key lost): in the Oracle console open
+Compute → Instances → the instance → **Console connection** → *Launch Cloud Shell
+connection*. This opens a serial terminal in the browser that works without port 22.
+
 ## Everyday commands
 
-SSH in first, then `cd /opt/developers-eye/deploy`.
+[Open a terminal on the server](#open-a-terminal-on-the-server) first, then
+`cd /opt/developers-eye/deploy`.
 
 ### Crawler
 
