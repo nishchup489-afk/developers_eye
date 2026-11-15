@@ -15,3 +15,23 @@ body:has(.docs-handbook)::before,
 body:has(.docs-handbook)::after {
   display: none;
 }
+
+.docs-handbook .docs-home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-inline-start: 0.75rem;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  color: var(--color-fd-muted-foreground);
+  text-decoration: none;
+  transition: color 150ms, border-color 150ms;
+}
+
+.docs-handbook .docs-home-link:hover,
+.docs-handbook .docs-home-link:focus-visible {
+  color: var(--color-fd-primary);
+  border-color: var(--color-fd-primary);
+}
