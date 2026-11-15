@@ -18,7 +18,7 @@ Thumbs.db
 *~
 *.sublime-workspace
 *.sublime-project
-
+*.env.production
 # Environment Files (Keep sensitive secrets out of git)
 .env
 .env*.local
@@ -130,3 +130,4 @@ deploy/backups/
 
 # Reports written by scripts/run_all_tests.py --save
 tests/reports/
+seed.dump
