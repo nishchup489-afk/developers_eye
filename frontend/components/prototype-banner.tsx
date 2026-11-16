@@ -12,6 +12,11 @@ export default function PrototypeBanner() {
 
   const message = (
     <span className="prototype-banner__item">
+      Make your first contribution to Developer’s Eye <span aria-hidden="true">→</span>{" "}
+      <a href={`${REPO_URL}/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22`} target="_blank" rel="noopener noreferrer">
+        Browse good first issues
+      </a>
+      <span aria-hidden="true"> · </span>
       This is a small prototype with a ~100K-document dataset. For the full experience,{" "}
       <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
         run it locally from GitHub
@@ -22,7 +27,7 @@ export default function PrototypeBanner() {
   );
 
   return (
-    <aside className="prototype-banner" aria-label="Prototype notice">
+    <aside className="prototype-banner" aria-label="Project announcements">
       <div className="prototype-banner__track">
         {message}
         {/* Second copy makes the scroll loop seamless; inert keeps it out of reading and tab order. */}
