@@ -13,8 +13,9 @@ password=$(openssl rand -hex 16)
 trap 'docker rm -fv "$name" >/dev/null 2>&1 || true' EXIT
 docker run -d --name "$name" -e POSTGRES_PASSWORD="$password" postgres:18-alpine >/dev/null
 ready=0
+# The image's temporary init server only listens on a Unix socket.
 for attempt in $(seq 1 60); do
-    if docker exec "$name" pg_isready -U postgres >/dev/null 2>&1; then ready=1; break; fi
+    if docker exec "$name" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then ready=1; break; fi
     sleep 1
 done
 [ "$ready" -eq 1 ] || { echo "Restore-test database did not become ready" >&2; exit 1; }

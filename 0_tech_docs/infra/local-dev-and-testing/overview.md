@@ -30,6 +30,7 @@ Reviewed against `facd333` on 2026-11-02. “Active” means implementation exis
 | [INC-0036](INC-0036-redirected-windows-test-runner-encoding.md) | incident | Redirected Windows test runner failed before executing suites | resolved |
 | [INC-0039](INC-0039-fresh-clone-test-dependencies.md) | incident | Fresh backend Poetry environment could not collect HTTP tests | resolved |
 | [INC-0044](INC-0044-stale-dev-chunks-block-hydration.md) | incident | Stale Next.js dev chunks left pages unhydrated until a hard refresh | mitigated |
+| [INC-0045](INC-0045-frontend-ci-picomatch-audit.md) | incident | Frontend CI stopped at the picomatch dependency audit | resolved |
 
 ## Decisions to record
 
@@ -56,3 +57,5 @@ The identified decisions for this feature are indexed above. Record new decision
 - Do not run the suites in parallel without a per-suite test database (ADR-0051).
 - Keep the backend-to-crawler dependency direction unchanged.
 - Keep Next.js dev chunks uncacheable; a page that renders but never responds means stale dev chunks (INC-0044).
+- Verify the production audit and handbook route and search behavior when
+  replacing the temporary matcher overrides (INC-0045).

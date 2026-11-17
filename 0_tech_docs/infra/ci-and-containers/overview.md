@@ -34,6 +34,7 @@ PG18 seed transfer, edge authentication, backups and the local verification scop
 | [ADR-0058](ADR-0058-vercel-to-oracle-authenticated-api.md) | decision | Deploy Vercel behind a scoped authenticated API hop to Oracle | accepted |
 | [ADR-0059](ADR-0059-small-opt-in-production-crawl.md) | decision | Run a small opt-in production crawl bounded by source caps and a disk guard | accepted |
 | [EXP-0018](EXP-0018-local-oracle-container-readiness.md) | experiment | Verify the local Oracle container and edge-auth boundary | done |
+| [INC-0046](INC-0046-oracle-restore-readiness-race.md) | incident | Oracle restore check connected before PostgreSQL finished initialization | resolved |
 
 ## Decisions to record
 
@@ -60,4 +61,6 @@ with `pip-audit` after lock updates.
   `npm ci`, full `npm audit`, lint, and TypeScript checks passed after the refresh.
 
 - Make readiness checks distinct from liveness checks.
+- Probe TCP for readiness of fresh PostgreSQL containers so initialization
+  cannot satisfy the probe (INC-0046).
 - Do not mark CI/container work complete until files exist and a run is verified.

@@ -54,7 +54,7 @@ services:
       - ./${POSTGRES_CONFIG:-postgresql.conf}:/etc/postgresql/postgresql.conf:ro
     shm_size: ${POSTGRES_SHM_SIZE:-6gb}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U developers_eye -d developers_eye"]
+      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "developers_eye", "-d", "developers_eye"]
       interval: 5s
       timeout: 3s
       retries: 20
