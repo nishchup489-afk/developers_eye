@@ -491,18 +491,13 @@ export default function SearchExperience({
         <section className="hero shell" aria-label={resultsPage ? "Search" : undefined} aria-labelledby={resultsPage ? undefined : "hero-title"}>
           {!resultsPage && <BrandEye />}
           {!resultsPage && <div className="hero-copy">
-            <h1
-              id="hero-title"
-              className="hero-title"
-              aria-label="Developer’s Eye: open-source search for developers across docs, code, and discussions."
-            >
+            <h1 id="hero-title" className="hero-title" aria-label="developer’s eye.">
               <span className="word" aria-hidden="true">
-                <Chars text="Developer’s" />
+                <Chars text="developer’s" />
               </span>{" "}
               <span className="word accent" aria-hidden="true">
-                <Chars text="Eye:" />
-              </span>{" "}
-              open-source search for developers across docs, code, and discussions.
+                <Chars text="eye." />
+              </span>
             </h1>
             <p className="hero-description reveal">
               Instead of searching sources separately, search documentation, repositories, discussions, and articles together.
