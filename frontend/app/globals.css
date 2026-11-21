@@ -5,7 +5,7 @@
   --line: #262b20;
   --line-strong: #3a4430;
   --text: #eef0e6;
-  --muted: #a9b29d;
+  --muted: #d9dfd2;
   --faint: #7d8872;
   --lime: #d6fc81;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -267,11 +267,10 @@ h1 .accent {
   margin-top: 24px;
 }
 .eye-art {
-  height: 320px;
+  width: min(100%, 240px);
   position: relative;
   isolation: isolate;
-  margin-left: 8px;
-  grid-area: eye;
+  text-align: center;
 }
 .art-grid {
   position: absolute;
@@ -282,18 +281,9 @@ h1 .accent {
   background-size: 25px 25px;
   mask-image: radial-gradient(ellipse, #000 30%, transparent 72%);
 }
-.eye-art::before {
-  content: "";
-  position: absolute;
-  inset: 8% 12%;
-  z-index: -1;
-  background: radial-gradient(
-    ellipse at center,
-    #d6fc8124 0%,
-    #7f965512 35%,
-    transparent 70%
-  );
-  filter: blur(18px);
+.eye-stage {
+  position: relative;
+  aspect-ratio: 5 / 2;
 }
 .eye-canvas {
   position: absolute;
@@ -311,32 +301,31 @@ h1 .accent {
   height: 100%;
 }
 .art-coordinate {
-  position: absolute;
+  display: block;
+  margin-top: 6px;
   font-family: var(--font-mono);
   font-size: 9px;
-  letter-spacing: 1.2px;
+  letter-spacing: 0.7px;
   color: var(--faint);
 }
-.coordinate-top {
-  top: 3px;
-  left: 15px;
-}
-.coordinate-bottom {
-  bottom: 0;
-  right: 15px;
+.art-labels {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 .art-label {
-  position: absolute;
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 4px;
   border: 1px solid #3c4630;
   background: #11150dcc;
   backdrop-filter: blur(10px);
   border-radius: 999px;
-  padding: 6px 11px;
+  padding: 2px 6px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   color: #c3d1ad;
   box-shadow:
     0 10px 30px #0007,
@@ -344,18 +333,6 @@ h1 .accent {
 }
 .art-label svg {
   color: var(--lime);
-}
-.label-docs {
-  top: 65px;
-  right: 17%;
-}
-.label-code {
-  top: 49%;
-  left: 3%;
-}
-.label-community {
-  bottom: 49px;
-  right: 2%;
 }
 .search-section {
   padding: 0 0 48px;
@@ -535,7 +512,7 @@ h1 .accent {
   margin-top: 14px;
 }
 .muted {
-  color: var(--faint);
+  color: var(--muted);
 }
 .section-heading > p {
   font-size: 12px;
@@ -658,7 +635,7 @@ h1 .accent {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: var(--faint);
+  color: var(--muted);
   transition:
     color 0.2s,
     gap 0.35s var(--ease-out);
@@ -666,31 +643,6 @@ h1 .accent {
 .source-card:hover .source-card-bottom {
   color: var(--lime);
   gap: 12px;
-}
-.ecosystem-note {
-  padding: 18px 0;
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.3px;
-  color: var(--faint);
-}
-.ecosystem-note > span {
-  display: flex;
-  gap: 9px;
-  align-items: center;
-}
-.ecosystem-note > span > span:not(.small-pill) {
-  color: #414b36;
-}
-.small-pill {
-  font-size: 11px;
-  border: 1px solid #38422c;
-  border-radius: 3px;
-  padding: 3px 5px;
-  color: #a8b993;
 }
 .text-button {
   display: inline-flex;
@@ -1117,9 +1069,6 @@ h1 .accent {
   .hero {
     min-height: 0;
   }
-  .eye-art {
-    height: 360px;
-  }
   h1 {
     font-size: 83px;
   }
@@ -1142,9 +1091,6 @@ h1 .accent {
   .title-asterisk {
     font-size: 26px;
   }
-  .eye-art {
-    height: 300px;
-  }
   .hero .eyebrow {
     font-size: 11px;
     letter-spacing: 1px;
@@ -1162,9 +1108,6 @@ h1 .accent {
     display: none;
   }
   .source-card p {
-    font-size: 11px;
-  }
-  .art-label {
     font-size: 11px;
   }
   .section-heading > p {
@@ -1205,23 +1148,6 @@ h1 .accent {
   }
   .hero-description {
     font-size: 13px;
-  }
-  .eye-art {
-    height: 260px;
-  }
-  .art-label {
-    padding: 5px 7px;
-    font-size: 11px;
-  }
-  .art-coordinate {
-    font-size: 11px;
-    letter-spacing: 0.7px;
-  }
-  .coordinate-top {
-    left: 0;
-  }
-  .coordinate-bottom {
-    right: 0;
   }
   .hero .eyebrow {
     font-size: 10px;
@@ -1364,32 +1290,6 @@ h1 .accent {
     font-size: 14px;
     margin-top: 16px;
   }
-  .eye-art {
-    height: 185px;
-    margin: 0 auto 25px;
-    width: min(85%, 290px);
-    max-width: 320px;
-  }
-  .coordinate-top {
-    left: 5px;
-    top: 0;
-    font-size: 11px;
-  }
-  .coordinate-bottom {
-    bottom: 0;
-    font-size: 11px;
-  }
-  .label-docs {
-    top: 16px;
-    right: 11%;
-  }
-  .label-code {
-    left: 0;
-  }
-  .label-community {
-    bottom: 17px;
-    right: 0;
-  }
   .search-section {
     padding-top: 0;
     padding-bottom: 0;
@@ -1493,12 +1393,6 @@ h1 .accent {
     padding-top: 19px;
     gap: 5px;
   }
-  .ecosystem-note {
-    flex-direction: column;
-    gap: 14px;
-    font-size: 11px;
-    padding: 17px 0;
-  }
   .footer {
     padding-block: 25px;
     gap: 20px;
@@ -1561,7 +1455,16 @@ h1 .accent {
     display: none;
   }
 }
-/* Keep the landing search in its own viewport, with sources below the fold. */
+@media (max-width: 350px) {
+  .header,
+  .header nav {
+    gap: 6px;
+  }
+  .header .brand {
+    font-size: 15px;
+  }
+}
+/* Let the landing hero size to its content. */
 .search-home {
   --header-height: 88px;
 }
@@ -1572,18 +1475,19 @@ h1 .accent {
 .search-home .hero {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  min-height: calc(100vh - var(--header-height));
-  min-height: calc(100dvh - var(--header-height));
-  padding-block: 24px 64px;
+  padding-block: 12px 28px;
   gap: 22px;
 }
-.search-home .hero > .eye-art {
-  width: min(100%, 450px);
-  height: clamp(170px, 30dvh, 300px);
-  flex-shrink: 0;
-  margin: 0;
+@media (width >= 768px) {
+  .search-home .hero > .eye-art {
+    order: -1;
+  }
+}
+@media (width < 768px) {
+  .eye-art {
+    max-width: 140px;
+  }
 }
 .search-home .hero-copy {
   text-align: center;
@@ -1645,7 +1549,6 @@ h1 .accent {
   flex-direction: column;
   justify-content: center;
   margin-top: 22px;
-  gap: 20px;
 }
 .search-home .suggestions {
   justify-content: center;
@@ -1668,13 +1571,55 @@ h1 .accent {
     opacity: 0.55;
   }
 }
+.result-preview {
+  width: min(720px, calc(100% - 40px));
+  margin: 24px auto;
+  padding: 16px 20px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+}
+.result-preview h2 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 500;
+}
+.result-preview-source {
+  color: var(--muted);
+  font: 11px var(--font-mono);
+}
+.result-preview h3 {
+  font-size: 15px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.result-preview a:hover {
+  color: var(--lime);
+  text-decoration: underline;
+}
+.result-preview p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  margin-block: 6px 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.result-preview-skeleton {
+  min-height: 105px;
+  background:
+    linear-gradient(var(--line), var(--line)) 20px 20px / 38% 12px no-repeat,
+    linear-gradient(var(--line), var(--line)) 20px 44px / 65% 10px no-repeat,
+    linear-gradient(var(--line), var(--line)) 20px 64px / 52% 10px no-repeat,
+    var(--panel);
+}
 @media (max-width: 560px) {
   .search-home {
     --header-height: 78px;
-  }
-  .search-home .hero {
-    padding-block: 20px 44px;
-    gap: 22px;
   }
   .search-home h1 {
     font-size: clamp(32px, 8.5vw, 46px);
@@ -1952,7 +1897,6 @@ h1 .accent {
   overflow: hidden;
   border-block: 1px solid var(--line);
   padding: 18px 0;
-  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
 }
 .ticker-track {
   display: flex;
@@ -1972,7 +1916,7 @@ h1 .accent {
   padding-right: 42px;
   font-size: clamp(22px, 3vw, 34px);
   letter-spacing: -1px;
-  color: #3b4530;
+  color: var(--muted);
   white-space: nowrap;
   transition: color 0.3s;
 }
@@ -2665,7 +2609,7 @@ h1 .accent {
   border: 1px solid var(--line); border-radius: 8px; font-size: 12px;
 }
 
-/* Prototype notice: a slim scrolling strip above every public page. */
+/* Prototype notice: a slim scrolling strip on public pages. */
 .prototype-banner {
   position: relative;
   z-index: 70;

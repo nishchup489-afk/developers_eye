@@ -6,9 +6,9 @@ import { usePathname } from "next/navigation";
 const REPO_URL = "https://github.com/nishchup489-afk/developers_eye";
 
 /** Site-wide notice that the public demo runs a small corpus. Hidden inside /admin. */
-export default function PrototypeBanner() {
+export default function PrototypeBanner({ onHome = false }: { onHome?: boolean }) {
   const pathname = usePathname();
-  if (pathname?.startsWith("/admin")) return null;
+  if (pathname?.startsWith("/admin") || (pathname === "/") !== onHome) return null;
 
   const message = (
     <span className="prototype-banner__item">
