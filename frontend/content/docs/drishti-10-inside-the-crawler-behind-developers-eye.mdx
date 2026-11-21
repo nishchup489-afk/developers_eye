@@ -1,0 +1,497 @@
+---
+# Imported from Google Docs: https://docs.google.com/document/d/1kr6CEFYwgDUrTInORvLZbfYKLk_ZVj-IQB0U8lEIM5Q on 2026-11-21.
+# Refresh with: npm run docs:import -- <link> --slug drishti-10-inside-the-crawler-behind-developers-eye --force
+title: "Drishti 1.0: Inside the Crawler Behind Developer's Eye"
+description: "IMPLEMENTING ALGORITHM IN REAL LIFE"
+---
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 1](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-01.webp)
+
+_How a focused web crawler runs on nothing but Python and PostgreSQL. It has no queue service and no Redis, and it still keeps its manners with every host it visits._
+
+---
+
+**WHAT IS A CRAWLER WHY A CRAWLER?**
+
+When you search something in google it processes that query from billions of pages in its database. Ever wondered who stored those billions of pages? Not google employee manually parse them and add them…
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 2](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-02.webp)
+
+if so then when you make a new website and host it how google find it and already start indexing? Your domain provider informed google? Why they didnt invite duckduckgo or yahoo? If someone make a new website they need to make a new business deal with them? The answer is NO.\
+\
+Thats why crawler exists. Its job is to fetch a website which is initially added as seed , find links from those website to other website , visit those websites and keeps going. Just link how a spider traverse its web.
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 3](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-03.webp)
+
+So a crawler basically check source registry find more hyperlinks fetch them safely respect their policy decide weather its worth keeping and hand it to indexer. Indexer helps indexing all documents in database by keywords or lexems like “python” “javascript” which makes the database query a lot cheaper. CHEAPER HOW?\
+\
+Imagine someone searched “python async” and the database have 100k of documents. Without indexer database will go find that keyword from one docs repeat it 100k times , sort relevant documents and rank them. But indexer already do this task before , database pressure reduced from 100k query to \~ 1 query ( depends on the query).
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 4](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-04.webp)
+
+---
+
+**WHAT IS DRISHTI ?**
+
+_Drishti_ (দৃষ্টি) means "sight" or "vision" in Bangla and Sanskrit. It is the eye in Developer's Eye. On the wire it identifies itself as `DevelopersEyeBot.`
+
+Just like other search crawlers like GOOGLE - google bot , Bings - bing bot , Baidu - baiduspider, we have drishti bot.\
+\
+The logo was inspired from a gaming character name `HSIN` and mostly symbolize fox while the name itself symbolize vision.
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 5](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-01.webp)![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 6](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-05.webp)
+
+The whole idea is basically instead of sending a spider we are sending a fox ( a sentinel fox ) \[ in v2.0 ] which will not fetch unrelated garbage and will only bring quality documents.
+
+Drishti 1.0 is a focused crawler. It doesn't try to crawl the whole web. It crawls a curated set of developer sources well, and in local runs it stores about **100,000 documents an hour**. This post walks through how it is built, the decisions behind it, and the things that broke along the way.
+
+---
+
+### The one rule: PostgreSQL is the whole system
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 7](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-06.webp)
+
+The design starts from one constraint. Developer's Eye has to be cheap to run and easy for anyone to self-host. The live demo runs on a free-tier Oracle instance. That rules out a separate message queue, a Redis cluster or a coordination service. ( gotta be cheap )
+
+So Drishti ( the crawler) , the indexer , and the search API are three processes follow one source of truth \`POSTGRES\` **and never call each other directly** . Besides postgres lots of built in feature it also keeps coordination (leases, politeness) atomic inside single SQL statements.
+
+The crawler fetech and writes a document in db , indexer notices which documents are new or stale. The API reads the index. Every piece of coordination, from the job queue to per-host rate limits, is a table and a carefully written SQL statement.
+
+This turns out to be a much stronger MVP foundation than it sounds, as long as you respect a few rules about transactions.
+
+---
+
+### The pipeline at a glance
+
+Each URL moves through the same stage
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 8](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-07.webp)
+
+The crawler is asynchronous Python built on `asyncio` and HTTPX. Each stage is its own package with its own docs and tests. Every major decision has a written ADR, every outage has an incident report, and every performance claim links to the benchmark that produced it.
+
+### The frontier is the job queue
+
+There is no RabbitMQ or SQS. The `crawl_target` table _is_ the queue ([ADR-0004](https://github.com/nishchup489-afk/developers_eye/tree/main/0_tech_docs/crawler/scheduler-and-leases)).
+
+[Source registry](https://github.com/nishchup489-afk/developers_eye/blob/main/crawler/src/crawler/seed/sources/documentation.json) follows a schema which contains crawl_interval_seconds , priority , max_depth , allowed_hosts configs.[ Seed discovery](https://github.com/nishchup489-afk/developers_eye/blob/main/crawler/src/crawler/seed/discovery.py) adds the seed URLs as targets and store the record in a database table [crawl_target](https://github.com/nishchup489-afk/developers_eye/blob/main/backend/src/backend/models/crawler_frontier.py)
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 9](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-08.webp)
+
+Now schedular check the target from `crawl_target` table and claim the target , lease it for next step. BUT a lot interesting things happens in mid.
+
+- The claim_target query uses `SELECT … FOR UPDATE SKIP LOCKED` `prevents workers from claiming the same url together.`
+- ![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 10](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-09.webp)
+
+**`THE DEAD LOCK`**
+
+- `But while applying a more interesting thing happened.` `DEADLOCK.` `Basically right now two workers cant hold same target together. But suddenly my crawler frooze. Why?`
+
+Suppose worker 1 locked link X . and waiting for other link Y and worker 2 locked link Y and waiting for other link X , both sides awaits someon to finish their job and unlock the target but nobody unlocks it thinking other is using it. This is what frooze the crawler.
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 11](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-10.webp)
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 12](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-11.webp)
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 13](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-12.webp)
+
+HOW THAT WAS FIXED?
+
+[CONSISTENT LOCK ORDER ](https://github.com/nishchup489-afk/developers_eye/blob/main/crawler/src/crawler/frontier/repository.py)([commit](https://github.com/search?q=repo%3Anishchup489-afk%2Fdevelopers_eye++0653690\&type=commits)): in enqueue_target , targets are deduplicated by source_id and normalized_url. And they are sorted by the same key which matches the unique index before the insert.\
+The lock ( pg_advisory_xact_lock ) is added in sorted source_id order. A conflicting transaction blocks until the other commits, then its insert becomes a no-op. In simple word, every worker locks links in the same sorted order, so nobody waits in a circle. If it still fails it retries
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 14](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-13.webp)
+
+HOW it claims a target , here comes engineering part.
+
+It uses round-robin algorithm and priority based BFS ( breadth first search ) algorithm.
+
+**How i came up with this decision?**
+
+**VERSION 1 : priority only.**
+
+Initially crawler had 5 source ( MDN \{huge \} , [python.org](http://python.org) , fastapi doc , django doc , rust book ) was supposed to use priority based BFS only but when i inspect the fetching i noticed it was only crawling the first source (MDN) from source registry. No matter how many worker I send all were claiming MDN. The investigation found
+
+- In source config there was priority set up and it wasnt even calculated
+- I wasnt using depth to calculate BFS
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 15](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-14.webp)
+
+The core query was
+
+WHERE (
+
+Status = queue | satisfied still not leased
+
+```
+next_fetch_at <= now() | satisfied fetch time arrived  
+ )
+```
+
+ORDER_BY(
+
+Priority.desc , | ‼️no priority so skip
+
+next_fetch_at.ASC | in the same fetch time this one comes first
+
+Id ASC | go for the first one
+
+AS there was no priority all were going for the first one causing source starvation.
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 16](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-15.webp)
+
+**VERSION 2 : round robin across sources, then priority-based BFS inside the source**
+
+Medicine :
+
+- 1\) ROUND ROBIN ( give all source a chance to shine regardless of priority )
+- 2\) use the priority from the source config (a priority calculator basic model exists but is not wired in yet )
+- 3\) use the [calculated depth ](https://github.com/nishchup489-afk/developers_eye/blob/main/crawler/src/crawler/worker/jobs/utility.py?utm_source=chatgpt.com#L132-L145)for BFS
+
+Now the whole algorithm is priority based BFS + round robin , in short go by priority first then visit shallowest possible page still give less claimed target a little chance.
+
+The updated code was :
+
+ROUND ROBIN
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 17](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-16.webp)
+
+```
+SELECT s.id
+FROM source s
+WHERE s.is_enabled = TRUE
+  AND EXISTS (
+    SELECT 1
+    FROM crawl_target ct
+    WHERE ct.source_id = s.id
+      AND ct.state = 'queued'
+      AND ct.next_fetch_at <= NOW()
+  )
+ORDER BY
+    s.last_claimed_at ASC NULLS FIRST, | WHOEVER IS STARVING 
+    s.id ASC;
+```
+
+PRIORITY BASED BFS
+
+```
+SELECT ct.*
+FROM crawl_target ct
+WHERE ct.source_id = :source_id
+  AND ct.state = 'queued'
+  AND ct.next_fetch_at <= NOW()
+ORDER BY
+    ct.priority DESC, | famous kid first 
+    ct.depth ASC,     | BFS go shallowest depth not too deep 
+    ct.next_fetch_at ASC,
+    ct.id ASC
+LIMIT 1
+FOR UPDATE SKIP LOCKED;
+```
+
+\[ THIS CODES WERE PREVIOUS VERSION, WHILE UPDATING THE QUERY ALSO CHANGED ]
+
+#### Removing a lock made it 8× faster
+
+Before (commit [e019701](https://github.com/search?q=repo%3Anishchup489-afk%2Fdevelopers_eye++e019701\&type=commits))
+
+In Version 2 round robin was picking a source and locking it. Then taking the targets from that source and update the last_claimed_at inside the loop.
+
+```sql
+-- pick the next source in round-robin order, and LOCK it
+SELECT s.id FROM source s
+WHERE ... has due targets ...
+ORDER BY s.last_claimed_at NULLS FIRST, s.id
+FOR UPDATE OF s SKIP LOCKED;
+-- then take targets from that source
+SELECT ct.* FROM crawl_target ct
+WHERE ct.source_id = :sid ...
+ORDER BY ct.priority DESC, ct.depth, ...
+FOR UPDATE SKIP LOCKED;
+-- and update source.last_claimed_at inside the loop
+```
+
+**Why that killed throughput**
+
+Take the benchmark case: 1 source with 2,000 due targets and 8 workers.
+
+1. Worker 1 locks the source row and starts claiming.
+2. Workers 2–8 run the same query. The only source is locked, `SKIP LOCKED` skips it, and there’s no other source left, so they **return nothing**.
+3. They loop and try again, and get nothing again.
+
+So only **one worker could claim at a time**, even though 2,000 targets were waiting. The other 7 burned transactions on empty claims, about 12,000 of them, and that wasted work also slowed the worker that was claiming. More workers meant more empty round-trips, which is why 8 workers (66–70/s) were **slower** than 1 (136–143/s).
+
+**1. Read the source order without locking it.**
+
+```sql
+SELECT s.id FROM source s
+WHERE s.is_enabled AND <has a due target>
+ORDER BY s.last_claimed_at ASC NULLS FIRST,  -- whoever is starving
+         s.id ASC
+LIMIT :limit;                                -- no FOR UPDATE
+```
+
+Every worker gets the same list, and nobody is blocked.
+
+**2. Rotate through sources in memory.** The ids go into a queue. Take the front source, claim one URL from it, then put it at the back of the line: MDN → python → fastapi → MDN → … A source with nothing left drops out.
+
+**3. Lock only the URL.**
+
+```sql
+SELECT * FROM crawl_target
+WHERE source_id = :source AND state = 'queued' AND next_fetch_at <= now()
+ORDER BY priority DESC,        -- famous kid first
+         depth ASC,            -- BFS: shallowest first
+         next_fetch_at, id
+LIMIT 1
+FOR UPDATE SKIP LOCKED;        -- busy URL? take the next one
+```
+
+The worker leases that row and calls `flush()` right away. `SKIP LOCKED` only skips rows locked by _other_ transactions, so without the flush the same worker could grab the URL it had just taken.
+
+**4. Record the turns once, at the end, in sorted order.**
+
+```sql
+UPDATE source
+SET last_claimed_at = GREATEST(last_claimed_at, :claimed_at)
+WHERE id = :source_id;   -- run for each source, ascending id
+```
+
+Updating in id order is the same trick that fixed the deadlock: everyone takes locks in the same order, so no cycle can form. `GREATEST` stops a late commit from moving a source’s turn backwards.
+
+Now 8 workers on one source each take a different URL, in parallel:
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 18](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-17.webp)
+
+| **Worker** | **Source list** | **URL claimed**      |
+| ---------- | --------------- | -------------------- |
+| W1         | MDN             | #1                   |
+| W2         | MDN             | #1 busy → **#2**     |
+| W3         | MDN             | #1, #2 busy → **#3** |
+| …          | …               | …                    |
+| W8         | MDN             | **#8**               |
+
+The numbers, from EXP-0001 (1 source, 2,000 URLs):
+
+| **Workers** | **With source lock**                   | **Without source lock**             |
+| ----------- | -------------------------------------- | ----------------------------------- |
+| 1           | 136–143 targets/s                      | 174–185 targets/s                   |
+| 4           | 92–99 targets/s (≈6,500 empty claims)  | 478–485 targets/s (0 empty claims)  |
+| 8           | 66–70 targets/s (≈12,000 empty claims) | 563–580 targets/s (≈0 empty claims) |
+
+With the lock, adding workers made things _slower_. They spent their time claiming nothing while work sat in the queue. Dropping the lock and relying on target-level `SKIP LOCKED` fixed it, at the cost of fairness that is best-effort rather than strict.
+
+- **IF A TARGET IS FAILED TO CRAWL WHEN TO RETRY THAT AGAIN?**
+
+Other interesting part. What if a crawl attempt is failed? Thats will not automatically fall into dark hole , it will just be rescheduled for next crawl. But not immediately, it follows a series formula
+
+Delay = min( base delay seconds x ( 2^(n-1) ) , cap )
+
+Suppose we set a cap of = 3600 seconds or 1 hr and
+
+Base delay seconds = 60s
+
+N = attempt
+
+Suppose target A failed firsttime , its next schedule will be within 60 sec , then 120 sec , then 240 sec , 480 sec, 960 sec , 1920 sec, 3600 sec , 3600 sec , 3600 sec
+
+It goes like : 1 -> 2 -> 4 -> 8 -> 16 -> 32 -> cap -> cap -> cap
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 19](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-18.webp)
+
+**THE 7 SECURITY GATES**
+
+Claiming a URL doesn't mean we fetch it. Every hop has to pass the checkpoint first: allowed host? safe IP (no sneaky localhost)? robots.txt says ok? host not busy? ALL YES → fetch. Unsafe → DENY. Temporary issue → DEFER, try later.
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 20](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-19.webp)
+
+HOST POLICY : The syntax is okay , is target in allowed_host list? Any weird character like user:pass@ ? if passed YES. not DENY.
+
+DNS POLICY : The resolved host in host policy’s IP must be public. ocalhost, private network or cloud metadata (`169.254.169.254`)? DENY. we connect ONLY to the IPs we just checked, so DNS can’t switch us to localhost midway (DNS rebinding).
+
+ROBOTS POLICY : The urls official allow list robots.txt allows us to crawl this site? No = DENY, robots.txt down = DEFER, no robots.txt = allowed
+
+POLITENESS POLICY: one request per host at a time with a gap in between, shared by ALL workers. Got a 429/503? The whole crawler backs off.
+
+One bounded request: a single GET, 15 s timeout, 2 MB max, no auto redirects, no hidden retries.
+
+REDIRECT POLICY: 301/302/303/307/308: every redirect is a brand-new URL that runs the whole checklist again (max 5 hops, no https → http downgrade).
+
+**Response status:** 429/5xx → DEFER and retry later. Anything else → hand it to the parser.
+
+**THE POLITENESS FIX: \~120 → \~4,000 DOCUMENTS/MINUTE (ON MY LOCAL CRAWL)**
+
+In commit [800ab2b ](https://github.com/nishchup489-afk/developers_eye/commit/800ab2be84c90f4c62494d66fb849538dda10d3c)we introduced shared politeness. What is politeness? We explained it before, it means dont exhaust a single host too much or it might rate limit you. Thats why every host have a min_interval_seconds = default 2s. Some sites set their own delay in robots.txt with a Crawl-delay: line, but Drishti ignores it and uses a hand-written list of longer gaps instead
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 21](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-20.webp)
+
+PROBLEM :
+
+- A worker grabbed a URL **without checking** whether that website was free.
+- If the website had just been visited, the worker **sat and waited** for the 2-second gap, holding its slot and doing nothing.
+- Lots of workers ended up waiting on busy websites while other websites had nobody working on them.
+- Adding more terminals (processes) didn’t make it faster _and_ polite. Each terminal ignored the others, they were tracking the 2 seconds with their own memory, so they hit the same website together.
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 22](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-21.webp)
+
+SOLUTION :\
+\- **Workers only grab URLs from websites that are free right now.**
+
+This is the change that made it fast: no more waiting, so every worker is always fetching something.
+
+- **All terminals share one rulebook in Postgres.** This made it **safe** to run many terminals at once. More terminals means more speed, and the sites still aren’t overloaded. This part is called Shared politeness
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 23](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-22.webp)
+
+**MORE WORKERS IS NOT MORE SPEED**
+
+I thought: slow crawler? Just add more workers. 8 → 16 → 32 → 64. The speed didn’t move.
+
+Here’s my own benchmark (64 fake websites):
+
+| Workers | 2   | 8    | 16   | 32   | 64   |
+| ------- | --- | ---- | ---- | ---- | ---- |
+| pages/s | 5.1 | 14.0 | 14.8 | 13.8 | 12.2 |
+
+After 16, more workers made it slower. Why?
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 24](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-23.webp)
+
+**The crawl delay**
+
+Drishti waits **2 seconds** between two requests to the same website. That’s the crawl delay, the polite thing to do. So every website can give us about **1 page every \~2.5 seconds**, no matter what.
+
+```
+max speed ≈ number of websites ÷ 2.5 s
+```
+
+- **5 websites** (my first registry): 5 ÷ 2.5 = \~2 pages/s = **\~120 pages/min**
+- **332 websites** (now): 332 ÷ 2.5 = \~130 pages/s = **\~8,000 pages/min max**
+
+With 5 websites, 32 workers were just standing in line for the same 5 sites. **Speed comes from more websites, not more workers.**
+
+**The knobs I can turn**
+
+| **Setting**                        | **Default** | **What it does**                                                    |
+| ---------------------------------- | ----------- | ------------------------------------------------------------------- |
+| `--concurrency`                    | 2           | **Slots**: how many URLs one terminal works on at once              |
+| `--batch-size`                     | 5           | How many URLs it grabs per claim (really `min(batch, concurrency)`) |
+| `--min-interval-seconds`           | 2.0         | **Crawl delay**: gap between requests to the same website           |
+| `--lease-seconds`                  | 300         | How long a grabbed URL is “mine” before it’s given back             |
+| `--job-timeout-seconds`            | 240         | Max time for one URL (always 15 s+ under the lease)                 |
+| `DB_POOL_SIZE` / `DB_MAX_OVERFLOW` | 2 / 2       | Database connections per terminal                                   |
+
+**The database limit**
+
+Every terminal opens its own database connections:
+
+POOLS ( DB_POOL_SIZE ) : How many database connections terminal keeps open. Default 2. If worker needs it , it uses it and returns back.
+
+OVERFLOW (DB_MAX_OVERFLOW ) : The number of **extra** connections a terminal may open **temporarily** when all pool connections are busy. When they’re no longer needed, they’re closed again. Default 2
+
+**`max_connections`**
+
+The **total** number of connections Postgres accepts at once, from every program combined. It’s set in `postgresql.conf`. Once it’s full, any new connection is refused with “too many clients”.
+
+**API**
+
+The **search backend**, the FastAPI server the website talks to. Every search a user makes borrows a database connection.
+
+**Indexer**
+
+The **indexer worker**, the process that turns new documents into searchable index rows (`search_index`). Each indexer process uses the default **2 + 2 = 4 connections**.
+
+```
+terminals ×             
+(pool + overflow) 
++ API + indexer 
+≤ max_connections
+20 × (2 + 2) + 10  + ...      ≈ 96 of 100
+```
+
+Too many terminals and Postgres runs out of connections. (It happened, back before shared politeness.)
+
+**So what actually made it fast?**
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 25](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-24.webp)
+
+1. **More websites.** 5 → 332 hosts raised the ceiling.
+2. **Host-aware claims.** Workers only grab URLs from websites that are free _right now_, so nobody waits.
+3. **Shared politeness.** All terminals follow ONE crawl delay through Postgres, so adding terminals doesn’t make Drishti rude.
+
+Result on my local crawl: **\~120 → \~4,000 pages/min**.
+
+### From bytes to documents
+
+Drishti ingests four formats through bounded adapters: **HTML pages, XML sitemaps, RSS/Atom feeds and JSON APIs**. Responses are size-capped, and typed failures let the worker tell unsafe requests, retryable errors and oversized content apart.
+
+Processing is pure and does no I/O ([ADR-0019](https://github.com/nishchup489-afk/developers_eye/tree/main/0_tech_docs/crawler/content-processing)). Content is normalized, classified with explicit rules, and fingerprinted with SHA-256 , every single change of document update the sha code thats how documents change are detected. The **writer** owns every persistence decision:
+
+- Exact duplicates are caught by fingerprint.
+- A feed record never replaces a page that was actually fetched (ADR-0050).
+- A new content source that wants to replace an existing document has to provide **at least as much body text** (ADR-0052). This came from a real incident where thin pages and competing sources overwrote good content.
+- Pages that disappear are marked unavailable instead of deleted (ADR-0011).
+
+### Drishti 1.0 by the numbers
+
+| **Measurement**                                         | **Result**                             |
+| ------------------------------------------------------- | -------------------------------------- |
+| **Local crawl throughput**                              | **\~100,000 documents/hour**           |
+| **Claim throughput, 8 workers on one source**           | **563–580 targets/s**                  |
+| **Politeness-safe fetch rate, 4 processes × 200 hosts** | **204.5 requests/s, 0 gap violations** |
+| **Single-process ceiling (Python-bound)**               | **\~60 requests/s**                    |
+| **Indexing with 4 outbox shards**                       | **581 documents/s**                    |
+
+These are local benchmarks on developer hardware with synthetic hosts where noted. They are not production capacity claims. The hosted demo deliberately runs one crawler worker on a free tier.
+
+### Known limits
+
+Drishti 1.0 is honest about what it doesn't do yet. The limits fall into three groups.
+
+**Speed**
+
+- **Websites set the ceiling, not workers.** With a 2-second crawl delay per host, the crawler can't go faster than about _hosts ÷ 2.5 s_. Five hosts cap it near 120 pages a minute, and 332 hosts near 8,000.
+- **One process tops out around 60 requests/s.** in local benchmarks, likely Python's single event loop, so scaling past that means more processes, not more slots.
+- **Postgres connections are finite.** Each crawler process uses up to 4 (pool 2 + overflow 2), and every process shares one `max_connections` budget.
+
+**What it fetches**
+
+- **No conditional recrawl.** It doesn't send `ETag` or `If-Modified-Since`, so every recrawl downloads the full page. This was a deliberate deferral (EXP-0015) until validator ownership across redirects and content producers is specified.
+- **Exact duplicates only.** SHA-256 catches identical copies. Mirrored or versioned docs need near-duplicate detection such as SimHash or MinHash.
+- **No JavaScript rendering**, so single-page-app documentation sites don't crawl fully.
+- **No WARC output**, so its crawls can't yet be reused by other archiving tools.
+
+**Design**
+
+- **One machine, one database.** Nobody else can contribute crawling capacity.
+- **Not installable on its own.** Drishti imports the Developer's Eye backend, so it can't run without the whole search engine.
+- **One open incident.** Vocabulary lock contention (INC-0032) can still stall document finalization.
+
+### What's next: Drishti 2.0
+
+Drishti 2.0 is an evolution of this crawler, not a rewrite. The plan:
+
+1. **Its own repository**, still connected to Developer's Eye, so contributors can run the crawler without the whole search engine.
+2. **A dedicated advanced control panel** for watching and steering crawls.
+3. **Node-based, multi-user crawling** into a shared database, so contributors can lend machines to the crawl.
+4. **Updated crawl policies.**
+5. **Experimental** **`.onion`** **support**, with those links opening only in Tor Browser.
+6. **A better quality model** that keeps only documents worth indexing.
+7. **A sustained target of 10 million pages a week**, measured locally before it is promised anywhere else.
+
+###
+
+###
+
+###
+
+### Get involved
+
+![Drishti 1.0: Inside the Crawler Behind Developer's Eye image 26](/docs-assets/drishti-10-inside-the-crawler-behind-developers-eye/image-25.webp)
+
+Drishti and Developer's Eye are MIT-licensed and built in public. If you're interested in crawlers, search, compression or distributed systems, there is real work here and the reasoning behind every decision is written down.
+
+- **Code:** [github.com/nishchup489-afk/developers_eye](https://github.com/nishchup489-afk/developers_eye)
+- **Live demo:** [developers-eye.vercel.app](https://developers-eye.vercel.app)
+- **Community:** [Discord](https://discord.gg/jxbRsFj3d)
+
+Start with the crawler's tech docs in `0_tech_docs/crawler/`. Every ADR, incident and experiment mentioned in this post is there.
