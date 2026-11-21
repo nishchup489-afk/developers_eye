@@ -36,7 +36,7 @@ through their `tests/conftest.py`, so nothing has to be set in the terminal. See
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**109 test files, 818 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**110 test files, 818 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
@@ -44,7 +44,7 @@ Everything between the markers is generated. Write notes above them.
 | [Backend (FastAPI, search)](#backend-fastapi-search) | 45 | 370 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 14 | 109 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 37 | 339 | `cd crawler && poetry run pytest tests/crawler` |
-| [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 13 | 0 | npm scripts in `frontend/package.json` (see below) |
+| [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 14 | 0 | npm scripts in `frontend/package.json` (see below) |
 
 ### End-to-end (full app)
 
@@ -188,6 +188,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 - `npm run test:admin:routes` runs `node --experimental-strip-types tests/admin-routes.mjs`
 - `npm run test:search:unit` runs `node --experimental-strip-types tests/search-unit.mjs && node --experimental-strip-types tests/knowledge-unit.mjs && node tests/edge-transport-unit.mjs`
 - `npm run test:overview:routes` runs `node tests/overview-routes.mjs`
+- `npm run test:docs:import` runs `node tests/google-doc-import-unit.mjs`
 
 | File | Kind | Cases | Write-up |
 |---|---|---:|---|
@@ -201,6 +202,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [fixtures/crawler-report.mjs](../frontend/tests/fixtures/crawler-report.mjs) | fixture data |  | [test_case.md](../frontend/tests/test_case.md#fixtures) |
 | [fixtures/search-quality.mjs](../frontend/tests/fixtures/search-quality.mjs) | fixture data |  | [test_case.md](../frontend/tests/test_case.md#fixtures) |
 | [fixtures/system-report.mjs](../frontend/tests/fixtures/system-report.mjs) | fixture data |  |  |
+| [google-doc-import-unit.mjs](../frontend/tests/google-doc-import-unit.mjs) | tests | script |  |
 | [indexer-report-unit.mjs](../frontend/tests/indexer-report-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#indexer-report-unitmjs) |
 | [integration.mjs](../frontend/tests/integration.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#integrationmjs) |
 | [knowledge-unit.mjs](../frontend/tests/knowledge-unit.mjs) | tests | script | [test_case.md](../frontend/tests/test_case.md#knowledge-unitmjs) |

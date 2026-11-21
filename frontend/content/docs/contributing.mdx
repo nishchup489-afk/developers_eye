@@ -25,3 +25,15 @@ Keep the query set, result snapshot and human relevance judgments together. The 
 ## Leave a record someone can follow
 
 Update the guide for the behavior you changed. For an architectural decision or incident, use the templates in `0_tech_docs/_templates` and regenerate the record index. For this handbook, edit the MDX under `frontend/content/docs` and check its sidebar entry and links locally. The [contribution guide](https://github.com/nishchup489-afk/developers_eye/blob/main/CONTRIBUTING.md) describes the repository workflow.
+
+## Import a page from Google Docs
+
+To turn a Google Doc into a handbook page, share it as **Anyone with the link can view** and run this from `frontend/`:
+
+```bash
+npm run docs:import -- "https://docs.google.com/document/d/<id>/edit" --slug my-page
+```
+
+The importer keeps headings, bold, italic, strikethrough, inline code, nested lists, tables and links, and it unwraps Google's redirect links. Paragraphs set in a monospace font become a code block. Images are downloaded into `public/docs-assets/<slug>/`, so the page does not depend on Google's image links. Photos and screenshots are saved as WebP at most 1600 pixels wide, which keeps them small enough to commit; GIFs and SVGs are kept as they are. Comments are dropped. The doc's title and subtitle become the page title and description. The page is written to `content/docs/<slug>.mdx` and added to the sidebar under "Imported from Google Docs".
+
+Pass `--force` to refresh a page you imported earlier, and `--title` to override the title. For a private doc, set `GOOGLE_ACCESS_TOKEN` to a token with Drive read access, for example from `gcloud auth print-access-token --scopes=https://www.googleapis.com/auth/drive.readonly`. You can also convert a saved **File → Download → Web page** export with `--html <file>`. Review the generated page locally before committing it, because pages are built at deploy time.

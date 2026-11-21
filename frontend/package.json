@@ -15,7 +15,9 @@
     "test:admin:unit": "node --experimental-strip-types tests/admin-unit.mjs && node --experimental-strip-types tests/crawler-monitor-unit.mjs && node --experimental-strip-types tests/indexer-report-unit.mjs && node --experimental-strip-types tests/search-quality-unit.mjs",
     "test:admin:routes": "node --experimental-strip-types tests/admin-routes.mjs",
     "test:search:unit": "node --experimental-strip-types tests/search-unit.mjs && node --experimental-strip-types tests/knowledge-unit.mjs && node tests/edge-transport-unit.mjs",
-    "test:overview:routes": "node tests/overview-routes.mjs"
+    "test:overview:routes": "node tests/overview-routes.mjs",
+    "docs:import": "node scripts/import-google-doc.mjs",
+    "test:docs:import": "node tests/google-doc-import-unit.mjs"
   },
   "dependencies": {
     "@types/mdx": "^2.0.14",
@@ -50,6 +52,8 @@
     "@types/three": "^0.180.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
+    "rehype-parse": "^9.0.1",
+    "rehype-remark": "^10.0.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

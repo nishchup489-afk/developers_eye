@@ -1331,6 +1331,10 @@ Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tes
 
 Script-style file, run as a whole
 
+### [frontend/tests/google-doc-import-unit.mjs](../../frontend/tests/google-doc-import-unit.mjs)
+
+Script-style file, run as a whole
+
 ### [frontend/tests/indexer-report-unit.mjs](../../frontend/tests/indexer-report-unit.mjs)
 
 Script-style file, run as a whole · write-up: [test_case.md](../../frontend/tests/test_case.md#indexer-report-unitmjs)
@@ -1400,6 +1404,7 @@ These test files have no matching heading in a `test_case.md`.
 - [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
 - [crawler/tests/indexer/test_worker_recovery.py](../../crawler/tests/indexer/test_worker_recovery.py)
 - [frontend/tests/edge-transport-unit.mjs](../../frontend/tests/edge-transport-unit.mjs)
+- [frontend/tests/google-doc-import-unit.mjs](../../frontend/tests/google-doc-import-unit.mjs)
 - [frontend/tests/overview-routes.mjs](../../frontend/tests/overview-routes.mjs)
 - [frontend/tests/preview-overview.mjs](../../frontend/tests/preview-overview.mjs)
 <!-- test-index:end -->
