@@ -36,12 +36,12 @@ through their `tests/conftest.py`, so nothing has to be set in the terminal. See
 Everything between the markers is generated. Write notes above them.
 
 <!-- test-index:start -->
-**108 test files, 815 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
+**109 test files, 818 named test cases** (Python `test_*` functions; script-style `.mjs` files count as one file each).
 
 | Suite | Test files | Named cases | How to run |
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
-| [Backend (FastAPI, search)](#backend-fastapi-search) | 44 | 367 | `cd backend && poetry run pytest` |
+| [Backend (FastAPI, search)](#backend-fastapi-search) | 45 | 370 | `cd backend && poetry run pytest` |
 | [Indexer](#indexer) | 14 | 109 | `cd crawler && poetry run pytest tests/indexer` |
 | [Crawler](#crawler) | 37 | 339 | `cd crawler && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 13 | 0 | npm scripts in `frontend/package.json` (see below) |
@@ -85,6 +85,7 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 | [unit/test_analyzer.py](../backend/tests/unit/test_analyzer.py) | tests | 13 | [test_case.md](../backend/tests/test_case.md#query-analyzer) |
 | [unit/test_code_excerpt.py](../backend/tests/unit/test_code_excerpt.py) | tests | 3 |  |
 | [unit/test_corpus_refresh.py](../backend/tests/unit/test_corpus_refresh.py) | tests | 3 |  |
+| [unit/test_crawler_sessions.py](../backend/tests/unit/test_crawler_sessions.py) | tests | 3 |  |
 | [unit/test_fuzzy_suggestions.py](../backend/tests/unit/test_fuzzy_suggestions.py) | tests | 9 | [test_case.md](../backend/tests/test_case.md#fuzzy-suggestions) |
 | [unit/test_main_lifespan_search.py](../backend/tests/unit/test_main_lifespan_search.py) | tests | 1 | [test_case.md](../backend/tests/test_case.md#app-startup-lifespan) |
 | [unit/test_pagination.py](../backend/tests/unit/test_pagination.py) | tests | 3 | [test_case.md](../backend/tests/test_case.md#pagination) |

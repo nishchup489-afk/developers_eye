@@ -2,6 +2,7 @@
 
 import logging
 import secrets
+from datetime import datetime
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Response
@@ -78,6 +79,25 @@ async def crawler_monitor(
     return await monitor_query(response, build_monitor, days=days, source_id=source_id, status=status,
         category=category, q=q, document_page=document_page, frontier_page=frontier_page,
         frontier_state=frontier_state, before_event_id=before_event_id)
+
+
+@router.get("/sessions", dependencies=[Depends(require_report_key)])
+async def crawler_sessions(
+    response: Response,
+    limit: Annotated[int, Query(ge=1, le=50)] = 20,
+    start: datetime | None = None,
+    end: datetime | None = None,
+):
+    """Crawl sessions (start to stop, all workers combined), or one custom start/end window."""
+    from backend.admin_services.crawler_sessions import build_sessions
+    if end is not None and start is None:
+        raise HTTPException(422, "end requires start")
+    for value in (start, end):
+        if value is not None and value.tzinfo is None:
+            raise HTTPException(422, "start and end must include a timezone")
+    if start is not None and end is not None and end <= start:
+        raise HTTPException(422, "end must be after start")
+    return await monitor_query(response, build_sessions, limit=limit, start=start, end=end)
 
 
 @router.get("/documents/{document_id}", dependencies=[Depends(require_report_key)])

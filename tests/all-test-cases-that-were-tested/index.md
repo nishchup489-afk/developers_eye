@@ -341,6 +341,14 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_successful_refresh_replaces_both_snapshots`
 - `test_background_refresh_retries_after_failure`
 
+### [backend/tests/unit/test_crawler_sessions.py](../../backend/tests/unit/test_crawler_sessions.py)
+
+3 cases
+
+- `test_overlapping_workers_form_one_session`
+- `test_running_worker_extends_session_to_now`
+- `test_crashed_worker_ends_at_last_heartbeat`
+
 ### [backend/tests/unit/test_fuzzy_suggestions.py](../../backend/tests/unit/test_fuzzy_suggestions.py)
 
 9 cases · write-up: [test_case.md](../../backend/tests/test_case.md#fuzzy-suggestions)
@@ -1373,6 +1381,7 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/unit/test_ai_overview.py](../../backend/tests/unit/test_ai_overview.py)
 - [backend/tests/unit/test_code_excerpt.py](../../backend/tests/unit/test_code_excerpt.py)
 - [backend/tests/unit/test_corpus_refresh.py](../../backend/tests/unit/test_corpus_refresh.py)
+- [backend/tests/unit/test_crawler_sessions.py](../../backend/tests/unit/test_crawler_sessions.py)
 - [backend/tests/unit/test_ranking_goldens.py](../../backend/tests/unit/test_ranking_goldens.py)
 - [backend/tests/unit/test_relevance_cli.py](../../backend/tests/unit/test_relevance_cli.py)
 - [backend/tests/unit/test_relevance_metrics.py](../../backend/tests/unit/test_relevance_metrics.py)
