@@ -500,7 +500,7 @@ export default function SearchExperience({
               </span>
             </h1>
             <p className="hero-description reveal">
-              Instead of searching sources separately, search documentation, repositories, discussions, and articles together.
+              Less searching. More building.
             </p>
           </div>}
           <section
