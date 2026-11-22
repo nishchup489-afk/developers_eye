@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
 import BrandEye from "./brand-eye";
-import PrototypeBanner from "./prototype-banner";
 import { icons } from "./search/source-icons";
 import { KnowledgePanel, SearchResultRow, SuggestedQuery } from "./search/result-parts";
 import { SearchOptions, SearchPagination } from "./search/search-options";
@@ -18,6 +17,7 @@ import {
   ArrowUpRight,
   Bookmark,
   Eye,
+  GitBranch,
   LoaderCircle,
   MessageCircle,
   Search,
@@ -36,13 +36,11 @@ import {
   type Source,
 } from "@/lib/search";
 import { isKnowledgeResponse, knowledgeQuery, type KnowledgeResponse } from "@/lib/knowledge";
-import { repoUrl } from "@/lib/site";
 
 // Highest-scoring queries in the judged 25-query benchmark
 // (backend/evaluation/checklist-25/results-at-10.json, BM25 nDCG@10 0.81-1.00, MRR 1.0).
-const previewQuery = "asyncio gather";
 const suggestions = [
-  previewQuery,
+  "asyncio gather",
   "FastAPI lifespan events",
   "django QuerySet select_related",
   "dependency injection",
@@ -157,7 +155,6 @@ export default function SearchExperience({
   const [query, setQuery] = useState(() => splitQuery(initialQuery)[0]);
   const [code, setCode] = useState(() => splitQuery(initialQuery)[1]);
   const [response, setResponse] = useState<SearchResponse | null>(null);
-  const [preview, setPreview] = useState<SearchResult | null>();
   const [suggestion, setSuggestion] = useState<SearchSuggestion | null>(null);
   const [knowledge, setKnowledge] = useState<KnowledgeResponse | null>(null);
   const [filter, setFilter] = useState<SearchFilter>(initialFilter);
@@ -169,31 +166,6 @@ export default function SearchExperience({
   const showSaved = savedPage;
   const [storageError, setStorageError] = useState("");
   const [menuFor, setMenuFor] = useState<string | null>(null);
-  const showPreview = !resultsPage && mode === "live";
-
-  useEffect(() => {
-    if (!showPreview) return;
-    const request = new AbortController();
-
-    async function loadPreview() {
-      try {
-        const { status, data } = await api.get<SearchResponse>("/search", {
-          params: { q: previewQuery, mode: "all", page: 1, limit: 20 },
-          signal: request.signal,
-        });
-        const first = data?.results?.[0];
-        if (request.signal.aborted) return;
-        const usable = status === 200 && data?.mode === "live" && isSearchResult(first) &&
-          first.title.trim() && first.snippet.trim();
-        setPreview(usable ? first : null);
-      } catch {
-        if (!request.signal.aborted) setPreview(null);
-      }
-    }
-
-    void loadPreview();
-    return () => request.abort();
-  }, [showPreview]);
 
   useEffect(() => {
     if (!menuFor) return;
@@ -421,7 +393,7 @@ export default function SearchExperience({
       root,
     );
     return () => context.revert();
-  }, [response, filter, showSaved, loading, error, preview]);
+  }, [response, filter, showSaved, loading, error]);
 
   function toggleSave(result: SearchResult) {
     const next = saved.some((item) => item.url === result.url)
@@ -438,9 +410,6 @@ export default function SearchExperience({
     }
   }
   const fullQuery = [query.trim(), code].filter(Boolean).join("\n");
-  const exampleSearchParams = new URLSearchParams({ q: previewQuery });
-  if (filter !== "all") exampleSearchParams.set("source", filter);
-  if (selectedMode !== "all") exampleSearchParams.set("mode", selectedMode);
   const resultItems = showSaved ? saved : (response?.results ?? []);
   // Saved results live in the browser. Live results are filtered by the server,
   // so a filter finds every match in the index, not just the current page.
@@ -503,9 +472,9 @@ export default function SearchExperience({
           <Link className="nav-link nav-link-mobile" href="/docs">
             Docs <ArrowUpRight size={12} />
           </Link>
-          <a className="nav-link nav-link-mobile" href={repoUrl}>
-            Source code <ArrowUpRight size={12} aria-hidden="true" />
-          </a>
+          <Link className="nav-link nav-link-mobile" href="/admin">
+            Admin <ArrowUpRight size={12} />
+          </Link>
         </nav>
         <Link
           href="/search?saved=1"
@@ -520,6 +489,7 @@ export default function SearchExperience({
       </header>
       <main>
         <section className="hero shell" aria-label={resultsPage ? "Search" : undefined} aria-labelledby={resultsPage ? undefined : "hero-title"}>
+          {!resultsPage && <BrandEye />}
           {!resultsPage && <div className="hero-copy">
             <h1 id="hero-title" className="hero-title" aria-label="developer’s eye.">
               <span className="word" aria-hidden="true">
@@ -647,37 +617,13 @@ export default function SearchExperience({
                   </button>
                 ))}
               </div>
-              {mode === "demo" && <span className="demo-label">
+              <span className="demo-label">
                 <span className="status-dot" />
-                Demo playground
-              </span>}
+                {mode === "demo" ? "Demo playground" : "Live search configured"}
+              </span>
             </div>}
           </section>
-          {!resultsPage && <BrandEye />}
         </section>
-
-        {!resultsPage && <PrototypeBanner onHome />}
-        {showPreview && preview === undefined && (
-          <div className="result-preview result-preview-skeleton" aria-hidden="true" />
-        )}
-        {showPreview && preview && (
-          <section className="result-preview" aria-labelledby="result-preview-title">
-            <h2 id="result-preview-title">A result for &apos;{previewQuery}&apos;</h2>
-            <span className="result-preview-source">{preview.source}</span>
-            <h3><a href={preview.url}>{preview.title}</a></h3>
-            <p>{preview.snippet}</p>
-            <Link
-              className="text-button"
-              href={`/search?${exampleSearchParams}`}
-              onNavigate={(event) => {
-                event.preventDefault();
-                void search(previewQuery, true, filter, selectedMode);
-              }}
-            >
-              Search {previewQuery}
-            </Link>
-          </section>
-        )}
 
         {resultsPage && (
           <section
@@ -930,6 +876,17 @@ export default function SearchExperience({
               );
             })}
           </div>
+          <div className="ecosystem-note">
+            <span>
+              <GitBranch size={14} /> A growing field of view
+            </span>
+            <span>
+              Events <span>/</span> Practice{" "}
+              <span className="small-pill">
+                {mode === "demo" ? "IN THE DEMO" : "SOURCE CATEGORIES"}
+              </span>
+            </span>
+          </div>
         </section>}
         {!resultsPage && (
           <section className="steps-section shell" aria-labelledby="steps-title">
@@ -985,13 +942,14 @@ export default function SearchExperience({
         </Link>
         <p>Made for the beautifully curious.</p>
         <div>
-          {(mode === "demo" || resultsPage) && (
-            <span className="footer-mode">
-              ● {mode === "demo" ? "Demo mode" : "Live search configured"}
-            </span>
-          )}
+          <span className="footer-mode">
+            ● {mode === "demo" ? "Demo mode" : "Live search configured"}
+          </span>
           <Link href="/docs">
             Under the hood <ArrowUpRight size={12} />
+          </Link>
+          <Link href="/admin">
+            Admin <ArrowUpRight size={12} />
           </Link>
         </div>
       </footer>
