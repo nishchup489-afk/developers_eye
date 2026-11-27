@@ -6,7 +6,7 @@ Usage, from the repository root:
     python scripts/update_test_index.py --check         # exit 1 if an index is stale
     python scripts/update_test_index.py --install-hook  # run this on every commit
 
-Test files stay where their runners expect them (backend/tests, crawler/tests,
+Test files stay where their runners expect them (backend/tests, drishti/tests,
 frontend/tests, tests/end-to-end). This script collects every one of them into:
 
     tests/test-index-of-whole-app.md                     one table per suite
@@ -43,8 +43,8 @@ GENERATED = {WHOLE_APP, CASES}
 SUITES = [
     ("tests/end-to-end/", "End-to-end (full app)", "Not written yet."),
     ("backend/tests/", "Backend (FastAPI, search)", "`cd backend && poetry run pytest`"),
-    ("crawler/tests/indexer/", "Indexer", "`cd crawler && poetry run pytest tests/indexer`"),
-    ("crawler/tests/", "Crawler", "`cd crawler && poetry run pytest tests/crawler`"),
+    ("drishti/tests/indexer/", "Indexer", "`cd drishti && poetry run pytest tests/indexer`"),
+    ("drishti/tests/", "Crawler", "`cd drishti && poetry run pytest tests/crawler`"),
     ("frontend/tests/", "Frontend (Next.js, admin)", "npm scripts in `frontend/package.json` (see below)"),
 ]
 
@@ -80,11 +80,15 @@ fi
 # ---------------------------------------------------------------- discovery
 
 def repo_files(root: Path) -> list[str]:
-    out = subprocess.run(
-        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+    tracked = subprocess.run(
+        ["git", "ls-files", "--cached", "--recurse-submodules", "-z"],
         cwd=root, check=True, capture_output=True,
     ).stdout.decode("utf-8")
-    return sorted({p for p in out.split("\0") if p and (root / p).is_file()})
+    untracked = subprocess.run(
+        ["git", "ls-files", "--others", "--exclude-standard", "-z"],
+        cwd=root, check=True, capture_output=True,
+    ).stdout.decode("utf-8")
+    return sorted({p for p in (tracked + untracked).split("\0") if p and (root / p).is_file()})
 
 
 def is_test_file(path: str) -> bool:
@@ -200,7 +204,7 @@ def documented_in(path: str, writeups: dict[str, list[tuple[str, str, str]]]) ->
 
     Best match first: a heading naming the file, then a section saying
     "Test file: <path>", then any section quoting the full path, then the name.
-    Only write-ups in the same top-level folder (backend, crawler, frontend) count.
+    Only write-ups in the same top-level folder (backend, drishti, frontend) count.
     """
     p = PurePosixPath(path)
     top = p.parts[0]

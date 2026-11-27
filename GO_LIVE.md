@@ -144,6 +144,7 @@ docker compose exec -T db psql -U developers_eye -d developers_eye -c \
 
 ```sh
 cd /opt/developers-eye && git pull
+git submodule update --init --recursive
 cd deploy && docker compose build && docker compose up -d
 # only if the crawler should keep running:
 docker compose --profile crawl up -d crawler

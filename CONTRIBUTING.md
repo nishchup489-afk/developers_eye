@@ -30,7 +30,7 @@ or open an issue to discuss your idea. Questions are welcome on
 - Put the test in **its own file**, in the matching `tests/` folder of the part
   you changed.
 - Update the **test case write-up** for that part (`backend/tests/test_case.md`,
-  `crawler/tests/test_case.md` or `frontend/tests/test_case.md`) with what you
+  `drishti/tests/test_case.md` or `frontend/tests/test_case.md`) with what you
   tested and what you found.
 - Run `python scripts/update_test_index.py` to refresh the
   [test index](tests/test-index-of-whole-app.md) and the

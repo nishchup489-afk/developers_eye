@@ -110,15 +110,15 @@ try:
     from rich.text import Text
 except ImportError:  # pragma: no cover - depends on the caller's interpreter
     if os.environ.get("DE_TEST_RUNNER_REEXEC"):
-        sys.exit("rich is not installed. Run: cd crawler && poetry install")
-    for project in ("crawler", "backend"):
+        sys.exit("rich is not installed. Run: cd drishti && poetry install")
+    for project in ("drishti", "backend"):
         python = _venv_python(ROOT / project) or _poetry_python(ROOT / project)
         if python and Path(python).resolve() != Path(sys.executable).resolve():
             env = dict(os.environ, DE_TEST_RUNNER_REEXEC="1")
             sys.exit(subprocess.call([str(python), __file__, *sys.argv[1:]], env=env))
     sys.exit(
         "rich is not installed for this Python and no project virtualenv was found.\n"
-        "Run `cd crawler && poetry install`, then `poetry run python ../scripts/run_all_tests.py`."
+        "Run `cd drishti && poetry install`, then `poetry run python ../scripts/run_all_tests.py`."
     )
 
 
@@ -182,8 +182,8 @@ class Check:
 
 SUITES: list[Suite] = [
     Suite("backend", "python", "Backend (FastAPI, search)", "backend", "pytest", needs_db="some"),
-    Suite("crawler", "python", "Crawler", "crawler", "pytest", targets=["tests/crawler"], needs_db="some"),
-    Suite("indexer", "python", "Indexer", "crawler", "pytest", targets=["tests/indexer"], needs_db="some"),
+    Suite("crawler", "python", "Crawler", "drishti", "pytest", targets=["tests/crawler"], needs_db="some"),
+    Suite("indexer", "python", "Indexer", "drishti", "pytest", targets=["tests/indexer"], needs_db="some"),
     Suite("fe-lint", "frontend", "Frontend lint (eslint)", "frontend", "node", npm_script="lint"),
     Suite(
         "fe-types",
@@ -298,7 +298,7 @@ def read_env_file(path: Path) -> dict[str, str]:
 def build_env(extra: dict[str, str]) -> dict[str, str]:
     env = dict(os.environ)
     env.update(extra)
-    src_paths = [str(ROOT / "backend" / "src"), str(ROOT / "crawler" / "src")]
+    src_paths = [str(ROOT / "backend" / "src"), str(ROOT / "drishti" / "src")]
     if env.get("PYTHONPATH"):
         src_paths.append(env["PYTHONPATH"])
     env["PYTHONPATH"] = os.pathsep.join(src_paths)
@@ -576,7 +576,7 @@ def environment_checks(
             )
 
     if any(s.needs_db for s in selected):
-        db_py = pythons.get("crawler") or pythons.get("backend")
+        db_py = pythons.get("drishti") or pythons.get("backend")
         checks.extend(db_checks(db_url, db_source, db_py))
     return checks
 

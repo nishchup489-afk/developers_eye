@@ -8,8 +8,9 @@
 **/.env.*
 !**/.env.example
 0_tech_docs
-crawler/logs
-crawler/tests
+drishti/logs
+crawler
+drishti/tests
 backend/tests
 tests/reports
 deploy/backups

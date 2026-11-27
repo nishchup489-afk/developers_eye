@@ -39,7 +39,7 @@ Created by **Nish**
 
 ## What is Developer's Eye?
 
-**Developer's Eye** is a search engine for technical content. It crawls developer documentation, indexes it, and ranks results with its own BM25 implementation. There is no Elasticsearch, no vector database and no search library underneath: every stage, from the URL frontier to the snippet shown under a result, is code in this repository running on one PostgreSQL database.
+**Developer's Eye** is a search engine for technical content. It crawls developer documentation, indexes it, and ranks results with its own BM25 implementation. There is no Elasticsearch, no vector database and no search library underneath: the crawler, indexer and search API share one PostgreSQL database. The crawler and indexer live in the [Drishti repository](https://github.com/nishchup489-afk/drishti), included here as a Git submodule.
 
 It is also built to be read. Every major decision has a written record, every incident has a post-mortem, and every performance claim links to the experiment that produced it. An admin dashboard shows the crawler, indexer, database and search quality live.
 
@@ -228,7 +228,7 @@ The repo is a monorepo with a strict split: **why** something was built lives in
 | Path | What's inside |
 |---|---|
 | [`backend/`](backend/README.md) | FastAPI app, database models and Alembic migrations. The search engine itself is in `backend/src/backend/search` (query analysis, retrieval, ranking, snippets, evaluation). |
-| [`crawler/`](crawler/src/crawler/README.md) | Two Python packages: `crawler` (frontier, policy, fetcher, parser, writer, worker) and [`indexer`](crawler/src/indexer/README.md) (analysis, vectors, vocabulary, worker). Each component has its own `docs/` folder. |
+| [`drishti/`](https://github.com/nishchup489-afk/drishti/blob/main/src/crawler/README.md) | Two Python packages: `crawler` (frontier, policy, fetcher, parser, writer, worker) and [`indexer`](https://github.com/nishchup489-afk/drishti/blob/main/src/indexer/README.md) (analysis, vectors, vocabulary, worker). Each component has its own `docs/` folder. |
 | [`frontend/`](frontend/README.md) | Next.js search UI, API proxy routes and the admin dashboard. |
 | [`deploy/`](deploy/README.md) | Docker Compose stack, Caddy config, PostgreSQL settings, backup and restore-test scripts. |
 | [`0_tech_docs/`](0_tech_docs/README.md) | Every decision, incident and experiment, grouped by area and feature. Start with its README and the [record index](0_tech_docs/record-index.md). |
@@ -268,7 +268,7 @@ Each numbered step runs in its own terminal, from the repository root.
 **1. Clone and create two databases**
 
 ```bash
-git clone https://github.com/nishchup489-afk/developers_eye.git
+git clone --recurse-submodules https://github.com/nishchup489-afk/developers_eye.git
 cd developers_eye
 
 createdb developers_eye
@@ -288,7 +288,7 @@ poetry run uvicorn backend.main:app --reload
 **3. Crawler**
 
 ```bash
-cd crawler
+cd drishti
 poetry install
 poetry run python -m crawler.main bootstrap                        # register sources, queue start URLs
 poetry run python -m crawler.worker.runner --forever --concurrency 2
@@ -297,7 +297,7 @@ poetry run python -m crawler.worker.runner --forever --concurrency 2
 **4. Indexer**
 
 ```bash
-cd crawler
+cd drishti
 poetry run python -m indexer.worker.runner --forever --batch-size 100 --concurrency 2 --poll-seconds 10
 ```
 
@@ -321,7 +321,7 @@ cp .env.local.example .env.local     # set TEST_DATABASE_URL
 python scripts/run_all_tests.py      # every suite, one report
 ```
 
-For hardware recommendations, running several crawler workers and troubleshooting, see the full [setup guide](setup-guide.md). More detail for each part is in the [backend](backend/README.md), [crawler](crawler/src/crawler/README.md), [indexer](crawler/src/indexer/operations.md) and [frontend](frontend/README.md) guides. To run everything on one server with Docker Compose, follow the [deployment guide](deploy/README.md).
+For hardware recommendations, running several crawler workers and troubleshooting, see the full [setup guide](setup-guide.md). More detail for each part is in the [backend](backend/README.md), [crawler](https://github.com/nishchup489-afk/drishti/blob/main/src/crawler/README.md), [indexer](https://github.com/nishchup489-afk/drishti/blob/main/src/indexer/operations.md) and [frontend](frontend/README.md) guides. To run everything on one server with Docker Compose, follow the [deployment guide](deploy/README.md).
 
 ## Environment files
 
@@ -350,8 +350,8 @@ python scripts/run_all_tests.py --save           # write HTML, text and JSON rep
 | Suite | Test files | Named cases | Run it alone |
 |---|---:|---:|---|
 | Backend (API, search, ranking) | 42 | 358 | `cd backend && poetry run pytest` |
-| Crawler | 36 | 338 | `cd crawler && poetry run pytest tests/crawler` |
-| Indexer | 14 | 109 | `cd crawler && poetry run pytest tests/indexer` |
+| Crawler | 36 | 338 | `cd drishti && poetry run pytest tests/crawler` |
+| Indexer | 14 | 109 | `cd drishti && poetry run pytest tests/indexer` |
 | Frontend and admin | 12 | script-style | npm scripts in `frontend/package.json` |
 
 

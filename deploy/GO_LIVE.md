@@ -115,7 +115,7 @@ Check: `dig +short api.example.com` prints `<vm-ip>`.
 
 ```sh
 sudo mkdir -p /opt/developers-eye && sudo chown ubuntu: /opt/developers-eye
-git clone https://github.com/nishchup489-afk/developers_eye.git /opt/developers-eye
+git clone --recurse-submodules https://github.com/nishchup489-afk/developers_eye.git /opt/developers-eye
 cd /opt/developers-eye/deploy
 cp .env.example .env && chmod 600 .env
 openssl rand -hex 32   # run three times: one value per secret below
@@ -245,7 +245,7 @@ keeps processing what was fetched. If the guard stops it, read the reason in
 | --- | --- |
 | Status | `docker compose --profile crawl ps` |
 | Logs | `docker compose logs --tail 100 api` (or `indexer-0`, `crawler`) |
-| Update code | `git pull && docker compose build && docker compose up -d` (add `--profile crawl` if the crawler should keep running) |
+| Update code | `git pull && git submodule update --init --recursive && docker compose build && docker compose up -d` (add `--profile crawl` if the crawler should keep running) |
 | Stop everything | `docker compose --profile crawl down` |
 | Raise the budget | edit `CRAWL_MAX_DOCUMENTS`, then `./cap-sources.sh --apply` (caps only go down, so to raise them, update `source.config` by hand) |
 | Disk use | `df -h /data /` and `docker system df` |

@@ -10,7 +10,7 @@ There is no `.venv` at the repository root. Use the crawler's environment, which
 backend, crawler and indexer packages installed together:
 
 ```powershell
-crawler\.venv\Scripts\python.exe scripts\<script>.py --help
+drishti\.venv\Scripts\python.exe scripts\<script>.py --help
 ```
 
 The repository-maintenance scripts use only the standard library and run with any Python 3.
@@ -52,7 +52,7 @@ with `poetry run python ../scripts/<script>.py`.
 The scripts behind [CORE_TRADEOFFS.md](../CORE_TRADEOFFS.md). The step-by-step method is
 [guide/tradeoffs_calculation.md](../guide/tradeoffs_calculation.md). Reports go to
 `backend/reports/tradeoffs/`. They need `psutil`
-(`crawler\.venv\Scripts\python.exe -m pip install psutil`) and refuse to run on any
+(`drishti\.venv\Scripts\python.exe -m pip install psutil`) and refuse to run on any
 database whose name does not start with `developers_eye_bench`, because several of them write.
 Make that copy first (guide, section 0.2).
 
@@ -68,7 +68,7 @@ Make that copy first (guide, section 0.2).
 | `tradeoffs/cloud_estimate.py` | 14 | Local vs Oracle Always Free ARM capacity and monthly cost, estimated from the other reports |
 
 ```bash
-PY=crawler/.venv/Scripts/python.exe
+PY=drishti/.venv/Scripts/python.exe
 $PY scripts/tradeoffs/search_bench.py ranking --rounds 5
 $PY scripts/tradeoffs/http_bench.py concurrency --seconds 20
 $PY scripts/tradeoffs/cloud_estimate.py --arm-per-core 0.45

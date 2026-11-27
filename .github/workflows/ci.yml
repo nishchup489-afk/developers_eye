@@ -27,13 +27,15 @@ jobs:
       TEST_DATABASE_URL: postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/developers_eye_ci_test
     steps:
       - uses: actions/checkout@v6
+        with:
+          submodules: true
       - uses: actions/setup-python@v6
         with:
           python-version: "3.14"
       - name: Install
         run: |
           python -m venv .venv
-          .venv/bin/pip install ./backend ./crawler pytest pytest-asyncio httpx httpx2 colorama pip-audit
+          .venv/bin/pip install ./backend ./drishti pytest pytest-asyncio httpx httpx2 colorama pip-audit
       - name: Migrate an empty database, down one and up again
         working-directory: backend
         run: |
@@ -44,7 +46,7 @@ jobs:
         working-directory: backend
         run: ../.venv/bin/python -m pytest -q
       - name: Crawler and indexer tests
-        working-directory: crawler
+        working-directory: drishti
         run: ../.venv/bin/python -m pytest -q --ignore=tests/crawler/worker/test_live_pipeline.py --ignore=tests/benchmarks
       - name: Dependency audit
         run: .venv/bin/pip-audit

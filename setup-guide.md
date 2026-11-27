@@ -13,7 +13,7 @@ Every command runs from the repository root unless a step says otherwise.
 |---|---|---|
 | Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4 | `frontend/` |
 | API | Python 3.14, FastAPI, SQLAlchemy 2, Alembic | `backend/` |
-| Crawler and indexer | Python 3.14, HTTPX, lxml + BeautifulSoup, asyncpg | `crawler/` |
+| Crawler and indexer | Python 3.14, HTTPX, lxml + BeautifulSoup, asyncpg | `drishti/` |
 | Database | PostgreSQL 16 or newer | one database shared by everything |
 | Tests | pytest, npm scripts, GitHub Actions | `scripts/run_all_tests.py` runs all of it |
 | Deployment (optional) | Docker Compose, Caddy | `deploy/` |
@@ -63,12 +63,14 @@ The hosted demo runs about 100k documents on a 4-core ARM VM with 24 GB RAM.
 ## 4. Get the code and create the databases
 
 ```bash
-git clone https://github.com/nishchup489-afk/developers_eye.git
+git clone --recurse-submodules https://github.com/nishchup489-afk/developers_eye.git
 cd developers_eye
 
 createdb developers_eye
 createdb developers_eye_test   # tests refuse any database whose name lacks "test"
 ```
+
+In an existing checkout, run `git submodule update --init --recursive` from the repository root after pulling.
 
 ## 5. Configure the environment files
 
@@ -124,7 +126,7 @@ indexer have done some work.
 The first time, install the crawler and register the sources:
 
 ```bash
-cd crawler
+cd drishti
 poetry install
 poetry run python -m crawler.main bootstrap   # register sources, queue the start URLs
 ```
@@ -132,7 +134,7 @@ poetry run python -m crawler.main bootstrap   # register sources, queue the star
 Then start a worker:
 
 ```bash
-cd crawler
+cd drishti
 poetry run python -m crawler.worker.runner --forever --concurrency 2 --batch-size 20
 ```
 
@@ -149,7 +151,7 @@ the admin dashboard, and add workers while throughput keeps rising.
 In one more terminal:
 
 ```bash
-cd crawler
+cd drishti
 poetry run python -m indexer.worker.runner --forever --batch-size 100 --concurrency 2 --poll-seconds 10
 ```
 
@@ -180,12 +182,12 @@ There is no `.venv` at the repository root. The test runner and maintenance
 scripts can use the crawler's environment, which has every package installed:
 
 ```bash
-crawler/.venv/Scripts/python.exe scripts/run_all_tests.py   # Windows
-crawler/.venv/bin/python scripts/run_all_tests.py           # macOS / Linux
+drishti/.venv/Scripts/python.exe scripts/run_all_tests.py   # Windows
+drishti/.venv/bin/python scripts/run_all_tests.py           # macOS / Linux
 ```
 
 If Poetry keeps its environments outside the project on your machine, use
-`cd crawler && poetry run python ../scripts/run_all_tests.py` instead.
+`cd drishti && poetry run python ../scripts/run_all_tests.py` instead.
 
 Useful options:
 
@@ -214,6 +216,6 @@ Run the suites before and after a change and compare.
 ## Going further
 
 - Run everything on one server with Docker Compose: [deploy/README.md](deploy/README.md)
-- Component guides: [backend](backend/README.md), [crawler](crawler/src/crawler/README.md), [indexer](crawler/src/indexer/operations.md), [frontend](frontend/README.md)
+- Component guides: [backend](backend/README.md), [crawler](https://github.com/nishchup489-afk/drishti/blob/main/src/crawler/README.md), [indexer](https://github.com/nishchup489-afk/drishti/blob/main/src/indexer/operations.md), [frontend](frontend/README.md)
 - Why it is built this way: [0_tech_docs](0_tech_docs/README.md)
 - Ready to change something? Read [CONTRIBUTING.md](CONTRIBUTING.md)

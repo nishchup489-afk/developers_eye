@@ -28,9 +28,10 @@ both OCI rules and the host firewall; leave 5432/8000 private. Reserve the publi
 IP and point the API hostname at it. Account, firewall, disk, swap and DNS setup
 remain operator actions.
 
-After cloning to `/opt/developers-eye`:
+Initialize the pinned Drishti checkout before building from `/opt/developers-eye`:
 
 ```sh
+git -C /opt/developers-eye submodule update --init --recursive
 cd /opt/developers-eye/deploy
 mountpoint /data
 sudo install -d -m 0700 -o 70 -g 70 /data/pgdata   # postgres:18-alpine runs as uid 70

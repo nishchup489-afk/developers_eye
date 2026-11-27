@@ -42,8 +42,8 @@ Everything between the markers is generated. Write notes above them.
 |---|---:|---:|---|
 | [End-to-end (full app)](#end-to-end-full-app) | 0 | 0 | Not written yet. |
 | [Backend (FastAPI, search)](#backend-fastapi-search) | 45 | 370 | `cd backend && poetry run pytest` |
-| [Indexer](#indexer) | 14 | 109 | `cd crawler && poetry run pytest tests/indexer` |
-| [Crawler](#crawler) | 37 | 339 | `cd crawler && poetry run pytest tests/crawler` |
+| [Indexer](#indexer) | 14 | 109 | `cd drishti && poetry run pytest tests/indexer` |
+| [Crawler](#crawler) | 37 | 339 | `cd drishti && poetry run pytest tests/crawler` |
 | [Frontend (Next.js, admin)](#frontend-nextjs-admin) | 14 | 0 | npm scripts in `frontend/package.json` (see below) |
 
 ### End-to-end (full app)
@@ -113,72 +113,72 @@ Empty for now. Full-app tests go in `tests/end-to-end/`.
 
 | File | Kind | Cases | Write-up |
 |---|---|---:|---|
-| [conftest.py](../crawler/tests/indexer/conftest.py) | fixtures |  | [test_case.md](../crawler/tests/test_case.md#conftestpy) |
-| [test_analyzer.py](../crawler/tests/indexer/test_analyzer.py) | tests | 11 | [test_case.md](../crawler/tests/test_case.md#test_analyzerpy) |
-| [test_builder.py](../crawler/tests/indexer/test_builder.py) | tests | 13 | [test_case.md](../crawler/tests/test_case.md#test_builderpy) |
-| [test_concurrent_writers.py](../crawler/tests/indexer/test_concurrent_writers.py) | tests | 5 |  |
-| [test_index_lifecycle.py](../crawler/tests/indexer/test_index_lifecycle.py) | tests | 1 | [test_case.md](../crawler/tests/test_case.md#test_index_lifecyclepy) |
-| [test_indexer.py](../crawler/tests/indexer/test_indexer.py) | tests | 2 | [test_case.md](../crawler/tests/test_case.md#test_indexerpy) |
-| [test_pipeline.py](../crawler/tests/indexer/test_pipeline.py) | tests | 1 | [test_case.md](../crawler/tests/test_case.md#test_pipelinepy) |
-| [test_repository.py](../crawler/tests/indexer/test_repository.py) | tests | 8 | [test_case.md](../crawler/tests/test_case.md#test_repositorypy) |
-| [test_selector.py](../crawler/tests/indexer/test_selector.py) | tests | 10 | [test_case.md](../crawler/tests/test_case.md#test_selectorpy) |
-| [test_service_writer.py](../crawler/tests/indexer/test_service_writer.py) | tests | 9 | [test_case.md](../crawler/tests/test_case.md#test_service_writerpy) |
-| [test_vector.py](../crawler/tests/indexer/test_vector.py) | tests | 29 | [test_case.md](../crawler/tests/test_case.md#test_vectorpy) |
-| [test_vocabulary.py](../crawler/tests/indexer/test_vocabulary.py) | tests | 4 | [test_case.md](../crawler/tests/test_case.md#test_vocabularypy) |
-| [test_vocabulary_outbox.py](../crawler/tests/indexer/test_vocabulary_outbox.py) | tests | 6 |  |
-| [test_vocabulary_rebuild_cli.py](../crawler/tests/indexer/test_vocabulary_rebuild_cli.py) | tests | 6 | [test_case.md](../crawler/tests/test_case.md#test_vocabulary_rebuild_clipy) |
-| [test_worker_recovery.py](../crawler/tests/indexer/test_worker_recovery.py) | tests | 4 |  |
+| [conftest.py](../drishti/tests/indexer/conftest.py) | fixtures |  | [test_case.md](../drishti/tests/test_case.md#conftestpy) |
+| [test_analyzer.py](../drishti/tests/indexer/test_analyzer.py) | tests | 11 | [test_case.md](../drishti/tests/test_case.md#test_analyzerpy) |
+| [test_builder.py](../drishti/tests/indexer/test_builder.py) | tests | 13 | [test_case.md](../drishti/tests/test_case.md#test_builderpy) |
+| [test_concurrent_writers.py](../drishti/tests/indexer/test_concurrent_writers.py) | tests | 5 |  |
+| [test_index_lifecycle.py](../drishti/tests/indexer/test_index_lifecycle.py) | tests | 1 | [test_case.md](../drishti/tests/test_case.md#test_index_lifecyclepy) |
+| [test_indexer.py](../drishti/tests/indexer/test_indexer.py) | tests | 2 | [test_case.md](../drishti/tests/test_case.md#test_indexerpy) |
+| [test_pipeline.py](../drishti/tests/indexer/test_pipeline.py) | tests | 1 | [test_case.md](../drishti/tests/test_case.md#test_pipelinepy) |
+| [test_repository.py](../drishti/tests/indexer/test_repository.py) | tests | 8 | [test_case.md](../drishti/tests/test_case.md#test_repositorypy) |
+| [test_selector.py](../drishti/tests/indexer/test_selector.py) | tests | 10 | [test_case.md](../drishti/tests/test_case.md#test_selectorpy) |
+| [test_service_writer.py](../drishti/tests/indexer/test_service_writer.py) | tests | 9 | [test_case.md](../drishti/tests/test_case.md#test_service_writerpy) |
+| [test_vector.py](../drishti/tests/indexer/test_vector.py) | tests | 29 | [test_case.md](../drishti/tests/test_case.md#test_vectorpy) |
+| [test_vocabulary.py](../drishti/tests/indexer/test_vocabulary.py) | tests | 4 | [test_case.md](../drishti/tests/test_case.md#test_vocabularypy) |
+| [test_vocabulary_outbox.py](../drishti/tests/indexer/test_vocabulary_outbox.py) | tests | 6 |  |
+| [test_vocabulary_rebuild_cli.py](../drishti/tests/indexer/test_vocabulary_rebuild_cli.py) | tests | 6 | [test_case.md](../drishti/tests/test_case.md#test_vocabulary_rebuild_clipy) |
+| [test_worker_recovery.py](../drishti/tests/indexer/test_worker_recovery.py) | tests | 4 |  |
 
 ### Crawler
 
 | File | Kind | Cases | Write-up |
 |---|---|---:|---|
-| [README.md](../crawler/tests/README.md) | write-up |  |  |
-| [benchmarks/bench_claim.py](../crawler/tests/benchmarks/bench_claim.py) | helper |  | [test_case.md](../crawler/tests/test_case.md#claim-benchmark) |
-| [benchmarks/bench_indexer.py](../crawler/tests/benchmarks/bench_indexer.py) | helper |  |  |
-| [benchmarks/bench_safety.py](../crawler/tests/benchmarks/bench_safety.py) | helper |  |  |
-| [benchmarks/bench_search.py](../crawler/tests/benchmarks/bench_search.py) | helper |  |  |
-| [benchmarks/fake_web_load.py](../crawler/tests/benchmarks/fake_web_load.py) | helper |  |  |
-| [conftest.py](../crawler/tests/conftest.py) | fixtures |  | [test_case.md](../crawler/tests/test_case.md#conftestpy) |
-| [crawler/fetcher/conftest.py](../crawler/tests/crawler/fetcher/conftest.py) | fixtures |  | [test_case.md](../crawler/tests/test_case.md#conftestpy) |
-| [crawler/fetcher/test_fetcher.py](../crawler/tests/crawler/fetcher/test_fetcher.py) | tests | 33 | [test_case.md](../crawler/tests/test_case.md#test_fetcherpy) |
-| [crawler/frontier/test_enqueue_target.py](../crawler/tests/crawler/frontier/test_enqueue_target.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_enqueue_targetpy) |
-| [crawler/frontier/test_scope.py](../crawler/tests/crawler/frontier/test_scope.py) | tests | 5 | [test_case.md](../crawler/tests/test_case.md#test_scopepy) |
-| [crawler/frontier/test_urls.py](../crawler/tests/crawler/frontier/test_urls.py) | tests | 3 | [test_case.md](../crawler/tests/test_case.md#test_urlspy) |
-| [crawler/ingestion/test_feeds.py](../crawler/tests/crawler/ingestion/test_feeds.py) | tests | 5 | [test_case.md](../crawler/tests/test_case.md#test_feedspy) |
-| [crawler/ingestion/test_ingestion_jobs.py](../crawler/tests/crawler/ingestion/test_ingestion_jobs.py) | tests | 7 | [test_case.md](../crawler/tests/test_case.md#test_ingestion_jobspy) |
-| [crawler/ingestion/test_json_api.py](../crawler/tests/crawler/ingestion/test_json_api.py) | tests | 11 | [test_case.md](../crawler/tests/test_case.md#test_json_apipy) |
-| [crawler/ingestion/test_sitemap.py](../crawler/tests/crawler/ingestion/test_sitemap.py) | tests | 11 | [test_case.md](../crawler/tests/test_case.md#test_sitemappy) |
-| [crawler/ingestion/test_sitemap_discovery.py](../crawler/tests/crawler/ingestion/test_sitemap_discovery.py) | tests | 5 | [test_case.md](../crawler/tests/test_case.md#test_sitemap_discoverypy) |
-| [crawler/parser/test_html_parser.py](../crawler/tests/crawler/parser/test_html_parser.py) | tests | 28 | [test_case.md](../crawler/tests/test_case.md#test_html_parserpy) |
-| [crawler/parser/test_robots_metadata.py](../crawler/tests/crawler/parser/test_robots_metadata.py) | tests | 1 | [test_case.md](../crawler/tests/test_case.md#test_robots_metadatapy) |
-| [crawler/policy_and_politeness/test_dns_policy.py](../crawler/tests/crawler/policy_and_politeness/test_dns_policy.py) | tests | 19 | [test_case.md](../crawler/tests/test_case.md#test_dns_policypy) |
-| [crawler/policy_and_politeness/test_host_policy.py](../crawler/tests/crawler/policy_and_politeness/test_host_policy.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_host_policypy) |
-| [crawler/policy_and_politeness/test_policy_coordinator.py](../crawler/tests/crawler/policy_and_politeness/test_policy_coordinator.py) | tests | 23 | [test_case.md](../crawler/tests/test_case.md#test_policy_coordinatorpy) |
-| [crawler/policy_and_politeness/test_politeness_policy.py](../crawler/tests/crawler/policy_and_politeness/test_politeness_policy.py) | tests | 40 | [test_case.md](../crawler/tests/test_case.md#test_politeness_policypy) |
-| [crawler/policy_and_politeness/test_redirect_policy.py](../crawler/tests/crawler/policy_and_politeness/test_redirect_policy.py) | tests | 23 | [test_case.md](../crawler/tests/test_case.md#test_redirect_policypy) |
-| [crawler/policy_and_politeness/test_robots_policy.py](../crawler/tests/crawler/policy_and_politeness/test_robots_policy.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_robots_policypy) |
-| [crawler/policy_and_politeness/test_robots_rules.py](../crawler/tests/crawler/policy_and_politeness/test_robots_rules.py) | tests | 6 | [test_case.md](../crawler/tests/test_case.md#test_robots_rulespy) |
-| [crawler/policy_and_politeness/test_shared_politeness.py](../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py) | tests | 6 |  |
-| [crawler/processing/test_fingerprint.py](../crawler/tests/crawler/processing/test_fingerprint.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_fingerprintpy) |
-| [crawler/processing/test_processing.py](../crawler/tests/crawler/processing/test_processing.py) | tests | 58 | [test_case.md](../crawler/tests/test_case.md#test_processingpy) |
-| [crawler/scheduler/test_complete_target.py](../crawler/tests/crawler/scheduler/test_complete_target.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_complete_targetpy) |
-| [crawler/scheduler/test_concurrent_claims.py](../crawler/tests/crawler/scheduler/test_concurrent_claims.py) | tests | 3 | [test_case.md](../crawler/tests/test_case.md#test_concurrent_claimspy) |
-| [crawler/scheduler/test_fail_target.py](../crawler/tests/crawler/scheduler/test_fail_target.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_fail_targetpy) |
-| [crawler/scheduler/test_legacy_contracts.py](../crawler/tests/crawler/scheduler/test_legacy_contracts.py) | tests | 1 |  |
-| [crawler/scheduler/test_repository.py](../crawler/tests/crawler/scheduler/test_repository.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_repositorypy) |
-| [crawler/worker/test_availability.py](../crawler/tests/crawler/worker/test_availability.py) | tests | 2 | [test_case.md](../crawler/tests/test_case.md#test_availabilitypy) |
-| [crawler/worker/test_benchmark_safety.py](../crawler/tests/crawler/worker/test_benchmark_safety.py) | tests | 2 |  |
-| [crawler/worker/test_database_faults.py](../crawler/tests/crawler/worker/test_database_faults.py) | tests | 2 |  |
-| [crawler/worker/test_deadlock_retry.py](../crawler/tests/crawler/worker/test_deadlock_retry.py) | tests | 3 | [test_case.md](../crawler/tests/test_case.md#test_deadlock_retrypy) |
-| [crawler/worker/test_live_pipeline.py](../crawler/tests/crawler/worker/test_live_pipeline.py) | tests | 0 | [test_case.md](../crawler/tests/test_case.md#test_live_pipelinepy) |
-| [crawler/worker/test_logging_config.py](../crawler/tests/crawler/worker/test_logging_config.py) | tests | 1 |  |
-| [crawler/worker/test_monitoring.py](../crawler/tests/crawler/worker/test_monitoring.py) | tests | 4 | [test_case.md](../crawler/tests/test_case.md#test_monitoringpy) |
-| [crawler/worker/test_postgres_pipeline.py](../crawler/tests/crawler/worker/test_postgres_pipeline.py) | tests | 18 | [test_case.md](../crawler/tests/test_case.md#test_postgres_pipelinepy) |
-| [crawler/worker/test_recovery.py](../crawler/tests/crawler/worker/test_recovery.py) | tests | 5 | [test_case.md](../crawler/tests/test_case.md#test_recoverypy) |
-| [crawler/worker/test_runner_continuous.py](../crawler/tests/crawler/worker/test_runner_continuous.py) | tests | 5 |  |
-| [crawler/writer/test_database_writer.py](../crawler/tests/crawler/writer/test_database_writer.py) | tests | 9 | [test_case.md](../crawler/tests/test_case.md#test_database_writerpy) |
-| [test_case.md](../crawler/tests/test_case.md) | write-up |  |  |
+| [README.md](../drishti/tests/README.md) | write-up |  |  |
+| [benchmarks/bench_claim.py](../drishti/tests/benchmarks/bench_claim.py) | helper |  | [test_case.md](../drishti/tests/test_case.md#claim-benchmark) |
+| [benchmarks/bench_indexer.py](../drishti/tests/benchmarks/bench_indexer.py) | helper |  |  |
+| [benchmarks/bench_safety.py](../drishti/tests/benchmarks/bench_safety.py) | helper |  |  |
+| [benchmarks/bench_search.py](../drishti/tests/benchmarks/bench_search.py) | helper |  |  |
+| [benchmarks/fake_web_load.py](../drishti/tests/benchmarks/fake_web_load.py) | helper |  |  |
+| [conftest.py](../drishti/tests/conftest.py) | fixtures |  | [test_case.md](../drishti/tests/test_case.md#conftestpy) |
+| [crawler/fetcher/conftest.py](../drishti/tests/crawler/fetcher/conftest.py) | fixtures |  | [test_case.md](../drishti/tests/test_case.md#conftestpy) |
+| [crawler/fetcher/test_fetcher.py](../drishti/tests/crawler/fetcher/test_fetcher.py) | tests | 33 | [test_case.md](../drishti/tests/test_case.md#test_fetcherpy) |
+| [crawler/frontier/test_enqueue_target.py](../drishti/tests/crawler/frontier/test_enqueue_target.py) | tests | 0 | [test_case.md](../drishti/tests/test_case.md#test_enqueue_targetpy) |
+| [crawler/frontier/test_scope.py](../drishti/tests/crawler/frontier/test_scope.py) | tests | 5 | [test_case.md](../drishti/tests/test_case.md#test_scopepy) |
+| [crawler/frontier/test_urls.py](../drishti/tests/crawler/frontier/test_urls.py) | tests | 3 | [test_case.md](../drishti/tests/test_case.md#test_urlspy) |
+| [crawler/ingestion/test_feeds.py](../drishti/tests/crawler/ingestion/test_feeds.py) | tests | 5 | [test_case.md](../drishti/tests/test_case.md#test_feedspy) |
+| [crawler/ingestion/test_ingestion_jobs.py](../drishti/tests/crawler/ingestion/test_ingestion_jobs.py) | tests | 7 | [test_case.md](../drishti/tests/test_case.md#test_ingestion_jobspy) |
+| [crawler/ingestion/test_json_api.py](../drishti/tests/crawler/ingestion/test_json_api.py) | tests | 11 | [test_case.md](../drishti/tests/test_case.md#test_json_apipy) |
+| [crawler/ingestion/test_sitemap.py](../drishti/tests/crawler/ingestion/test_sitemap.py) | tests | 11 | [test_case.md](../drishti/tests/test_case.md#test_sitemappy) |
+| [crawler/ingestion/test_sitemap_discovery.py](../drishti/tests/crawler/ingestion/test_sitemap_discovery.py) | tests | 5 | [test_case.md](../drishti/tests/test_case.md#test_sitemap_discoverypy) |
+| [crawler/parser/test_html_parser.py](../drishti/tests/crawler/parser/test_html_parser.py) | tests | 28 | [test_case.md](../drishti/tests/test_case.md#test_html_parserpy) |
+| [crawler/parser/test_robots_metadata.py](../drishti/tests/crawler/parser/test_robots_metadata.py) | tests | 1 | [test_case.md](../drishti/tests/test_case.md#test_robots_metadatapy) |
+| [crawler/policy_and_politeness/test_dns_policy.py](../drishti/tests/crawler/policy_and_politeness/test_dns_policy.py) | tests | 19 | [test_case.md](../drishti/tests/test_case.md#test_dns_policypy) |
+| [crawler/policy_and_politeness/test_host_policy.py](../drishti/tests/crawler/policy_and_politeness/test_host_policy.py) | tests | 0 | [test_case.md](../drishti/tests/test_case.md#test_host_policypy) |
+| [crawler/policy_and_politeness/test_policy_coordinator.py](../drishti/tests/crawler/policy_and_politeness/test_policy_coordinator.py) | tests | 23 | [test_case.md](../drishti/tests/test_case.md#test_policy_coordinatorpy) |
+| [crawler/policy_and_politeness/test_politeness_policy.py](../drishti/tests/crawler/policy_and_politeness/test_politeness_policy.py) | tests | 40 | [test_case.md](../drishti/tests/test_case.md#test_politeness_policypy) |
+| [crawler/policy_and_politeness/test_redirect_policy.py](../drishti/tests/crawler/policy_and_politeness/test_redirect_policy.py) | tests | 23 | [test_case.md](../drishti/tests/test_case.md#test_redirect_policypy) |
+| [crawler/policy_and_politeness/test_robots_policy.py](../drishti/tests/crawler/policy_and_politeness/test_robots_policy.py) | tests | 0 | [test_case.md](../drishti/tests/test_case.md#test_robots_policypy) |
+| [crawler/policy_and_politeness/test_robots_rules.py](../drishti/tests/crawler/policy_and_politeness/test_robots_rules.py) | tests | 6 | [test_case.md](../drishti/tests/test_case.md#test_robots_rulespy) |
+| [crawler/policy_and_politeness/test_shared_politeness.py](../drishti/tests/crawler/policy_and_politeness/test_shared_politeness.py) | tests | 6 |  |
+| [crawler/processing/test_fingerprint.py](../drishti/tests/crawler/processing/test_fingerprint.py) | tests | 0 | [test_case.md](../drishti/tests/test_case.md#test_fingerprintpy) |
+| [crawler/processing/test_processing.py](../drishti/tests/crawler/processing/test_processing.py) | tests | 58 | [test_case.md](../drishti/tests/test_case.md#test_processingpy) |
+| [crawler/scheduler/test_complete_target.py](../drishti/tests/crawler/scheduler/test_complete_target.py) | tests | 0 | [test_case.md](../drishti/tests/test_case.md#test_complete_targetpy) |
+| [crawler/scheduler/test_concurrent_claims.py](../drishti/tests/crawler/scheduler/test_concurrent_claims.py) | tests | 3 | [test_case.md](../drishti/tests/test_case.md#test_concurrent_claimspy) |
+| [crawler/scheduler/test_fail_target.py](../drishti/tests/crawler/scheduler/test_fail_target.py) | tests | 0 | [test_case.md](../drishti/tests/test_case.md#test_fail_targetpy) |
+| [crawler/scheduler/test_legacy_contracts.py](../drishti/tests/crawler/scheduler/test_legacy_contracts.py) | tests | 1 |  |
+| [crawler/scheduler/test_repository.py](../drishti/tests/crawler/scheduler/test_repository.py) | tests | 0 | [test_case.md](../drishti/tests/test_case.md#test_repositorypy) |
+| [crawler/worker/test_availability.py](../drishti/tests/crawler/worker/test_availability.py) | tests | 2 | [test_case.md](../drishti/tests/test_case.md#test_availabilitypy) |
+| [crawler/worker/test_benchmark_safety.py](../drishti/tests/crawler/worker/test_benchmark_safety.py) | tests | 2 |  |
+| [crawler/worker/test_database_faults.py](../drishti/tests/crawler/worker/test_database_faults.py) | tests | 2 |  |
+| [crawler/worker/test_deadlock_retry.py](../drishti/tests/crawler/worker/test_deadlock_retry.py) | tests | 3 | [test_case.md](../drishti/tests/test_case.md#test_deadlock_retrypy) |
+| [crawler/worker/test_live_pipeline.py](../drishti/tests/crawler/worker/test_live_pipeline.py) | tests | 0 | [test_case.md](../drishti/tests/test_case.md#test_live_pipelinepy) |
+| [crawler/worker/test_logging_config.py](../drishti/tests/crawler/worker/test_logging_config.py) | tests | 1 |  |
+| [crawler/worker/test_monitoring.py](../drishti/tests/crawler/worker/test_monitoring.py) | tests | 4 | [test_case.md](../drishti/tests/test_case.md#test_monitoringpy) |
+| [crawler/worker/test_postgres_pipeline.py](../drishti/tests/crawler/worker/test_postgres_pipeline.py) | tests | 18 | [test_case.md](../drishti/tests/test_case.md#test_postgres_pipelinepy) |
+| [crawler/worker/test_recovery.py](../drishti/tests/crawler/worker/test_recovery.py) | tests | 5 | [test_case.md](../drishti/tests/test_case.md#test_recoverypy) |
+| [crawler/worker/test_runner_continuous.py](../drishti/tests/crawler/worker/test_runner_continuous.py) | tests | 5 |  |
+| [crawler/writer/test_database_writer.py](../drishti/tests/crawler/writer/test_database_writer.py) | tests | 9 | [test_case.md](../drishti/tests/test_case.md#test_database_writerpy) |
+| [test_case.md](../drishti/tests/test_case.md) | write-up |  |  |
 
 ### Frontend (Next.js, admin)
 

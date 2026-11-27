@@ -8,6 +8,7 @@ Use Node.js 24, Python 3.14, Poetry and PostgreSQL 16 or later. The commands ass
 ## Prepare the database and settings
 
 ```sh
+git submodule update --init --recursive
 createdb developers_eye
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
@@ -35,7 +36,7 @@ npm run dev
 ## Give the crawler somewhere to start
 
 ```sh
-cd crawler
+cd drishti
 poetry install
 poetry run python -m crawler.main bootstrap
 poetry run python -m crawler.worker.runner --forever --concurrency 2 --batch-size 20
@@ -46,7 +47,7 @@ Bootstrap registers sources and queues starting URLs. The worker claims those UR
 ## Turn fetched documents into results
 
 ```sh
-cd crawler
+cd drishti
 poetry run python -m indexer.worker.runner --forever --batch-size 100 --concurrency 2 --poll-seconds 10
 ```
 

@@ -7,9 +7,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc libxml2-dev
 WORKDIR /app
 COPY backend/pyproject.toml backend/README.md backend/
 COPY backend/src backend/src
-COPY crawler/pyproject.toml crawler/
-COPY crawler/src crawler/src
-RUN python -m venv /venv && /venv/bin/pip install ./backend ./crawler
+COPY drishti/pyproject.toml drishti/
+COPY drishti/src drishti/src
+RUN python -m venv /venv && /venv/bin/pip install ./backend ./drishti
 
 FROM python:3.14-slim
 RUN apt-get update && apt-get install -y --no-install-recommends libxml2 libxslt1.1 \

@@ -10,7 +10,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - [0_tech_docs/journal/test-reports/scheduler-test-1-report.md](../../0_tech_docs/journal/test-reports/scheduler-test-1-report.md)
 - [0_tech_docs/journal/test-reports/writer-first-successful-test.md](../../0_tech_docs/journal/test-reports/writer-first-successful-test.md)
 - [backend/tests/test_case.md](../../backend/tests/test_case.md)
-- [crawler/tests/test_case.md](../../crawler/tests/test_case.md)
+- [drishti/tests/test_case.md](../../drishti/tests/test_case.md)
 - [frontend/tests/test_case.md](../../frontend/tests/test_case.md)
 
 ## Backend (FastAPI, search)
@@ -612,9 +612,9 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ## Indexer
 
-### [crawler/tests/indexer/test_analyzer.py](../../crawler/tests/indexer/test_analyzer.py)
+### [drishti/tests/indexer/test_analyzer.py](../../drishti/tests/indexer/test_analyzer.py)
 
-11 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_analyzerpy)
+11 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_analyzerpy)
 
 - `test_analyzer_separates_text_and_code`
 - `test_analyzer_preserves_boundaries_and_code_whitespace`
@@ -628,9 +628,9 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_join_items_rejects_invalid_container_or_elements`
 - `test_analyzer_rejects_wrong_argument_types`
 
-### [crawler/tests/indexer/test_builder.py](../../crawler/tests/indexer/test_builder.py)
+### [drishti/tests/indexer/test_builder.py](../../drishti/tests/indexer/test_builder.py)
 
-13 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_builderpy)
+13 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_builderpy)
 
 - `test_prepare_normalizes_text_and_metadata`
 - `test_prepare_does_not_mutate_crawler_metadata`
@@ -646,7 +646,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_hash_changes_when_index_version_changes`
 - `test_hash_excludes_source_timestamp`
 
-### [crawler/tests/indexer/test_concurrent_writers.py](../../crawler/tests/indexer/test_concurrent_writers.py)
+### [drishti/tests/indexer/test_concurrent_writers.py](../../drishti/tests/indexer/test_concurrent_writers.py)
 
 5 cases
 
@@ -656,28 +656,28 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_recrawl_with_no_change_does_not_invalidate_an_index_write`
 - `test_two_indexers_write_once_and_count_the_vocabulary_once`
 
-### [crawler/tests/indexer/test_index_lifecycle.py](../../crawler/tests/indexer/test_index_lifecycle.py)
+### [drishti/tests/indexer/test_index_lifecycle.py](../../drishti/tests/indexer/test_index_lifecycle.py)
 
-1 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_index_lifecyclepy)
+1 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_index_lifecyclepy)
 
 - `test_unchanged_update_removal_and_rebuild_keep_index_and_vocabulary_true`
 
-### [crawler/tests/indexer/test_indexer.py](../../crawler/tests/indexer/test_indexer.py)
+### [drishti/tests/indexer/test_indexer.py](../../drishti/tests/indexer/test_indexer.py)
 
-2 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_indexerpy)
+2 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_indexerpy)
 
 - `test_final_local_document_to_sql_expression`: Exercise the real builder/analyzer/vector types without PostgreSQL.
 - `test_final_indexer_lifecycle_against_postgresql`: Verify build, search, skip, stale, reindex, version, removal, revival.
 
-### [crawler/tests/indexer/test_pipeline.py](../../crawler/tests/indexer/test_pipeline.py)
+### [drishti/tests/indexer/test_pipeline.py](../../drishti/tests/indexer/test_pipeline.py)
 
-1 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_pipelinepy)
+1 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_pipelinepy)
 
 - `test_document_flows_from_builder_to_analyzer`
 
-### [crawler/tests/indexer/test_repository.py](../../crawler/tests/indexer/test_repository.py)
+### [drishti/tests/indexer/test_repository.py](../../drishti/tests/indexer/test_repository.py)
 
-8 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_repositorypy)
+8 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_repositorypy)
 
 - `test_get_search_index_loads_only_freshness_metadata`
 - `test_get_search_index_returns_none_if_missing`
@@ -688,9 +688,9 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_repository_rejects_invalid_document_ids`
 - `test_delete_is_idempotent_and_does_not_commit`
 
-### [crawler/tests/indexer/test_selector.py](../../crawler/tests/indexer/test_selector.py)
+### [drishti/tests/indexer/test_selector.py](../../drishti/tests/indexer/test_selector.py)
 
-10 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_selectorpy)
+10 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_selectorpy)
 
 - `test_new_document_needs_indexing`
 - `test_current_document_is_skipped`
@@ -703,9 +703,9 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_each_shard_selects_only_its_own_documents`
 - `test_shard_index_must_fit_shard_count`
 
-### [crawler/tests/indexer/test_service_writer.py](../../crawler/tests/indexer/test_service_writer.py)
+### [drishti/tests/indexer/test_service_writer.py](../../drishti/tests/indexer/test_service_writer.py)
 
-9 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_service_writerpy)
+9 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_service_writerpy)
 
 - `test_writer_new_index`
 - `test_writer_unchanged_index`
@@ -717,9 +717,9 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_service_does_not_swallow_database_errors`
 - `test_service_remove_result`
 
-### [crawler/tests/indexer/test_vector.py](../../crawler/tests/indexer/test_vector.py)
+### [drishti/tests/indexer/test_vector.py](../../drishti/tests/indexer/test_vector.py)
 
-29 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_vectorpy)
+29 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_vectorpy)
 
 - `test_empty_vector_is_typed_and_parameterized`
 - `test_field_vector_compiles_as_weighted_tsvector`
@@ -751,16 +751,16 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_search_vectors_reject_non_tuple_field_group`
 - `test_postgresql_executes_weighted_text_and_code_vectors`: Optional end-to-end expression execution; requires a test PostgreSQL DB.
 
-### [crawler/tests/indexer/test_vocabulary.py](../../crawler/tests/indexer/test_vocabulary.py)
+### [drishti/tests/indexer/test_vocabulary.py](../../drishti/tests/indexer/test_vocabulary.py)
 
-4 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_vocabularypy)
+4 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_vocabularypy)
 
 - `test_vocabulary_filters_artifacts_and_keeps_developer_terms`
 - `test_vocabulary_rejects_non_string_lexemes`
 - `test_unchanged_document_queues_nothing`
 - `test_change_queues_sorted_added_and_removed_terms`
 
-### [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
+### [drishti/tests/indexer/test_vocabulary_outbox.py](../../drishti/tests/indexer/test_vocabulary_outbox.py)
 
 6 cases
 
@@ -771,9 +771,9 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_large_backlog_drains_across_batches_and_empties_the_queue`
 - `test_second_drainer_steps_aside_and_loses_nothing`
 
-### [crawler/tests/indexer/test_vocabulary_rebuild_cli.py](../../crawler/tests/indexer/test_vocabulary_rebuild_cli.py)
+### [drishti/tests/indexer/test_vocabulary_rebuild_cli.py](../../drishti/tests/indexer/test_vocabulary_rebuild_cli.py)
 
-6 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_vocabulary_rebuild_clipy)
+6 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_vocabulary_rebuild_clipy)
 
 - `test_default_options_are_one_shot`
 - `test_explicit_options`
@@ -782,7 +782,7 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_cli_returns_nonzero_when_rebuild_fails`
 - `test_rebuild_validates_limits_before_connecting`
 
-### [crawler/tests/indexer/test_worker_recovery.py](../../crawler/tests/indexer/test_worker_recovery.py)
+### [drishti/tests/indexer/test_worker_recovery.py](../../drishti/tests/indexer/test_worker_recovery.py)
 
 4 cases
 
@@ -793,9 +793,9 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 
 ## Crawler
 
-### [crawler/tests/crawler/fetcher/test_fetcher.py](../../crawler/tests/crawler/fetcher/test_fetcher.py)
+### [drishti/tests/crawler/fetcher/test_fetcher.py](../../drishti/tests/crawler/fetcher/test_fetcher.py)
 
-33 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_fetcherpy)
+33 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_fetcherpy)
 
 - `test_chunk_size_is_16_kib`
 - `test_reject_invalid_chunk_size`
@@ -831,13 +831,13 @@ Hand-written notes: the cases each suite covers, how to run them, and results.
 - `test_security_rejects_custom_sni_extension`
 - `test_security_rejects_other_path_on_same_host`
 
-### [crawler/tests/crawler/frontier/test_enqueue_target.py](../../crawler/tests/crawler/frontier/test_enqueue_target.py)
+### [drishti/tests/crawler/frontier/test_enqueue_target.py](../../drishti/tests/crawler/frontier/test_enqueue_target.py)
 
-Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_enqueue_targetpy)
+Script-style file, run as a whole · write-up: [test_case.md](../../drishti/tests/test_case.md#test_enqueue_targetpy)
 
-### [crawler/tests/crawler/frontier/test_scope.py](../../crawler/tests/crawler/frontier/test_scope.py)
+### [drishti/tests/crawler/frontier/test_scope.py](../../drishti/tests/crawler/frontier/test_scope.py)
 
-5 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_scopepy)
+5 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_scopepy)
 
 - `test_depth_boundary_and_child_depth`
 - `test_explicit_path_scope`
@@ -845,17 +845,17 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_duplicate_urls_do_not_use_remaining_budget_and_lock_precedes_count`
 - `test_full_source_does_not_insert_more_urls`
 
-### [crawler/tests/crawler/frontier/test_urls.py](../../crawler/tests/crawler/frontier/test_urls.py)
+### [drishti/tests/crawler/frontier/test_urls.py](../../drishti/tests/crawler/frontier/test_urls.py)
 
-3 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_urlspy)
+3 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_urlspy)
 
 - `test_normalize_url`
 - `test_invalid_url`
 - `test_idempotency`
 
-### [crawler/tests/crawler/ingestion/test_feeds.py](../../crawler/tests/crawler/ingestion/test_feeds.py)
+### [drishti/tests/crawler/ingestion/test_feeds.py](../../drishti/tests/crawler/ingestion/test_feeds.py)
 
-5 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_feedspy)
+5 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_feedspy)
 
 - `test_rss_content_extensions_dates_and_invalid_records`
 - `test_atom_bases_text_html_xhtml_author_and_pagination`
@@ -863,9 +863,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_feed_limits_count_all_items`
 - `test_bad_date_does_not_drop_valid_entry_and_guid_must_be_a_url`
 
-### [crawler/tests/crawler/ingestion/test_ingestion_jobs.py](../../crawler/tests/crawler/ingestion/test_ingestion_jobs.py)
+### [drishti/tests/crawler/ingestion/test_ingestion_jobs.py](../../drishti/tests/crawler/ingestion/test_ingestion_jobs.py)
 
-7 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_ingestion_jobspy)
+7 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_ingestion_jobspy)
 
 - `test_rss_worker_stores_only_in_scope_content_and_queues_pagination`
 - `test_rss_http_directives_and_malformed_feed`
@@ -875,9 +875,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_json_source_uses_api_target_kind`
 - `test_feed_does_not_expand_into_sitemaps_without_explicit_configuration`
 
-### [crawler/tests/crawler/ingestion/test_json_api.py](../../crawler/tests/crawler/ingestion/test_json_api.py)
+### [drishti/tests/crawler/ingestion/test_json_api.py](../../drishti/tests/crawler/ingestion/test_json_api.py)
 
-11 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_json_apipy)
+11 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_json_apipy)
 
 - `test_default_array_single_object_and_items_container`
 - `test_custom_nested_fields_html_and_body_pagination`
@@ -891,9 +891,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_invalid_metadata_fields_are_rejected`
 - `test_boolean_is_not_a_unix_date`
 
-### [crawler/tests/crawler/ingestion/test_sitemap.py](../../crawler/tests/crawler/ingestion/test_sitemap.py)
+### [drishti/tests/crawler/ingestion/test_sitemap.py](../../drishti/tests/crawler/ingestion/test_sitemap.py)
 
-11 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_sitemappy)
+11 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_sitemappy)
 
 - `test_namespaced_urlset`
 - `test_sitemap_index`
@@ -907,9 +907,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_extension_namespace_does_not_supply_page_location`
 - `test_corrupt_deflate_is_reported_as_malformed_xml`
 
-### [crawler/tests/crawler/ingestion/test_sitemap_discovery.py](../../crawler/tests/crawler/ingestion/test_sitemap_discovery.py)
+### [drishti/tests/crawler/ingestion/test_sitemap_discovery.py](../../drishti/tests/crawler/ingestion/test_sitemap_discovery.py)
 
-5 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_sitemap_discoverypy)
+5 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_sitemap_discoverypy)
 
 - `test_seed_configuration_host_filter_and_default_sitemap`
 - `test_gzip_file_mime_types_are_only_enabled_for_sitemap_jobs`
@@ -917,9 +917,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_nested_maps_and_page_scope_have_separate_depth_meanings`
 - `test_worker_sitemap_uses_policy_then_normal_finalization`
 
-### [crawler/tests/crawler/parser/test_html_parser.py](../../crawler/tests/crawler/parser/test_html_parser.py)
+### [drishti/tests/crawler/parser/test_html_parser.py](../../drishti/tests/crawler/parser/test_html_parser.py)
 
-28 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_html_parserpy)
+28 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_html_parserpy)
 
 - `TestParserIntegration.test_complete_html_pipeline`
 - `TestParserIntegration.test_xhtml_supported`
@@ -950,15 +950,15 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `TestLinkExtraction.test_max_links`
 - `TestLinkExtraction.test_invalid_inputs`
 
-### [crawler/tests/crawler/parser/test_robots_metadata.py](../../crawler/tests/crawler/parser/test_robots_metadata.py)
+### [drishti/tests/crawler/parser/test_robots_metadata.py](../../drishti/tests/crawler/parser/test_robots_metadata.py)
 
-1 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_robots_metadatapy)
+1 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_robots_metadatapy)
 
 - `test_all_applicable_meta_tags_are_respected`
 
-### [crawler/tests/crawler/policy_and_politeness/test_dns_policy.py](../../crawler/tests/crawler/policy_and_politeness/test_dns_policy.py)
+### [drishti/tests/crawler/policy_and_politeness/test_dns_policy.py](../../drishti/tests/crawler/policy_and_politeness/test_dns_policy.py)
 
-19 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_dns_policypy)
+19 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_dns_policypy)
 
 - `test_resolve_records`
 - `test_resolve_ip_literal`
@@ -980,13 +980,13 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_pinned_connect_rejects_wrong_host_or_port`
 - `test_no_unix_socket`
 
-### [crawler/tests/crawler/policy_and_politeness/test_host_policy.py](../../crawler/tests/crawler/policy_and_politeness/test_host_policy.py)
+### [drishti/tests/crawler/policy_and_politeness/test_host_policy.py](../../drishti/tests/crawler/policy_and_politeness/test_host_policy.py)
 
-Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_host_policypy)
+Script-style file, run as a whole · write-up: [test_case.md](../../drishti/tests/test_case.md#test_host_policypy)
 
-### [crawler/tests/crawler/policy_and_politeness/test_policy_coordinator.py](../../crawler/tests/crawler/policy_and_politeness/test_policy_coordinator.py)
+### [drishti/tests/crawler/policy_and_politeness/test_policy_coordinator.py](../../drishti/tests/crawler/policy_and_politeness/test_policy_coordinator.py)
 
-23 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_policy_coordinatorpy)
+23 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_policy_coordinatorpy)
 
 - `test_coordinator_uses_fetchers_security_exception`
 - `test_success_approved_ips_forwarded_to_fetcher`
@@ -1012,9 +1012,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_invalid_max_redirects_rejected`
 - `test_invalid_max_body_bytes_rejected`
 
-### [crawler/tests/crawler/policy_and_politeness/test_politeness_policy.py](../../crawler/tests/crawler/policy_and_politeness/test_politeness_policy.py)
+### [drishti/tests/crawler/policy_and_politeness/test_politeness_policy.py](../../drishti/tests/crawler/policy_and_politeness/test_politeness_policy.py)
 
-40 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_politeness_policypy)
+40 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_politeness_policypy)
 
 - `TestHostKey.test_extract_hostname`
 - `TestHostKey.test_same_host_different_paths`
@@ -1057,9 +1057,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `TestPolitenessManager.test_context_manager_releases_on_error`
 - `TestPolitenessManager.test_cancellation_releases_semaphore`
 
-### [crawler/tests/crawler/policy_and_politeness/test_redirect_policy.py](../../crawler/tests/crawler/policy_and_politeness/test_redirect_policy.py)
+### [drishti/tests/crawler/policy_and_politeness/test_redirect_policy.py](../../drishti/tests/crawler/policy_and_politeness/test_redirect_policy.py)
 
-23 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_redirect_policypy)
+23 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_redirect_policypy)
 
 - `test_supported_redirect_status`
 - `test_non_redirect_status`
@@ -1085,13 +1085,13 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_invalid_https_downgrade_setting`
 - `test_trackers_are_independent`
 
-### [crawler/tests/crawler/policy_and_politeness/test_robots_policy.py](../../crawler/tests/crawler/policy_and_politeness/test_robots_policy.py)
+### [drishti/tests/crawler/policy_and_politeness/test_robots_policy.py](../../drishti/tests/crawler/policy_and_politeness/test_robots_policy.py)
 
-Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_robots_policypy)
+Script-style file, run as a whole · write-up: [test_case.md](../../drishti/tests/test_case.md#test_robots_policypy)
 
-### [crawler/tests/crawler/policy_and_politeness/test_robots_rules.py](../../crawler/tests/crawler/policy_and_politeness/test_robots_rules.py)
+### [drishti/tests/crawler/policy_and_politeness/test_robots_rules.py](../../drishti/tests/crawler/policy_and_politeness/test_robots_rules.py)
 
-6 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_robots_rulespy)
+6 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_robots_rulespy)
 
 - `test_path_matching`
 - `test_merge_repeated_matching_groups`
@@ -1100,7 +1100,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_empty_specific_group_allows_without_wildcard_fallback`
 - `test_nontext_rejected`
 
-### [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
+### [drishti/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../drishti/tests/crawler/policy_and_politeness/test_shared_politeness.py)
 
 6 cases
 
@@ -1111,13 +1111,13 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_prepaid_first_request_skips_the_gate_once`
 - `test_settle_frees_an_unused_prepaid_hold`
 
-### [crawler/tests/crawler/processing/test_fingerprint.py](../../crawler/tests/crawler/processing/test_fingerprint.py)
+### [drishti/tests/crawler/processing/test_fingerprint.py](../../drishti/tests/crawler/processing/test_fingerprint.py)
 
-Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_fingerprintpy)
+Script-style file, run as a whole · write-up: [test_case.md](../../drishti/tests/test_case.md#test_fingerprintpy)
 
-### [crawler/tests/crawler/processing/test_processing.py](../../crawler/tests/crawler/processing/test_processing.py)
+### [drishti/tests/crawler/processing/test_processing.py](../../drishti/tests/crawler/processing/test_processing.py)
 
-58 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_processingpy)
+58 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_processingpy)
 
 - `Test01Normalization.test_cleans_short_fields`
 - `Test01Normalization.test_cleans_body_and_blank_lines`
@@ -1178,83 +1178,83 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `Test04Processor.test_different_urls_same_content_not_deduped_here`
 - `Test04Processor.test_wrong_processor_inputs_raise_type_error`
 
-### [crawler/tests/crawler/scheduler/test_complete_target.py](../../crawler/tests/crawler/scheduler/test_complete_target.py)
+### [drishti/tests/crawler/scheduler/test_complete_target.py](../../drishti/tests/crawler/scheduler/test_complete_target.py)
 
-Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_complete_targetpy)
+Script-style file, run as a whole · write-up: [test_case.md](../../drishti/tests/test_case.md#test_complete_targetpy)
 
-### [crawler/tests/crawler/scheduler/test_concurrent_claims.py](../../crawler/tests/crawler/scheduler/test_concurrent_claims.py)
+### [drishti/tests/crawler/scheduler/test_concurrent_claims.py](../../drishti/tests/crawler/scheduler/test_concurrent_claims.py)
 
-3 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_concurrent_claimspy)
+3 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_concurrent_claimspy)
 
 - `test_single_source_overlapping_claims_get_different_targets`
 - `test_overlapping_claims_never_take_the_same_host_twice`
 - `test_parallel_workers_drain_without_duplicates_or_idle_claims`
 
-### [crawler/tests/crawler/scheduler/test_fail_target.py](../../crawler/tests/crawler/scheduler/test_fail_target.py)
+### [drishti/tests/crawler/scheduler/test_fail_target.py](../../drishti/tests/crawler/scheduler/test_fail_target.py)
 
-Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_fail_targetpy)
+Script-style file, run as a whole · write-up: [test_case.md](../../drishti/tests/test_case.md#test_fail_targetpy)
 
-### [crawler/tests/crawler/scheduler/test_legacy_contracts.py](../../crawler/tests/crawler/scheduler/test_legacy_contracts.py)
+### [drishti/tests/crawler/scheduler/test_legacy_contracts.py](../../drishti/tests/crawler/scheduler/test_legacy_contracts.py)
 
 1 cases
 
 - `test_scheduler_script_contract`
 
-### [crawler/tests/crawler/scheduler/test_repository.py](../../crawler/tests/crawler/scheduler/test_repository.py)
+### [drishti/tests/crawler/scheduler/test_repository.py](../../drishti/tests/crawler/scheduler/test_repository.py)
 
-Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_repositorypy)
+Script-style file, run as a whole · write-up: [test_case.md](../../drishti/tests/test_case.md#test_repositorypy)
 
-### [crawler/tests/crawler/worker/test_availability.py](../../crawler/tests/crawler/worker/test_availability.py)
+### [drishti/tests/crawler/worker/test_availability.py](../../drishti/tests/crawler/worker/test_availability.py)
 
-2 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_availabilitypy)
+2 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_availabilitypy)
 
 - `test_missing_pages_are_marked_unavailable_without_index_deletion`
 - `test_successful_observation_restores_document_availability`
 
-### [crawler/tests/crawler/worker/test_benchmark_safety.py](../../crawler/tests/crawler/worker/test_benchmark_safety.py)
+### [drishti/tests/crawler/worker/test_benchmark_safety.py](../../drishti/tests/crawler/worker/test_benchmark_safety.py)
 
 2 cases
 
 - `test_socket_and_tcp_test_databases_are_accepted`
 - `test_host_password_or_query_cannot_make_a_production_database_disposable`
 
-### [crawler/tests/crawler/worker/test_database_faults.py](../../crawler/tests/crawler/worker/test_database_faults.py)
+### [drishti/tests/crawler/worker/test_database_faults.py](../../drishti/tests/crawler/worker/test_database_faults.py)
 
 2 cases
 
 - `test_connection_lost_in_finalize_rolls_back_and_the_lease_recovers`
 - `test_pool_replaces_connections_killed_while_idle`
 
-### [crawler/tests/crawler/worker/test_deadlock_retry.py](../../crawler/tests/crawler/worker/test_deadlock_retry.py)
+### [drishti/tests/crawler/worker/test_deadlock_retry.py](../../drishti/tests/crawler/worker/test_deadlock_retry.py)
 
-3 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_deadlock_retrypy)
+3 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_deadlock_retrypy)
 
 - `test_deadlock_retries_fresh_operation_without_refetch`
 - `test_deadlock_exhaustion_propagates_last_error`
 - `test_other_database_errors_and_cancellation_are_not_retried`
 
-### [crawler/tests/crawler/worker/test_live_pipeline.py](../../crawler/tests/crawler/worker/test_live_pipeline.py)
+### [drishti/tests/crawler/worker/test_live_pipeline.py](../../drishti/tests/crawler/worker/test_live_pipeline.py)
 
-Script-style file, run as a whole · write-up: [test_case.md](../../crawler/tests/test_case.md#test_live_pipelinepy)
+Script-style file, run as a whole · write-up: [test_case.md](../../drishti/tests/test_case.md#test_live_pipelinepy)
 
-### [crawler/tests/crawler/worker/test_logging_config.py](../../crawler/tests/crawler/worker/test_logging_config.py)
+### [drishti/tests/crawler/worker/test_logging_config.py](../../drishti/tests/crawler/worker/test_logging_config.py)
 
 1 cases
 
 - `test_production_logging_creates_no_file_and_quiets_sql`
 
-### [crawler/tests/crawler/worker/test_monitoring.py](../../crawler/tests/crawler/worker/test_monitoring.py)
+### [drishti/tests/crawler/worker/test_monitoring.py](../../drishti/tests/crawler/worker/test_monitoring.py)
 
-4 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_monitoringpy)
+4 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_monitoringpy)
 
 - `test_real_parser_pipeline_checkpoints`
 - `test_atomic_storage_events_and_dedup`
 - `test_telemetry_failure_does_not_fail_crawl`
 - `test_monitoring_routes_enforce_auth_and_validate_filters`
 
-### [crawler/tests/crawler/worker/test_postgres_pipeline.py](../../crawler/tests/crawler/worker/test_postgres_pipeline.py)
+### [drishti/tests/crawler/worker/test_postgres_pipeline.py](../../drishti/tests/crawler/worker/test_postgres_pipeline.py)
 
-18 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_postgres_pipelinepy)
+18 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_postgres_pipelinepy)
 
 - `test_http_429_retry_after_persists_and_delays_reclaim`
 - `test_structured_resources_commit_documents_targets_and_attempts`
@@ -1275,9 +1275,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_noindex_page_is_removed_and_a_feed_cannot_bring_it_back`
 - `test_batched_progress_is_durable_and_terminal_summary_is_written_once`
 
-### [crawler/tests/crawler/worker/test_recovery.py](../../crawler/tests/crawler/worker/test_recovery.py)
+### [drishti/tests/crawler/worker/test_recovery.py](../../drishti/tests/crawler/worker/test_recovery.py)
 
-5 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_recoverypy)
+5 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_recoverypy)
 
 - `test_abandoned_attempt_is_terminal_and_preserves_original_failure_category`
 - `test_recovery_never_requeues_a_newer_workers_claim`
@@ -1285,7 +1285,7 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_expired_leases_increment_failures_delay_retries_and_reconcile_orphans`
 - `test_timeout_records_exact_claim_and_is_counted_as_failed`
 
-### [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
+### [drishti/tests/crawler/worker/test_runner_continuous.py](../../drishti/tests/crawler/worker/test_runner_continuous.py)
 
 5 cases
 
@@ -1295,9 +1295,9 @@ Script-style file, run as a whole · write-up: [test_case.md](../../crawler/test
 - `test_claim_retries_for_every_way_the_database_can_be_unavailable`
 - `test_shutdown_cancels_running_jobs_and_leaves_them_to_lease_expiry`
 
-### [crawler/tests/crawler/writer/test_database_writer.py](../../crawler/tests/crawler/writer/test_database_writer.py)
+### [drishti/tests/crawler/writer/test_database_writer.py](../../drishti/tests/crawler/writer/test_database_writer.py)
 
-9 cases · write-up: [test_case.md](../../crawler/tests/test_case.md#test_database_writerpy)
+9 cases · write-up: [test_case.md](../../drishti/tests/test_case.md#test_database_writerpy)
 
 - `test_attempt_starts_and_finishes`
 - `test_competing_sources_preserve_owner_quality_and_observations`
@@ -1394,15 +1394,15 @@ These test files have no matching heading in a `test_case.md`.
 - [backend/tests/unit/test_search_telemetry.py](../../backend/tests/unit/test_search_telemetry.py)
 - [backend/tests/unit/test_search_trace.py](../../backend/tests/unit/test_search_trace.py)
 - [backend/tests/unit/test_shutdown.py](../../backend/tests/unit/test_shutdown.py)
-- [crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../crawler/tests/crawler/policy_and_politeness/test_shared_politeness.py)
-- [crawler/tests/crawler/scheduler/test_legacy_contracts.py](../../crawler/tests/crawler/scheduler/test_legacy_contracts.py)
-- [crawler/tests/crawler/worker/test_benchmark_safety.py](../../crawler/tests/crawler/worker/test_benchmark_safety.py)
-- [crawler/tests/crawler/worker/test_database_faults.py](../../crawler/tests/crawler/worker/test_database_faults.py)
-- [crawler/tests/crawler/worker/test_logging_config.py](../../crawler/tests/crawler/worker/test_logging_config.py)
-- [crawler/tests/crawler/worker/test_runner_continuous.py](../../crawler/tests/crawler/worker/test_runner_continuous.py)
-- [crawler/tests/indexer/test_concurrent_writers.py](../../crawler/tests/indexer/test_concurrent_writers.py)
-- [crawler/tests/indexer/test_vocabulary_outbox.py](../../crawler/tests/indexer/test_vocabulary_outbox.py)
-- [crawler/tests/indexer/test_worker_recovery.py](../../crawler/tests/indexer/test_worker_recovery.py)
+- [drishti/tests/crawler/policy_and_politeness/test_shared_politeness.py](../../drishti/tests/crawler/policy_and_politeness/test_shared_politeness.py)
+- [drishti/tests/crawler/scheduler/test_legacy_contracts.py](../../drishti/tests/crawler/scheduler/test_legacy_contracts.py)
+- [drishti/tests/crawler/worker/test_benchmark_safety.py](../../drishti/tests/crawler/worker/test_benchmark_safety.py)
+- [drishti/tests/crawler/worker/test_database_faults.py](../../drishti/tests/crawler/worker/test_database_faults.py)
+- [drishti/tests/crawler/worker/test_logging_config.py](../../drishti/tests/crawler/worker/test_logging_config.py)
+- [drishti/tests/crawler/worker/test_runner_continuous.py](../../drishti/tests/crawler/worker/test_runner_continuous.py)
+- [drishti/tests/indexer/test_concurrent_writers.py](../../drishti/tests/indexer/test_concurrent_writers.py)
+- [drishti/tests/indexer/test_vocabulary_outbox.py](../../drishti/tests/indexer/test_vocabulary_outbox.py)
+- [drishti/tests/indexer/test_worker_recovery.py](../../drishti/tests/indexer/test_worker_recovery.py)
 - [frontend/tests/edge-transport-unit.mjs](../../frontend/tests/edge-transport-unit.mjs)
 - [frontend/tests/google-doc-import-unit.mjs](../../frontend/tests/google-doc-import-unit.mjs)
 - [frontend/tests/overview-routes.mjs](../../frontend/tests/overview-routes.mjs)
